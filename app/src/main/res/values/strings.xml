@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name" translatable="false">崩坏3扫码器</string>
+    <string name="btn_login_BH" translatable="false">登录账户</string>
+    <string name="btn_QRscan" translatable="false">扫描二维码</string>
+    <string name="check_BH_login" translatable="false">崩坏3数据获取状态</string>
+    <string name="btn_logout" translatable="false">账户登出</string>
+</resources>

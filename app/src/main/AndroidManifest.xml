@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.github.haocen2004.login_simulation">
+
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" /> <!-- 震动权限 -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- 摄像头权限 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <activity android:name="com.github.haocen2004.login_simulation.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.google.zxing.activity.CaptureActivity" />
+        <!--是否为付费下载游戏,如果是付费下载游戏value值为true,否则value值为false  -->
+        <!--游戏付费下载指的是用户需要先购买才能下载游戏，与用户可以免费下载但是游戏内有内购是不同的 -->
+        <meta-data
+            android:name="BSGameSdk_PaidGame"
+            android:value="false"
+            />
+        <activity
+            android:name="com.bsgamesdk.android.activity.CaptchaWebActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop">
+        </activity>
+        <activity
+            android:name="com.bsgamesdk.android.activity.WebActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop">
+        </activity>
+        <activity
+            android:name="com.bsgamesdk.android.activity.ExitActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop">
+        </activity>
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.PrePayActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.PaymentActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/bsgamesdk_customPaymentTranslucentTheme"
+            android:launchMode="singleTop" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.BSGameSdkAgreementActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.Login_RegActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.LoadingActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.TouristActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.WelcomeActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgemsdk_activity_welcome_style"
+            android:launchMode="singleTop" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.NoticeActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.PointActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.RegisterActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.LicenseAgreementActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:theme="@style/bsgamesdk_customDialog"
+            android:launchMode="singleTop"/>
+
+
+
+    </application>
+
+</manifest>
