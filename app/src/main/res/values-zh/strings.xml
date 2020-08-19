@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">崩坏3扫码器</string>
+    <string name="btn_login">登录</string>
+    <string name="btn_login_finished">登录成功</string>
+    <string name="btn_scan">扫描二维码</string>
+    <string name="btn_logout">退出登录</string>
+    <string name="list_main">主页</string>
+    <string name="page_main">主页</string>
+    <string name="list_settings">设置</string>
+
+    <string name="basic_header">基础设置</string>
+    <string name="settings_fast_login">自动确认扫码结果</string>
+    <string name="settings_ad">启用广告</string>
+    <string name="settings_ad_desc_on">感谢您的理解</string>
+    <string name="settings_ad_desc_off">没有广告，服务器怎么活呢</string>
+
+    <string name="toolbar_icon_description">占位符</string>
+    <string name="request_permission_failed">请求权限失败</string>
+    <string name="settings_servers">选择服务器</string>
+    <string name="types_official">官服</string>
+    <string name="types_prefix">当前选择：</string>
+    <string name="types_bilibili">B服</string>
+    <string name="list_report">Bug反馈</string>
+    <string name="list_pay">支持作者</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+
+</resources>

@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Honkai Impact 3 Scanner</string>
+    <string name="app_info" translatable="false">Powered By Hao_cen</string>
+    <string name="app_ver" translatable="false">V.1.1.0</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_login_finished">Logged</string>
+    <string name="btn_scan">Scan Qr Code</string>
+    <string name="btn_logout">Logout</string>
+    <string name="list_main">Main</string>
+    <string name="page_main">Scanner</string>
+    <string name="list_settings">Settings</string>
+
+    <string name="basic_header">Basic</string>
+    <string name="settings_servers">Select Server</string>
+    <string name="settings_fast_login">Automatic confirmation</string>
+    <string name="settings_ad">Enable AD</string>
+    <string name="settings_ad_desc_on">Thanks for your understanding</string>
+    <string name="settings_ad_desc_off">All ads have been closed</string>
+
+    <string name="toolbar_icon_description">Icon PlaceHolder</string>
+    <string name="nav_header_pid" translatable="false">Pixiv:82665700</string>
+    <string name="request_permission_failed">Request permission FAILED</string>
+    <string name="types_official">Official Server</string>
+    <string name="types_prefix">"Selected : "</string>
+    <string name="types_bilibili">BiliBili Server</string>
+    <string name="list_report">Bug Report</string>
+    <string name="list_pay">Supporting author</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+
+</resources>

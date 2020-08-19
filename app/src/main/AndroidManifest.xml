@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.github.haocen2004.login_simulation">
+
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" /> <!-- 震动权限 -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- 摄像头权限 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" />
+    <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />
+    <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.NoActionBar">
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.google.zxing.activity.CaptureActivity" />
+        <!--是否为付费下载游戏,如果是付费下载游戏value值为true,否则value值为false  -->
+        <!--游戏付费下载指的是用户需要先购买才能下载游戏，与用户可以免费下载但是游戏内有内购是不同的 -->
+        <meta-data
+            android:name="BSGameSdk_PaidGame"
+            android:value="false" />
+
+        <activity
+            android:name="com.bsgamesdk.android.activity.CaptchaWebActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.WebActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.ExitActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog"/>
+        <activity
+            android:name="com.bsgamesdk.android.activity.BSGameSdkAgreementActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.Login_RegActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.LoadingActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.TouristActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.WelcomeActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgemsdk_activity_welcome_style" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.NoticeActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.PointActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.RegisterActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog" />
+        <activity
+            android:name="com.bsgamesdk.android.activity.LicenseAgreementActivity"
+            android:configChanges="keyboardHidden|navigation|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/bsgamesdk_customDialog" />
+
+        <activity
+            android:name="cn.uc.gamesdk.activity.PullupActivity"
+            tools:node="replace"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="PullupActivity"
+            android:launchMode="singleTop"
+            android:taskAffinity="cn.uc.gamesdk.demo.diff"
+            android:theme="@android:style/Theme.Translucent">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="ng119474" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="cn.gundam.sdk.shell.activity.ProxyActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="cn.uc.gamesdk.sdkweb" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.MiActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.PayListActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name="com.xiaomi.hy.dj.HyDjActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.fault.ViewFaultNoticeActivity"
+            android:configChanges="orientation|screenSize"
+            android:excludeFromRecents="true"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.notice.NoticeActivity"
+            android:configChanges="orientation|screenSize"
+            android:excludeFromRecents="true"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.anti.ui.MiAntiAlertActivity"
+            android:configChanges="orientation|screenSize"
+            android:excludeFromRecents="true"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <data
+                    android:host="open_anti_alert"
+                    android:scheme="mioauthsdk" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.MiPayAntiActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity android:name="com.xiaomi.gamecenter.sdk.ui.MiVerifyActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:screenOrientation="behind"/>
+        <!-- sdk service -->
+        <service
+            tools:replace="android:exported"
+            android:name="cn.gundam.sdk.shell.service.ProxyService"
+            android:exported="false"
+            android:process=":bgservice" />
+        <!-- sdk service end -->
+
+    </application>
+
+</manifest>

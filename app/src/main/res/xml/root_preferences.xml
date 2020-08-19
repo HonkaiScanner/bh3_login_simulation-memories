@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/basic_header">
+
+        <ListPreference
+            android:entries="@array/server_types"
+            android:entryValues="@array/server_types"
+            android:key="server_type"
+            android:title="@string/settings_servers" />
+        <SwitchPreferenceCompat
+            app:key="auto_confirm"
+            app:title="@string/settings_fast_login" />
+        <SwitchPreferenceCompat
+            app:key="enable_ad"
+            app:summaryOff="@string/settings_ad_desc_off"
+            app:summaryOn="@string/settings_ad_desc_on"
+            app:title="@string/settings_ad" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

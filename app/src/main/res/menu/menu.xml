@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/g1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/mainFragment"
+            android:title="@string/list_main" />
+        <item
+            android:id="@+id/settingsFragment"
+            android:title="@string/list_settings" />
+    </group>
+    <group
+        android:id="@+id/g2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/btn_support"
+            android:title="@string/list_pay" />
+        <item
+            android:id="@+id/btn_report"
+            android:title="@string/list_report" />
+    </group>
+</menu>
