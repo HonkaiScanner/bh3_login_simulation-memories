@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_dialog_cancel_blue_nor">#33b4ff</color>
+    <color name="color_dialog_cancel_white_press">#FFD6F0FF</color>
+    <color name="color_dialog_cancel_blue_press">#FF2890CC</color>
+    <color name="color_light_gray">#FF030303</color>
+    <color name="color_last_login_red">#FFEE001D</color>
+    <color name="color_dialog_light_grey">#FFF6F6F6</color>
+    <color name="color_black_trans_3">#08000000</color>
+    <color name="text_color_black_5">#0D000000</color>
+    <color name="text_color_black_4">#0A000000</color>
+    <color name="color_black_trans_6">#0F000000</color>
+    <color name="text_color_black_10">#19000000</color>
+    <color name="text_color_black_15">#26000000</color>
+    <color name="text_color_black_20">#33000000</color>
+    <color name="text_color_black_30">#4c000000</color>
+    <color name="text_color_black_40">#66000000</color>
+    <color name="text_color_black_50">#80000000</color>
+    <color name="text_color_black_60">#99000000</color>
+    <color name="text_color_black_70">#B3000000</color>
+    <color name="text_color_black_80">#CC000000</color>
+    <color name="text_color_black_85">#DA000000</color>
+    <color name="text_color_black_90">#E6000000</color>
+    <color name="text_color_black_100">#FF000000</color>
+
+    <color name="text_color_white_5">#0DFFFFFF</color>
+    <color name="text_color_white_10">#19FFFFFF</color>
+    <color name="text_color_white_15">#26FFFFFF</color>
+    <color name="text_color_white_20">#33FFFFFF</color>
+    <color name="text_color_white_30">#4cFFFFFF</color>
+    <color name="text_color_white_40">#66FFFFFF</color>
+    <color name="text_color_white_50">#80FFFFFF</color>
+    <color name="text_color_white_60">#99FFFFFF</color>
+    <color name="text_color_white_70">#B3FFFFFF</color>
+    <color name="text_color_white_80">#CCFFFFFF</color>
+    <color name="text_color_white_85">#DAFFFFFF</color>
+    <color name="text_color_white_90">#E6FFFFFF</color>
+    <color name="text_color_white_100">#FFFFFFFF</color>
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_black">#FF000000</color>
+    <color name="black_20_percent">#33000000</color>
+
+    <color name="translucent_background">#00000000</color>
+    <color name="color_button_window_close_blue">#33B4FF</color>
+    <color name="color_text_window_close_orange">#FFA900</color>
+
+    <color name="color_payment_stay_btn_background">#F6F6F6</color>
+    <color name="color_payment_stay_btn_text">#030303</color>
+    <color name="color_coupon_background">#F2F2F2</color>
+    <color name="color_gift_text">#FF7E00</color>
+    <color name="color_coupon_text">#54C77C</color>
+    <color name="color_coupon_rebate_text">#FFFF5A5F</color>
+
+
+    <color name="text_colot_red_time">#FC5052</color>
+
+    <color name="color_payment_dialog_cancel_blue_nor">#FF33B4FF</color>
+
+</resources>

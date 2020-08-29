@@ -27,5 +27,8 @@
     <string name="list_pay">Supporting author</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="feedback_holder">Thanks for your report</string>
+    <string name="support_holder">Thanks for your donation</string>
 
 </resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/mio_notice_checkbox_sel" android:state_checked="true" />
+    <item android:drawable="@drawable/mio_notice_checkbox_nor" android:state_checked="false" />
+    <item android:drawable="@drawable/mio_notice_checkbox_sel" />
+</selector>

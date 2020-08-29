@@ -1,7 +1,6 @@
 package com.github.haocen2004.login_simulation.util;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +8,7 @@ import android.os.Message;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,33 +22,38 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class QRScanner {
     private String device_id;
-    private String uid;
+    private String open_id;
+    private String open_token;
     private String combo_token;
-    private String asterisk_name;
     private String combo_id;
     private String app_id;
     private String channel_id;
-    private String ip;
-    private String oaserver_url;
     private String ticket;
-    private Activity activity;
-    private JSONObject confirm_json,qr_check_json;
-    private Map<String,Object> qr_check_map;
+    private String account_type;
 
-//    private String scanResult;
+    private RoleData roleData;
+
+    private AppCompatActivity activity;
+    private JSONObject confirm_json, qr_check_json, oaserver;
+    private Map<String, Object> qr_check_map;
+
+    //    private String scanResult;
 //    private String ;
-    public QRScanner(Activity activity,String uid,String combo_id,String combo_token,String app_id,String channel_id,String ip,String oaserver_url){
+    public QRScanner(AppCompatActivity activity, RoleData roleData) {
 
         this.activity = activity;
         device_id = Tools.getDeviceID(activity);
-        this.uid = uid;
-        this.combo_id = combo_id;
-        this.combo_token = combo_token;
-        this.app_id = app_id;
-        this.channel_id = channel_id;
-        this.ip = ip;
-        this.oaserver_url = oaserver_url;
+        open_id = roleData.getOpen_id();
+        open_token = roleData.getOpen_token();
+        combo_id = roleData.getCombo_id();
+        combo_token = roleData.getCombo_token();
+        app_id = "1";
+        channel_id = roleData.getChannel_id();
+        oaserver = roleData.getOaserver();
+        account_type = roleData.getAccount_type();
         qr_check_map = new HashMap<>();
+        this.roleData = roleData;
+
 
     }
 
@@ -105,69 +110,54 @@ public class QRScanner {
         JSONObject ext_json = new JSONObject();
         JSONObject data_json = new JSONObject();
         JSONObject dispatch_json = new JSONObject();
-        JSONObject ext2_json = new JSONObject();
-        JSONObject gateway_json = new JSONObject(); //Same with game server
-        JSONObject server_ext_json = new JSONObject();
 
-        raw_json.put("heartbeat",false)
-                .put("open_id", uid)
+        raw_json.put("heartbeat", false)
+                .put("open_id", open_id)
+                .put("open_token", open_token)
                 .put("device_id", device_id)
-                .put("app_id",app_id)
+                .put("app_id", app_id)
                 .put("channel_id", channel_id)
-                .put("combo_token",combo_token)
+                .put("combo_token", combo_token)
                 .put("asterisk_name", "崩坏3外置扫码器用户")
-                .put("combo_id",combo_id);
+                .put("combo_id", combo_id)
+                .put("guest", false)
+                .put("account_type", account_type);
 
-        server_ext_json.put("cdkey_url","https://api-takumi.mihoyo.com/common/")
-                .put("is_official","1");
 
-        gateway_json.put("ip",ip)
-//        gateway_json.put("ip","106.14.219.183")
-                .put("port","15100");
-
-        ext2_json.put("disable_msad","1")
-                .put("ex_res_server_url","bundle.bh3.com/tmp/Original")
-                .put("ex_res_use_http","0")
-                .put("forbid_recharge","0")
-                .put("is_checksum_off","0")
-                .put("mtp_debug_switch","0")
-                .put("mtp_level","1")
-                .put("res_use_asset_boundle","1")
-                .put("show_version_text","0")
-                .put("update_streaming_asb","1");
-
-        dispatch_json.put("account_url","https://gameapi.account.mihoyo.com")
-                .put("account_url_backup", "http://webapi.account.mihoyo.com")
-                .put("asset_boundle_url","https://bundle.bh3.com/asset_bundle/bb01/1.0")
-                .put("ex_resource_url","bundle.bh3.com/tmp/Original")
-                .put("ext",ext2_json)
-                .put("gameserver",gateway_json)
-                .put("gateway",gateway_json)
-                .put("oaserver_url",oaserver_url)
+        dispatch_json.put("account_url", oaserver.get("account_url"))
+                .put("account_url_backup", oaserver.get("account_url_backup"))
+                .put("asset_boundle_url", oaserver.get("asset_boundle_url"))
+                .put("ex_resource_url", oaserver.get("ex_resource_url"))
+                .put("ext", oaserver.getJSONObject("ext"))
+                .put("gameserver", oaserver.getJSONObject("gameserver"))
+                .put("gateway", oaserver.getJSONObject("gateway"))
+                .put("oaserver_url", oaserver.get("oaserver_url"))
 //                .put("oaserver_url","http://139.196.248.220:1080")
-                .put("region_name","bb01")
-                .put("retcode","0")
-                .put("server_ext", server_ext_json);
+                .put("region_name", oaserver.getString("region_name"))
+                .put("retcode", "0")
+                .put("is_data_ready", true)
+                .put("server_ext", oaserver.getJSONObject("server_ext"));
 
-        data_json.put("accountType","2")
-                .put("accountID",uid)
-                .put("accountToken",combo_token)
-                .put("dispatch",dispatch_json);
 
-        ext_json.put("data",data_json);
+        data_json.put("accountType", account_type)
+                .put("accountID", open_id)
+                .put("accountToken", combo_token)
+                .put("dispatch", dispatch_json);
 
-        payload_json.put("raw",raw_json.toString())
-                .put("proto","Combo")
-                .put("ext",ext_json.toString());
+        ext_json.put("data", data_json);
+
+        payload_json.put("raw", raw_json.toString())
+                .put("proto", "Combo")
+                .put("ext", ext_json.toString());
 
         confirm_json = new JSONObject();
-        confirm_json.put("device",device_id)
-                .put("app_id",app_id)
+        confirm_json.put("device", device_id)
+                .put("app_id", app_id)
                 .put("ts", System.currentTimeMillis())
-                .put("ticket",ticket)
-                .put("payload",payload_json);
+                .put("ticket", ticket)
+                .put("payload", payload_json);
 
-        qr_check_map.put("payload",payload_json);
+        qr_check_map.put("payload", payload_json);
         String sign2 = Tools.bh3Sign(qr_check_map);
         confirm_json.put("sign",sign2);
 

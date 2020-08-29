@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!---v7:24.2.0(包括)以上 才支持 external-cache-path-->
+    <external-cache-path
+        name="payeco_img"
+        path="payeco_photos" />
+    <cache-path
+        name="payeco_img_"
+        path="payeco_photos" />
+    <root-path
+        name="payeco_img__"
+        path="payeco_photos" />
+</paths>

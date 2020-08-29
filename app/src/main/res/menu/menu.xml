@@ -14,10 +14,10 @@
         android:id="@+id/g2"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/btn_support"
+            android:id="@+id/supportFragment"
             android:title="@string/list_pay" />
         <item
-            android:id="@+id/btn_report"
+            android:id="@+id/reportFragment"
             android:title="@string/list_report" />
     </group>
 </menu>

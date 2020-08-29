@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/login_third_account_icon_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:clickable="false">
+
+        <ImageView
+            android:id="@+id/login_third_account_item_icon"
+            android:layout_width="@dimen/view_dimen_120"
+            android:layout_height="@dimen/view_dimen_120"
+            android:layout_centerHorizontal="true"
+            android:clickable="false"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/login_third_account_last_login"
+            android:layout_width="@dimen/view_dimen_123"
+            android:layout_height="@dimen/view_dimen_41"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/mio_shape_last_login_tip"
+            android:clickable="false"
+            android:gravity="center"
+            android:text="上次登录"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_font_size_24"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/login_third_account_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_third_account_icon_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/view_dimen_20"
+        android:clickable="false"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/text_font_size_32" />
+
+</RelativeLayout>

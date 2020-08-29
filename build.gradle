@@ -3,7 +3,6 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven { url 'https://gitlab.com/xiaomi-passport/maven-repository/raw/master/releases' }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.0.1"
@@ -17,7 +16,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url 'https://gitlab.com/xiaomi-passport/maven-repository/raw/master/releases' }
     }
 }
 

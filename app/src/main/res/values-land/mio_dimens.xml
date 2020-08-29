@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="float_new_msg_window_padding">100dip</dimen>
+</resources>

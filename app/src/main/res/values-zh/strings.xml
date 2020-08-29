@@ -25,5 +25,7 @@
     <string name="list_pay">支持作者</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
+    <string name="feedback_holder">感谢您的反馈</string>
+    <string name="support_holder">感谢您的支持</string>
 
 </resources>

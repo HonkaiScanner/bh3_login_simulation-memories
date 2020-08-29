@@ -1,21 +1,22 @@
 package com.github.haocen2004.login_simulation.login;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Looper;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bsgamesdk.android.BSGameSdk;
 import com.bsgamesdk.android.callbacklistener.BSGameSdkError;
 import com.bsgamesdk.android.callbacklistener.CallbackListener;
-import com.bsgamesdk.android.callbacklistener.ExitCallbackListener;
 import com.bsgamesdk.android.callbacklistener.InitCallbackListener;
 import com.bsgamesdk.android.utils.LogUtils;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
+import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
 
 import org.json.JSONObject;
@@ -24,48 +25,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 import static com.github.haocen2004.login_simulation.util.Constant.BS_APP_KEY;
 
-public class Bilibili implements Login {
+public class Bilibili implements LoginImpl {
 
-    private String combo_id;
-    private String combo_token;
     private String access_token;
     private String username;
     private String uid;
     private BSGameSdk gameSdk;
     private SharedPreferences preferences;
     private String device_id;
-    private Activity activity;
+    private AppCompatActivity activity;
     private boolean isLogin;
+    private RoleData roleData;
 
-    @Override
-    public void login(){
-
-        BSGameSdk.initialize(true, activity, "590", "180",
-                "378", BS_APP_KEY, new InitCallbackListener() {
-                    @Override
-                    public void onSuccess() {
-                        Logger.info("Bilibili SDK setup succeed");
-                    }
-
-                    @Override
-                    public void onFailed() {
-
-                        Logger.warning("Bilibili SDK setup Failed");
-
-                    }
-                }, new ExitCallbackListener() {
-                    @Override
-                    public void onExit() {
-                        System.exit(0);
-                    }
-                });
-
-        gameSdk = BSGameSdk.getInstance();
-        preferences =  activity.getSharedPreferences("bili_user",Context.MODE_PRIVATE);
-        doBiliLogin();
-
+    public Bilibili(AppCompatActivity activity) {
+        this.activity = activity;
+        device_id = Tools.getDeviceID(activity);
+        //isLogin = false;
     }
 
     private void doBiliLogin() {
@@ -149,13 +127,59 @@ public class Bilibili implements Login {
             }
         });
     }
-    public void doBHLogin(){
+
+    @Override
+    public void login() {
+
+        BSGameSdk.initialize(true, activity, "590", "180",
+                "378", BS_APP_KEY, new InitCallbackListener() {
+                    @Override
+                    public void onSuccess() {
+                        Logger.info("Bilibili SDK setup succeed");
+                    }
+
+                    @Override
+                    public void onFailed() {
+
+                        Logger.warning("Bilibili SDK setup Failed");
+
+                    }
+                }, () -> System.exit(0));
+
+        gameSdk = BSGameSdk.getInstance();
+        preferences = activity.getSharedPreferences("bili_user", Context.MODE_PRIVATE);
+        doBiliLogin();
+
+    }
+
+    @Override
+    public RoleData getRole() {
+        return roleData;
+    }
+
+    @SuppressLint("ShowToast")
+    private void makeToast(String result) {
+        try {
+            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Looper.prepare();
+            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+            Looper.loop();
+        }
+    }
+
+    @Override
+    public boolean isLogin() {
+        return isLogin;
+    }
+
+    public void doBHLogin() {
 
         Map<String, Object> login_map = new HashMap<>();
 
         login_map.put("device", device_id);
-        login_map.put("app_id","1");
-        login_map.put("channel_id","14");
+        login_map.put("app_id", "1");
+        login_map.put("channel_id", "14");
 
         String data_json = "{\"uid\":" +
                 uid +
@@ -186,11 +210,13 @@ public class Bilibili implements Login {
             JSONObject feedback_json = new JSONObject(feedback);
             Logger.info(feedback);
 
-            if (feedback_json.getInt("retcode") == 0){
+            if (feedback_json.getInt("retcode") == 0) {
 
                 JSONObject data_json2 = feedback_json.getJSONObject("data");
-                combo_id = data_json2.getString("combo_id");
-                combo_token = data_json2.getString("combo_token");
+                String combo_id = data_json2.getString("combo_id");
+                String combo_token = data_json2.getString("combo_token");
+                String open_id = data_json2.getString("open_id");
+                roleData = new RoleData(open_id, "", combo_id, combo_token, "14", "2", "4.2.0_gf_android_bilibili");
 
                 isLogin = true;
                 makeToast("登录成功");
@@ -207,39 +233,5 @@ public class Bilibili implements Login {
 
     }
 
-    @SuppressLint("ShowToast")
-    private void makeToast(String result) {
-        try {
-            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Looper.prepare();
-            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
-            Looper.loop();
-        }
-    }
-    @Override
-    public String getCombo_id() {
-        if (isLogin) return combo_id;
-        return "not login";
-    }
-    @Override
-    public String getCombo_token() {
-        if (isLogin) return combo_token;
-        return "not login";
-    }
-    @Override
-    public boolean isLogin() {
-        return isLogin;
-    }
-
-    public Bilibili(Activity activity){
-        this.activity = activity;
-        device_id = Tools.getDeviceID(activity);
-        //isLogin = false;
-    }
-    @Override
-    public String getUid(){
-        return uid;
-    }
 }
 

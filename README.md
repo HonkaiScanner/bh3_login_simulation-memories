@@ -4,7 +4,7 @@
 
 ## 支持协议 / Supported protocol
 
-Offical  
+Official  
 Bilibili 
 Xiaomi  
 UC(豌豆荚/九游)  

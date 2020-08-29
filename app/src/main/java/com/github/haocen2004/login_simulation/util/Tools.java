@@ -1,9 +1,17 @@
 package com.github.haocen2004.login_simulation.util;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.security.KeyFactory;
@@ -18,9 +26,37 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import static com.github.haocen2004.login_simulation.util.Constant.BH_APP_KEY;
+import static com.github.haocen2004.login_simulation.util.Network.sendPost;
 
 public class Tools {
 
+    public static String getOAServer(RoleData roleData) {
+//        http://106.14.51.73/query_gameserver?version=4.2.0_gf_pc&t=1598631898&uid=21097880
+//        https://global2.bh3.com/query_dispatch  version=4.2.0_gf_android_xiaomi
+//        https://global1.bh3.com/query_dispatch?version=4.2.0_gf_pc&t=1598673811
+        try {
+            String feedback = sendPost("https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
+            System.out.println(feedback);
+            JSONObject json1 = new JSONObject(feedback);
+            JSONArray jsonArray = json1.getJSONArray("region_list");
+            JSONObject json2 = jsonArray.getJSONObject(0);
+            String url = json2.getString("dispatch_url");
+            feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
+            System.out.println(feedback);
+            return feedback;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void openUrl(String url, AppCompatActivity activity) {
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        intent.setData(uri);
+        activity.startActivity(intent);
+    }
 
     public static String bh3Sign(Map<String, Object> paramMap) {
         ArrayList<Comparable> arrayList = new ArrayList(paramMap.keySet());

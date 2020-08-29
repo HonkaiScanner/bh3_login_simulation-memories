@@ -58,15 +58,32 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.hostFragment);
         DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
         appBarConfiguration = new AppBarConfiguration
-                .Builder(R.id.mainFragment,R.id.settingsFragment)
-                .setDrawerLayout(drawerLayout)
+                .Builder(R.id.mainFragment, R.id.settingsFragment)
+                .setOpenableLayout(drawerLayout)
+//                .setDrawerLayout(drawerLayout)
                 .build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationView navigationView = findViewById(R.id.navigationView);
+
+//        navigationView.setNavigationItemSelectedListener(menuItem -> {
+//            System.out.println("按钮id"+menuItem.getItemId());
+//            switch (menuItem.getItemId()) {
+//                case R.id.btn_support:
+//                    openUrl("https://afdian.net/@Haocen20004");
+//                    drawerLayout.closeDrawer(navigationView);
+//                    return false;
+//                case R.id.btn_report:
+//                    openUrl("https://github.com/Haocen2004/bh3_login_simulation/issues");
+//                    drawerLayout.closeDrawer(navigationView);
+//                    return false;
+//            }
+//            return true;
+//        });
         NavigationUI.setupWithNavController(navigationView, navController);
 
 
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -74,5 +91,6 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
 
     }
+
 
 }

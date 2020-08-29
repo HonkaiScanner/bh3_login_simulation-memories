@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="@dimen/view_dimen_940"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/view_dimen_40"
+        android:background="@color/translucent_background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <!--title-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_dimen_132"
+            android:background="@drawable/mio_corner_24_wite_bg">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_dimen_132"
+                android:background="@drawable/mio_corner_12_top_17191e" />
+
+            <ImageView
+                android:id="@+id/mio_notice_title_icon"
+                android:layout_width="@dimen/view_dimen_60"
+                android:layout_height="@dimen/view_dimen_60"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/view_dimen_40"
+                android:background="@drawable/mio_notice_dialog_icon" />
+
+            <!--<TextView-->
+            <!--android:id="@+id/mio_notice_title"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:maxWidth="@dimen/view_dimen_480"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:textSize="@dimen/text_font_size_51"-->
+            <!--android:maxLines="1"-->
+            <!--android:gravity="center"-->
+            <!--android:ellipsize="end"-->
+            <!--android:textColor="@color/color_white"-->
+            <!--android:text="活动公告"/>-->
+
+            <com.xiaomi.gamecenter.sdk.utils.MarqueeTextView
+                android:id="@+id/mio_notice_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/view_dimen_20"
+                android:layout_marginRight="@dimen/view_dimen_20"
+                android:layout_toLeftOf="@id/mio_notice_close"
+                android:layout_toRightOf="@id/mio_notice_title_icon"
+                android:focusable="false"
+                android:gravity="center"
+                android:textColor="@color/text_color_black_100"
+                android:textSize="@dimen/text_font_size_51" />
+
+            <TextView
+                android:id="@+id/mio_notice_close"
+                android:layout_width="@dimen/view_dimen_90"
+                android:layout_height="@dimen/view_dimen_90"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/view_dimen_20"
+                android:background="@drawable/mio_notice_text_dialog_close" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_dimen_678"
+            android:background="@drawable/mio_corner_12_bot_1b1f26">
+
+            <!--有按钮的样式-->
+            <LinearLayout
+                android:id="@+id/mio_notice_btn_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/mio_notice_btn"
+                    android:layout_width="@dimen/view_dimen_480"
+                    android:layout_height="@dimen/view_dimen_120"
+                    android:layout_marginBottom="@dimen/view_dimen_30"
+                    android:background="@drawable/mio_bg_100_ff7e00"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingLeft="@dimen/view_dimen_45"
+                    android:paddingRight="@dimen/view_dimen_45"
+                    android:text="立即领取"
+                    android:textAllCaps="false"
+                    android:textColor="@color/color_white" />
+
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/mio_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/mio_notice_btn_parent"
+                android:paddingTop="@dimen/view_dimen_40"
+                android:paddingBottom="@dimen/view_dimen_30">
+
+                <TextView
+                    android:id="@+id/mio_notice_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/view_dimen_40"
+                    android:layout_marginRight="@dimen/view_dimen_40"
+                    android:textColor="@color/text_color_black_70"
+                    android:textSize="@dimen/text_font_size_42" />
+            </ScrollView>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/mio_notice_checkbox_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_46"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/mio_notice_checkbox"
+                style="@style/MioNoticeChcekBox"
+                android:layout_width="@dimen/view_dimen_36"
+                android:layout_height="@dimen/view_dimen_36" />
+
+            <TextView
+                android:id="@+id/mio_notice_checkbox_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/view_dimen_20"
+                android:text="本期不再提醒"
+                android:textColor="@color/text_color_white_60"
+                android:textSize="@dimen/text_font_size_36" />
+
+        </LinearLayout>
+    </LinearLayout>
+</merge>

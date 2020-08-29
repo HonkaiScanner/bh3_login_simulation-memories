@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/view_dimen_740"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!--title layout-->
+    <LinearLayout
+        android:id="@+id/mifloat_menu_title_parent"
+        android:layout_width="@dimen/view_dimen_740"
+        android:layout_height="@dimen/view_dimen_140"
+        android:background="@drawable/mio_corner_16_top_17191e"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="@dimen/view_dimen_96"
+            android:layout_height="@dimen/view_dimen_96"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/common_title_icon_left_padding">
+            <!--头像-->
+            <ImageView
+                android:id="@+id/mifloat_menu_userav"
+                android:layout_width="@dimen/view_dimen_96"
+                android:layout_height="@dimen/view_dimen_96"
+                app:srcCompat="@drawable/game_icon" />
+
+            <!--蒙层-->
+            <ImageView
+                android:layout_width="@dimen/view_dimen_96"
+                android:layout_height="@dimen/view_dimen_96"
+                app:srcCompat="@drawable/avatar_background_white" />
+        </FrameLayout>
+
+        <!--用户名-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/view_dimen_32"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/mifloat_menu_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/view_dimen_5"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/text_font_size_42"
+                tools:text="111" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/mifloat_menu_member"
+                    android:layout_width="@dimen/view_dimen_118"
+                    android:layout_height="@dimen/view_dimen_38"
+                    android:layout_below="@id/mifloat_menu_username"
+                    android:layout_marginTop="@dimen/view_dimen_5"
+                    android:layout_marginRight="@dimen/view_dimen_12"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/mifloat_menu_vip"
+                    android:layout_width="@dimen/view_dimen_117"
+                    android:layout_height="@dimen/view_dimen_38"
+                    android:layout_below="@id/mifloat_menu_username"
+                    android:layout_marginTop="@dimen/view_dimen_5"
+                    android:layout_toRightOf="@id/mifloat_menu_member"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <Space
+                android:id="@+id/mifloat_name_top_margin"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_dimen_12"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/mifloat_menu_redpoint_root"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/mifloat_menu_vip_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/view_dimen_10"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/mifloat_menu_window_viptext"
+                android:textColor="@color/text_colot_red_time"
+                android:textSize="@dimen/text_font_size_30" />
+
+            <!--title 红点-->
+            <ImageView
+                android:id="@+id/mifloat_menu_redpoint"
+                android:layout_width="@dimen/view_dimen_18"
+                android:layout_height="@dimen/view_dimen_18"
+                android:background="@drawable/mio_shape_me_red_point"
+                android:clickable="false"
+                android:scaleType="fitXY"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/mifloat_menu_arrow"
+            android:layout_width="@dimen/view_dimen_40"
+            android:layout_height="@dimen/view_dimen_90"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/view_dimen_40"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/mifloat_enter_icon_gray" />
+
+    </LinearLayout>
+
+    <!--menu layout-->
+    <RelativeLayout
+        android:id="@+id/mifloat_menu_parent"
+        android:layout_width="@dimen/view_dimen_740"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mifloat_menu_title_parent"
+        android:background="@drawable/mio_corner_16_lb_rb">
+
+        <!--        <com.xiaomi.android.support.v7.widget.RecyclerView
+                    android:id="@+id/mifloat_menu_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_dimen_40"
+                    android:layout_marginBottom="@dimen/view_dimen_40" />-->
+        <com.xiaomi.gamecenter.sdk.ui.widget.gridview.FloatMenuGridView
+            android:id="@+id/mifloat_menu_gridview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_40"
+            android:layout_marginBottom="@dimen/view_dimen_40"
+            android:listSelector="@android:color/transparent" />
+
+    </RelativeLayout>
+
+</LinearLayout>

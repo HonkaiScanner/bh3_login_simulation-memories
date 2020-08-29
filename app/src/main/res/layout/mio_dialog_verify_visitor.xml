@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/view_dimen_980"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/mio_bg_corner_white"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/view_dimen_80"
+    android:paddingRight="@dimen/view_dimen_80">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/view_dimen_80"
+        android:gravity="center"
+        android:text="非实名注册玩家将进入游客模式"
+        android:textColor="@color/color_black"
+        android:textSize="@dimen/text_font_size_51"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/view_dimen_66"
+        android:background="@color/translucent_background"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_24"
+            android:background="@drawable/mio_text_dot_black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/view_dimen_18"
+            android:text="游客模式15天内累计游戏时长不得超过60分钟。超时将不能登录游戏"
+            android:textColor="@color/text_color_black_60"
+            android:textSize="@dimen/text_font_size_42" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/view_dimen_30"
+        android:background="@color/translucent_background"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_24"
+            android:background="@drawable/mio_text_dot_black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/view_dimen_18"
+            android:text="游客模式无法进行支付"
+            android:textColor="@color/text_color_black_60"
+            android:textSize="@dimen/text_font_size_42" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/view_dimen_72"
+        android:layout_marginBottom="@dimen/view_dimen_72">
+
+        <TextView
+            android:id="@+id/mio_dialog_verify_visitor_verify"
+            android:layout_width="@dimen/view_dimen_390"
+            android:layout_height="@dimen/view_dimen_120"
+            android:layout_weight="1"
+            android:background="@drawable/mio_selector_dialog_cancel_blue_line"
+            android:gravity="center"
+            android:text="返回实名注册"
+            android:textColor="@color/color_payment_dialog_cancel_blue_nor"
+            android:textSize="@dimen/text_font_size_48" />
+
+        <TextView
+            android:id="@+id/mio_dialog_verify_visitor_visitor"
+            android:layout_width="@dimen/view_dimen_390"
+            android:layout_height="@dimen/view_dimen_120"
+            android:layout_marginLeft="@dimen/view_dimen_40"
+            android:layout_weight="1"
+            android:background="@drawable/mio_selector_dialog_cancel_blue"
+            android:gravity="center"
+            android:text="进入游客模式"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_font_size_48" />
+
+    </LinearLayout>
+
+</LinearLayout>

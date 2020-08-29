@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_font_size_hugest">87sp</dimen>
+    <dimen name="text_font_size_big">60sp</dimen>
+    <dimen name="text_font_size_huge">25.5sp</dimen> <!-- smaller 1sp than system -->
+    <dimen name="text_font_size_huge_2">51sp</dimen>
+    <dimen name="text_font_size_large">24sp</dimen>
+    <dimen name="text_font_size_medium">21sp</dimen>
+    <dimen name="text_font_size_small">18sp</dimen>
+    <dimen name="text_font_size_tiny">15sp</dimen>
+
+    <dimen name="float_hide_tip_icon_size">125dip</dimen>
+    <dimen name="float_hide_tip_view_height">235dip</dimen>
+    <dimen name="float_hide_tip_black_height">301dip</dimen>
+    <dimen name="float_hide_tip_padding_bot">20dip</dimen>
+    <dimen name="float_hide_tip_tmp_height">50dip</dimen>
+    <dimen name="float_hide_tip_text_padding">2.5dip</dimen>
+
+    <dimen name="float_window_close_tip_text_margin_left">10dip</dimen>
+    <dimen name="float_window_close_tip_animation_margin_top">19dip</dimen>
+    <dimen name="float_window_close_tip_reminder_margin_top">11.5dip</dimen>
+    <dimen name="float_window_close_tip_reminder_margin_left">10dip</dimen>
+    <dimen name="float_window_close_tip_btn_width">195dip</dimen>
+    <dimen name="float_window_close_tip_btn_height">60dip</dimen>
+    <dimen name="float_window_close_tip_btn_margin_left">15dip</dimen>
+    <dimen name="float_window_close_tip_btn_margin_top">26dip</dimen>
+
+
+    <dimen name="float_window_width">87.8dip</dimen>
+    <dimen name="float_window_hide_width">43.9dip</dimen>
+    <dimen name="float_window_hide_height">87.8dip</dimen>
+    <dimen name="float_window_height">87.8dip</dimen>
+
+    <dimen name="bot_ctrl_left">62dip</dimen>
+</resources>

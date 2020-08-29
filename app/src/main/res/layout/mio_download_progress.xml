@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/choose_account_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/view_dimen_40"
+    android:paddingRight="@dimen/view_dimen_40">
+
+    <LinearLayout
+        android:layout_width="@dimen/view_dimen_880"
+        android:layout_height="@dimen/view_dimen_294"
+        android:background="@drawable/mio_shape_alert_background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/progressbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_50"
+            android:gravity="center"
+            android:text="游戏服务下载中"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_font_size_42" />
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="@dimen/view_dimen_840"
+            android:layout_height="@dimen/view_dimen_20"
+            android:layout_marginTop="@dimen/view_dimen_60"
+            android:max="100"
+            android:progress="10"
+            android:progressDrawable="@drawable/mio_progress_horizontal" />
+
+        <TextView
+            android:id="@+id/progressbar_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="@dimen/view_dimen_20"
+            android:layout_marginRight="@dimen/view_dimen_70"
+            android:alpha="0.4"
+            android:gravity="center"
+            android:text="1%"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_font_size_36" />
+
+    </LinearLayout>
+
+</LinearLayout>

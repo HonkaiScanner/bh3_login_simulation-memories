@@ -13,7 +13,7 @@ public class Logger {
         Object[] arrayOfObject = new Object[3];
         arrayOfObject[0] = str2;
         arrayOfObject[1] = stackTraceElement.getMethodName();
-        arrayOfObject[2] = Integer.valueOf(stackTraceElement.getLineNumber());
+        arrayOfObject[2] = stackTraceElement.getLineNumber();
         String str3 = String.format("%s.%s(L:%d)", arrayOfObject);
         if (tag != null) {
             StringBuilder stringBuilder = new StringBuilder();

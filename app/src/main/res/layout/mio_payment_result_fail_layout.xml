@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/text_color_black_10">
+
+    <RelativeLayout
+        android:id="@+id/payment_result_main_root_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_dimen_1062"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/mio_corner_24_wite_bg">
+
+        <ImageView
+            android:id="@+id/payment_result_fail_img"
+            android:layout_width="@dimen/view_dimen_270"
+            android:layout_height="@dimen/view_dimen_270"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/view_dimen_66" />
+
+        <TextView
+            android:id="@+id/payment_result_fail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/view_dimen_354"
+            android:alpha="0.9"
+            android:text="支付失败"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/text_font_size_60" />
+
+        <TextView
+            android:id="@+id/payment_result_fail_conent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/payment_result_fail_title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/view_dimen_120"
+            android:layout_marginTop="@dimen/view_dimen_18"
+            android:layout_marginRight="@dimen/view_dimen_120"
+            android:alpha="0.6"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/text_font_size_42" />
+
+        <LinearLayout
+            android:id="@+id/payment_result_fail_quota"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/view_dimen_121"
+            android:layout_marginTop="@dimen/view_dimen_608"
+            android:layout_marginRight="@dimen/view_dimen_120"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/payment_result_fail_quota_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.9"
+                android:text="取消"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/text_font_size_36" />
+
+            <ProgressBar
+                android:id="@+id/payment_result_fail_progress_bar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/view_dimen_30"
+                android:max="100"
+                android:minHeight="@dimen/view_dimen_14"
+                android:progressDrawable="@drawable/mio_payment_result_progressbar_bg" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/payment_result_fail_back"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_dimen_120"
+            android:layout_marginHorizontal="@dimen/view_dimen_86"
+            android:layout_marginTop="@dimen/view_dimen_798"
+            android:background="@drawable/mio_selector_dialog_cancel_blue"
+            android:text="返回游戏"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/view_dimen_48" />
+
+        <TextView
+            android:id="@+id/payment_result_fail_realname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/payment_result_fail_back"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/view_dimen_30"
+            android:text="@string/anti_addiction_realname_detail"
+            android:textColor="@color/color_dialog_cancel_blue_nor"
+            android:textSize="@dimen/text_font_size_36" />
+    </RelativeLayout>
+</RelativeLayout>

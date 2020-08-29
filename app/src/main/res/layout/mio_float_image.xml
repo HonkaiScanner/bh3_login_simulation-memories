@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/float_window_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@null"
+    android:gravity="center">
+
+    <RelativeLayout
+        android:id="@+id/wid_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageSwitcher
+            android:id="@+id/img_float_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/float_window_nor"></ImageSwitcher>
+
+        <ImageView
+            android:id="@+id/img_float_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/icon_red_point_left"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</LinearLayout>
