@@ -11,9 +11,6 @@
 
     <string name="basic_header">基础设置</string>
     <string name="settings_fast_login">自动确认扫码结果</string>
-    <string name="settings_ad">启用广告</string>
-    <string name="settings_ad_desc_on">感谢您的理解</string>
-    <string name="settings_ad_desc_off">没有广告，服务器怎么活呢</string>
 
     <string name="toolbar_icon_description">占位符</string>
     <string name="request_permission_failed">请求权限失败</string>
@@ -27,5 +24,10 @@
     <string name="password">密码</string>
     <string name="feedback_holder">感谢您的反馈</string>
     <string name="support_holder">感谢您的支持</string>
+    <string name="types_uc">九游服</string>
+    <string name="types_xiaomi">小米服</string>
+    <string name="boolean_true">启用</string>
+    <string name="confirm_prefix">自动确认：</string>
+    <string name="boolean_false">禁用</string>
 
 </resources>

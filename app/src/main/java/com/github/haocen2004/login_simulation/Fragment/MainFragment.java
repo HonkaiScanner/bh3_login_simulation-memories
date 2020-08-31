@@ -76,9 +76,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 server_type = "UC";
                 break;
             default:
-                break;
+                server_type = "DEBUG -- SERVER ERROR";
         }
-        ((TextView) requireActivity().findViewById(R.id.text_select_server)).setText(getString(R.string.types_prefix)+server_type);
+        ((TextView) requireActivity().findViewById(R.id.text_select_server)).setText(getString(R.string.types_prefix) + server_type);
+        ((TextView) requireActivity().findViewById(R.id.text_auto_confirm)).setText(getString(R.string.confirm_prefix) + (getDefaultSharedPreferences(context).getBoolean("auto_confirm", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
 
     }
 

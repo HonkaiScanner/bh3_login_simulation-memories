@@ -13,9 +13,6 @@
     <string name="basic_header">Basic</string>
     <string name="settings_servers">Select Server</string>
     <string name="settings_fast_login">Automatic confirmation</string>
-    <string name="settings_ad">Enable AD</string>
-    <string name="settings_ad_desc_on">Thanks for your understanding</string>
-    <string name="settings_ad_desc_off">All ads have been closed</string>
 
     <string name="toolbar_icon_description">Icon PlaceHolder</string>
     <string name="nav_header_pid" translatable="false">Pixiv:82665700</string>
@@ -27,8 +24,12 @@
     <string name="list_pay">Supporting author</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="feedback_holder">Thanks for your report</string>
     <string name="support_holder">Thanks for your donation</string>
+    <string name="types_uc">UC Server</string>
+    <string name="types_xiaomi">Xiao Mi Server</string>
+    <string name="boolean_true">ON</string>
+    <string name="boolean_false">OFF</string>
+    <string name="confirm_prefix">Auto Confirm:</string>
 
 </resources>

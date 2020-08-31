@@ -1,0 +1,9 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="server_types">
+        <item>官服</item>
+        <item>B服</item>
+        <item>小米服</item>
+        <item>九游服</item>
+    </string-array>
+</resources>
