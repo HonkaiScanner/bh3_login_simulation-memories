@@ -31,15 +31,5 @@
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/btn_album"
-            android:layout_width="66dip"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackground"
-            android:text="@string/layout_album"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white" />
     </RelativeLayout>
 </Toolbar>

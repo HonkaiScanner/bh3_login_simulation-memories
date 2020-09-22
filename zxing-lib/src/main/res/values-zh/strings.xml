@@ -1,5 +1,5 @@
 <resources>
-    <string name="layout_scan">扫码</string>
+    <string name="layout_scan">扫描崩坏3登录二维码</string>
     <string name="layout_album">相册</string>
     <string name="layout_focus_qrcode">请对准二维码进行扫描</string>
 
