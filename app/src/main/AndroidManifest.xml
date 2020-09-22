@@ -210,7 +210,8 @@
             android:name="com.xiaomi.gamecenter.sdk.utils.MiFileProvider"
             android:authorities="${applicationId}.mi_fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            tools:ignore="Instantiatable">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/mio_file_paths" />
