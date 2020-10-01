@@ -145,13 +145,20 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     } else {
                         makeToast("请先登录或等待后台登录处理完成");
                     }
-                }catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                     makeToast("请先登录");
                 }
                 break;
             case R.id.btn_login:
-                switch(getDefaultSharedPreferences(context).getString("server_type","")) {
+                try {
+                    if (loginImpl.isLogin()) {
+                        makeToast("账号已登录");
+                        return;
+                    }
+                } catch (Exception ignore) {
+                }
+                switch (getDefaultSharedPreferences(context).getString("server_type", "")) {
                     case "Official":
                         loginImpl = new Official(activity);
                         break;
@@ -174,7 +181,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 loginImpl.login();
                 break;
             case R.id.btn_logout:
-                loginImpl.logout();
+                try {
+                    if ("Official".equals(getDefaultSharedPreferences(context).getString("server_type", ""))) {
+                        activity.getSharedPreferences("official_user", Context.MODE_PRIVATE).edit().clear().apply();
+                        makeToast("缓存信息已删除");
+                    } else if (loginImpl.isLogin()) {
+                        loginImpl.logout();
+                    }
+                } catch (Exception e) {
+                    makeToast("账号未登录");
+                }
             default:
                 break;
         }
@@ -191,19 +207,5 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             Looper.loop();
         }
     }
-//
-//    private void showInfoDialog(String title,String msg,String btn){
-//
-//        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(context);
-//        normalDialog.setTitle(title);
-//        normalDialog.setMessage(msg);
-//        normalDialog.setPositiveButton(btn,
-//                (dialog, which) -> {
-//
-//                });
-//
-//        normalDialog.show();
-//    }
-
 
 }
