@@ -41,7 +41,7 @@
             android:background="?attr/selectableItemBackground"
             android:padding="6dip"
             android:scaleType="centerInside"
-            app:srcCompat="@drawable/flash_off" />
+            android:src="@drawable/flash_off" />
     </FrameLayout>
 
 </LinearLayout>

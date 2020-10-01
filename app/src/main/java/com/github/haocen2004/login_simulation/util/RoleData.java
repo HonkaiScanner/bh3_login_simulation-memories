@@ -9,6 +9,7 @@ import android.os.Message;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Tools.getOAServer;
 
 public class RoleData {
@@ -53,7 +54,7 @@ public class RoleData {
         this.combo_token = combo_token;
         this.channel_id = channel_id;
         this.account_type = account_type;
-        this.oa_req_key = oa_req_key;
+        this.oa_req_key = BH_VER + "_gf_android_" + oa_req_key;
         new Thread(getOA_runnable).start();
     }
 

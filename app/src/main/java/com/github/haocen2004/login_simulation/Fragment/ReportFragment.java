@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
@@ -36,7 +35,7 @@ public class ReportFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        openUrl("https://github.com/Haocen2004/bh3_login_simulation/issues", (AppCompatActivity) getActivity());
+        openUrl("https://github.com/Haocen2004/bh3_login_simulation/issues", getActivity());
         super.onViewCreated(view, savedInstanceState);
     }
 }

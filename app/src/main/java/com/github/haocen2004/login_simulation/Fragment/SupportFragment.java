@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
@@ -36,7 +35,7 @@ public class SupportFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        openUrl("https://afdian.net/@Haocen20004", (AppCompatActivity) getActivity());
+        openUrl("https://afdian.net/@Haocen20004", getActivity());
         super.onViewCreated(view, savedInstanceState);
     }
 }

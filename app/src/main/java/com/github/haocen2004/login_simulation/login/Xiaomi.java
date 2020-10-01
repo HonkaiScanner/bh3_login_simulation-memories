@@ -128,7 +128,7 @@ public class Xiaomi implements LoginImpl {
                 String combo_token = data_json2.getString("combo_token");
                 String open_id = data_json2.getString("open_id");
                 String account_type = data_json2.getString("account_type");
-                roleData = new RoleData(open_id, "", combo_id, combo_token, "14", account_type, "4.2.0_gf_android_bilibili");
+                roleData = new RoleData(open_id, "", combo_id, combo_token, "14", account_type, "xiaomi");
 
 
                 isLogin = true;

@@ -1,8 +1,13 @@
 package com.github.haocen2004.login_simulation;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,24 +17,32 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.github.haocen2004.login_simulation.util.Network;
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
+import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
+    private SharedPreferences app_pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        SharedPreferences app_pref = getDefaultSharedPreferences(this);
-        if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version",1) != 2){
+        app_pref = getDefaultSharedPreferences(this);
+        if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) != VERSION_CODE) {
             app_pref.edit()
 
-                    .putBoolean("is_first_run",false)
-                    .putInt("version",2)
+                    .putBoolean("is_first_run", false)
+                    .putInt("version", VERSION_CODE)
 
                     .apply();
 //                                .putString("server_type","Official")
@@ -90,8 +103,10 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         if (getDefaultSharedPreferences(this).getBoolean("showBetaInfo", true)) {
-            showInfoDialog();
+            showBetaInfoDialog();
         }
+
+        new Thread(update_rb).start();
 
     }
 
@@ -103,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void showInfoDialog() {
+    private void showBetaInfoDialog() {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
         normalDialog.setTitle("Beta使用须知");
@@ -116,5 +131,47 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.setCancelable(false);
         normalDialog.show();
     }
+
+    @SuppressLint("HandlerLeak")
+    Handler update_check_hd = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+            try {
+                JSONObject json = new JSONObject(feedback);
+                if (app_pref.getInt("version", VERSION_CODE) != json.getInt("ver")) {
+                    final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getApplicationContext());
+                    normalDialog.setTitle("获取到新版本");
+                    normalDialog.setMessage("请记下提取码\n提取码：" + json.getString("code") + "\n并点击按钮前往更新");
+                    normalDialog.setPositiveButton("打开更新链接",
+                            (dialog, which) -> {
+                                try {
+                                    openUrl(json.getString("update_url"), getParent());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                dialog.dismiss();
+                            });
+                    normalDialog.setCancelable(false);
+                    normalDialog.show();
+                }
+                app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
+            } catch (Exception ignore) {
+                Log.d("Update", "handleMessage: Check Update Failed");
+                app_pref.edit().putString("bh_ver", "4.3.0").apply();
+                BH_VER = app_pref.getString("bh_ver", "4.3.0");
+            }
+        }
+    };
+    Runnable update_rb = () -> {
+        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
+        Message msg = new Message();
+        Bundle data = new Bundle();
+        data.putString("value", feedback);
+        msg.setData(data);
+        update_check_hd.sendMessage(msg);
+    };
 
 }

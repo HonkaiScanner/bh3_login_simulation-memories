@@ -16,6 +16,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -57,6 +58,7 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
     private ViewfinderView viewfinderView;
     private ImageButton back;
     private ImageButton btnFlash;
+    private Button btnAlbum; // 相册
     private boolean isFlashOn = false;
     private boolean hasSurface;
     private Vector<BarcodeFormat> decodeFormats;
@@ -74,8 +76,8 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
         CameraManager.init(getApplication());
-        viewfinderView = findViewById(R.id.viewfinder_content);
-        back = findViewById(R.id.btn_back);
+        viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_content);
+        back = (ImageButton) findViewById(R.id.btn_back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,22 +85,32 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
             }
         });
 
-        btnFlash = findViewById(R.id.btn_flash);
+        btnFlash = (ImageButton) findViewById(R.id.btn_flash);
         btnFlash.setOnClickListener(flashListener);
+
+        btnAlbum = (Button) findViewById(R.id.btn_album);
+        btnAlbum.setOnClickListener(albumOnClick);
 
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
 
     }
 
+    private View.OnClickListener albumOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //打开手机中的相册
+            Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
+            innerIntent.setType("image/*");
+            startActivityForResult(innerIntent, REQUEST_CODE_SCAN_GALLERY);
+        }
+    };
 
     @Override
     protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_CODE_SCAN_GALLERY:
-                    handleAlbumPic(data);
-                    break;
+            if (requestCode == REQUEST_CODE_SCAN_GALLERY) {
+                handleAlbumPic(data);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -157,7 +169,11 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
         QRCodeReader reader = new QRCodeReader();
         try {
             return reader.decode(bitmap1, hints);
-        } catch (NotFoundException | FormatException | ChecksumException e) {
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (ChecksumException e) {
+            e.printStackTrace();
+        } catch (FormatException e) {
             e.printStackTrace();
         }
         return null;
@@ -166,7 +182,7 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
     @Override
     protected void onResume() {
         super.onResume();
-        SurfaceView surfaceView = findViewById(R.id.scanner_view);
+        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.scanner_view);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         if (hasSurface) {
             initCamera(surfaceHolder);
@@ -231,7 +247,9 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
     private void initCamera(SurfaceHolder surfaceHolder) {
         try {
             CameraManager.get().openDriver(surfaceHolder);
-        } catch (IOException | RuntimeException ioe) {
+        } catch (IOException ioe) {
+            return;
+        } catch (RuntimeException e) {
             return;
         }
         if (handler == null) {

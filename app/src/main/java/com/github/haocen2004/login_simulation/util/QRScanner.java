@@ -233,6 +233,7 @@ public class QRScanner {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
+
             Logger.debug(feedback);
 
             try {
@@ -256,7 +257,8 @@ public class QRScanner {
 
             try {
                 genRequest();
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/confirm",confirm_json.toString());
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/confirm", confirm_json.toString());
+                Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", "");
             } catch (JSONException e) {
                 e.printStackTrace();
             }

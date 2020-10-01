@@ -1,5 +1,6 @@
 package com.github.haocen2004.login_simulation.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,13 +8,12 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
@@ -50,7 +50,7 @@ public class Tools {
         return null;
     }
 
-    public static void openUrl(String url, AppCompatActivity activity) {
+    public static void openUrl(String url, Activity activity) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
@@ -187,8 +187,8 @@ public class Tools {
     }
 
     private static byte[] decodePrivate(String paramString) throws UnsupportedEncodingException {
-        StringBuffer stringBuffer = new StringBuffer();
-        byte[] arrayOfByte = paramString.getBytes("US-ASCII");
+        StringBuilder stringBuffer = new StringBuilder();
+        byte[] arrayOfByte = paramString.getBytes(StandardCharsets.US_ASCII);
         int i = arrayOfByte.length;
         int j = 0;
         while (j < i) {
@@ -246,7 +246,7 @@ public class Tools {
     }
 
     public static String encode(byte[] paramArrayOfbyte) {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         int i = paramArrayOfbyte.length;
         for (int j = 0; j < i; j++) {
             int k = j + 1;

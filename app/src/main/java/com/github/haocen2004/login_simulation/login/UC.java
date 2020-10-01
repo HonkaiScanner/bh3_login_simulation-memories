@@ -1,8 +1,13 @@
 package com.github.haocen2004.login_simulation.login;
 
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.util.Logger;
@@ -10,6 +15,7 @@ import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -44,8 +50,9 @@ public class UC implements LoginImpl {
 
         @Subscribe(event = SDKEventKey.ON_LOGIN_SUCC)
         private void onLoginSucc(String sid2) {
+            System.out.println("开始登陆" + sid2);
             sid = sid2;
-            isLogin = true;
+
             doBHLogin();
         }
 
@@ -79,63 +86,94 @@ public class UC implements LoginImpl {
         }
     }
 
-    public void doBHLogin() {
-
-        Map<String, Object> login_map = new HashMap<>();
-
-        String device_id = Tools.getDeviceID(activity);
-        login_map.put("device", device_id);
-        login_map.put("app_id", "1");
-        login_map.put("channel_id", "20");
-
-        String data_json = "{\"sid\":" + sid + "}";
-
-        login_map.put("data", data_json);
-
-        String sign = Tools.bh3Sign(login_map);
-        ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
-        Collections.sort(arrayList);
-
-        JSONObject login_json = new JSONObject();
-
-        try {
-
-            for (String str : arrayList) {
-
-                login_json.put(str, login_map.get(str));
-
+    @SuppressLint("HandlerLeak")
+    Handler login_handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+            Logger.debug(feedback);
+            JSONObject feedback_json = null;
+            try {
+                feedback_json = new JSONObject(feedback);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            login_json.put("sign", sign);
-
-            Logger.info(login_json.toString());
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
-            JSONObject feedback_json = new JSONObject(feedback);
             Logger.info(feedback);
 
-            if (feedback_json.getInt("retcode") == 0) {
+            try {
+                if (feedback_json.getInt("retcode") == 0) {
 
-                JSONObject data_json2 = feedback_json.getJSONObject("data");
-                String combo_id = data_json2.getString("combo_id");
-                String combo_token = data_json2.getString("combo_token");
-                String account_type = data_json2.getString("account_type");
+                    JSONObject data_json2 = feedback_json.getJSONObject("data");
+                    String combo_id = data_json2.getString("combo_id");
+                    String combo_token = data_json2.getString("combo_token");
+                    String account_type = data_json2.getString("account_type");
 
-                roleData = new RoleData(sid, "", combo_id, combo_token, "20", account_type, "4.2.0_gf_android_uc");
+                    roleData = new RoleData(sid, "", combo_id, combo_token, "20", account_type, "uc");
 
-                isLogin = true;
-                makeToast("登录成功");
+                    isLogin = true;
+                    makeToast("登录成功");
 
+                } else {
 
-            } else {
+                    makeToast(feedback_json.getString("message"));
+                    isLogin = false;
 
-                makeToast(feedback_json.getString("message"));
-                isLogin = false;
-
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+        }
+    };
 
-        } catch (Exception ignore) {
+    Runnable login_runnable = new Runnable() {
+        @Override
+        public void run() {
+
+            Map<String, Object> login_map = new HashMap<>();
+
+            String device_id = Tools.getDeviceID(activity);
+            login_map.put("device", device_id);
+            login_map.put("app_id", "1");
+            login_map.put("channel_id", "20");
+
+            String data_json = "{\"sid\":\"" + sid + "\"}";
+
+            login_map.put("data", data_json);
+
+            String sign = Tools.bh3Sign(login_map);
+            ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
+            Collections.sort(arrayList);
+
+            JSONObject login_json = new JSONObject();
+
+            try {
+
+                for (String str : arrayList) {
+
+                    login_json.put(str, login_map.get(str));
+
+                }
+
+                login_json.put("sign", sign);
+
+                Logger.info(login_json.toString());
+                String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
+
+                Message msg = new Message();
+                Bundle data = new Bundle();
+                data.putString("value", feedback);
+                msg.setData(data);
+                login_handler.sendMessage(msg);
+            } catch (Exception ignore) {
+            }
         }
 
+    };
+
+    public void doBHLogin() {
+        new Thread(login_runnable).start();
     }
 
     private void makeToast(String result) {

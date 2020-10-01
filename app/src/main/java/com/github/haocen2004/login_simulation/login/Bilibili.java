@@ -216,7 +216,7 @@ public class Bilibili implements LoginImpl {
                 String combo_id = data_json2.getString("combo_id");
                 String combo_token = data_json2.getString("combo_token");
                 String open_id = data_json2.getString("open_id");
-                roleData = new RoleData(open_id, "", combo_id, combo_token, "14", "2", "4.2.0_gf_android_bilibili");
+                roleData = new RoleData(open_id, "", combo_id, combo_token, "14", "2", "bilibili");
 
                 isLogin = true;
                 makeToast("登录成功");
