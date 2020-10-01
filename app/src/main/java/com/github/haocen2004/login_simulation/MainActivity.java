@@ -20,7 +20,6 @@ import androidx.navigation.ui.NavigationUI;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.google.android.material.navigation.NavigationView;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -132,6 +131,19 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.show();
     }
 
+    private void showUpdateDialog(String code, String url) {
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+        normalDialog.setTitle("获取到新版本");
+        normalDialog.setMessage("请记下提取码 " + code + "\n并点击按钮前往更新");
+        normalDialog.setPositiveButton("打开更新链接",
+                (dialog, which) -> {
+                    openUrl(url, this);
+                    dialog.dismiss();
+                });
+        normalDialog.setCancelable(false);
+        normalDialog.show();
+    }
+
     @SuppressLint("HandlerLeak")
     Handler update_check_hd = new Handler() {
         @Override
@@ -139,27 +151,17 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
+            feedback = feedback.substring(1, feedback.length() - 1).replaceAll("\\\\", "");
+            Log.i("Update", "handleMessage: " + feedback);
             try {
                 JSONObject json = new JSONObject(feedback);
                 if (app_pref.getInt("version", VERSION_CODE) != json.getInt("ver")) {
-                    final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getApplicationContext());
-                    normalDialog.setTitle("获取到新版本");
-                    normalDialog.setMessage("请记下提取码\n提取码：" + json.getString("code") + "\n并点击按钮前往更新");
-                    normalDialog.setPositiveButton("打开更新链接",
-                            (dialog, which) -> {
-                                try {
-                                    openUrl(json.getString("update_url"), getParent());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                dialog.dismiss();
-                            });
-                    normalDialog.setCancelable(false);
-                    normalDialog.show();
+                    showUpdateDialog(json.getString("code"), json.getString("update_url"));
                 }
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
-            } catch (Exception ignore) {
-                Log.d("Update", "handleMessage: Check Update Failed");
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("Update", "Check Update Failed");
                 app_pref.edit().putString("bh_ver", "4.3.0").apply();
                 BH_VER = app_pref.getString("bh_ver", "4.3.0");
             }

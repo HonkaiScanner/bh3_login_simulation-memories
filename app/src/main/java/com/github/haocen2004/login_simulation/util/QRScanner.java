@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -259,6 +260,7 @@ public class QRScanner {
                 genRequest();
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/confirm", confirm_json.toString());
                 Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", "");
+                Log.i("Network", "run: succeed upload");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
