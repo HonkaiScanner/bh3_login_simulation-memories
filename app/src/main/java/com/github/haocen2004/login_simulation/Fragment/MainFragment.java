@@ -37,10 +37,6 @@ import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
-    private String combo_id;
-    private String combo_token;
-    private String uid;
-    private String channel_id;
     private LoginImpl loginImpl;
     private AppCompatActivity activity;
     private Context context;
@@ -70,10 +66,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 server_type = getString(R.string.types_bilibili);
                 break;
             case "Xiaomi":
-                server_type = "Xiaomi";
+                server_type = getString(R.string.types_xiaomi);
                 break;
             case "UC":
-                server_type = "UC";
+                server_type = getString(R.string.types_uc);
                 break;
             default:
                 server_type = "DEBUG -- SERVER ERROR";

@@ -155,16 +155,16 @@ public class MainActivity extends AppCompatActivity {
             Log.i("Update", "handleMessage: " + feedback);
             try {
                 JSONObject json = new JSONObject(feedback);
-                if (app_pref.getInt("version", VERSION_CODE) != json.getInt("ver")) {
+                app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
+                if (app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
                     showUpdateDialog(json.getString("code"), json.getString("update_url"));
                 }
-                app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d("Update", "Check Update Failed");
                 app_pref.edit().putString("bh_ver", "4.3.0").apply();
-                BH_VER = app_pref.getString("bh_ver", "4.3.0");
             }
+            BH_VER = app_pref.getString("bh_ver", "4.3.0");
         }
     };
     Runnable update_rb = () -> {
