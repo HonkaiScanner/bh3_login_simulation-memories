@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/float_new_msg_window_height"
+    android:layout_marginLeft="@dimen/float_new_msg_window_padding"
+    android:layout_marginTop="@dimen/float_new_msg_window_padding_top"
+    android:layout_marginRight="@dimen/float_new_msg_window_padding"
+    android:background="@drawable/mio_shape_float_new_msg_win_background">
+
+    <!--icon -->
+    <ImageView
+        android:id="@+id/float_new_msg_win_icon"
+        android:layout_width="@dimen/float_new_msg_window_horn_width"
+        android:layout_height="@dimen/float_new_msg_window_horn_height"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/float_new_msg_window_icon_padding"
+        android:src="@drawable/float_new_msg_win_horn" />
+
+    <!--close button -->
+
+    <RelativeLayout
+        android:id="@+id/float_newmsg_win_btnroot"
+        android:layout_width="@dimen/float_new_msg_window_closebtn_root_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true">
+
+        <Button
+            android:id="@+id/float_new_msg_win_close_btn"
+            android:layout_width="@dimen/float_new_msg_window_colse_width"
+            android:layout_height="@dimen/float_new_msg_window_colse_height"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/float_new_msg_window_icon_padding"
+            android:background="@drawable/float_new_msg_win_close" />
+
+        <!--line -->
+        <TextView
+            android:id="@+id/float_new_msg_win_line"
+            android:layout_width="1dip"
+            android:layout_height="@dimen/float_new_msg_window_line_height"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/float_new_msg_window_icon_padding"
+            android:layout_toLeftOf="@id/float_new_msg_win_close_btn"
+            android:background="@drawable/float_new_msg_win_line" />
+
+        <!-- arrow icon-->
+        <Button
+            android:id="@+id/float_new_msg_win_arrow"
+            android:layout_width="@dimen/float_new_msg_window_arrow_width"
+            android:layout_height="@dimen/float_new_msg_window_arrow_height"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/float_new_msg_window_icon_padding1"
+            android:layout_toLeftOf="@id/float_new_msg_win_line"
+            android:background="@drawable/float_new_msg_win_arrow" />
+
+    </RelativeLayout>
+
+
+    <!-- message info-->
+    <com.xiaomi.gamecenter.sdk.utils.MarqueeTextView
+        android:id="@+id/float_new_msg_win_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/float_new_msg_window_icon_padding"
+        android:layout_marginRight="@dimen/float_new_msg_window_icon_padding"
+        android:layout_toLeftOf="@id/float_newmsg_win_btnroot"
+        android:layout_toRightOf="@id/float_new_msg_win_icon"
+        android:focusable="false"
+        android:textColor="@color/color_white" />
+
+</RelativeLayout>

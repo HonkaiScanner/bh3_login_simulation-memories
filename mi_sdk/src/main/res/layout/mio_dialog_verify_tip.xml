@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/view_dimen_980"
+    android:layout_height="@dimen/view_dimen_536"
+    android:layout_gravity="center"
+    android:background="@drawable/mio_bg_corner_white"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/view_dimen_80">
+
+    <TextView
+        android:id="@+id/mio_dialog_verify_tips_tipsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/view_dimen_104"
+        android:textSize="@dimen/text_font_size_48"
+        android:textColor="@color/color_black"
+        android:text="您未完成真实身份登记，根据国家规定，无法登录游戏" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_dimen_390"
+        android:layout_marginTop="@dimen/view_dimen_108"
+        android:layout_marginBottom="@dimen/view_dimen_72">
+
+        <TextView
+            android:id="@+id/mio_dialog_verify_tips_backBtn"
+            android:layout_width="@dimen/view_dimen_390"
+            android:layout_height="@dimen/view_dimen_120"
+            android:layout_weight="1"
+            android:background="@drawable/mio_selector_dialog_cancel_blue_line"
+            android:gravity="center"
+            android:text="退出游戏"
+            android:textColor="@color/color_payment_dialog_cancel_blue_nor"
+            android:textSize="@dimen/text_font_size_48" />
+
+        <TextView
+            android:id="@+id/mio_dialog_verify_tips_verify"
+            android:layout_width="@dimen/view_dimen_390"
+            android:layout_height="@dimen/view_dimen_120"
+            android:layout_marginLeft="@dimen/view_dimen_40"
+            android:layout_weight="1"
+            android:background="@drawable/mio_selector_dialog_cancel_blue"
+            android:gravity="center"
+            android:text="去注册"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_font_size_48" />
+
+    </LinearLayout>
+
+</LinearLayout>

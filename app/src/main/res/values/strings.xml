@@ -31,5 +31,7 @@
     <string name="boolean_true">ON</string>
     <string name="boolean_false">OFF</string>
     <string name="confirm_prefix">Auto Confirm:</string>
+    <string name="channel_name">Proxy</string>
+    <string name="channel_description">Magic for Inject SDK</string>
 
 </resources>

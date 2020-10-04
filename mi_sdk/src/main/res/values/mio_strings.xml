@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="no_longer_remind">不再提醒</string>
+    <string name="btn_hide">隐藏</string>
+    <string name="shake">摇一摇</string>
+    <string name="show_box">显示小宝箱</string>
+    <string name="float_hide_tip_text">拖到此处关闭浮窗</string>
+    <string name="fault_notice_button_text">查看详情</string>
+    <string name="btn_ok">确定</string>
+    <string name="btn_cancel">取消</string>
+    <string name="network_error">请检查网络</string>
+    <string name="start_download_service">开始下载游戏服务</string>
+    <string name="service_downloading">游戏服务下载中...</string>
+    <string name="ask_download_service">您需要安装新版本的游戏服务，才能使用%1$s功能，是否安装游戏服务？</string>
+    <string name="ask_download_gamecenter_title">安装游戏中心</string>
+    <string name="ask_download_gamecenter">您需要安装新版本的游戏中心，才能使用%1$s功能，是否安装游戏中心？</string>
+    <string name="mifloat_account_error">此功能您需要重新登录后使用。</string>
+    <string name="install_gameservice">安装游戏服务</string>
+    <string name="mifloat_menu_window_viptext" translatable="false">VIP上线啦</string>
+    <string name="mifloat_default_nick_name" translatable="false">我的</string>
+    <string name="verify_now">立即注册</string>
+    <string name="verify_pay_fail">支付失败</string>
+
+    <string name="anti_addiction_quit">退出游戏</string>
+
+    <string name="anti_addiction_rest">休息一下</string>
+
+    <string name="anti_addiction_realname_detail">我的实名信息</string>
+
+    <string name="anti_addiction_ok">确定</string>
+    <string name="anti_addiction_please_rest">请您休息一下，注意保护眼睛哦</string>
+    <string name="anti_addiction_no_time_left">您今天游戏时长已超过%1$d分钟，根据国家相关规定，今天您将无法登录游戏，请注意休息，明天再来哦</string>
+    <string name="anti_addiction_tired">累了吧，请合理安排游戏时间</string>
+    <string name="anti_addiction_today_time_left">您今天已经玩了%1$s分钟，根据国家相关规定，%2$d分钟后您将无法继续游戏，请注意休息</string>
+    <string name="anti_addiction_night_late">夜深了，请合理安排游戏时间</string>
+    <string name="anti_addiction_daily_time_left">每天的%1$s~次日%2$s为休息时间，根据国家相关规定，%3$d分钟后您将无法继续游戏，请注意休息</string>
+    <string name="anti_addiction_grown_healthy">好好休息，才能健康成长哦</string>
+    <string name="anti_addiction_cannot_play">每天的%1$s~次日%2$s为休息时间，根据国家相关规定，该时间段内无法登录游戏，请注意休息哦</string>
+    <string name="anti_addiction_time_left">今日游戏时长剩余%1$d分钟，请注意休息</string>
+
+    <string name="no_url" translatable="false">no url</string>
+    <string name="download_fail" translatable="false">download fail</string>
+</resources>

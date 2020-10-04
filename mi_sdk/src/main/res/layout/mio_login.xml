@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/choose_account_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/view_dimen_40"
+    android:paddingRight="@dimen/view_dimen_40">
+
+    <LinearLayout
+        android:layout_width="@dimen/view_dimen_880"
+        android:layout_height="@dimen/view_dimen_600"
+        android:background="@drawable/mio_shape_alert_background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/login_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_66"
+            android:gravity="center"
+            android:text="选择登录方式"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_font_size_42" />
+
+        <LinearLayout
+            android:id="@+id/choose_account_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_78"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/mi_account_layout"
+                android:layout_width="@dimen/view_dimen_220"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/mi_account_icon_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="false">
+
+                    <ImageView
+                        android:id="@+id/mi_account_icon"
+                        android:layout_width="@dimen/view_dimen_120"
+                        android:layout_height="@dimen/view_dimen_120"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/view_dimen_12"
+                        android:clickable="false"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/mio_login_third_account_mi" />
+
+                    <TextView
+                        android:id="@+id/mi_account_last_login"
+                        android:layout_width="@dimen/view_dimen_123"
+                        android:layout_height="@dimen/view_dimen_41"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/mio_shape_last_login_tip"
+                        android:clickable="false"
+                        android:gravity="center"
+                        android:text="上次登录"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/text_font_size_24"
+                        android:visibility="invisible" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/mi_account_icon_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/mi_account_icon_layout"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/view_dimen_20"
+                    android:clickable="false"
+                    android:text="小米"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_font_size_32" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/qq_account_layout"
+                android:layout_width="@dimen/view_dimen_220"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/qq_account_icon_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="false">
+
+                    <ImageView
+                        android:id="@+id/qq_account_icon"
+                        android:layout_width="@dimen/view_dimen_120"
+                        android:layout_height="@dimen/view_dimen_120"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/view_dimen_12"
+                        android:clickable="false"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/mio_login_third_account_qq" />
+
+                    <TextView
+                        android:id="@+id/qq_account_last_login"
+                        android:layout_width="@dimen/view_dimen_123"
+                        android:layout_height="@dimen/view_dimen_41"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/mio_shape_last_login_tip"
+                        android:clickable="false"
+                        android:gravity="center"
+                        android:text="上次登录"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/text_font_size_24"
+                        android:visibility="invisible" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/qq_account_icon_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/qq_account_icon_layout"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/view_dimen_20"
+                    android:clickable="false"
+                    android:text="QQ"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_font_size_32" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/wechat_account_layout"
+                android:layout_width="@dimen/view_dimen_220"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/wechat_account_icon_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="false">
+
+                    <ImageView
+                        android:id="@+id/wechat_account_icon"
+                        android:layout_width="@dimen/view_dimen_120"
+                        android:layout_height="@dimen/view_dimen_120"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/view_dimen_12"
+                        android:clickable="false"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/mio_login_third_account_wechat" />
+
+                    <TextView
+                        android:id="@+id/wechat_account_last_login"
+                        android:layout_width="@dimen/view_dimen_123"
+                        android:layout_height="@dimen/view_dimen_41"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/mio_shape_last_login_tip"
+                        android:clickable="false"
+                        android:gravity="center"
+                        android:text="上次登录"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/text_font_size_24"
+                        android:visibility="invisible" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/wechat_account_icon_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/wechat_account_icon_layout"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/view_dimen_20"
+                    android:clickable="false"
+                    android:text="微信"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_font_size_32" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/weibo_account_layout"
+                android:layout_width="@dimen/view_dimen_220"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/weibo_account_icon_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="false">
+
+                    <ImageView
+                        android:id="@+id/weibo_account_icon"
+                        android:layout_width="@dimen/view_dimen_120"
+                        android:layout_height="@dimen/view_dimen_120"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/view_dimen_12"
+                        android:clickable="false"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/mio_login_third_account_weibo_disable" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/weibo_account_icon_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/weibo_account_icon_layout"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/view_dimen_20"
+                    android:clickable="false"
+                    android:text="微博"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_font_size_32" />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/info_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_75"
+            android:alpha="0.4"
+            android:gravity="center"
+            android:text="使用小米账号登录，享受更多游戏福利！"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_font_size_36" />
+
+        <TextView
+            android:id="@+id/version_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_18"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_font_size_24"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+</LinearLayout>

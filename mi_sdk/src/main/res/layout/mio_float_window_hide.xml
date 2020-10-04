@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/float_hide_tip_rootlayout"
+    android:background="@color/translucent_background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_dimen_400"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/mio_bg_float_window_hide_jpg">
+
+        <RelativeLayout
+            android:id="@+id/float_hide_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/view_dimen_88">
+
+            <ImageView
+                android:id="@+id/float_hide_tip_icon"
+                android:layout_width="@dimen/view_dimen_110"
+                android:layout_height="@dimen/view_dimen_110"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/float_hide_tip_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/float_hide_tip_icon"
+                android:layout_centerHorizontal="true"
+                android:text="@string/float_hide_tip_text"
+                android:layout_marginTop="@dimen/view_dimen_20"
+                android:textSize="@dimen/text_font_size_42" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

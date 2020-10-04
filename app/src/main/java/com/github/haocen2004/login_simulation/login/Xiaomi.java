@@ -1,5 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
+import android.app.Application;
 import android.os.Looper;
 import android.widget.Toast;
 
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Xiaomi implements LoginImpl {
+public class Xiaomi extends Application implements LoginImpl {
 
 
     private AppCompatActivity activity;
@@ -45,6 +46,35 @@ public class Xiaomi implements LoginImpl {
             @Override
             public void finishInitProcess(List<String> loginMethod, int gameConfig) {
                 Logger.info("Init success");
+                MiCommplatform.getInstance().onMainActivityCreate(activity);
+                MiCommplatform.getInstance().miLogin(activity,
+                        (code, arg1) -> {
+                            switch (code) {
+                                case MiErrorCode.MI_XIAOMI_PAYMENT_SUCCESS:// 登陆成功
+                                    //获取用户的登陆后的UID（即用户唯一标识）
+                                    uid = arg1.getUid();
+
+                                    //以下为获取session并校验流程，如果是网络游戏必须校验,(12小时过期)
+                                    //获取用户的登陆的Session（请参考5.3.3流程校验Session有效性）
+                                    session = arg1.getSessionId();
+                                    //请开发者完成将uid和session提交给开发者自己服务器进行session验证
+
+                                    doBHLogin();
+                                    break;
+                                case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_LOGIN_FAIL:
+                                    // 登陆失败
+                                    break;
+                                case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_CANCEL:
+                                    // 取消登录
+                                    break;
+                                case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_ACTION_EXECUTED:
+                                    //登录操作正在进行中
+                                    break;
+                                default:
+                                    // 登录失败
+                                    break;
+                            }
+                        });
             }
 
             @Override
@@ -53,34 +83,7 @@ public class Xiaomi implements LoginImpl {
             }
         });
 
-        MiCommplatform.getInstance().miLogin(activity,
-                (code, arg1) -> {
-                    switch (code) {
-                        case MiErrorCode.MI_XIAOMI_PAYMENT_SUCCESS:// 登陆成功
-                            //获取用户的登陆后的UID（即用户唯一标识）
-                            uid = arg1.getUid();
 
-                            //以下为获取session并校验流程，如果是网络游戏必须校验,(12小时过期)
-                            //获取用户的登陆的Session（请参考5.3.3流程校验Session有效性）
-                            session = arg1.getSessionId();
-                            //请开发者完成将uid和session提交给开发者自己服务器进行session验证
-
-                            doBHLogin();
-                            break;
-                        case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_LOGIN_FAIL:
-                            // 登陆失败
-                            break;
-                        case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_CANCEL:
-                            // 取消登录
-                            break;
-                        case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_ACTION_EXECUTED:
-                            //登录操作正在进行中
-                            break;
-                        default:
-                            // 登录失败
-                            break;
-                    }
-                });
     }
 
     public void doBHLogin() {
@@ -89,8 +92,8 @@ public class Xiaomi implements LoginImpl {
 
         String device_id = Tools.getDeviceID(activity);
         login_map.put("device", device_id);
-        login_map.put("app_id", "1");
-        login_map.put("channel_id", "11");
+        login_map.put("app_id", 1);
+        login_map.put("channel_id", 11);
 
         String data_json = "{\"uid\":" +
                 uid +
@@ -175,4 +178,6 @@ public class Xiaomi implements LoginImpl {
     public boolean isLogin() {
         return isLogin;
     }
+
+
 }

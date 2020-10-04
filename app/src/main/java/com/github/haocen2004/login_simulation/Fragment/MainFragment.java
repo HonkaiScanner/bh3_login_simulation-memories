@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.github.haocen2004.login_simulation.Proxy.Proxy;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
@@ -40,6 +41,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private LoginImpl loginImpl;
     private AppCompatActivity activity;
     private Context context;
+    private Proxy proxy;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +59,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         requireActivity().findViewById(R.id.btn_login).setOnClickListener(this);
         requireActivity().findViewById(R.id.btn_scan).setOnClickListener(this);
         requireActivity().findViewById(R.id.btn_logout).setOnClickListener(this);
+        requireActivity().findViewById(R.id.button_debug).setOnClickListener(this);
         String server_type = null;
         switch(getDefaultSharedPreferences(context).getString("server_type","")) {
             case "Official":
@@ -95,6 +98,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     makeToast("扫码结果异常");
                 }
             }
+        }
+        if (resultCode == RESULT_OK && requestCode == 12580) {
+            proxy.prepareNetBare();
         }
 
     }
@@ -161,6 +167,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     case "Xiaomi":
                         loginImpl = new Xiaomi(activity);
                         //11
+                        break;
                     case "Bilibili":
                         loginImpl = new Bilibili(activity);
                         //14
@@ -187,6 +194,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 } catch (Exception e) {
                     makeToast("账号未登录");
                 }
+            case R.id.button_debug:
+                proxy = new Proxy(activity);
+                break;
             default:
                 break;
         }

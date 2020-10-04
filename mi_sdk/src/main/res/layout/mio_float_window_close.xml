@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/float_window_close"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/shake"
+            android:textColor="@color/color_text_window_close_orange"
+            android:textSize="@dimen/text_font_size_large" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/float_window_close_tip_text_margin_left"
+            android:text="@string/show_box"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_font_size_large" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/animation_shake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/float_window_close_tip_animation_margin_top"
+        android:src="@drawable/animlist_shake" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/float_window_close_tip_reminder_margin_top"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/layout_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cb_check"
+                style="@style/checkBoxStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:checked="false"
+                android:clickable="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/float_window_close_tip_reminder_margin_left"
+                android:text="@string/no_longer_remind"
+                android:textColor="@color/text_color_black_60"
+                android:textSize="@dimen/text_font_size_large" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/float_window_close_tip_btn_margin_top"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btn_cancel"
+            android:layout_width="@dimen/float_window_close_tip_btn_width"
+            android:layout_height="@dimen/float_window_close_tip_btn_height"
+            android:background="@drawable/mio_selector_btn_float_window_close_white"
+            android:gravity="center"
+            android:text="@string/btn_cancel"
+            android:textColor="@color/color_button_window_close_blue" />
+
+        <TextView
+            android:id="@+id/btn_hide"
+            android:layout_width="@dimen/float_window_close_tip_btn_width"
+            android:layout_height="@dimen/float_window_close_tip_btn_height"
+            android:layout_marginLeft="@dimen/float_window_close_tip_btn_margin_left"
+            android:background="@drawable/mio_selector_btn_float_window_close_blue"
+            android:gravity="center"
+            android:text="@string/btn_hide"
+            android:textColor="@color/color_white" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

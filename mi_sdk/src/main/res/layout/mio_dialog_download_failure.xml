@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/view_dimen_40"
+    android:paddingRight="@dimen/view_dimen_40">
+
+    <LinearLayout
+        android:layout_width="@dimen/view_dimen_880"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:background="@drawable/mio_shape_alert_background"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="@dimen/view_dimen_90"
+            android:layout_height="@dimen/view_dimen_90"
+            android:layout_gravity="right"
+            android:layout_marginTop="@dimen/view_dimen_11"
+            android:layout_marginRight="@dimen/view_dimen_11"
+            android:background="@drawable/mio_close_button" />
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="@dimen/view_dimen_240"
+            android:layout_height="@dimen/view_dimen_166"
+            android:layout_gravity="center"
+            android:src="@drawable/mio_download_failure" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/view_dimen_54"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="下载错误"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_font_size_51"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="@dimen/view_dimen_790"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/view_dimen_20"
+            android:alpha="0.6"
+            android:gravity="center"
+            android:lineSpacingExtra="@dimen/view_dimen_36"
+            android:singleLine="false"
+            android:text="下载错误，点击重新下载安装"
+            android:textColor="@color/color_light_gray"
+            android:textSize="@dimen/text_font_size_42" />
+
+        <LinearLayout
+            android:id="@+id/llDialogOptions"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_dimen_120"
+            android:layout_margin="@dimen/view_dimen_70"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_dimen_120"
+                android:background="@drawable/mio_selector_dialog_cancel_blue"
+                android:text="重新下载"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_font_size_54" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

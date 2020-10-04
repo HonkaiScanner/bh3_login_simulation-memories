@@ -14,5 +14,5 @@ public class Constant {
     //    public static final String BH_APP_KEY = "86d0629f8498e55344a68d9ac1ee2c34";
     public static final String BS_APP_KEY = "dbf8f1b4496f430b8a3c0f436a35b931";
 
-    public static String BH_VER = "1.0.0";
+    public static String BH_VER = "4.3.0";
 }

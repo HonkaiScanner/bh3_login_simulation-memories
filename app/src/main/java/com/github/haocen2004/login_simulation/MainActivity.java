@@ -1,16 +1,20 @@
 package com.github.haocen2004.login_simulation;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -106,9 +110,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         new Thread(update_rb).start();
+        checkPermissions();
 
     }
 
+    private void checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // 申请权限
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getParent(), Manifest.permission.CAMERA)) {
+                Toast.makeText(getApplicationContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+            }
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getParent(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Toast.makeText(getApplicationContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+            }
+            ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA);
+        }
+    }
 
     @Override
     public boolean onSupportNavigateUp() {

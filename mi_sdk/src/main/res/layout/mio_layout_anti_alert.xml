@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:background="@color/black_20_percent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="@dimen/view_dimen_980"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:background="@drawable/mio_shape_alert_background"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/view_dimen_60">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_42">
+
+            <ImageView
+                android:id="@+id/dialog_restrictive_img"
+                android:layout_width="@dimen/view_dimen_240"
+                android:layout_height="@dimen/view_dimen_240"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center" />
+
+            <ImageView
+                android:id="@+id/anti_dialog_arrow"
+                android:layout_width="@dimen/view_dimen_12"
+                android:layout_height="@dimen/view_dimen_22"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/view_dimen_10"
+                android:layout_marginTop="@dimen/view_dimen_13"
+                android:layout_marginRight="@dimen/view_dimen_54"
+                android:scaleType="centerInside"
+                android:src="@drawable/dialog_anti_arrow" />
+
+            <TextView
+                android:id="@+id/dialog_restrictive_realname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/anti_dialog_arrow"
+                android:text="@string/anti_addiction_realname_detail"
+                android:textColor="@color/color_payment_dialog_cancel_blue_nor"
+                android:textSize="@dimen/text_font_size_36" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/dialog_restrictive_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/view_dimen_16"
+            android:alpha="0.9"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/anti_addiction_realname_detail"
+            android:textColor="@color/color_light_gray"
+            android:textSize="@dimen/text_font_size_51"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dialog_restrictive_content"
+            android:layout_width="@dimen/view_dimen_820"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/view_dimen_24"
+            android:alpha="0.6"
+            android:lineSpacingExtra="@dimen/view_dimen_6"
+            android:singleLine="false"
+            android:text="@string/anti_addiction_realname_detail"
+            android:textColor="@color/color_light_gray"
+            android:textSize="@dimen/text_font_size_42" />
+
+        <Button
+            android:id="@+id/dialog_restrictive_bt"
+            android:layout_width="@dimen/view_dimen_820"
+            android:layout_height="@dimen/view_dimen_120"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/view_dimen_72"
+            android:layout_marginBottom="@dimen/view_dimen_12"
+            android:background="@drawable/mio_selector_dialog_cancel_blue"
+            android:text="@string/anti_addiction_rest"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_font_size_48" />
+
+        <TextView
+            android:id="@+id/dialog_quit_game"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/view_dimen_18"
+            android:alpha="0.6"
+            android:text="@string/anti_addiction_quit"
+            android:textColor="@color/color_light_gray"
+            android:textSize="@dimen/text_font_size_36" />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.xiaomi.gamecenter.sdk.ui.mifloat.menu.MiFloatMenuIconItem xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/view_dimen_180"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/color_white"
+    android:gravity="center_horizontal">
+
+    <RelativeLayout
+        android:layout_width="@dimen/view_dimen_134"
+        android:layout_height="@dimen/view_dimen_134"
+        android:background="#F1FFFFFF"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/mifloat_menu_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/mio_selector_fw_menu_welfare" />
+
+        <ImageView
+            android:id="@+id/mifloat_menu_icon_redpoint"
+            android:layout_width="@dimen/view_dimen_18"
+            android:layout_height="@dimen/view_dimen_18"
+            android:clickable="false"
+            android:scaleType="fitXY"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/view_dimen_100"
+            android:background="@drawable/mio_shape_me_red_point"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/mifloat_menu_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="@dimen/view_dimen_20"
+        android:maxWidth="@dimen/view_dimen_261"
+        android:textColor="@color/text_color_black_90"
+        android:textSize="@dimen/text_font_size_39"
+        android:text="福利活动" />
+
+</com.xiaomi.gamecenter.sdk.ui.mifloat.menu.MiFloatMenuIconItem>

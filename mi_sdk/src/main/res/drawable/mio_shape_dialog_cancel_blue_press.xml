@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/color_dialog_cancel_blue_press" />
+
+    <corners
+        android:topLeftRadius="@dimen/view_dimen_12"
+        android:bottomLeftRadius="@dimen/view_dimen_12"
+        android:bottomRightRadius="@dimen/view_dimen_12"
+        android:topRightRadius="@dimen/view_dimen_12" />
+</shape>

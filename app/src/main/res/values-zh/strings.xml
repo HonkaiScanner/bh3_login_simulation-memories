@@ -29,5 +29,7 @@
     <string name="boolean_true">启用</string>
     <string name="confirm_prefix">自动确认：</string>
     <string name="boolean_false">禁用</string>
+    <string name="channel_name">代理</string>
+    <string name="channel_description">用于注入SDK</string>
 
 </resources>

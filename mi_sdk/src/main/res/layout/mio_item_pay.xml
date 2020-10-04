@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    android:background="@drawable/mio_selector_mipayment_item">
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="33.3dp"
+        android:layout_height="33.3dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="30dp"
+        android:src="@drawable/mio_mipay_payment_wx" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="#FF000000"
+        android:textSize="14.1sp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/iv_logo"
+        android:layout_marginLeft="13.3dp"
+        android:text="Wechat pay(微信支付)" />
+
+    <ImageView
+        android:id="@+id/act_item_arrow"
+        android:layout_width="6.66dp"
+        android:layout_height="13.3dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/mio_mipay_payment_arrow"
+        android:contentDescription="@+id/act_item_arrow"
+        android:layout_marginRight="30dp" />
+</RelativeLayout>
