@@ -1,0 +1,102 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xiaomi">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" />
+    <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <application>
+
+        <!-- Xiaomi SDK Need -->
+        <meta-data
+            android:name="notch.config"
+            android:value="portrait|landscape" />
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.2" />
+        <meta-data
+            android:name="MiLinkGroupAppID"
+            android:value="@integer/MiLinkGroupAppID" />
+
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.MiActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.PayListActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name="com.xiaomi.hy.dj.HyDjActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <!--不支持${applicationId}的请替换为包名-->
+
+        <provider
+            android:name="com.xiaomi.gamecenter.sdk.utils.MiFileProvider"
+            android:authorities="${applicationId}.mi_fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/mio_file_paths" />
+        </provider>
+
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.fault.ViewFaultNoticeActivity"
+            android:configChanges="orientation|screenSize"
+            android:excludeFromRecents="true"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.notice.NoticeActivity"
+            android:configChanges="orientation|screenSize"
+            android:excludeFromRecents="true"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.anti.ui.MiAntiAlertActivity"
+            android:configChanges="orientation|screenSize"
+            android:excludeFromRecents="true"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <data
+                    android:host="open_anti_alert"
+                    android:scheme="mioauthsdk" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.MiPayAntiActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name="com.xiaomi.gamecenter.sdk.ui.MiVerifyActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:screenOrientation="behind" />
+
+        <!-- Xiaomi SDK Need End-->
+    </application>
+</manifest>
