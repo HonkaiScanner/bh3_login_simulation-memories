@@ -3,13 +3,13 @@
     <string-array name="server_types">
         <item>Official</item>
         <item>Bilibili</item>
-        <item>Xiaomi</item>
+<!--        <item>Xiaomi</item>-->
         <item>UC</item>
     </string-array>
     <string-array name="server_types_value">
         <item>Official</item>
         <item>Bilibili</item>
-        <item>Xiaomi</item>
+        <!--        <item>Xiaomi</item>-->
         <item>UC</item>
     </string-array>
 </resources>

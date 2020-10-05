@@ -49,15 +49,19 @@ public class UC implements LoginImpl {
         }
 
         @Subscribe(event = SDKEventKey.ON_LOGIN_SUCC)
-        private void onLoginSucc(String sid2) {
-            System.out.println("开始登陆" + sid2);
-            sid = sid2;
+        private void onLoginSucc(String sid) {
+            System.out.println("开始登陆" + sid);
+            setSid(sid);
 
             doBHLogin();
         }
 
 
     };
+
+    public void setSid(String sid) {
+        this.sid = sid;
+    }
 
     public UC(AppCompatActivity activity) {
         this.activity = activity;
@@ -107,10 +111,11 @@ public class UC implements LoginImpl {
 
                     JSONObject data_json2 = feedback_json.getJSONObject("data");
                     String combo_id = data_json2.getString("combo_id");
+                    String open_id = data_json2.getString("open_id");
                     String combo_token = data_json2.getString("combo_token");
                     String account_type = data_json2.getString("account_type");
 
-                    roleData = new RoleData(sid, "", combo_id, combo_token, "20", account_type, "uc");
+                    roleData = new RoleData(open_id, "", combo_id, combo_token, "20", account_type, "uc", 1);
 
                     isLogin = true;
                     makeToast("登录成功");

@@ -45,7 +45,7 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
     implementation fileTree(dir: 'libs', include: ['*.aar'], exclude: [])
     implementation project(':zxing-lib')
-    implementation project(':mi_sdk')
+//    implementation project(':mi_sdk')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.github.MegatronKing:NetBare:df5b417'
     implementation ('com.github.AlexLiuSheng:CheckVersionLib:2.4_androidx') {

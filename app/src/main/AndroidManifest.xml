@@ -15,7 +15,15 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" />
     <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />
+
     <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -38,8 +46,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.google.zxing.activity.CaptureActivity" />
-        <!--是否为付费下载游戏,如果是付费下载游戏value值为true,否则value值为false  -->
-        <!--游戏付费下载指的是用户需要先购买才能下载游戏，与用户可以免费下载但是游戏内有内购是不同的 -->
         <meta-data
             android:name="BSGameSdk_PaidGame"
             android:value="false" />
@@ -107,13 +113,13 @@
 
         <activity
             android:name="cn.uc.gamesdk.activity.PullupActivity"
-            tools:node="replace"
+            android:theme="@android:style/Theme.Translucent"
+            android:taskAffinity="cn.uc.gamesdk.demo.diff"
             android:excludeFromRecents="true"
-            android:exported="true"
             android:label="PullupActivity"
             android:launchMode="singleTop"
-            android:taskAffinity="cn.uc.gamesdk.demo.diff"
-            android:theme="@android:style/Theme.Translucent">
+            android:exported="true"
+            tools:node="replace">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -137,6 +143,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!-- sdk service -->
+        <service
+            android:name="cn.gundam.sdk.shell.service.ProxyService"
+            android:exported="true"
+            android:process=":bgservice" />
+        <!-- sdk service end -->
+
     </application>
 
 </manifest>

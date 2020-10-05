@@ -108,8 +108,9 @@ public class MainActivity extends AppCompatActivity {
         if (getDefaultSharedPreferences(this).getBoolean("showBetaInfo", true)) {
             showBetaInfoDialog();
         }
-
-        new Thread(update_rb).start();
+        if (!getPackageName().contains("dev")) {
+            new Thread(update_rb).start();
+        }
         checkPermissions();
 
     }

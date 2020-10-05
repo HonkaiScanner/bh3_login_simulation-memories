@@ -20,8 +20,10 @@ public class RoleData {
     private String channel_id;
     private JSONObject oaserver;
     private String account_type;
+    private String accountType;
     private String oa_req_key;
     private boolean is_setup;
+    private boolean uc_sign;
     @SuppressLint("HandlerLeak")
     Handler getOA_handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -54,7 +56,23 @@ public class RoleData {
         this.combo_token = combo_token;
         this.channel_id = channel_id;
         this.account_type = account_type;
+        accountType = account_type;
         this.oa_req_key = BH_VER + "_gf_android" + (oa_req_key.isEmpty() ? "" : "_" + oa_req_key);
+        new Thread(getOA_runnable).start();
+    }
+
+    public RoleData(String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key, int special_tag) {
+        this.open_id = open_id;
+        this.open_token = open_token;
+        this.combo_id = combo_id;
+        this.combo_token = combo_token;
+        this.channel_id = channel_id;
+        this.account_type = account_type;
+        this.oa_req_key = BH_VER + "_gf_android" + (oa_req_key.isEmpty() ? "" : "_" + oa_req_key);
+        if (special_tag == 1) {
+            this.uc_sign = true;
+            accountType = "3";
+        }
         new Thread(getOA_runnable).start();
     }
 
@@ -72,6 +90,10 @@ public class RoleData {
 
     public String getAccount_type() {
         return account_type;
+    }
+
+    public String getAccountType() {
+        return accountType;
     }
 
     public String getChannel_id() {
@@ -92,6 +114,10 @@ public class RoleData {
 
     public String getOpen_token() {
         return open_token;
+    }
+
+    public boolean isUc_sign() {
+        return uc_sign;
     }
 }
 

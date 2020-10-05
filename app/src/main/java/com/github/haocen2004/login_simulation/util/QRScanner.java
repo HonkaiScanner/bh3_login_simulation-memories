@@ -114,15 +114,21 @@ public class QRScanner {
 
         raw_json.put("heartbeat", false)
                 .put("open_id", open_id)
-                .put("open_token", open_token)
                 .put("device_id", device_id)
                 .put("app_id", app_id)
                 .put("channel_id", channel_id)
                 .put("combo_token", combo_token)
                 .put("asterisk_name", "崩坏3外置扫码器用户")
                 .put("combo_id", combo_id)
-                .put("guest", false)
+
                 .put("account_type", account_type);
+        if (roleData.isUc_sign()) {
+            raw_json.put("is_wdj", false);
+        }
+        if (!open_token.isEmpty()) {
+            raw_json.put("open_token", open_token)
+                    .put("guest", false);
+        }
 
 
         dispatch_json.put("account_url", oaserver.get("account_url"))
@@ -140,7 +146,7 @@ public class QRScanner {
                 .put("server_ext", oaserver.getJSONObject("server_ext"));
 
 
-        data_json.put("accountType", account_type)
+        data_json.put("accountType", roleData.getAccountType())
                 .put("accountID", open_id)
                 .put("accountToken", combo_token)
                 .put("dispatch", dispatch_json);

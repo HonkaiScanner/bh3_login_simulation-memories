@@ -26,7 +26,6 @@ import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.UC;
-import com.github.haocen2004.login_simulation.login.Xiaomi;
 import com.github.haocen2004.login_simulation.util.QRScanner;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.zxing.activity.CaptureActivity;
@@ -68,9 +67,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             case "Bilibili":
                 server_type = getString(R.string.types_bilibili);
                 break;
-            case "Xiaomi":
-                server_type = getString(R.string.types_xiaomi);
-                break;
+//            case "Xiaomi":
+//                server_type = getString(R.string.types_xiaomi);
+//                break;
             case "UC":
                 server_type = getString(R.string.types_uc);
                 break;
@@ -164,10 +163,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     case "Official":
                         loginImpl = new Official(activity);
                         break;
-                    case "Xiaomi":
-                        loginImpl = new Xiaomi(activity);
-                        //11
-                        break;
+//                    case "Xiaomi":
+//                        loginImpl = new Xiaomi(activity);
+//                        //11
+//                        break;
                     case "Bilibili":
                         loginImpl = new Bilibili(activity);
                         //14
