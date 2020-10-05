@@ -1,20 +1,16 @@
 package com.github.haocen2004.login_simulation;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -91,22 +87,10 @@ public class MainActivity extends AppCompatActivity {
         if (!getPackageName().contains("dev")) {
             new Thread(update_rb).start();
         }
-        checkPermissions();
 
     }
 
-    private void checkPermissions() {
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // 申请权限
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getParent(), Manifest.permission.CAMERA)) {
-                Toast.makeText(getApplicationContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
-            }
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getParent(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                Toast.makeText(getApplicationContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
-            }
-            ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA);
-        }
-    }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -129,10 +113,10 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.show();
     }
 
-    private void showUpdateDialog(String code, String url) {
+    private void showUpdateDialog(String ver, String code, String url, String logs) {
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("获取到新版本");
-        normalDialog.setMessage("请记下提取码 " + code + "\n并点击按钮前往更新");
+        normalDialog.setTitle("获取到新版本: " + ver);
+        normalDialog.setMessage("更新日志：\n" + logs + "\n\n请记下提取码 " + code + "\n并点击按钮前往更新");
         normalDialog.setPositiveButton("打开更新链接",
                 (dialog, which) -> {
                     openUrl(url, this);
@@ -155,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
                 if (app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
-                    showUpdateDialog(json.getString("code"), json.getString("update_url"));
+                    showUpdateDialog(json.getString("ver_name"), json.getString("code"), json.getString("update_url"), json.getString("logs").replaceAll("&n", "\n"));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
