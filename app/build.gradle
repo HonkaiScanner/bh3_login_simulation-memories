@@ -35,7 +35,7 @@ android {
 
 dependencies {
 
-    implementation fileTree(dir: "libs", include: ["*.jar","*.so"])
+    implementation fileTree(dir: "libs", include: ["*.jar","*.so",'*.aar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
@@ -43,7 +43,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.3.0'
     implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
-    implementation fileTree(dir: 'libs', include: ['*.aar'], exclude: [])
     implementation project(':zxing-lib')
 //    implementation project(':mi_sdk')
     implementation 'androidx.multidex:multidex:2.0.1'

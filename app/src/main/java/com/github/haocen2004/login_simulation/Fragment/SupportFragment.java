@@ -12,8 +12,6 @@ import androidx.fragment.app.Fragment;
 import com.github.haocen2004.login_simulation.R;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
-import java.util.Objects;
-
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class SupportFragment extends Fragment {
@@ -37,7 +35,7 @@ public class SupportFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        openUrl("https://afdian.net/@Haocen20004", Objects.requireNonNull(getActivity()));
+        openUrl("https://afdian.net/@Haocen20004", requireActivity());
         super.onViewCreated(view, savedInstanceState);
     }
 }

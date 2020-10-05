@@ -193,12 +193,14 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     if ("Official".equals(getDefaultSharedPreferences(context).getString("server_type", ""))) {
                         activity.getSharedPreferences("official_user", Context.MODE_PRIVATE).edit().clear().apply();
                         makeToast("缓存信息已删除");
-                    } else if (loginImpl.isLogin()) {
+                    }
+                    if (loginImpl.isLogin()) {
                         loginImpl.logout();
                     }
                 } catch (Exception e) {
                     makeToast("账号未登录");
                 }
+                break;
             case R.id.button_debug:
                 proxy = new Proxy(activity);
                 break;
