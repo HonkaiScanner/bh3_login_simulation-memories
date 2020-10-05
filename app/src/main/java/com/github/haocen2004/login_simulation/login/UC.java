@@ -195,9 +195,10 @@ public class UC implements LoginImpl {
     public void logout() {
         try {
             sdk.logout(activity, null);
-            sdk.exit(activity, null);
+            isLogin = false;
         } catch (AliLackActivityException | AliNotInitException e) {
             e.printStackTrace();
+            isLogin = false;
         }
     }
 

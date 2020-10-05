@@ -90,6 +90,7 @@ public class Bilibili implements LoginImpl {
 
     @Override
     public void logout() {
+        isLogin = false;
         gameSdk.logout(new CallbackListener() {
 
             @Override
@@ -98,7 +99,7 @@ public class Bilibili implements LoginImpl {
                 LogUtils.d("onSuccess");
                 try {
                     preferences.edit().clear().apply();
-                } catch ( NullPointerException e){
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
                 makeToast("账号已退出");

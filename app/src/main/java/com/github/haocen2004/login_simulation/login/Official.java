@@ -225,6 +225,7 @@ public class Official implements LoginImpl {
     @Override
     public void logout() {
         preferences.edit().clear().apply();
+        isLogin = false;
     }
 
     @Override
