@@ -9,8 +9,8 @@ android {
         minSdkVersion 21
         //noinspection OldTargetApi
         targetSdkVersion 29
-        versionCode 4
-        versionName '1.1.0-alpha4'
+        versionCode 5
+        versionName '1.1.1-alpha1'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
@@ -48,10 +48,6 @@ dependencies {
 //    implementation project(':mi_sdk')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.github.MegatronKing:NetBare:df5b417'
-    implementation ('com.github.AlexLiuSheng:CheckVersionLib:2.4_androidx') {
-        exclude group: "com.squareup.okhttp3",module: "okhttp"
-    }
-
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

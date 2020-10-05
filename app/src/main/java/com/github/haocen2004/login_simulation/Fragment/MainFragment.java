@@ -157,6 +157,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_login:
+                checkPermissions();
                 try {
                     if (loginImpl.isLogin()) {
                         makeToast("账号已登录");
@@ -218,4 +219,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // 申请权限
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA)) {
+                Toast.makeText(getContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+            }
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Toast.makeText(getContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+            }
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA);
+        }
+    }
 }
