@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +30,8 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.zxing.activity.CaptureActivity;
 import com.google.zxing.util.Constant;
 
+import java.util.Objects;
+
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 
@@ -52,15 +53,19 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().findViewById(R.id.btn_login).setOnClickListener(this);
         requireActivity().findViewById(R.id.btn_scan).setOnClickListener(this);
         requireActivity().findViewById(R.id.btn_logout).setOnClickListener(this);
-        requireActivity().findViewById(R.id.button_debug).setOnClickListener(this);
-        String server_type = null;
-        switch(getDefaultSharedPreferences(context).getString("server_type","")) {
+        if (requireActivity().getPackageName().contains("dev")) {
+            requireActivity().findViewById(R.id.button_debug).setOnClickListener(this);
+            requireActivity().findViewById(R.id.button_debug).setVisibility(View.VISIBLE);
+        }
+        String server_type;
+        switch (Objects.requireNonNull(getDefaultSharedPreferences(context).getString("server_type", ""))) {
             case "Official":
                 server_type = getString(R.string.types_official);
                 break;
@@ -89,7 +94,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             Bundle bundle = data.getExtras();
             if (bundle != null) {
                 String result = bundle.getString(com.github.haocen2004.login_simulation.util.Constant.INTENT_EXTRA_KEY_QR_SCAN);
-                if (!TextUtils.isEmpty(result)) {
+                if (result != null) {
                     QRScanner qrScanner = new QRScanner((AppCompatActivity) getActivity(), loginImpl.getRole());
                     qrScanner.parseUrl(result);
                     qrScanner.getScanRequest();
@@ -159,7 +164,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     }
                 } catch (Exception ignore) {
                 }
-                switch (getDefaultSharedPreferences(context).getString("server_type", "")) {
+                switch (Objects.requireNonNull(getDefaultSharedPreferences(context).getString("server_type", ""))) {
                     case "Official":
                         loginImpl = new Official(activity);
                         break;

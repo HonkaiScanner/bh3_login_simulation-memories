@@ -43,14 +43,9 @@ public class MainActivity extends AppCompatActivity {
         app_pref = getDefaultSharedPreferences(this);
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) != VERSION_CODE) {
             app_pref.edit()
-
                     .putBoolean("is_first_run", false)
                     .putInt("version", VERSION_CODE)
-
                     .apply();
-//                                .putString("server_type","Official")
-//                    .putBoolean("enable_ad",true)
-//                    .putBoolean("auto_confirm",false)
             if (!app_pref.contains("auto_confirm")) {
                 app_pref.edit()
                         .putBoolean("auto_confirm", false)
@@ -84,25 +79,10 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration
                 .Builder(R.id.mainFragment, R.id.settingsFragment)
                 .setOpenableLayout(drawerLayout)
-//                .setDrawerLayout(drawerLayout)
                 .build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationView navigationView = findViewById(R.id.navigationView);
 
-//        navigationView.setNavigationItemSelectedListener(menuItem -> {
-//            System.out.println("按钮id"+menuItem.getItemId());
-//            switch (menuItem.getItemId()) {
-//                case R.id.btn_support:
-//                    openUrl("https://afdian.net/@Haocen20004");
-//                    drawerLayout.closeDrawer(navigationView);
-//                    return false;
-//                case R.id.btn_report:
-//                    openUrl("https://github.com/Haocen2004/bh3_login_simulation/issues");
-//                    drawerLayout.closeDrawer(navigationView);
-//                    return false;
-//            }
-//            return true;
-//        });
         NavigationUI.setupWithNavController(navigationView, navController);
 
         if (getDefaultSharedPreferences(this).getBoolean("showBetaInfo", true)) {

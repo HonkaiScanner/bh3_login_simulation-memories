@@ -1,7 +1,6 @@
 package com.github.haocen2004.login_simulation.util;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -216,19 +215,9 @@ public class QRScanner {
         normalDialog.setTitle("扫码成功");
         normalDialog.setMessage("等待确认是否登录");
         normalDialog.setPositiveButton("确定",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        new Thread(runnable2).start();
-                    }
-                });
+                (dialog, which) -> new Thread(runnable2).start());
         normalDialog.setNegativeButton("取消",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(activity,"登录已被用户取消",Toast.LENGTH_LONG).show();
-                    }
-                });
+                (dialog, which) -> Toast.makeText(activity, "登录已被用户取消", Toast.LENGTH_LONG).show());
 
         normalDialog.show();
     }

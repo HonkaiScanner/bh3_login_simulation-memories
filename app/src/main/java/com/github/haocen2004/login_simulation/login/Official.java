@@ -178,16 +178,13 @@ public class Official implements LoginImpl {
             customizeDialog.setTitle("login");
             customizeDialog.setView(dialogView);
             customizeDialog.setPositiveButton("yes",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // 获取EditView中的输入内容
-                            EditText edit_text = (EditText) dialogView.findViewById(R.id.username);
-                            EditText password_text = (EditText) dialogView.findViewById(R.id.password);
-                            username = edit_text.getText().toString();
-                            password = password_text.getText().toString();
-                            loginByAccount();
-                        }
+                    (DialogInterface.OnClickListener) (dialog, which) -> {
+                        // 获取EditView中的输入内容
+                        EditText edit_text = (EditText) dialogView.findViewById(R.id.username);
+                        EditText password_text = (EditText) dialogView.findViewById(R.id.password);
+                        username = edit_text.getText().toString();
+                        password = password_text.getText().toString();
+                        loginByAccount();
                     });
             customizeDialog.show();
         } else {
