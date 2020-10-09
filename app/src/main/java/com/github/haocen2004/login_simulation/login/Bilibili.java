@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +15,6 @@ import com.bsgamesdk.android.callbacklistener.BSGameSdkError;
 import com.bsgamesdk.android.callbacklistener.CallbackListener;
 import com.bsgamesdk.android.callbacklistener.InitCallbackListener;
 import com.bsgamesdk.android.utils.LogUtils;
-import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
@@ -39,6 +39,7 @@ public class Bilibili implements LoginImpl {
     private AppCompatActivity activity;
     private boolean isLogin;
     private RoleData roleData;
+    private static String TAG = "Bilibili Login";
 
     public Bilibili(AppCompatActivity activity) {
         this.activity = activity;
@@ -136,13 +137,14 @@ public class Bilibili implements LoginImpl {
                 "378", BS_APP_KEY, new InitCallbackListener() {
                     @Override
                     public void onSuccess() {
-                        Logger.info("Bilibili SDK setup succeed");
+//                        Logger.info("Bilibili SDK setup succeed");
+                        Log.i(TAG, "onSuccess: Setup Succeed");
                     }
 
                     @Override
                     public void onFailed() {
 
-                        Logger.warning("Bilibili SDK setup Failed");
+                        Log.w(TAG, "Bilibili SDK setup Failed");
 
                     }
                 }, () -> System.exit(0));
@@ -206,10 +208,10 @@ public class Bilibili implements LoginImpl {
 
             login_json.put("sign",sign);
 
-            Logger.info(login_json.toString());
+            Log.i(TAG, "doBHLogin: " + login_json.toString());
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login",login_json.toString());
             JSONObject feedback_json = new JSONObject(feedback);
-            Logger.info(feedback);
+            Log.i(TAG, "doBHLogin: " + feedback);
 
             if (feedback_json.getInt("retcode") == 0) {
 

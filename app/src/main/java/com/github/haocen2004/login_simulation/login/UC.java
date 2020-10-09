@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
@@ -41,6 +41,7 @@ public class UC implements LoginImpl {
     private String sid;
     private boolean isLogin;
     private RoleData roleData;
+    private static String TAG = "UC Login";
     private SDKEventReceiver eventReceiver = new SDKEventReceiver() {
 
         @Subscribe(event = SDKEventKey.ON_INIT_SUCC)
@@ -50,7 +51,8 @@ public class UC implements LoginImpl {
 
         @Subscribe(event = SDKEventKey.ON_LOGIN_SUCC)
         private void onLoginSucc(String sid) {
-            System.out.println("开始登陆" + sid);
+//            System.out.println("开始登陆" + sid);
+            Log.i("UCSDK", "onLoginSucc: sid:" + sid);
             setSid(sid);
 
             doBHLogin();
@@ -97,15 +99,16 @@ public class UC implements LoginImpl {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
-            Logger.debug(feedback);
+//            Logger.debug(feedback);
+            Log.d(TAG, "handleMessage: " + feedback);
             JSONObject feedback_json = null;
             try {
                 feedback_json = new JSONObject(feedback);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Logger.info(feedback);
-
+//            Logger.info(feedback);
+            Log.i(TAG, "handleMessage: " + feedback);
             try {
                 if (feedback_json.getInt("retcode") == 0) {
 
@@ -163,7 +166,8 @@ public class UC implements LoginImpl {
 
                 login_json.put("sign", sign);
 
-                Logger.info(login_json.toString());
+//                Logger.info(login_json.toString());
+                Log.i(TAG, "run: " + login_json.toString());
                 String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
 
                 Message msg = new Message();

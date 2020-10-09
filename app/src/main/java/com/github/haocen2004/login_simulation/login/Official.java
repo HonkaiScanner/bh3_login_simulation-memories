@@ -2,11 +2,11 @@ package com.github.haocen2004.login_simulation.login;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
@@ -39,6 +38,7 @@ public class Official implements LoginImpl {
     private AppCompatActivity activity;
     private boolean isLogin;
     private SharedPreferences preferences;
+    private static String TAG = "Official Login.";
     @SuppressLint("HandlerLeak")
     Handler login_handler = new Handler() {
         @Override
@@ -46,7 +46,8 @@ public class Official implements LoginImpl {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
-            Logger.debug(feedback);
+//            Logger.debug(feedback);
+            Log.d(TAG, "handleMessage: " + feedback);
 
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
@@ -63,8 +64,9 @@ public class Official implements LoginImpl {
                             .apply();
                     new Thread(login_runnable2).start();
                 } else {
-                    Logger.warning("登录失败");
-                    Logger.warning(feedback);
+//                    Logger.warning("登录失败");
+                    Log.w(TAG, "handleMessage: 登录失败" + feedback);
+//                    Logger.warning(feedback);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -95,7 +97,8 @@ public class Official implements LoginImpl {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
-            Logger.debug(feedback);
+//            Logger.debug(feedback);
+            Log.d(TAG, "handleMessage: " + feedback);
 
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
@@ -109,8 +112,9 @@ public class Official implements LoginImpl {
                     Toast.makeText(activity, "login succeed.", Toast.LENGTH_LONG).show();
 
                 } else {
-                    Logger.warning("登录失败");
-                    Logger.warning(feedback);
+//                    Logger.warning("登录失败");
+//                    Logger.warning(feedback);
+                    Log.w(TAG, "handleMessage: 登录失败" + feedback);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -148,10 +152,13 @@ public class Official implements LoginImpl {
 
                 login_json.put("sign", sign);
 
-                Logger.debug(login_json.toString());
+//                Logger.debug(login_json.toString());
+                Log.d(TAG, "run: " + login_json.toString());
             } catch (JSONException e) {
-                Logger.warning("JSON PUT ERROR");
+//                Logger.warning("JSON PUT ERROR");
+                Log.w(TAG, "run: JSON WRONG\n" + e);
             }
+
             //https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
             Message msg = new Message();
@@ -178,10 +185,10 @@ public class Official implements LoginImpl {
             customizeDialog.setTitle("login");
             customizeDialog.setView(dialogView);
             customizeDialog.setPositiveButton("yes",
-                    (DialogInterface.OnClickListener) (dialog, which) -> {
+                    (dialog, which) -> {
                         // 获取EditView中的输入内容
-                        EditText edit_text = (EditText) dialogView.findViewById(R.id.username);
-                        EditText password_text = (EditText) dialogView.findViewById(R.id.password);
+                        EditText edit_text = dialogView.findViewById(R.id.username);
+                        EditText password_text = dialogView.findViewById(R.id.password);
                         username = edit_text.getText().toString();
                         password = password_text.getText().toString();
                         loginByAccount();

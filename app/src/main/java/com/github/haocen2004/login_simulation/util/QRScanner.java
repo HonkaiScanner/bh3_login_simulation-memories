@@ -30,6 +30,7 @@ public class QRScanner {
     private String channel_id;
     private String ticket;
     private String account_type;
+    private static String TAG = "QRScanner";
 
     private RoleData roleData;
 
@@ -66,6 +67,8 @@ public class QRScanner {
                     ticket = key.split("=")[1];
                 }
             }
+        } else {
+            makeToast("请扫描正确的二维码");
         }
     }
     public void getScanRequest(){
@@ -84,8 +87,9 @@ public class QRScanner {
                 }
                 qr_check_json.put("sign",sign);
 
-                Logger.debug(qr_check_json.toString());
+//                Logger.debug(qr_check_json.toString());
 
+                Log.d(TAG, "getScanRequest: " + qr_check_json.toString());
                 new Thread(runnable).start();
 
 //                String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/scan",qr_check_json.toString());
@@ -165,10 +169,10 @@ public class QRScanner {
 
         qr_check_map.put("payload", payload_json);
         String sign2 = Tools.bh3Sign(qr_check_map);
-        confirm_json.put("sign",sign2);
+        confirm_json.put("sign", sign2);
 
-        Logger.debug(confirm_json.toString());
-
+//        Logger.debug(confirm_json.toString());
+        Log.d(TAG, "genRequest: " + confirm_json.toString());
     }
 
     @SuppressLint("HandlerLeak")
@@ -178,18 +182,20 @@ public class QRScanner {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
-            Logger.debug(feedback);
-
+//            Logger.debug(feedback);
+            Log.d(TAG, "handleMessage: " + feedback);
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
-                if (feedback_json.getInt("retcode") == 0){
-                    if (getDefaultSharedPreferences(activity).getBoolean("auto_confirm",false)) {
+                if (feedback_json.getInt("retcode") == 0) {
+                    if (getDefaultSharedPreferences(activity).getBoolean("auto_confirm", false)) {
                         new Thread(runnable2).start();
                     } else {
                         showNormalDialog();
                     }
                 } else {
-                    Logger.warning("扫码登录失败1");
+                    makeToast("二维码已过期");
+//                    Logger.warning("二维码已过期");
+                    Log.w(TAG, "handleMessage: 二维码已过期");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -230,15 +236,17 @@ public class QRScanner {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 
-            Logger.debug(feedback);
+//            Logger.debug(feedback);
+            Log.d(TAG, "handleMessage: " + feedback);
 
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
-                if (feedback_json.getInt("retcode") == 0){
+                if (feedback_json.getInt("retcode") == 0) {
                     makeToast("登录成功");
                 } else {
-                    Logger.warning("扫码登录失败2");
-                    makeToast("登录失败");
+//                    Logger.warning("扫码登录失败2");
+                    Log.w(TAG, "handleMessage: 扫描登录失败2");
+                    makeToast("登录失败 code:2");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

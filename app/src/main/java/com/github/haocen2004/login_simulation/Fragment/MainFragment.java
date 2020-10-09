@@ -99,7 +99,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     qrScanner.parseUrl(result);
                     qrScanner.getScanRequest();
                 } else {
-                    makeToast("扫码结果异常");
+                    makeToast("二维码识别错误" + result);
                 }
             }
         }

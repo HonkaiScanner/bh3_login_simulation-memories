@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +34,7 @@ public class RoleData {
             String feedback = data.getString("value");
             try {
                 oaserver = new JSONObject(feedback);
-                System.out.println(oaserver.toString());
+                Log.i("GetOAServer", "handleMessage: " + oaserver.toString());
                 is_setup = true;
             } catch (JSONException e) {
                 e.printStackTrace();

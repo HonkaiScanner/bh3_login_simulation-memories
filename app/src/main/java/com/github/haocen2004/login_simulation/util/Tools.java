@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,7 @@ import static com.github.haocen2004.login_simulation.util.Constant.BH_APP_KEY;
 import static com.github.haocen2004.login_simulation.util.Network.sendPost;
 
 public class Tools {
+    private static String TAG = "Tools";
 
     public static String getOAServer(RoleData roleData) {
 //        http://106.14.51.73/query_gameserver?version=4.2.0_gf_pc&t=1598631898&uid=21097880
@@ -36,13 +38,14 @@ public class Tools {
 //        https://global1.bh3.com/query_dispatch?version=4.2.0_gf_pc&t=1598673811
         try {
             String feedback = sendPost("https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
-            System.out.println(feedback);
+            Log.i(TAG, "getOAServer: " + feedback);
             JSONObject json1 = new JSONObject(feedback);
             JSONArray jsonArray = json1.getJSONArray("region_list");
             JSONObject json2 = jsonArray.getJSONObject(0);
             String url = json2.getString("dispatch_url");
             feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
-            System.out.println(feedback);
+            Log.i(TAG, "getOAServer: " + feedback);
+
             return feedback;
         } catch (JSONException e) {
             e.printStackTrace();
