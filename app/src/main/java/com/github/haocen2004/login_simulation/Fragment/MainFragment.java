@@ -99,7 +99,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     qrScanner.parseUrl(result);
                     qrScanner.getScanRequest();
                 } else {
-                    makeToast("二维码识别错误" + result);
+                    makeToast(getString(R.string.error_scan));
                 }
             }
         }
@@ -146,21 +146,25 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.btn_scan:
                 try {
-                    if (loginImpl.isLogin() && loginImpl.getRole().is_setup()) {
-                        startQrCode();
+                    if (loginImpl.isLogin()) {
+                        if (loginImpl.getRole().is_setup()) {
+                            startQrCode();
+                        } else {
+                            makeToast(getString(R.string.error_oa_process));
+                        }
                     } else {
-                        makeToast("请先登录或等待后台登录处理完成");
+                        makeToast(getString(R.string.error_not_login));
                     }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
-                    makeToast("请先登录");
+                    makeToast(getString(R.string.error_not_login));
                 }
                 break;
             case R.id.btn_login:
                 checkPermissions();
                 try {
                     if (loginImpl.isLogin()) {
-                        makeToast("账号已登录");
+                        makeToast(getString(R.string.has_login));
                         return;
                     }
                 } catch (Exception ignore) {
@@ -183,7 +187,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         break;
 
                     default:
-                        makeToast("服务器错误");
+                        makeToast(getString(R.string.error_wrong_server));
                         break;
                 }
                 loginImpl.login();
@@ -192,13 +196,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 try {
                     if ("Official".equals(getDefaultSharedPreferences(context).getString("server_type", ""))) {
                         activity.getSharedPreferences("official_user", Context.MODE_PRIVATE).edit().clear().apply();
-                        makeToast("缓存信息已删除");
+                        makeToast(getString(R.string.cache_delete));
                     }
                     if (loginImpl.isLogin()) {
                         loginImpl.logout();
                     }
                 } catch (Exception e) {
-                    makeToast("账号未登录");
+                    makeToast(getString(R.string.error_not_login));
                 }
                 break;
             case R.id.button_debug:

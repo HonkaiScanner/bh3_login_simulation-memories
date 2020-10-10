@@ -11,6 +11,15 @@
         <SwitchPreferenceCompat
             app:key="auto_confirm"
             app:title="@string/settings_fast_login" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="create_short_cut"
+            android:title="@string/create_short_cut" />
+        <EditTextPreference
+            android:key="custom_username"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/custom_username" />
     </PreferenceCategory>
 
 </PreferenceScreen>

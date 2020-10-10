@@ -33,5 +33,16 @@
     <string name="confirm_prefix">Auto Confirm:</string>
     <string name="channel_name">Proxy</string>
     <string name="channel_description">Magic for Inject SDK</string>
+    <string name="error_scan">Wrong QR Code</string>
+    <string name="error_oa_process">Waiting for OAServer URL</string>
+    <string name="error_not_login">Not Login</string>
+    <string name="has_login">Account Logged</string>
+    <string name="error_wrong_server">Wrong Server</string>
+    <string name="cache_delete">Cache Deleted</string>
+    <string name="login_succeed">Login Succeed</string>
+    <string name="logout">Account Logout</string>
+    <string name="outdate_qr">QR Code OutDated</string>
+    <string name="custom_username">Custom Display User Name</string>
+    <string name="create_short_cut">Create Short Cut For Last Succeed</string>
 
 </resources>

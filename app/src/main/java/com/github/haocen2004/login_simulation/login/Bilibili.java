@@ -15,6 +15,7 @@ import com.bsgamesdk.android.callbacklistener.BSGameSdkError;
 import com.bsgamesdk.android.callbacklistener.CallbackListener;
 import com.bsgamesdk.android.callbacklistener.InitCallbackListener;
 import com.bsgamesdk.android.utils.LogUtils;
+import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
@@ -103,7 +104,7 @@ public class Bilibili implements LoginImpl {
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
-                makeToast("账号已退出");
+                makeToast(activity.getString(R.string.logout));
 
             }
 
@@ -222,7 +223,7 @@ public class Bilibili implements LoginImpl {
                 roleData = new RoleData(open_id, "", combo_id, combo_token, "14", "2", "bilibili");
 
                 isLogin = true;
-                makeToast("登录成功");
+                makeToast(activity.getString(R.string.login_succeed));
 
 
             } else {

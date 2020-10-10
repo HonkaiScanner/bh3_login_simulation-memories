@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
@@ -121,7 +122,7 @@ public class UC implements LoginImpl {
                     roleData = new RoleData(open_id, "", combo_id, combo_token, "20", account_type, "uc", 1);
 
                     isLogin = true;
-                    makeToast("登录成功");
+                    makeToast(activity.getString(R.string.login_succeed));
 
                 } else {
 

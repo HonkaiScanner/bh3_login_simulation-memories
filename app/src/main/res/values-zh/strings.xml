@@ -31,5 +31,15 @@
     <string name="boolean_false">禁用</string>
     <string name="channel_name">代理</string>
     <string name="channel_description">用于注入SDK</string>
+    <string name="error_scan">不正确的二维码</string>
+    <string name="error_oa_process">正在请求登录服务器</string>
+    <string name="error_not_login">账号未登录</string>
+    <string name="has_login">账号已登录</string>
+    <string name="error_wrong_server">服务器错误</string>
+    <string name="cache_delete">缓存信息已删除</string>
+    <string name="login_succeed">登录成功</string>
+    <string name="logout">账号已登出</string>
+    <string name="outdate_qr">二维码已过期</string>
+    <string name="custom_username">设置自定义用户名</string>
 
 </resources>

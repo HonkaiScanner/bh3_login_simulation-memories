@@ -63,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
                         .putBoolean("showBetaInfo", true)
                         .apply();
             }
+            if (!app_pref.contains("custom_username")) {
+                app_pref.edit()
+                        .putString("custom_username", "崩坏3扫码器用户")
+                        .apply();
+            }
 
         }
 
@@ -103,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
         normalDialog.setTitle("Beta使用须知");
-        normalDialog.setMessage("你现在使用的是内部测试版本\n请及时通过左边侧滑栏反馈bug\n此消息只会出现一次");
+        normalDialog.setMessage("你现在使用的是内部测试版本\n请及时通过左边侧滑栏反馈bug\n此消x息只会出现一次");
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     getDefaultSharedPreferences(this).edit().putBoolean("showBetaInfo", false).apply();

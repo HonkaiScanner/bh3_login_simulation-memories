@@ -1,6 +1,10 @@
 package com.github.haocen2004.login_simulation.util;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +13,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.github.haocen2004.login_simulation.MainActivity;
+import com.github.haocen2004.login_simulation.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -193,7 +200,7 @@ public class QRScanner {
                         showNormalDialog();
                     }
                 } else {
-                    makeToast("二维码已过期");
+                    makeToast(activity.getString(R.string.outdate_qr));
 //                    Logger.warning("二维码已过期");
                     Log.w(TAG, "handleMessage: 二维码已过期");
                 }
@@ -242,7 +249,14 @@ public class QRScanner {
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
                 if (feedback_json.getInt("retcode") == 0) {
-                    makeToast("登录成功");
+                    makeToast(activity.getString(R.string.login_succeed));
+                    new Thread(() -> {
+                        Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", "");
+                    }).start();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && getDefaultSharedPreferences(activity).getBoolean("create_short_cut", false)) {
+                        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
+                        shortcutManager.addDynamicShortcuts(new ShortcutInfo.Builder(activity, "test_1").setIcon(R.mipmap.ic_launcher).setShortLabel().setLongLabel().setIntent(new Intent(activity, MainActivity.class)).build());
+                    }
                 } else {
 //                    Logger.warning("扫码登录失败2");
                     Log.w(TAG, "handleMessage: 扫描登录失败2");
@@ -262,7 +276,6 @@ public class QRScanner {
             try {
                 genRequest();
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/confirm", confirm_json.toString());
-                Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", "");
                 Log.i("Network", "run: succeed upload");
             } catch (JSONException e) {
                 e.printStackTrace();

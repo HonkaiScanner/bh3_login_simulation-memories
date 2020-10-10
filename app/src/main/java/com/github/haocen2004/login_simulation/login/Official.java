@@ -109,7 +109,7 @@ public class Official implements LoginImpl {
 
                     roleData = new RoleData(uid, token, combo_id, combo_token, "1", "1", "");
                     isLogin = true;
-                    Toast.makeText(activity, "login succeed.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, R.string.login_succeed, Toast.LENGTH_LONG).show();
 
                 } else {
 //                    Logger.warning("登录失败");
@@ -182,9 +182,9 @@ public class Official implements LoginImpl {
                     new AlertDialog.Builder(activity);
             final View dialogView = LayoutInflater.from(activity)
                     .inflate(R.layout.offical_login_layout, null);
-            customizeDialog.setTitle("login");
+            customizeDialog.setTitle(R.string.types_official);
             customizeDialog.setView(dialogView);
-            customizeDialog.setPositiveButton("yes",
+            customizeDialog.setPositiveButton(R.string.btn_login,
                     (dialog, which) -> {
                         // 获取EditView中的输入内容
                         EditText edit_text = dialogView.findViewById(R.id.username);
