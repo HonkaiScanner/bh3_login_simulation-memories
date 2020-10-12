@@ -31,6 +31,7 @@ import static com.github.haocen2004.login_simulation.util.Constant.BS_APP_KEY;
 
 public class Bilibili implements LoginImpl {
 
+    private static String TAG = "Bilibili Login";
     private String access_token;
     private String username;
     private String uid;
@@ -40,7 +41,6 @@ public class Bilibili implements LoginImpl {
     private AppCompatActivity activity;
     private boolean isLogin;
     private RoleData roleData;
-    private static String TAG = "Bilibili Login";
 
     public Bilibili(AppCompatActivity activity) {
         this.activity = activity;
@@ -207,10 +207,10 @@ public class Bilibili implements LoginImpl {
 
             }
 
-            login_json.put("sign",sign);
+            login_json.put("sign", sign);
 
             Log.i(TAG, "doBHLogin: " + login_json.toString());
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login",login_json.toString());
+            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
             JSONObject feedback_json = new JSONObject(feedback);
             Log.i(TAG, "doBHLogin: " + feedback);
 
@@ -233,7 +233,8 @@ public class Bilibili implements LoginImpl {
 
             }
 
-        }catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
 
     }
 
