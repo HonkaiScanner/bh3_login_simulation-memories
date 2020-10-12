@@ -156,7 +156,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         makeToast(getString(R.string.error_not_login));
                     }
                 } catch (NullPointerException e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                     makeToast(getString(R.string.error_not_login));
                 }
                 break;

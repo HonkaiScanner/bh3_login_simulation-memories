@@ -1,10 +1,8 @@
 package com.github.haocen2004.login_simulation.util;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
-import android.os.Build;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,7 +12,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.haocen2004.login_simulation.MainActivity;
 import com.github.haocen2004.login_simulation.R;
 
 import org.json.JSONException;
@@ -37,6 +34,7 @@ public class QRScanner {
     private String channel_id;
     private String ticket;
     private String account_type;
+    private String biz_key;
     private static String TAG = "QRScanner";
 
     private RoleData roleData;
@@ -55,7 +53,7 @@ public class QRScanner {
         open_token = roleData.getOpen_token();
         combo_id = roleData.getCombo_id();
         combo_token = roleData.getCombo_token();
-        app_id = "1";
+//        app_id = "1";
         channel_id = roleData.getChannel_id();
         oaserver = roleData.getOaserver();
         account_type = roleData.getAccount_type();
@@ -73,21 +71,36 @@ public class QRScanner {
                 if (key.startsWith("ticket")) {
                     ticket = key.split("=")[1];
                 }
+                if (key.startsWith("app_id")) {
+                    app_id = key.split("=")[1];
+                }
+                if (key.startsWith("biz_key")) {
+                    biz_key = key.split("=")[1];
+                }
             }
         } else {
             makeToast("请扫描正确的二维码");
         }
     }
-    public void getScanRequest(){
+    public void getScanRequest() {
+        if (app_id.contains("4")) {
+            if (!account_type.contains("1")) {
+                makeToast("原神登录暂时只支持官服");
+
+                return;
+            }
+        }
+
+
 //            Map<String, Object> qr_check_map = new HashMap<>();
-            qr_check_map.put("device", device_id);
-            qr_check_map.put("app_id","1");
-            qr_check_map.put("ts", System.currentTimeMillis());
-            qr_check_map.put("ticket", ticket);
-            String sign = Tools.bh3Sign(qr_check_map);
-            qr_check_json = new JSONObject();
-            ArrayList<String> arrayList = new ArrayList<>(qr_check_map.keySet());
-            Collections.sort(arrayList);
+        qr_check_map.put("device", device_id);
+        qr_check_map.put("app_id", app_id);
+        qr_check_map.put("ts", System.currentTimeMillis());
+        qr_check_map.put("ticket", ticket);
+        String sign = Tools.bh3Sign(qr_check_map);
+        qr_check_json = new JSONObject();
+        ArrayList<String> arrayList = new ArrayList<>(qr_check_map.keySet());
+        Collections.sort(arrayList);
             try {
                 for (String str : arrayList) {
                     qr_check_json.put(str, qr_check_map.get(str));
@@ -116,63 +129,87 @@ public class QRScanner {
 
     public void genRequest() throws JSONException {
 
+
         JSONObject raw_json = new JSONObject();
         JSONObject payload_json = new JSONObject();
         JSONObject ext_json = new JSONObject();
         JSONObject data_json = new JSONObject();
         JSONObject dispatch_json = new JSONObject();
-
-        raw_json.put("heartbeat", false)
-                .put("open_id", open_id)
-                .put("device_id", device_id)
-                .put("app_id", app_id)
-                .put("channel_id", channel_id)
-                .put("combo_token", combo_token)
-                .put("asterisk_name", "崩坏3外置扫码器用户")
-                .put("combo_id", combo_id)
-
-                .put("account_type", account_type);
-        if (roleData.isUc_sign()) {
-            raw_json.put("is_wdj", false);
-        }
-        if (!open_token.isEmpty()) {
-            raw_json.put("open_token", open_token)
-                    .put("guest", false);
-        }
-
-
-        dispatch_json.put("account_url", oaserver.get("account_url"))
-                .put("account_url_backup", oaserver.get("account_url_backup"))
-                .put("asset_boundle_url", oaserver.get("asset_boundle_url"))
-                .put("ex_resource_url", oaserver.get("ex_resource_url"))
-                .put("ext", oaserver.getJSONObject("ext"))
-                .put("gameserver", oaserver.getJSONObject("gameserver"))
-                .put("gateway", oaserver.getJSONObject("gateway"))
-                .put("oaserver_url", oaserver.get("oaserver_url"))
-//                .put("oaserver_url","http://139.196.248.220:1080")
-                .put("region_name", oaserver.getString("region_name"))
-                .put("retcode", "0")
-                .put("is_data_ready", true)
-                .put("server_ext", oaserver.getJSONObject("server_ext"));
-
-
-        data_json.put("accountType", roleData.getAccountType())
-                .put("accountID", open_id)
-                .put("accountToken", combo_token)
-                .put("dispatch", dispatch_json);
-
-        ext_json.put("data", data_json);
-
-        payload_json.put("raw", raw_json.toString())
-                .put("proto", "Combo")
-                .put("ext", ext_json.toString());
-
         confirm_json = new JSONObject();
-        confirm_json.put("device", device_id)
-                .put("app_id", app_id)
-                .put("ts", System.currentTimeMillis())
-                .put("ticket", ticket)
-                .put("payload", payload_json);
+
+        if (app_id.contains("4")) {
+//{"app_id":4,"device":"c3a0a429-3d2a-36d1-8a4b-255aeae8a9d5","payload":{"proto":"Account","raw":"{\"uid\":\"214525854\",\"token\":\"cScORPGe3TUxbiiVZ5nuIVp1qOErNnl7\"}"},"ticket":"5f84394af05bdb23e5ce451b"}
+            SharedPreferences preferences = activity.getSharedPreferences("official_user", Context.MODE_PRIVATE);
+
+            raw_json.put("uid", preferences.getString("uid", ""))
+                    .put("token", preferences.getString("token", ""));
+
+            payload_json.put("raw", raw_json.toString())
+                    .put("proto", "Account");
+
+//                    .put("ext", ext_json.toString());
+
+            confirm_json.put("device", device_id)
+                    .put("app_id", app_id)
+                    .put("ts", System.currentTimeMillis())
+                    .put("ticket", ticket)
+                    .put("payload", payload_json);
+
+        } else {
+
+            raw_json.put("heartbeat", false)
+                    .put("open_id", open_id)
+                    .put("device_id", device_id)
+                    .put("app_id", app_id)
+                    .put("channel_id", channel_id)
+                    .put("combo_token", combo_token)
+                    .put("asterisk_name", "崩坏3外置扫码器用户")
+                    .put("combo_id", combo_id)
+                    .put("account_type", account_type);
+
+            if (roleData.isUc_sign()) {
+                raw_json.put("is_wdj", false);
+            }
+            if (!open_token.isEmpty()) {
+                raw_json.put("open_token", open_token)
+                        .put("guest", false);
+            }
+
+
+            dispatch_json.put("account_url", oaserver.get("account_url"))
+                    .put("account_url_backup", oaserver.get("account_url_backup"))
+                    .put("asset_boundle_url", oaserver.get("asset_boundle_url"))
+                    .put("ex_resource_url", oaserver.get("ex_resource_url"))
+                    .put("ext", oaserver.getJSONObject("ext"))
+                    .put("gameserver", oaserver.getJSONObject("gameserver"))
+                    .put("gateway", oaserver.getJSONObject("gateway"))
+                    .put("oaserver_url", oaserver.get("oaserver_url"))
+//                .put("oaserver_url","http://139.196.248.220:1080")
+                    .put("region_name", oaserver.getString("region_name"))
+                    .put("retcode", "0")
+                    .put("is_data_ready", true)
+                    .put("server_ext", oaserver.getJSONObject("server_ext"));
+
+
+            data_json.put("accountType", roleData.getAccountType())
+                    .put("accountID", open_id)
+                    .put("accountToken", combo_token)
+                    .put("dispatch", dispatch_json);
+
+            ext_json.put("data", data_json);
+
+            payload_json.put("raw", raw_json.toString())
+                    .put("proto", "Combo")
+                    .put("ext", ext_json.toString());
+
+            confirm_json.put("device", device_id)
+                    .put("app_id", app_id)
+                    .put("ts", System.currentTimeMillis())
+                    .put("ticket", ticket)
+                    .put("payload", payload_json);
+
+        }
+
 
         qr_check_map.put("payload", payload_json);
         String sign2 = Tools.bh3Sign(qr_check_map);
@@ -213,7 +250,7 @@ public class QRScanner {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/scan",qr_check_json.toString());
+            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
             Message msg = new Message();
             Bundle data = new Bundle();
             data.putString("value", feedback);
@@ -253,10 +290,10 @@ public class QRScanner {
                     new Thread(() -> {
                         Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", "");
                     }).start();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && getDefaultSharedPreferences(activity).getBoolean("create_short_cut", false)) {
-                        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
-                        shortcutManager.addDynamicShortcuts(new ShortcutInfo.Builder(activity, "test_1").setIcon(R.mipmap.ic_launcher).setShortLabel().setLongLabel().setIntent(new Intent(activity, MainActivity.class)).build());
-                    }
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && getDefaultSharedPreferences(activity).getBoolean("create_short_cut", false)) {
+//                        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
+//                        shortcutManager.addDynamicShortcuts(new ShortcutInfo.Builder(activity, "test_1").setIcon(R.mipmap.ic_launcher).setShortLabel().setLongLabel().setIntent(new Intent(activity, MainActivity.class)).build());
+//                    }
                 } else {
 //                    Logger.warning("扫码登录失败2");
                     Log.w(TAG, "handleMessage: 扫描登录失败2");
@@ -275,7 +312,7 @@ public class QRScanner {
 
             try {
                 genRequest();
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/confirm", confirm_json.toString());
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString());
                 Log.i("Network", "run: succeed upload");
             } catch (JSONException e) {
                 e.printStackTrace();
