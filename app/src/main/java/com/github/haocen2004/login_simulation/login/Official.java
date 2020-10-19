@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+
 public class Official implements LoginImpl {
 
     private JSONObject login_json;
@@ -172,7 +174,7 @@ public class Official implements LoginImpl {
     public Official(AppCompatActivity activity) {
         isLogin = false;
         this.activity = activity;
-        preferences = activity.getSharedPreferences("official_user", Context.MODE_PRIVATE);
+        preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
     }
 
     @Override

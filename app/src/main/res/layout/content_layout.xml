@@ -23,16 +23,6 @@
             app:scrimAnimationDuration="200"
             app:toolbarId="@+id/toolbar">
 
-            <ImageView
-                android:id="@+id/toolbarIconImageView"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_vertical|end"
-                android:layout_marginEnd="20dp"
-                android:contentDescription="@string/toolbar_icon_description"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.5" />
-
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"

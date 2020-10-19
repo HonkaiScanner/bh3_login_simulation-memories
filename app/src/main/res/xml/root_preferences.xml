@@ -14,12 +14,14 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="create_short_cut"
-            android:title="@string/create_short_cut" />
+            android:title="@string/create_short_cut"
+            android:visibility="gone" />
         <EditTextPreference
             android:key="custom_username"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/custom_username" />
+            android:title="@string/custom_username"
+            android:visibility="gone" />
     </PreferenceCategory>
 
 </PreferenceScreen>

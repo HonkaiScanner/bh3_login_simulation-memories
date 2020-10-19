@@ -41,5 +41,11 @@
     <string name="logout">账号已登出</string>
     <string name="outdate_qr">二维码已过期</string>
     <string name="custom_username">设置自定义用户名</string>
+    <string name="create_short_cut">为最后一次成功的扫码创建快捷方式</string>
+    <string name="slot1">账号1</string>
+    <string name="slot2">账号2</string>
+    <string name="slot3">账号3</string>
+    <string name="start_proxy">启动代理</string>
+    <string name="use_token">PC端记住账户</string>
 
 </resources>

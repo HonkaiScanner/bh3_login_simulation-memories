@@ -44,5 +44,10 @@
     <string name="outdate_qr">QR Code OutDated</string>
     <string name="custom_username">Custom Display User Name</string>
     <string name="create_short_cut">Create Short Cut For Last Succeed</string>
+    <string name="slot1">Slot 1</string>
+    <string name="slot2">Slot 2</string>
+    <string name="slot3">Slot 3</string>
+    <string name="start_proxy">Start Proxy</string>
+    <string name="use_token">Token Mode</string>
 
 </resources>

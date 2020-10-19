@@ -10,11 +10,14 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -32,11 +35,11 @@ import com.google.zxing.util.Constant;
 
 import java.util.Objects;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 
-public class MainFragment extends Fragment implements View.OnClickListener {
+public class MainFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     private LoginImpl loginImpl;
     private AppCompatActivity activity;
@@ -60,14 +63,33 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         requireActivity().findViewById(R.id.btn_login).setOnClickListener(this);
         requireActivity().findViewById(R.id.btn_scan).setOnClickListener(this);
         requireActivity().findViewById(R.id.btn_logout).setOnClickListener(this);
+        ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).setOnCheckedChangeListener(this);
+        ((Switch) requireActivity().findViewById(R.id.use_token)).setOnCheckedChangeListener((compoundButton, b) -> getDefaultSharedPreferences(activity).edit().putBoolean("use_token", b).apply());
         if (requireActivity().getPackageName().contains("dev")) {
             requireActivity().findViewById(R.id.button_debug).setOnClickListener(this);
             requireActivity().findViewById(R.id.button_debug).setVisibility(View.VISIBLE);
         }
+
         String server_type;
+        requireActivity().findViewById(R.id.official_slot_select).setVisibility(View.GONE);
+        requireActivity().findViewById(R.id.use_token).setVisibility(View.GONE);
         switch (Objects.requireNonNull(getDefaultSharedPreferences(context).getString("server_type", ""))) {
             case "Official":
                 server_type = getString(R.string.types_official);
+                requireActivity().findViewById(R.id.official_slot_select).setVisibility(View.VISIBLE);
+                requireActivity().findViewById(R.id.use_token).setVisibility(View.VISIBLE);
+                switch (getDefaultSharedPreferences(context).getInt("official_slot", 1)) {
+                    case 1:
+                        ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).check(R.id.slot1);
+                        break;
+                    case 2:
+                        ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).check(R.id.slot2);
+                        break;
+                    case 3:
+                        ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).check(R.id.slot3);
+                        break;
+                }
+
                 break;
             case "Bilibili":
                 server_type = getString(R.string.types_bilibili);
@@ -84,6 +106,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         ((TextView) requireActivity().findViewById(R.id.text_select_server)).setText(getString(R.string.types_prefix) + server_type);
         ((TextView) requireActivity().findViewById(R.id.text_auto_confirm)).setText(getString(R.string.confirm_prefix) + (getDefaultSharedPreferences(context).getBoolean("auto_confirm", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
 
+        checkPermissions();
     }
 
 
@@ -145,6 +168,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_scan:
+                if (Objects.equals(getDefaultSharedPreferences(context).getString("server_type", ""), "Official") && getDefaultSharedPreferences(context).getBoolean("use_token", false) && activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE).getBoolean("has_token", false)) {
+                    loginImpl = new Official(activity);
+                    loginImpl.login();
+                    startQrCode();
+                    return;
+                }
                 try {
                     if (loginImpl.isLogin()) {
                         if (loginImpl.getRole().is_setup()) {
@@ -161,7 +190,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_login:
-                checkPermissions();
                 try {
                     if (loginImpl.isLogin()) {
                         makeToast(getString(R.string.has_login));
@@ -214,6 +242,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     }
 
+
     @SuppressLint("ShowToast")
     private void makeToast(String result) {
         try {
@@ -226,15 +255,49 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private void checkPermissions() {
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             // 申请权限
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
                 Toast.makeText(getContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
             }
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 Toast.makeText(getContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
             }
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_PHONE_STATE)) {
+                Toast.makeText(getContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+            }
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getContext());
+            normalDialog.setTitle("权限说明");
+            normalDialog.setMessage("使用扫码器需要以下权限:\n1.读取设备识别码\n用于标识用户及米哈游登录传参\n\n2.使用摄像头\n扫码不给摄像头权限扫个寂寞\n\n3.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK所需\n可不授予权限");
+            normalDialog.setPositiveButton("我已知晓",
+                    (dialog, which) -> {
+                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE}, com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA);
+                        dialog.dismiss();
+                    });
+            normalDialog.setCancelable(false);
+            normalDialog.show();
         }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        switch (i) {
+            case R.id.slot1:
+                getDefaultSharedPreferences(activity).edit().putInt("official_slot", 1).apply();
+                break;
+            case R.id.slot2:
+                getDefaultSharedPreferences(activity).edit().putInt("official_slot", 2).apply();
+                break;
+            case R.id.slot3:
+                getDefaultSharedPreferences(activity).edit().putInt("official_slot", 3).apply();
+                break;
+        }
+        try {
+            if (loginImpl.isLogin()) {
+                loginImpl = new Official(activity);
+            }
+        } catch (Exception ignore) {
+        }
+//        Toast.makeText(getContext(), i+"", Toast.LENGTH_SHORT).show();
     }
 }

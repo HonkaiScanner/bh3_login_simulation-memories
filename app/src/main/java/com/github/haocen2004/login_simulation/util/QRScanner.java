@@ -227,7 +227,7 @@ public class QRScanner {
 
         if (app_id.contains("4")) {
 //{"app_id":4,"device":"c3a0a429-3d2a-36d1-8a4b-255aeae8a9d5","payload":{"proto":"Account","raw":"{\"uid\":\"214525854\",\"token\":\"cScORPGe3TUxbiiVZ5nuIVp1qOErNnl7\"}"},"ticket":"5f84394af05bdb23e5ce451b"}
-            SharedPreferences preferences = activity.getSharedPreferences("official_user", Context.MODE_PRIVATE);
+            SharedPreferences preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
 
             raw_json.put("uid", preferences.getString("uid", ""))
                     .put("token", preferences.getString("token", ""));
