@@ -1,0 +1,39 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xiaomi">
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!--联运sdk写入内容到sd卡-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--强制安装联运APK时，需要从SDK中读取APK文件-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!--判断游戏是否是在主进程初始化，避免初始化进程错误导致功能不可用-->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <!--获取安装权限-->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <application>
+
+        <meta-data
+            android:name="vivo_union_sdk"
+            android:value="4.6.0.1" />
+        <activity
+            android:name="com.vivo.unionsdk.ui.UnionActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+            android:theme="@android:style/Theme.Dialog"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="androidx.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="vivounion"
+                    android:host="union.vivo.com"
+                    android:path="/openjump" />
+            </intent-filter>
+        </activity>
+
+
+    </application>
+</manifest>

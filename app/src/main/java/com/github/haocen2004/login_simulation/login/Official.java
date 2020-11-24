@@ -116,7 +116,8 @@ public class Official implements LoginImpl {
                 } else {
 //                    Logger.warning("登录失败");
 //                    Logger.warning(feedback);
-                    Log.w(TAG, "handleMessage: 登录失败" + feedback);
+                    Log.w(TAG, "handleMessage: 登录失败：" + feedback);
+                    Toast.makeText(activity, "登录失败：" + feedback, Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

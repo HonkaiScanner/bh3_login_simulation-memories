@@ -9,10 +9,11 @@ android {
         minSdkVersion 21
         //noinspection OldTargetApi
         targetSdkVersion 29
-        versionCode 5
-        versionName '1.1.1-alpha1'
+        versionCode 6
+        versionName '1.1.1'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        versionNameSuffix 'alpha2'
 
     }
 
@@ -38,15 +39,17 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar","*.so",'*.aar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.navigation:navigation-fragment:2.3.0'
-    implementation 'androidx.navigation:navigation-ui:2.3.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.1'
+    implementation 'androidx.navigation:navigation-ui:2.3.1'
     implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
     implementation project(':zxing-lib')
 //    implementation project(':mi_sdk')
+//    implementation project(':vivo_sdk')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.github.MegatronKing:NetBare:df5b417'
+    implementation 'com.tencent.bugly:crashreport:3.2.422'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

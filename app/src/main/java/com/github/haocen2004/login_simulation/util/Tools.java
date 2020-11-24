@@ -31,7 +31,7 @@ import static com.github.haocen2004.login_simulation.util.Network.sendPost;
 
 public class Tools {
     private static String TAG = "Tools";
-    private static String name = "mihoyo_sdk_preference";
+    private static String name = "scanner_pref";
     private static byte[] base64DecodeChars;
     private static char[] base64EncodeChars = new char[]{
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',

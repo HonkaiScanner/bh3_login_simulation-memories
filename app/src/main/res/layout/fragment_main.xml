@@ -56,13 +56,12 @@
 
         </RadioGroup>
 
-        <Switch
-            android:id="@+id/use_token"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:text="@string/use_token"
+        <CheckBox
+            android:id="@+id/token_checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/use_token_true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/official_slot_select" />
@@ -71,11 +70,11 @@
             android:id="@+id/btn_scan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:text="@string/btn_scan"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/use_token" />
+            app:layout_constraintTop_toBottomOf="@+id/token_checkBox" />
 
         <Button
             android:id="@+id/btn_logout"

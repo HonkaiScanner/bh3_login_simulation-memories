@@ -19,6 +19,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.github.haocen2004.login_simulation.util.Network;
 import com.google.android.material.navigation.NavigationView;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         if (!getPackageName().contains("dev")) {
             new Thread(update_rb).start();
         }
+        CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", false);
 
     }
 
@@ -149,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d("Update", "Check Update Failed");
+
                 app_pref.edit().putString("bh_ver", "4.3.0").apply();
             }
             BH_VER = app_pref.getString("bh_ver", "4.3.0");

@@ -77,6 +77,7 @@ public class RoleData {
         new Thread(getOA_runnable).start();
     }
 
+
     public String getOpen_id() {
         return open_id;
     }

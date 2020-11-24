@@ -36,6 +36,7 @@ public class QRScanner {
     private String ticket;
     private String account_type;
     private String biz_key;
+    private Boolean is_official = false;
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -146,8 +147,17 @@ public class QRScanner {
         account_type = roleData.getAccount_type();
         qr_check_map = new HashMap<>();
         this.roleData = roleData;
+        is_official = false;
 
 
+    }
+
+    public QRScanner(AppCompatActivity activity, Boolean is_official) {
+        this.activity = activity;
+        this.is_official = is_official;
+        device_id = Tools.getDeviceID(activity);
+        account_type = "1";
+        qr_check_map = new HashMap<>();
     }
 
     public void parseUrl(String paramResult) {
@@ -172,7 +182,8 @@ public class QRScanner {
 
     public void getScanRequest() {
         if (app_id.contains("4")) {
-            if (!account_type.contains("1")) {
+            if (!account_type.equals("1")) {
+
                 makeToast("原神登录暂时只支持官服");
 
                 return;
@@ -225,7 +236,7 @@ public class QRScanner {
         JSONObject dispatch_json = new JSONObject();
         confirm_json = new JSONObject();
 
-        if (app_id.contains("4")) {
+        if (app_id.contains("4") || is_official) {
 //{"app_id":4,"device":"c3a0a429-3d2a-36d1-8a4b-255aeae8a9d5","payload":{"proto":"Account","raw":"{\"uid\":\"214525854\",\"token\":\"cScORPGe3TUxbiiVZ5nuIVp1qOErNnl7\"}"},"ticket":"5f84394af05bdb23e5ce451b"}
             SharedPreferences preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
 
@@ -250,7 +261,7 @@ public class QRScanner {
                 .put("app_id", app_id)
                 .put("channel_id", channel_id)
                 .put("combo_token", combo_token)
-                .put("asterisk_name", "崩坏3外置扫码器用户")
+                .put("asterisk_name", getDefaultSharedPreferences(activity).getString("custom_username", "崩坏3外置扫码器用户"))
                 .put("combo_id", combo_id)
                 .put("account_type", account_type);
 

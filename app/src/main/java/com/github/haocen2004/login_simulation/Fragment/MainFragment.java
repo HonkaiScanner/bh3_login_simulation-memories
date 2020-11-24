@@ -4,14 +4,15 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.RadioGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,8 @@ import java.util.Objects;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
 
 
 public class MainFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
@@ -45,6 +48,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     private AppCompatActivity activity;
     private Context context;
     private Proxy proxy;
+    private Boolean isOfficial = false;
+    private SharedPreferences pref;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +58,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                 .setTitle(getString(R.string.page_main));
         activity = (AppCompatActivity) getActivity();
         context = getContext();
+        pref = getDefaultSharedPreferences(context);
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
@@ -64,7 +70,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         requireActivity().findViewById(R.id.btn_scan).setOnClickListener(this);
         requireActivity().findViewById(R.id.btn_logout).setOnClickListener(this);
         ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).setOnCheckedChangeListener(this);
-        ((Switch) requireActivity().findViewById(R.id.use_token)).setOnCheckedChangeListener((compoundButton, b) -> getDefaultSharedPreferences(activity).edit().putBoolean("use_token", b).apply());
+        ((CheckBox) requireActivity().findViewById(R.id.token_checkBox)).setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
         if (requireActivity().getPackageName().contains("dev")) {
             requireActivity().findViewById(R.id.button_debug).setOnClickListener(this);
             requireActivity().findViewById(R.id.button_debug).setVisibility(View.VISIBLE);
@@ -72,13 +78,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
 
         String server_type;
         requireActivity().findViewById(R.id.official_slot_select).setVisibility(View.GONE);
-        requireActivity().findViewById(R.id.use_token).setVisibility(View.GONE);
-        switch (Objects.requireNonNull(getDefaultSharedPreferences(context).getString("server_type", ""))) {
+        requireActivity().findViewById(R.id.token_checkBox).setVisibility(View.GONE);
+        switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = getString(R.string.types_official);
                 requireActivity().findViewById(R.id.official_slot_select).setVisibility(View.VISIBLE);
-                requireActivity().findViewById(R.id.use_token).setVisibility(View.VISIBLE);
-                switch (getDefaultSharedPreferences(context).getInt("official_slot", 1)) {
+                requireActivity().findViewById(R.id.token_checkBox).setVisibility(View.VISIBLE);
+                switch (pref.getInt("official_slot", 1)) {
                     case 1:
                         ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).check(R.id.slot1);
                         break;
@@ -89,6 +95,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                         ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).check(R.id.slot3);
                         break;
                 }
+                requireActivity().findViewById(R.id.token_checkBox).setSelected(pref.getBoolean("use_token", false));
+
 
                 break;
             case "Bilibili":
@@ -104,7 +112,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                 server_type = "DEBUG -- SERVER ERROR";
         }
         ((TextView) requireActivity().findViewById(R.id.text_select_server)).setText(getString(R.string.types_prefix) + server_type);
-        ((TextView) requireActivity().findViewById(R.id.text_auto_confirm)).setText(getString(R.string.confirm_prefix) + (getDefaultSharedPreferences(context).getBoolean("auto_confirm", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
+        ((TextView) requireActivity().findViewById(R.id.text_auto_confirm)).setText(getString(R.string.confirm_prefix) + (pref.getBoolean("auto_confirm", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
 
         checkPermissions();
     }
@@ -118,7 +126,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
             if (bundle != null) {
                 String result = bundle.getString(com.github.haocen2004.login_simulation.util.Constant.INTENT_EXTRA_KEY_QR_SCAN);
                 if (result != null) {
-                    QRScanner qrScanner = new QRScanner((AppCompatActivity) getActivity(), loginImpl.getRole());
+                    QRScanner qrScanner;
+                    if (isOfficial) {
+                        qrScanner = new QRScanner(activity, true);
+                    } else {
+                        qrScanner = new QRScanner(activity, loginImpl.getRole());
+                    }
                     qrScanner.parseUrl(result);
                     qrScanner.getScanRequest();
                 } else {
@@ -137,8 +150,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA:
-            case com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE:
+            case REQ_PERM_CAMERA:
+            case REQ_PERM_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startQrCode();
                 } else {
@@ -157,7 +170,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     .CAMERA)) {
                 Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
             }
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA);
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQ_PERM_CAMERA);
             return;
         }
         Intent intent = new Intent(context, CaptureActivity.class);
@@ -168,9 +181,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_scan:
-                if (Objects.equals(getDefaultSharedPreferences(context).getString("server_type", ""), "Official") && getDefaultSharedPreferences(context).getBoolean("use_token", false) && activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE).getBoolean("has_token", false)) {
-                    loginImpl = new Official(activity);
-                    loginImpl.login();
+                if (Objects.equals(pref.getString("server_type", ""), "Official") && pref.getBoolean("use_token", false) && activity.getSharedPreferences("official_user_" + pref.getInt("official_slot", 1), Context.MODE_PRIVATE).getBoolean("has_token", false)) {
+                    makeToast("Token 登录模式");
+                    isOfficial = true;
                     startQrCode();
                     return;
                 }
@@ -197,7 +210,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     }
                 } catch (Exception ignore) {
                 }
-                switch (Objects.requireNonNull(getDefaultSharedPreferences(context).getString("server_type", ""))) {
+                switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
                     case "Official":
                         loginImpl = new Official(activity);
                         break;
@@ -222,7 +235,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                 break;
             case R.id.btn_logout:
                 try {
-                    if ("Official".equals(getDefaultSharedPreferences(context).getString("server_type", ""))) {
+                    if ("Official".equals(pref.getString("server_type", ""))) {
                         activity.getSharedPreferences("official_user", Context.MODE_PRIVATE).edit().clear().apply();
                         makeToast(getString(R.string.cache_delete));
                     }
@@ -271,7 +284,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
             normalDialog.setMessage("使用扫码器需要以下权限:\n1.读取设备识别码\n用于标识用户及米哈游登录传参\n\n2.使用摄像头\n扫码不给摄像头权限扫个寂寞\n\n3.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK所需\n可不授予权限");
             normalDialog.setPositiveButton("我已知晓",
                     (dialog, which) -> {
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE}, com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA);
+                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE}, REQ_PERM_CAMERA);
                         dialog.dismiss();
                     });
             normalDialog.setCancelable(false);
