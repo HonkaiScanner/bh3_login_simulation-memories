@@ -140,6 +140,7 @@ public class Bilibili implements LoginImpl {
                     public void onSuccess() {
 //                        Logger.info("Bilibili SDK setup succeed");
                         Log.i(TAG, "onSuccess: Setup Succeed");
+                        doBiliLogin();
                     }
 
                     @Override
@@ -152,8 +153,6 @@ public class Bilibili implements LoginImpl {
 
         gameSdk = BSGameSdk.getInstance();
         preferences = activity.getSharedPreferences("bili_user", Context.MODE_PRIVATE);
-        doBiliLogin();
-
     }
 
     @Override

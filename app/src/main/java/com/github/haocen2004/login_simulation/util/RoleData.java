@@ -1,11 +1,12 @@
 package com.github.haocen2004.login_simulation.util;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,10 +26,10 @@ public class RoleData {
     private String oa_req_key;
     private boolean is_setup;
     private boolean uc_sign;
-    @SuppressLint("HandlerLeak")
+
     Handler getOA_handler = new Handler(Looper.getMainLooper()) {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
@@ -90,10 +91,12 @@ public class RoleData {
         return combo_token;
     }
 
+    //区分官服和渠道服
     public String getAccount_type() {
         return account_type;
     }
 
+    //渠道id
     public String getAccountType() {
         return accountType;
     }
