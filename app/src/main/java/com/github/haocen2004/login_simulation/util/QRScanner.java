@@ -91,7 +91,9 @@ public class QRScanner {
 
             try {
                 genRequest();
+                Log.d("Network", "biz_key: "+biz_key);
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString());
+                Log.d("Network", "feedback: "+feedback);
                 Log.i("Network", "run: succeed upload");
             } catch (JSONException e) {
                 e.printStackTrace();
