@@ -50,6 +50,10 @@
             android:name="BSGameSdk_PaidGame"
             android:value="false" />
 
+        <!-- oppo options -->
+        <meta-data android:name="debug_mode"
+            android:value="false" />
+
         <activity
             android:name="com.bsgamesdk.android.activity.CaptchaWebActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"

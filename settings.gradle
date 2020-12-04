@@ -1,3 +1,2 @@
-include ':app', ':zxing-lib'
-//,'mi_sdk'
+include ':app', ':zxing-lib', ':mi_sdk'
 rootProject.name = "bh3_login_simulation"

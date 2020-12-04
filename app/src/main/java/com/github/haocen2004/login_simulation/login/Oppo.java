@@ -10,9 +10,10 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
-import com.vivo.unionsdk.open.VivoAccountCallback;
-import com.vivo.unionsdk.open.VivoUnionSDK;
+import com.nearme.game.sdk.GameCenterSDK;
+import com.nearme.game.sdk.callback.ApiCallback;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Vivo implements LoginImpl {
+public class Oppo implements LoginImpl {
     private Activity activity;
     private boolean isLogin;
     private String uid;
@@ -29,36 +30,39 @@ public class Vivo implements LoginImpl {
     private String appId = "";
     private String device_id;
     private static String TAG = "Vivo Login";
+    private final String appSecret = "test";
+    private GameCenterSDK sdk;
 
-    private VivoAccountCallback callback = new VivoAccountCallback() {
-        @Override
-        public void onVivoAccountLogin(String s, String s1, String s2) {
-            uid = s1;
-            token = s2;
-            doBHLogin();
-//            roleData = new RoleData()
-        }
 
-        @Override
-        public void onVivoAccountLogout(int i) {
-            isLogin = false;
-        }
-
-        @Override
-        public void onVivoAccountLoginCancel() {
-            isLogin = false;
-        }
-    };
-
-    public Vivo(Activity activity){
+    public Oppo(Activity activity) {
         this.activity = activity;
         device_id = Tools.getDeviceID(activity);
-        VivoUnionSDK.initSdk(activity,appId,true);
-        VivoUnionSDK.registerAccountCallback(activity,callback);
+        GameCenterSDK.init(appSecret,activity);
+        sdk = GameCenterSDK.getInstance();
     }
+
     @Override
     public void login() {
-        VivoUnionSDK.login(activity);
+        sdk.doLogin(activity, new ApiCallback() {
+            @Override
+            public void onSuccess(String s) {
+                try {
+                    JSONObject json = new JSONObject(s);
+                    token = json.getString("token");
+                    uid = json.getString("ssoid");
+                    doBHLogin();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(String s, int i) {
+                makeToast("error:"+s+"\ncode:"+i);
+                Log.d(TAG, "onFailure: s:"+s);
+                Log.d(TAG, "onFailure: i:"+i);
+            }
+        });
     }
 
     @Override
@@ -136,6 +140,7 @@ public class Vivo implements LoginImpl {
         }
 
     }
+
     @SuppressLint("ShowToast")
     private void makeToast(String result) {
         try {

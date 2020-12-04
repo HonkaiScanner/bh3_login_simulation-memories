@@ -45,8 +45,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.1'
     implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
     implementation project(':zxing-lib')
-//    implementation project(':mi_sdk')
-//    implementation project(':vivo_sdk')
+    implementation project(':mi_sdk')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.github.MegatronKing:NetBare:df5b417'
     implementation 'com.tencent.bugly:crashreport:3.2.422'
