@@ -49,5 +49,6 @@
     <string name="slot3">Slot 3</string>
     <string name="start_proxy">Start Proxy</string>
     <string name="use_token_true">Token Mode</string>
+    <string name="types_vivo">Vivo Server</string>
 
 </resources>

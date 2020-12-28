@@ -21,16 +21,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Vivo implements LoginImpl {
-    private Activity activity;
+    private final Activity activity;
     private boolean isLogin;
     private String uid;
     private String token;
     private RoleData roleData;
-    private String appId = "";
-    private String device_id;
-    private static String TAG = "Vivo Login";
+    private final String appId = "94c93e8ac604d1909943862f12803ac9";
+    private final String device_id;
+    private static final String TAG = "Vivo Login";
 
-    private VivoAccountCallback callback = new VivoAccountCallback() {
+    private final VivoAccountCallback callback = new VivoAccountCallback() {
         @Override
         public void onVivoAccountLogin(String s, String s1, String s2) {
             uid = s1;
@@ -82,13 +82,9 @@ public class Vivo implements LoginImpl {
 
         login_map.put("device", device_id);
         login_map.put("app_id", "1");
-        login_map.put("channel_id", "14");
+        login_map.put("channel_id", "19");
 
-        String data_json = "{\"uid\":" +
-                uid +
-                ",\"access_key\":\"" +
-//                access_token +   // 等待拆包获取传参
-                "\"}";
+        String data_json = "{\"authtoken\":\"" + token + "\"}";
 
         login_map.put("data", data_json);
 
@@ -119,7 +115,7 @@ public class Vivo implements LoginImpl {
                 String combo_id = data_json2.getString("combo_id");
                 String combo_token = data_json2.getString("combo_token");
                 String open_id = data_json2.getString("open_id");
-                roleData = new RoleData(open_id, "", combo_id, combo_token, "14", "2", "vivo");
+                roleData = new RoleData(open_id, "", combo_id, combo_token, "19", "2", "vivo");
 
                 isLogin = true;
                 makeToast(activity.getString(R.string.login_succeed));

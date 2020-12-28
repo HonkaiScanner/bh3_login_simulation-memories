@@ -8,3 +8,5 @@
 .cxx
 /.idea/
 /app/release/
+*.log
+/app/debug/

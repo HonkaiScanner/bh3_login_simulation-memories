@@ -29,6 +29,7 @@ import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.UC;
+import com.github.haocen2004.login_simulation.login.Vivo;
 import com.github.haocen2004.login_simulation.util.QRScanner;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.zxing.activity.CaptureActivity;
@@ -107,6 +108,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
 //                break;
             case "UC":
                 server_type = getString(R.string.types_uc);
+                break;
+            case "Vivo":
+                server_type = getString(R.string.types_vivo); //need i18n
                 break;
             default:
                 server_type = "DEBUG -- SERVER ERROR";
@@ -226,7 +230,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                         loginImpl = new UC(activity);
                         //20
                         break;
-
+                    case "Vivo":
+                        loginImpl = new Vivo(activity);
+                        break;
                     default:
                         makeToast(getString(R.string.error_wrong_server));
                         break;

@@ -12,20 +12,22 @@
     <string name="basic_header">基础设置</string>
     <string name="settings_fast_login">自动确认扫码结果</string>
 
-    <string name="toolbar_icon_description">占位符</string>
-    <string name="request_permission_failed">请求权限失败</string>
-    <string name="settings_servers">选择服务器</string>
     <string name="types_official">官服</string>
     <string name="types_prefix">当前选择：</string>
     <string name="types_bilibili">B服</string>
+    <string name="types_uc">九游服</string>
+    <string name="types_xiaomi">小米服</string>
+    <string name="types_vivo">Vivo服</string>
+
+    <string name="toolbar_icon_description">占位符</string>
+    <string name="request_permission_failed">请求权限失败</string>
+    <string name="settings_servers">选择服务器</string>
     <string name="list_report">Bug反馈</string>
     <string name="list_pay">支持作者</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
     <string name="feedback_holder">感谢您的反馈</string>
     <string name="support_holder">感谢您的支持</string>
-    <string name="types_uc">九游服</string>
-    <string name="types_xiaomi">小米服</string>
     <string name="boolean_true">启用</string>
     <string name="confirm_prefix">自动确认：</string>
     <string name="boolean_false">禁用</string>
@@ -47,5 +49,6 @@
     <string name="slot3">账号3</string>
     <string name="start_proxy">启动代理</string>
     <string name="use_token_true">Token登录模式</string>
+
 
 </resources>

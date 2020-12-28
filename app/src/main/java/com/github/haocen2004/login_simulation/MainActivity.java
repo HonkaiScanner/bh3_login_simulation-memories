@@ -90,9 +90,7 @@ public class MainActivity extends AppCompatActivity {
         if (getDefaultSharedPreferences(this).getBoolean("showBetaInfo", true)) {
             showBetaInfoDialog();
         }
-        if (!getPackageName().contains("dev")) {
-            new Thread(update_rb).start();
-        }
+        new Thread(update_rb).start();
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", false);
 
     }
@@ -110,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
         normalDialog.setTitle("Beta使用须知");
-        normalDialog.setMessage("你现在使用的是内部测试版本\n请及时通过左边侧滑栏反馈bug\n此消x息只会出现一次");
+        normalDialog.setMessage("你现在使用的是内部测试版本\n请及时通过左边侧滑栏反馈bug\n此消息只会出现一次");
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     getDefaultSharedPreferences(this).edit().putBoolean("showBetaInfo", false).apply();
@@ -145,16 +143,16 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
-                if (app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
+                if (!getPackageName().contains("dev") && app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
                     showUpdateDialog(json.getString("ver_name"), json.getString("code"), json.getString("update_url"), json.getString("logs").replaceAll("&n", "\n"));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d("Update", "Check Update Failed");
 
-                app_pref.edit().putString("bh_ver", "4.3.0").apply();
+                app_pref.edit().putString("bh_ver", "4.5.0").apply();
             }
-            BH_VER = app_pref.getString("bh_ver", "4.3.0");
+            BH_VER = app_pref.getString("bh_ver", "4.5.0");
         }
     };
     Runnable update_rb = () -> {
