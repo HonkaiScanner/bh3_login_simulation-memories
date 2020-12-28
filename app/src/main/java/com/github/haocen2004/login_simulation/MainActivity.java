@@ -34,6 +34,35 @@ public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
     private SharedPreferences app_pref;
+    @SuppressLint("HandlerLeak")
+    Handler update_check_hd = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+            feedback = feedback.substring(1, feedback.length() - 1).replaceAll("\\\\", "");
+            Log.i("Update", "handleMessage: " + feedback);
+            try {
+                JSONObject json = new JSONObject(feedback);
+                app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
+                if (!getPackageName().contains("dev") && app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
+                    showUpdateDialog(
+                            json.getString("ver_name"),
+                            json.getString("code"),
+                            json.getString("update_url"),
+                            json.getString("logs").replaceAll("&n", "\n")
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("Update", "Check Update Failed");
+
+                app_pref.edit().putString("bh_ver", "4.5.0").apply();
+            }
+            BH_VER = app_pref.getString("bh_ver", "4.5.0");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        setContentView(R.layout.activity_main);
 
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         navController = Navigation.findNavController(this, R.id.hostFragment);
@@ -86,9 +115,8 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationView navigationView = findViewById(R.id.navigationView);
-
         NavigationUI.setupWithNavController(navigationView, navController);
-        ((TextView) findViewById(R.id.version_text)).setText(VERSION_NAME);
+        ((TextView) findViewById(R.id.textView2)).setText(VERSION_NAME);
 
         if (getDefaultSharedPreferences(this).getBoolean("showBetaInfo", true)) {
             showBetaInfoDialog();
@@ -97,8 +125,6 @@ public class MainActivity extends AppCompatActivity {
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", false);
 
     }
-
-
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -133,31 +159,6 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.setCancelable(false);
         normalDialog.show();
     }
-
-    @SuppressLint("HandlerLeak")
-    Handler update_check_hd = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String feedback = data.getString("value");
-            feedback = feedback.substring(1, feedback.length() - 1).replaceAll("\\\\", "");
-            Log.i("Update", "handleMessage: " + feedback);
-            try {
-                JSONObject json = new JSONObject(feedback);
-                app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
-                if (!getPackageName().contains("dev") && app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
-                    showUpdateDialog(json.getString("ver_name"), json.getString("code"), json.getString("update_url"), json.getString("logs").replaceAll("&n", "\n"));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.d("Update", "Check Update Failed");
-
-                app_pref.edit().putString("bh_ver", "4.5.0").apply();
-            }
-            BH_VER = app_pref.getString("bh_ver", "4.5.0");
-        }
-    };
     Runnable update_rb = () -> {
         String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
         Message msg = new Message();
@@ -166,5 +167,4 @@ public class MainActivity extends AppCompatActivity {
         msg.setData(data);
         update_check_hd.sendMessage(msg);
     };
-
 }
