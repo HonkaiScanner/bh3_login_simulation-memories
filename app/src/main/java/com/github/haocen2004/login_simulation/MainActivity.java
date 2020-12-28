@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
+import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.navigationView);
 
         NavigationUI.setupWithNavController(navigationView, navController);
+        ((TextView) findViewById(R.id.version_text)).setText(VERSION_NAME);
 
         if (getDefaultSharedPreferences(this).getBoolean("showBetaInfo", true)) {
             showBetaInfoDialog();

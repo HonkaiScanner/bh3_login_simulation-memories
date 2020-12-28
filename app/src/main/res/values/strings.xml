@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Honkai Impact 3 Scanner</string>
     <string name="app_info" translatable="false">Powered By Hao_cen</string>
-    <string name="app_ver" translatable="false">V.1.1.1-alpha2</string>
+    <string name="app_ver" translatable="false">ver_placeholder</string>
     <string name="btn_login">Login</string>
     <string name="btn_login_finished">Logged</string>
     <string name="btn_scan">Scan Qr Code</string>

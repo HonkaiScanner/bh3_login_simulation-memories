@@ -7,13 +7,12 @@ android {
     defaultConfig {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 21
-        //noinspection OldTargetApi
         targetSdkVersion 29
-        versionCode 6
-        versionName '1.1.1'
+        versionCode 7
+        versionName '1.2.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        versionNameSuffix 'alpha2'
+        versionNameSuffix 'alpha-1'
 
     }
 
