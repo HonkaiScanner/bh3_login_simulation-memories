@@ -23,7 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.github.haocen2004.login_simulation.Proxy.Proxy;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
@@ -48,7 +47,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     private LoginImpl loginImpl;
     private AppCompatActivity activity;
     private Context context;
-    private Proxy proxy;
     private Boolean isOfficial = false;
     private SharedPreferences pref;
 
@@ -72,10 +70,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         requireActivity().findViewById(R.id.btn_logout).setOnClickListener(this);
         ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).setOnCheckedChangeListener(this);
         ((CheckBox) requireActivity().findViewById(R.id.token_checkBox)).setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
-        if (requireActivity().getPackageName().contains("dev")) {
-            requireActivity().findViewById(R.id.button_debug).setOnClickListener(this);
-            requireActivity().findViewById(R.id.button_debug).setVisibility(View.VISIBLE);
-        }
 
         String server_type;
         requireActivity().findViewById(R.id.official_slot_select).setVisibility(View.GONE);
@@ -142,9 +136,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     makeToast(getString(R.string.error_scan));
                 }
             }
-        }
-        if (resultCode == RESULT_OK && requestCode == 12580) {
-            proxy.prepareNetBare();
         }
 
     }
@@ -252,9 +243,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     makeToast(getString(R.string.error_not_login));
                 }
                 break;
-            case R.id.button_debug:
-                proxy = new Proxy(activity);
-                break;
             default:
                 break;
         }
@@ -287,7 +275,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
             }
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getContext());
             normalDialog.setTitle("权限说明");
-            normalDialog.setMessage("使用扫码器需要以下权限:\n1.读取设备识别码\n用于标识用户及米哈游登录传参\n\n2.使用摄像头\n扫码不给摄像头权限扫个寂寞\n\n3.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK所需\n可不授予权限");
+            normalDialog.setMessage("使用扫码器需要以下权限:\n1.读取设备识别码\n用于标识用户及米哈游登录传参\n\n2.使用摄像头\n用于扫描米哈游游戏登录二维码\n\n3.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK所需\n可不授予权限");
             normalDialog.setPositiveButton("我已知晓",
                     (dialog, which) -> {
                         ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE}, REQ_PERM_CAMERA);

@@ -126,16 +126,5 @@
             app:layout_constraintTop_toTopOf="@+id/guideline4"
             app:layout_constraintVertical_bias="0.3" />
 
-        <Button
-            android:id="@+id/button_debug"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
-            android:text="@string/start_proxy"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_auto_confirm" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
