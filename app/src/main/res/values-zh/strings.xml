@@ -49,6 +49,7 @@
     <string name="slot3">账号3</string>
     <string name="start_proxy">启动代理</string>
     <string name="use_token_true">Token登录模式</string>
+    <string name="settings_bh_ver">崩坏3版本号</string>
 
 
 </resources>
