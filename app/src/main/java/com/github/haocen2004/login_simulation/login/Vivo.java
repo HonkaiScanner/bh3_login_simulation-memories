@@ -41,6 +41,7 @@ public class Vivo implements LoginImpl {
 
         @Override
         public void onVivoAccountLogout(int i) {
+            makeToast(activity.getString(R.string.logout));
             isLogin = false;
         }
 
