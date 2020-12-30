@@ -2,7 +2,6 @@ package com.github.haocen2004.login_simulation.login;
 
 import android.app.Application;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
+import com.tencent.bugly.crashreport.BuglyLog;
 import com.xiaomi.gamecenter.sdk.MiCommplatform;
 import com.xiaomi.gamecenter.sdk.MiErrorCode;
 import com.xiaomi.gamecenter.sdk.OnInitProcessListener;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class Xiaomi extends Application implements LoginImpl {
 
 
-    private AppCompatActivity activity;
+    private final AppCompatActivity activity;
     private boolean isLogin;
     private String uid;
     private String session;
@@ -46,7 +46,7 @@ public class Xiaomi extends Application implements LoginImpl {
         MiCommplatform.Init(activity, appInfo, new OnInitProcessListener() {
             @Override
             public void finishInitProcess(List<String> loginMethod, int gameConfig) {
-                Log.i(TAG, "finishInitProcess: Init success");
+                BuglyLog.i(TAG, "finishInitProcess: Init success");
                 MiCommplatform.getInstance().onMainActivityCreate(activity);
                 MiCommplatform.getInstance().miLogin(activity,
                         (code, arg1) -> {
@@ -119,12 +119,12 @@ public class Xiaomi extends Application implements LoginImpl {
             }
 
             login_json.put("sign", sign);
-            Log.d(TAG, "doBHLogin: login_json: "+login_json.toString());
+            BuglyLog.d(TAG, "doBHLogin: login_json: " + login_json.toString());
 //            Logger.info(login_json.toString());
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
             JSONObject feedback_json = new JSONObject(feedback);
 //            Logger.info(feedback);
-            Log.d(TAG, "doBHLogin: feedback: "+feedback);
+            BuglyLog.d(TAG, "doBHLogin: feedback: " + feedback);
             if (feedback_json.getInt("retcode") == 0) {
 
                 JSONObject data_json2 = feedback_json.getJSONObject("data");

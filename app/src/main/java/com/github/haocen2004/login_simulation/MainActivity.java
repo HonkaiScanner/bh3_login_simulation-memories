@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +19,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.github.haocen2004.login_simulation.util.Network;
 import com.google.android.material.navigation.NavigationView;
+import com.tencent.bugly.crashreport.BuglyLog;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
@@ -42,21 +42,20 @@ public class MainActivity extends AppCompatActivity {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
             feedback = feedback.substring(1, feedback.length() - 1).replaceAll("\\\\", "");
-            Log.i("Update", "handleMessage: " + feedback);
+            BuglyLog.i("Update", "handleMessage: " + feedback);
             try {
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
                 if (!getPackageName().contains("dev") && app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
                     showUpdateDialog(
                             json.getString("ver_name"),
-                            json.getString("code"),
                             json.getString("update_url"),
                             json.getString("logs").replaceAll("&n", "\n")
                     );
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.d("Update", "Check Update Failed");
+                BuglyLog.d("Update", "Check Update Failed");
 
                 app_pref.edit().putString("bh_ver", "4.5.0").apply();
             }
@@ -147,10 +146,10 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.show();
     }
 
-    private void showUpdateDialog(String ver, String code, String url, String logs) {
+    private void showUpdateDialog(String ver, String url, String logs) {
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
         normalDialog.setTitle("获取到新版本: " + ver);
-        normalDialog.setMessage("更新日志：\n" + logs + "\n\n请记下提取码 " + code + "\n并点击按钮前往更新");
+        normalDialog.setMessage("更新日志：\n" + logs);
         normalDialog.setPositiveButton("打开更新链接",
                 (dialog, which) -> {
                     openUrl(url, this);

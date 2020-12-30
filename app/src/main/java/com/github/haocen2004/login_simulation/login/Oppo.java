@@ -3,7 +3,6 @@ package com.github.haocen2004.login_simulation.login;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.github.haocen2004.login_simulation.R;
@@ -12,6 +11,7 @@ import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.nearme.game.sdk.GameCenterSDK;
 import com.nearme.game.sdk.callback.ApiCallback;
+import com.tencent.bugly.crashreport.BuglyLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,22 +22,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Oppo implements LoginImpl {
-    private Activity activity;
+    private final Activity activity;
     private boolean isLogin;
     private String uid;
     private String token;
     private RoleData roleData;
-    private String appId = "";
-    private String device_id;
-    private static String TAG = "Vivo Login";
-    private final String appSecret = "test";
-    private GameCenterSDK sdk;
+    private final String appId = "";
+    private final String device_id;
+    private static final String TAG = "Oppo Login";
+    private final String appSecret = "f303388D89043bfEB1A667cfE42ea47E";
+    private final GameCenterSDK sdk;
 
 
     public Oppo(Activity activity) {
         this.activity = activity;
         device_id = Tools.getDeviceID(activity);
-        GameCenterSDK.init(appSecret,activity);
+        GameCenterSDK.init(appSecret, activity);
         sdk = GameCenterSDK.getInstance();
     }
 
@@ -58,9 +58,9 @@ public class Oppo implements LoginImpl {
 
             @Override
             public void onFailure(String s, int i) {
-                makeToast("error:"+s+"\ncode:"+i);
-                Log.d(TAG, "onFailure: s:"+s);
-                Log.d(TAG, "onFailure: i:"+i);
+                makeToast("error:" + s + "\ncode:" + i);
+                BuglyLog.d(TAG, "onFailure: s:" + s);
+                BuglyLog.d(TAG, "onFailure: i:" + i);
             }
         });
     }
@@ -88,10 +88,10 @@ public class Oppo implements LoginImpl {
         login_map.put("app_id", "1");
         login_map.put("channel_id", "14");
 
-        String data_json = "{\"uid\":" +
+        String data_json = "{\"ssoid\":" +
                 uid +
-                ",\"access_key\":\"" +
-//                access_token +   // 等待拆包获取传参
+                ",\"token\":\"" +
+                token +
                 "\"}";
 
         login_map.put("data", data_json);
@@ -112,10 +112,10 @@ public class Oppo implements LoginImpl {
 
             login_json.put("sign", sign);
 
-            Log.i(TAG, "doBHLogin: " + login_json.toString());
+            BuglyLog.i(TAG, "doBHLogin: " + login_json.toString());
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
             JSONObject feedback_json = new JSONObject(feedback);
-            Log.i(TAG, "doBHLogin: " + feedback);
+            BuglyLog.i(TAG, "doBHLogin: " + feedback);
 
             if (feedback_json.getInt("retcode") == 0) {
 
@@ -123,7 +123,7 @@ public class Oppo implements LoginImpl {
                 String combo_id = data_json2.getString("combo_id");
                 String combo_token = data_json2.getString("combo_token");
                 String open_id = data_json2.getString("open_id");
-                roleData = new RoleData(open_id, "", combo_id, combo_token, "14", "2", "vivo");
+                roleData = new RoleData(open_id, "", combo_id, combo_token, "18", "2", "oppo");
 
                 isLogin = true;
                 makeToast(activity.getString(R.string.login_succeed));

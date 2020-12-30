@@ -3,13 +3,13 @@ package com.github.haocen2004.login_simulation.login;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
+import com.tencent.bugly.crashreport.BuglyLog;
 import com.vivo.unionsdk.open.VivoAccountCallback;
 import com.vivo.unionsdk.open.VivoUnionSDK;
 
@@ -104,10 +104,10 @@ public class Vivo implements LoginImpl {
 
             login_json.put("sign", sign);
 
-            Log.i(TAG, "doBHLogin: " + login_json.toString());
+            BuglyLog.i(TAG, "doBHLogin: " + login_json.toString());
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
             JSONObject feedback_json = new JSONObject(feedback);
-            Log.i(TAG, "doBHLogin: " + feedback);
+            BuglyLog.i(TAG, "doBHLogin: " + feedback);
 
             if (feedback_json.getInt("retcode") == 0) {
 

@@ -7,7 +7,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
+
+import com.tencent.bugly.crashreport.BuglyLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,9 +31,9 @@ import static com.github.haocen2004.login_simulation.util.Constant.BH_APP_KEY;
 import static com.github.haocen2004.login_simulation.util.Network.sendPost;
 
 public class Tools {
-    private static String TAG = "Tools";
+    private static final String TAG = "Tools";
     private static final String name = "scanner_pref";
-    private static byte[] base64DecodeChars;
+    private static final byte[] base64DecodeChars;
     private static final char[] base64EncodeChars = new char[]{
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
@@ -65,13 +66,13 @@ public class Tools {
 //        https://global1.bh3.com/query_dispatch?version=4.2.0_gf_pc&t=1598673811
         try {
             String feedback = sendPost("https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
-            Log.i(TAG, "getOAServer: " + feedback);
+            BuglyLog.i(TAG, "getOAServer: " + feedback);
             JSONObject json1 = new JSONObject(feedback);
             JSONArray jsonArray = json1.getJSONArray("region_list");
             JSONObject json2 = jsonArray.getJSONObject(0);
             String url = json2.getString("dispatch_url");
             feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
-            Log.i(TAG, "getOAServer: " + feedback);
+            BuglyLog.i(TAG, "getOAServer: " + feedback);
 
             return feedback;
         } catch (JSONException e) {

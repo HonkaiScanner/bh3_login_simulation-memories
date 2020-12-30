@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,11 +13,11 @@ import com.bsgamesdk.android.BSGameSdk;
 import com.bsgamesdk.android.callbacklistener.BSGameSdkError;
 import com.bsgamesdk.android.callbacklistener.CallbackListener;
 import com.bsgamesdk.android.callbacklistener.InitCallbackListener;
-import com.bsgamesdk.android.utils.LogUtils;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
+import com.tencent.bugly.crashreport.BuglyLog;
 
 import org.json.JSONObject;
 
@@ -31,14 +30,14 @@ import static com.github.haocen2004.login_simulation.util.Constant.BS_APP_KEY;
 
 public class Bilibili implements LoginImpl {
 
-    private static String TAG = "Bilibili Login";
+    private static final String TAG = "Bilibili Login";
     private String access_token;
     private String username;
     private String uid;
     private BSGameSdk gameSdk;
     private SharedPreferences preferences;
-    private String device_id;
-    private AppCompatActivity activity;
+    private final String device_id;
+    private final AppCompatActivity activity;
     private boolean isLogin;
     private RoleData roleData;
 
@@ -70,7 +69,7 @@ public class Bilibili implements LoginImpl {
             @Override
             public void onFailed(BSGameSdkError arg0) {
                 // 此处为操作失败时执行，返回值为BSGameSdkError类型变量，其中包含ErrorCode和ErrorMessage
-                LogUtils.d("onFailed\nErrorCode : "
+                BuglyLog.d(TAG, "onFailed\nErrorCode : "
                         + arg0.getErrorCode() + "\nErrorMessage : "
                         + arg0.getErrorMessage());
                 makeToast("onFailed\nErrorCode : "
@@ -81,7 +80,7 @@ public class Bilibili implements LoginImpl {
             @Override
             public void onError(BSGameSdkError arg0) {
                 // 此处为操作异常时执行，返回值为BSGameSdkError类型变量，其中包含ErrorCode和ErrorMessage
-                LogUtils.d("onError\nErrorCode : "
+                BuglyLog.d(TAG, "onError\nErrorCode : "
                         + arg0.getErrorCode() + "\nErrorMessage : "
                         + arg0.getErrorMessage());
                 makeToast("onError\nErrorCode : " + arg0.getErrorCode()
@@ -98,7 +97,7 @@ public class Bilibili implements LoginImpl {
             @Override
             public void onSuccess(Bundle arg0) {
                 // 此处为操作成功时执行，返回值通过Bundle传回
-                LogUtils.d("onSuccess");
+                BuglyLog.d(TAG, "onSuccess");
                 try {
                     preferences.edit().clear().apply();
                 } catch (NullPointerException e) {
@@ -111,7 +110,7 @@ public class Bilibili implements LoginImpl {
             @Override
             public void onFailed(BSGameSdkError arg0) {
                 // 此处为操作失败时执行，返回值为BSGameSdkError类型变量，其中包含ErrorCode和ErrorMessage
-                LogUtils.d("onFailed\nErrorCode : "
+                BuglyLog.d(TAG, "onFailed\nErrorCode : "
                         + arg0.getErrorCode() + "\nErrorMessage : "
                         + arg0.getErrorMessage());
                 makeToast("onFailed\nErrorCode : "
@@ -122,7 +121,7 @@ public class Bilibili implements LoginImpl {
             @Override
             public void onError(BSGameSdkError arg0) {
                 // 此处为操作异常时执行，返回值为BSGameSdkError类型变量，其中包含ErrorCode和ErrorMessage
-                LogUtils.d("onError\nErrorCode : "
+                BuglyLog.d(TAG, "onError\nErrorCode : "
                         + arg0.getErrorCode() + "\nErrorMessage : "
                         + arg0.getErrorMessage());
                 makeToast("onError\nErrorCode : " + arg0.getErrorCode()
@@ -139,14 +138,14 @@ public class Bilibili implements LoginImpl {
                     @Override
                     public void onSuccess() {
 //                        Logger.info("Bilibili SDK setup succeed");
-                        Log.i(TAG, "onSuccess: Setup Succeed");
+                        BuglyLog.i(TAG, "onSuccess: Setup Succeed");
                         doBiliLogin();
                     }
 
                     @Override
                     public void onFailed() {
 
-                        Log.w(TAG, "Bilibili SDK setup Failed");
+                        BuglyLog.w(TAG, "Bilibili SDK setup Failed");
 
                     }
                 }, () -> System.exit(0));
@@ -208,10 +207,10 @@ public class Bilibili implements LoginImpl {
 
             login_json.put("sign", sign);
 
-            Log.i(TAG, "doBHLogin: " + login_json.toString());
+            BuglyLog.i(TAG, "doBHLogin: " + login_json.toString());
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
             JSONObject feedback_json = new JSONObject(feedback);
-            Log.i(TAG, "doBHLogin: " + feedback);
+            BuglyLog.i(TAG, "doBHLogin: " + feedback);
 
             if (feedback_json.getInt("retcode") == 0) {
 

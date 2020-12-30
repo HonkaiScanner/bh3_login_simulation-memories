@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,6 +14,7 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
+import com.tencent.bugly.crashreport.BuglyLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,13 +37,13 @@ import cn.uc.gamesdk.UCGameSdk;
 
 public class UC implements LoginImpl {
 
-    private AppCompatActivity activity;
+    private final AppCompatActivity activity;
     private UCGameSdk sdk;
     private String sid;
     private boolean isLogin;
     private RoleData roleData;
-    private static String TAG = "UC Login";
-    private SDKEventReceiver eventReceiver = new SDKEventReceiver() {
+    private static final String TAG = "UC Login";
+    private final SDKEventReceiver eventReceiver = new SDKEventReceiver() {
 
         @Subscribe(event = SDKEventKey.ON_INIT_SUCC)
         private void onInitSucc() throws AliNotInitException, AliLackActivityException {
@@ -53,7 +53,7 @@ public class UC implements LoginImpl {
         @Subscribe(event = SDKEventKey.ON_LOGIN_SUCC)
         private void onLoginSucc(String sid) {
 //            System.out.println("开始登陆" + sid);
-            Log.i("UCSDK", "onLoginSucc: sid:" + sid);
+            BuglyLog.i("UCSDK", "onLoginSucc: sid:" + sid);
             setSid(sid);
 
             doBHLogin();
@@ -101,7 +101,7 @@ public class UC implements LoginImpl {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 //            Logger.debug(feedback);
-            Log.d(TAG, "handleMessage: " + feedback);
+            BuglyLog.d(TAG, "handleMessage: " + feedback);
             JSONObject feedback_json = null;
             try {
                 feedback_json = new JSONObject(feedback);
@@ -109,7 +109,7 @@ public class UC implements LoginImpl {
                 e.printStackTrace();
             }
 //            Logger.info(feedback);
-            Log.i(TAG, "handleMessage: " + feedback);
+            BuglyLog.i(TAG, "handleMessage: " + feedback);
             try {
                 if (feedback_json.getInt("retcode") == 0) {
 
@@ -168,7 +168,7 @@ public class UC implements LoginImpl {
                 login_json.put("sign", sign);
 
 //                Logger.info(login_json.toString());
-                Log.i(TAG, "run: " + login_json.toString());
+                BuglyLog.i(TAG, "run: " + login_json.toString());
                 String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
 
                 Message msg = new Message();

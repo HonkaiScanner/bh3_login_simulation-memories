@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +18,7 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
+import com.tencent.bugly.crashreport.BuglyLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,10 +37,10 @@ public class Official implements LoginImpl {
     private String uid;
     private String username;
     private String password;
-    private AppCompatActivity activity;
+    private final AppCompatActivity activity;
     private boolean isLogin;
-    private SharedPreferences preferences;
-    private static String TAG = "Official Login.";
+    private final SharedPreferences preferences;
+    private static final String TAG = "Official Login.";
     @SuppressLint("HandlerLeak")
     Handler login_handler = new Handler() {
         @Override
@@ -49,7 +49,7 @@ public class Official implements LoginImpl {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 //            Logger.debug(feedback);
-            Log.d(TAG, "handleMessage: " + feedback);
+            BuglyLog.d(TAG, "handleMessage: " + feedback);
 
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
@@ -67,7 +67,7 @@ public class Official implements LoginImpl {
                     new Thread(login_runnable2).start();
                 } else {
 //                    Logger.warning("登录失败");
-                    Log.w(TAG, "handleMessage: 登录失败" + feedback);
+                    BuglyLog.w(TAG, "handleMessage: 登录失败" + feedback);
 //                    Logger.warning(feedback);
                 }
             } catch (JSONException e) {
@@ -100,7 +100,7 @@ public class Official implements LoginImpl {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 //            Logger.debug(feedback);
-            Log.d(TAG, "handleMessage: " + feedback);
+            BuglyLog.d(TAG, "handleMessage: " + feedback);
 
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
@@ -116,7 +116,7 @@ public class Official implements LoginImpl {
                 } else {
 //                    Logger.warning("登录失败");
 //                    Logger.warning(feedback);
-                    Log.w(TAG, "handleMessage: 登录失败：" + feedback);
+                    BuglyLog.w(TAG, "handleMessage: 登录失败：" + feedback);
                     Toast.makeText(activity, "登录失败：" + feedback, Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
@@ -156,10 +156,10 @@ public class Official implements LoginImpl {
                 login_json.put("sign", sign);
 
 //                Logger.debug(login_json.toString());
-                Log.d(TAG, "run: " + login_json.toString());
+                BuglyLog.d(TAG, "run: " + login_json.toString());
             } catch (JSONException e) {
 //                Logger.warning("JSON PUT ERROR");
-                Log.w(TAG, "run: JSON WRONG\n" + e);
+                BuglyLog.w(TAG, "run: JSON WRONG\n" + e);
             }
 
             //https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login

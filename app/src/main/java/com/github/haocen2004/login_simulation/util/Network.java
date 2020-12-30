@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.util;
 
-import android.util.Log;
+import com.tencent.bugly.crashreport.BuglyLog;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,7 +44,8 @@ public class Network {
                 result.append(line);
             }
         } catch (Exception e) {
-            Log.i("HTTP", "sendPost: Failed.");
+            BuglyLog.i("HTTP", "sendPost: Failed.");
+            CrashReport.postCatchedException(e);
             e.printStackTrace();
         }
         //使用finally块来关闭输出流、输入流

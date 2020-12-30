@@ -4,9 +4,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import com.tencent.bugly.crashreport.BuglyLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,15 +16,15 @@ import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Tools.getOAServer;
 
 public class RoleData {
-    private String open_id;
-    private String open_token;
-    private String combo_id;
-    private String combo_token;
-    private String channel_id;
+    private final String open_id;
+    private final String open_token;
+    private final String combo_id;
+    private final String combo_token;
+    private final String channel_id;
     private JSONObject oaserver;
-    private String account_type;
+    private final String account_type;
     private String accountType;
-    private String oa_req_key;
+    private final String oa_req_key;
     private boolean is_setup;
     private boolean uc_sign;
 
@@ -35,7 +36,7 @@ public class RoleData {
             String feedback = data.getString("value");
             try {
                 oaserver = new JSONObject(feedback);
-                Log.i("GetOAServer", "handleMessage: " + oaserver.toString());
+                BuglyLog.i("GetOAServer", "handleMessage: " + oaserver.toString());
                 is_setup = true;
             } catch (JSONException e) {
                 e.printStackTrace();
