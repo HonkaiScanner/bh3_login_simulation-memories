@@ -25,6 +25,7 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.json.JSONObject;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG);
+        BuglyLog.d("Main", "OnCreate");
         super.onCreate(savedInstanceState);
         app_pref = getDefaultSharedPreferences(this);
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) != VERSION_CODE) {
@@ -121,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             showBetaInfoDialog();
         }
         new Thread(update_rb).start();
-        CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", false);
 
     }
 

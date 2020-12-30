@@ -12,7 +12,7 @@ android {
         versionName '1.2.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        versionNameSuffix 'alpha-1'
+        versionNameSuffix 'alpha2'
 
     }
 

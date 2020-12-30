@@ -27,6 +27,7 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
+import com.github.haocen2004.login_simulation.login.Oppo;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
 import com.github.haocen2004.login_simulation.util.QRScanner;
@@ -104,7 +105,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                 server_type = getString(R.string.types_uc);
                 break;
             case "Vivo":
-                server_type = getString(R.string.types_vivo); //need i18n
+                server_type = getString(R.string.types_vivo);
+                break;
+            case "Oppo":
+                server_type = getString(R.string.types_oppo);
                 break;
             default:
                 server_type = "DEBUG -- SERVER ERROR";
@@ -224,6 +228,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     case "Vivo":
                         loginImpl = new Vivo(activity);
                         break;
+                    case "Oppo":
+                        loginImpl = new Oppo(activity);
+                        break;
                     default:
                         makeToast(getString(R.string.error_wrong_server));
                         break;
@@ -275,10 +282,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
             }
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getContext());
             normalDialog.setTitle("权限说明");
-            normalDialog.setMessage("使用扫码器需要以下权限:\n1.读取设备识别码\n用于标识用户及米哈游登录传参\n\n2.使用摄像头\n用于扫描米哈游游戏登录二维码\n\n3.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK所需\n可不授予权限");
+            normalDialog.setMessage("使用扫码器需要以下权限:\n1.读取设备识别码\n用于标识用户及米哈游登录传参\n\n2.使用摄像头\n用于扫描登录二维码\n\n3.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK强行加入\n可不授予权限");
             normalDialog.setPositiveButton("我已知晓",
                     (dialog, which) -> {
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE}, REQ_PERM_CAMERA);
+                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
                         dialog.dismiss();
                     });
             normalDialog.setCancelable(false);

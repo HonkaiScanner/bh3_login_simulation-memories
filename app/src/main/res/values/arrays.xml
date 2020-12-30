@@ -6,6 +6,7 @@
 <!--        <item>Xiaomi</item>-->
         <item>UC</item>
         <item>Vivo</item>
+        <item>Oppo</item>
     </string-array>
     <string-array name="server_types_value">
         <item>Official</item>
@@ -13,5 +14,6 @@
         <!--        <item>Xiaomi</item>-->
         <item>UC</item>
         <item>Vivo</item>
+        <item>Oppo</item>
     </string-array>
 </resources>

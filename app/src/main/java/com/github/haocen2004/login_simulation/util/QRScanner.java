@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.R;
 import com.tencent.bugly.crashreport.BuglyLog;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,17 +88,11 @@ public class QRScanner {
     Runnable runnable2 = new Runnable() {
         @Override
         public void run() {
-            String feedback = null;
-
-            try {
-                genRequest();
-                BuglyLog.d("Network", "biz_key: " + biz_key);
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString());
-                BuglyLog.d("Network", "feedback: " + feedback);
-                BuglyLog.i("Network", "run: succeed upload");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            genRequest();
+            BuglyLog.d("Network", "biz_key: " + biz_key);
+            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString());
+            BuglyLog.d("Network", "feedback: " + feedback);
+            BuglyLog.i("Network", "run: succeed upload");
             Message msg = new Message();
             Bundle data = new Bundle();
             data.putString("value", feedback);
@@ -128,6 +123,8 @@ public class QRScanner {
                     BuglyLog.w(TAG, "handleMessage: 二维码已过期");
                 }
             } catch (JSONException e) {
+                makeToast("网络请求错误！");
+                CrashReport.postCatchedException(e);
                 e.printStackTrace();
             }
         }
@@ -169,15 +166,19 @@ public class QRScanner {
             for (String key : param) {
                 if (key.startsWith("ticket")) {
                     ticket = key.split("=")[1];
+                    BuglyLog.i("Parse QRCode", "ticket: " + ticket);
                 }
                 if (key.startsWith("app_id")) {
                     app_id = key.split("=")[1];
+                    BuglyLog.i("Parse QRCode", "app_id: " + app_id);
                 }
                 if (key.startsWith("biz_key")) {
                     biz_key = key.split("=")[1];
+                    BuglyLog.i("Parse QRCode", "biz_key: " + biz_key);
                 }
             }
         } else {
+            BuglyLog.w("Parse QRCode", "Wrong QRCode,result: " + paramResult);
             makeToast("请扫描正确的二维码");
         }
     }
@@ -228,7 +229,7 @@ public class QRScanner {
         }
     }
 
-    public void genRequest() throws JSONException {
+    public void genRequest() {
 
 
         JSONObject raw_json = new JSONObject();
@@ -237,16 +238,16 @@ public class QRScanner {
         JSONObject data_json = new JSONObject();
         JSONObject dispatch_json = new JSONObject();
         confirm_json = new JSONObject();
-
-        if (app_id.contains("4") || is_official) {
+        try {
+            if (app_id.contains("4") || is_official) {
 //{"app_id":4,"device":"c3a0a429-3d2a-36d1-8a4b-255aeae8a9d5","payload":{"proto":"Account","raw":"{\"uid\":\"214525854\",\"token\":\"cScORPGe3TUxbiiVZ5nuIVp1qOErNnl7\"}"},"ticket":"5f84394af05bdb23e5ce451b"}
-            SharedPreferences preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
+                SharedPreferences preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
 
-            raw_json.put("uid", preferences.getString("uid", ""))
-                    .put("token", preferences.getString("token", ""));
+                raw_json.put("uid", preferences.getString("uid", ""))
+                        .put("token", preferences.getString("token", ""));
 
-            payload_json.put("raw", raw_json.toString())
-                    .put("proto", "Account");
+                payload_json.put("raw", raw_json.toString())
+                        .put("proto", "Account");
 
 //                    .put("ext", ext_json.toString());
 
@@ -302,15 +303,20 @@ public class QRScanner {
                 .put("proto", "Combo")
                 .put("ext", ext_json.toString());
 
-        confirm_json.put("device", device_id)
-                .put("app_id", app_id)
-                .put("ts", System.currentTimeMillis())
-                .put("ticket", ticket)
-                .put("payload", payload_json);
-        qr_check_map.put("payload", payload_json);
-        String sign2 = Tools.bh3Sign(qr_check_map);
-        confirm_json.put("sign", sign2);
-
+            confirm_json.put("device", device_id)
+                    .put("app_id", app_id)
+                    .put("ts", System.currentTimeMillis())
+                    .put("ticket", ticket)
+                    .put("payload", payload_json);
+            qr_check_map.put("payload", payload_json);
+            String sign2 = Tools.bh3Sign(qr_check_map);
+            confirm_json.put("sign", sign2);
+        } catch (Exception e) {
+            makeToast("扫码参数构建错误！\n开始上传错误数据...");
+            CrashReport.postCatchedException(e);
+            e.printStackTrace();
+            return;
+        }
 
 //        Logger.debug(confirm_json.toString());
         BuglyLog.d(TAG, "genRequest: " + confirm_json.toString());
@@ -324,7 +330,7 @@ public class QRScanner {
         normalDialog.setPositiveButton("确定",
                 (dialog, which) -> new Thread(runnable2).start());
         normalDialog.setNegativeButton("取消",
-                (dialog, which) -> Toast.makeText(activity, "登录已被用户取消", Toast.LENGTH_LONG).show());
+                (dialog, which) -> makeToast("登录已被用户取消"));
 
         normalDialog.show();
     }

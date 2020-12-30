@@ -11,10 +11,10 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" />
-    <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />
+    <!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
+    <!--    <uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
+    <!--    <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" />-->
+    <!--    <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />-->
 
     <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
 
@@ -38,7 +38,9 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,24 +48,32 @@
             </intent-filter>
         </activity>
         <activity android:name="com.google.zxing.activity.CaptureActivity" />
+
         <meta-data
             android:name="BSGameSdk_PaidGame"
             android:value="false" />
 
         <!-- oppo options -->
-        <meta-data android:name="debug_mode"
-            android:value="false" />
+        <meta-data
+            android:name="debug_mode"
+            android:value="true" />
+        <meta-data
+            android:name="is_offline_game"
+            android:value="false" /> <!-- true:单机游戏 false:网游 -->
+        <meta-data
+            android:name="app_key"
+            android:value="7NEgcusdF1ss0cK8CSwo8Ksk0" />
 
         <activity
             android:name="com.bsgamesdk.android.activity.CaptchaWebActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
             android:launchMode="singleTop"
-            android:theme="@style/bsgamesdk_customDialog"/>
+            android:theme="@style/bsgamesdk_customDialog" />
         <activity
             android:name="com.bsgamesdk.android.activity.WebActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
             android:launchMode="singleTop"
-            android:theme="@style/bsgamesdk_customDialog"/>
+            android:theme="@style/bsgamesdk_customDialog" />
         <activity
             android:name="com.bsgamesdk.android.activity.ExitActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
