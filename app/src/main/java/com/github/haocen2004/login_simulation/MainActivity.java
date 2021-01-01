@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         BuglyLog.d("Main", "OnCreate");
         super.onCreate(savedInstanceState);
         app_pref = getDefaultSharedPreferences(this);
-        if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) != VERSION_CODE) {
+        if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             app_pref.edit()
                     .putBoolean("is_first_run", false)
                     .putInt("version", VERSION_CODE)
@@ -102,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
                         .putString("custom_username", "崩坏3扫码器用户")
                         .apply();
             }
+            if (!app_pref.contains("check_update")) {
+                app_pref.edit()
+                        .putBoolean("check_update", !getPackageName().contains("dev"))
+                        .apply();
+            }
 
         }
 
@@ -120,11 +125,12 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         ((TextView) findViewById(R.id.textView2)).setText(VERSION_NAME);
 
-        if (getDefaultSharedPreferences(this).getBoolean("showBetaInfo", true)) {
+        if (app_pref.getBoolean("showBetaInfo", true)) {
             showBetaInfoDialog();
         }
-        new Thread(update_rb).start();
-
+        if (app_pref.getBoolean("check_update", true)) {
+            new Thread(update_rb).start();
+        }
     }
 
     @Override

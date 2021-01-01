@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.RoleData;
@@ -60,8 +61,8 @@ public class Vivo implements LoginImpl {
     public Vivo(Activity activity){
         this.activity = activity;
         device_id = Tools.getDeviceID(activity);
-        VivoUnionSDK.initSdk(activity,appId,true);
-        VivoUnionSDK.registerAccountCallback(activity,callback);
+        VivoUnionSDK.initSdk(activity, appId, BuildConfig.DEBUG);
+        VivoUnionSDK.registerAccountCallback(activity, callback);
     }
     @Override
     public void login() {
@@ -132,7 +133,6 @@ public class Vivo implements LoginImpl {
 
             Map<String, Object> login_map = new HashMap<>();
 
-            String device_id = Tools.getDeviceID(activity);
             login_map.put("device", device_id);
             login_map.put("app_id", "1");
             login_map.put("channel_id", "19");

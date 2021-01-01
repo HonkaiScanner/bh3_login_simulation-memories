@@ -1,19 +1,23 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
     buildToolsVersion '30.0.2'
 
     defaultConfig {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 7
+        targetSdkVersion 28
+        versionCode 8
         versionName '1.2.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         versionNameSuffix 'alpha2'
 
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     buildTypes {
@@ -46,8 +50,8 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.navigation:navigation-fragment:2.3.1'
-    implementation 'androidx.navigation:navigation-ui:2.3.1'
+    implementation 'androidx.navigation:navigation-fragment:2.3.2'
+    implementation 'androidx.navigation:navigation-ui:2.3.2'
     implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
     implementation project(':zxing-lib')
     implementation project(':mi_sdk')

@@ -15,7 +15,7 @@
     <!--    <uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
     <!--    <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" />-->
     <!--    <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />-->
-
+    <uses-permission android:name="vivo.game.permission.OPEN_JUMP_INTENTS" />
     <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
 
     <supports-screens
@@ -38,12 +38,10 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait">
+        <activity android:name=".MainActivity">
+            <!--            android:screenOrientation="portrait">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -63,6 +61,10 @@
         <meta-data
             android:name="app_key"
             android:value="7NEgcusdF1ss0cK8CSwo8Ksk0" />
+
+        <meta-data
+            android:name="vivo_union_sdk"
+            android:value="4.6.0.1" />
 
         <activity
             android:name="com.bsgamesdk.android.activity.CaptchaWebActivity"
@@ -155,6 +157,23 @@
                 <action android:name="cn.uc.gamesdk.sdkweb" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.vivo.unionsdk.ui.UnionActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+            android:theme="@android:style/Theme.Dialog">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="vivounion"
+                    android:host="union.vivo.com"
+                    android:path="/openjump" />
             </intent-filter>
         </activity>
 

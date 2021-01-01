@@ -13,6 +13,8 @@
     <string name="basic_header">Basic</string>
     <string name="settings_servers">Select Server</string>
     <string name="settings_fast_login">Automatic confirmation</string>
+    <string name="settings_bh_ver">Honkai Impact Version</string>
+    <string name="settings_update">Check Update</string>
 
     <string name="toolbar_icon_description">Icon PlaceHolder</string>
     <string name="nav_header_pid" translatable="false">Pixiv:82665700</string>
@@ -50,7 +52,10 @@
     <string name="start_proxy">Start Proxy</string>
     <string name="use_token_true">Token Mode</string>
     <string name="types_vivo">Vivo Server</string>
-    <string name="settings_bh_ver">Honkai Impact Version</string>
     <string name="types_oppo">Oppo Server</string>
+    <string name="report_github">Github</string>
+    <string name="report_bili">BiliBili</string>
+    <string name="report_qq">QQ Group</string>
+    <string name="adv_header">Advanced</string>
 
 </resources>

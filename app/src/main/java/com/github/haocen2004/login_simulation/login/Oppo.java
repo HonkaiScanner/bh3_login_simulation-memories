@@ -22,6 +22,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,10 +63,13 @@ public class Oppo implements LoginImpl {
                         BuglyLog.d(TAG, param2String);
                         try {
                             JSONObject json = new JSONObject(param2String);
-                            token = json.getString("token");
+                            token = URLEncoder.encode(json.getString("token"), "utf-8");
                             uid = json.getString("ssoid");
                             doBHLogin();
                         } catch (JSONException e) {
+                            CrashReport.postCatchedException(e);
+                            e.printStackTrace();
+                        } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
                     }

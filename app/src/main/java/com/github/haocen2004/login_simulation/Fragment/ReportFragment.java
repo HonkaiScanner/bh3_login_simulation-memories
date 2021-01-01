@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +15,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
-public class ReportFragment extends Fragment {
+public class ReportFragment extends Fragment implements View.OnClickListener {
 
     public ReportFragment() {
         // Required empty public constructor
@@ -35,7 +36,27 @@ public class ReportFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        openUrl("https://github.com/Haocen2004/bh3_login_simulation/issues", requireActivity());
+//        openUrl("https://github.com/Haocen2004/bh3_login_simulation/issues", requireActivity());
+        requireActivity().findViewById(R.id.report_bili).setOnClickListener(this);
+        requireActivity().findViewById(R.id.report_github).setOnClickListener(this);
+        requireActivity().findViewById(R.id.report_qq).setOnClickListener(this);
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.report_github:
+                openUrl("https://afdian.net/@Haocen20004", requireActivity());
+                break;
+            case R.id.report_bili:
+                openUrl("https://space.bilibili.com/269140934", requireActivity());
+                break;
+            case R.id.report_qq:
+                openUrl("https://jq.qq.com/?_wv=1027&k=v4Z91CMR", requireActivity());
+                break;
+            default:
+                Toast.makeText(requireActivity(), "Wrong Button", Toast.LENGTH_LONG).show();
+        }
     }
 }

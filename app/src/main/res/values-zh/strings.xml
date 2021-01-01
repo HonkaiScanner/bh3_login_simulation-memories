@@ -51,6 +51,11 @@
     <string name="start_proxy">启动代理</string>
     <string name="use_token_true">Token登录模式</string>
     <string name="settings_bh_ver">崩坏3版本号</string>
+    <string name="report_github">Github</string>
+    <string name="report_bili">B站私信</string>
+    <string name="report_qq">QQ群</string>
+    <string name="settings_update">检查更新</string>
+    <string name="adv_header">高级设置</string>
 
 
 </resources>
