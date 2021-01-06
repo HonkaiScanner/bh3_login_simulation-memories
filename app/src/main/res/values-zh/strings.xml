@@ -56,6 +56,7 @@
     <string name="report_qq">QQ群</string>
     <string name="settings_update">检查更新</string>
     <string name="adv_header">高级设置</string>
+    <string name="report_hand">无崩溃时提交Bugly反馈</string>
 
 
 </resources>

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
@@ -40,6 +41,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
         requireActivity().findViewById(R.id.report_bili).setOnClickListener(this);
         requireActivity().findViewById(R.id.report_github).setOnClickListener(this);
         requireActivity().findViewById(R.id.report_qq).setOnClickListener(this);
+        requireActivity().findViewById(R.id.report_hand).setOnClickListener(this);
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -54,6 +56,9 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.report_qq:
                 openUrl("https://jq.qq.com/?_wv=1027&k=v4Z91CMR", requireActivity());
+                break;
+            case R.id.report_hand:
+                CrashReport.testJavaCrash();
                 break;
             default:
                 Toast.makeText(requireActivity(), "Wrong Button", Toast.LENGTH_LONG).show();

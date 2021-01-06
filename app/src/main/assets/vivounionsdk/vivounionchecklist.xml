@@ -52,7 +52,7 @@
     <!--银联支付-->
     <activity android:include="false" android:name="com.unionpay.uppay.PayActivity" />
     <!--支付宝支付-->
-    <activity android:include="false" android:name="com.alipay.sdk.app.H5PayActivity" />
+<!--    <activity android:include="false" android:name="com.alipay.sdk.app.H5PayActivity" />-->
     <!--SDK含有功能时期声明 end-->
 
     <!-- 老版本声明 start -->

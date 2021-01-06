@@ -28,7 +28,7 @@
             android:name="com.xiaomi.gamecenter.sdk.ui.MiActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="behind"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name="com.xiaomi.gamecenter.sdk.ui.PayListActivity"
             android:configChanges="orientation|screenSize"

@@ -75,6 +75,8 @@ public class RoleData {
         if (special_tag == 1) {
             this.uc_sign = true;
             accountType = "3";
+        } else if (special_tag == 2) {
+            accountType = "9";
         }
         new Thread(getOA_runnable).start();
     }

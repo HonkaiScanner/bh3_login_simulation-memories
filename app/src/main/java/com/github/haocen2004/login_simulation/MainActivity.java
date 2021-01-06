@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG);
+        CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", true);
         BuglyLog.d("Main", "OnCreate");
         super.onCreate(savedInstanceState);
         app_pref = getDefaultSharedPreferences(this);
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (!app_pref.contains("showBetaInfo")) {
                 app_pref.edit()
-                        .putBoolean("showBetaInfo", true)
+                        .putBoolean("showBetaInfo", DEBUG)
                         .apply();
             }
             if (!app_pref.contains("custom_username")) {
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         ((TextView) findViewById(R.id.textView2)).setText(VERSION_NAME);
 
-        if (app_pref.getBoolean("showBetaInfo", true)) {
+        if (app_pref.getBoolean("showBetaInfo", DEBUG)) {
             showBetaInfoDialog();
         }
         if (app_pref.getBoolean("check_update", true)) {
@@ -168,6 +168,9 @@ public class MainActivity extends AppCompatActivity {
     }
     Runnable update_rb = () -> {
         String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
+        if (feedback.isEmpty()) {
+            return;
+        }
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);

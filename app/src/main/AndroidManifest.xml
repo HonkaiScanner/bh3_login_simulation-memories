@@ -11,6 +11,12 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />     <!--  Ignore system app   -->
     <!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
     <!--    <uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
     <!--    <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" />-->
@@ -26,14 +32,14 @@
         android:smallScreens="true" />
 
     <application
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true"
-        tools:targetApi="m"
-        android:fullBackupContent="@xml/backup_descriptor">
+        tools:targetApi="m">
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
@@ -80,7 +86,7 @@
             android:name="com.bsgamesdk.android.activity.ExitActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
             android:launchMode="singleTop"
-            android:theme="@style/bsgamesdk_customDialog"/>
+            android:theme="@style/bsgamesdk_customDialog" />
         <activity
             android:name="com.bsgamesdk.android.activity.BSGameSdkAgreementActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
@@ -129,12 +135,12 @@
 
         <activity
             android:name="cn.uc.gamesdk.activity.PullupActivity"
-            android:theme="@android:style/Theme.Translucent"
-            android:taskAffinity="cn.uc.gamesdk.demo.diff"
             android:excludeFromRecents="true"
+            android:exported="true"
             android:label="PullupActivity"
             android:launchMode="singleTop"
-            android:exported="true"
+            android:taskAffinity="cn.uc.gamesdk.demo.diff"
+            android:theme="@android:style/Theme.Translucent"
             tools:node="replace">
 
             <intent-filter>
@@ -171,12 +177,11 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="vivounion"
                     android:host="union.vivo.com"
-                    android:path="/openjump" />
+                    android:path="/openjump"
+                    android:scheme="vivounion" />
             </intent-filter>
         </activity>
-
         <!-- sdk service -->
         <service
             android:name="cn.gundam.sdk.shell.service.ProxyService"

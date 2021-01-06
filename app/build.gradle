@@ -9,10 +9,10 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 8
-        versionName '1.2.0'
+        versionName '1.2.1'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        versionNameSuffix 'alpha2'
+//        versionNameSuffix 'alpha2'
 
     }
 
@@ -54,7 +54,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.2'
     implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
     implementation project(':zxing-lib')
-    implementation project(':mi_sdk')
+//    implementation project(':mi_sdk')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.tencent.bugly:crashreport:3.2.422'
     testImplementation 'junit:junit:4.13.1'

@@ -27,7 +27,6 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
-import com.github.haocen2004.login_simulation.login.Oppo;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
 import com.github.haocen2004.login_simulation.util.QRScanner;
@@ -41,6 +40,8 @@ import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
+
+//import com.github.haocen2004.login_simulation.login.Oppo;
 
 
 public class MainFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
@@ -228,9 +229,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     case "Vivo":
                         loginImpl = new Vivo(activity);
                         break;
-                    case "Oppo":
-                        loginImpl = new Oppo(activity);
-                        break;
+//                    case "Oppo":
+//                        loginImpl = new Oppo(activity);
+//                        break;
                     default:
                         makeToast(getString(R.string.error_wrong_server));
                         break;
