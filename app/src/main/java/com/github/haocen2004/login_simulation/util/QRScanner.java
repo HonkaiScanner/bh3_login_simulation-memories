@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -203,7 +204,7 @@ public class QRScanner {
         qr_check_map.put("app_id", app_id);
         qr_check_map.put("ts", System.currentTimeMillis());
         qr_check_map.put("ticket", ticket);
-        String sign = Tools.bh3Sign(qr_check_map);
+        String sign = Encrypt.bh3Sign(qr_check_map);
         qr_check_json = new JSONObject();
         ArrayList<String> arrayList = new ArrayList<>(qr_check_map.keySet());
         Collections.sort(arrayList);
@@ -313,7 +314,7 @@ public class QRScanner {
                     .put("ticket", ticket)
                     .put("payload", payload_json);
             qr_check_map.put("payload", payload_json);
-            String sign2 = Tools.bh3Sign(qr_check_map);
+            String sign2 = Encrypt.bh3Sign(qr_check_map);
             confirm_json.put("sign", sign2);
         } catch (Exception e) {
             makeToast("扫码参数构建错误！\n开始上传错误数据...");

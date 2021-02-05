@@ -14,21 +14,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.util.Encrypt;
 import com.github.haocen2004.login_simulation.util.Network;
-import com.github.haocen2004.login_simulation.util.RoleData;
-import com.github.haocen2004.login_simulation.util.Tools;
 import com.tencent.bugly.crashreport.BuglyLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.BH_PUBLIC_KEY;
+import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 public class Official implements LoginImpl {
 
@@ -109,13 +106,11 @@ public class Official implements LoginImpl {
                     String combo_id = account_json.getString("combo_id");
                     String combo_token = account_json.getString("combo_token");
 
-                    roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "");
+                    roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "", 0);
                     isLogin = true;
                     Toast.makeText(activity, R.string.login_succeed, Toast.LENGTH_LONG).show();
 
                 } else {
-//                    Logger.warning("登录失败");
-//                    Logger.warning(feedback);
                     BuglyLog.w(TAG, "handleMessage: 登录失败：" + feedback);
                     Toast.makeText(activity, "登录失败：" + feedback, Toast.LENGTH_LONG).show();
                 }
@@ -127,48 +122,18 @@ public class Official implements LoginImpl {
     Runnable login_runnable2 = new Runnable() {
         @Override
         public void run() {
-            Map<String, Object> login_map = new HashMap<>();
-
-            login_map.put("device", Tools.getDeviceID(activity.getApplicationContext()));
-            login_map.put("app_id", "1");
-            login_map.put("channel_id", "1");
-
-            String data_json = "{\"uid\":\"" +
-                    uid +
-                    "\",\"token\":\"" +
-                    token +
-                    "\",\"guest\":false}";
-
-            login_map.put("data", data_json);
-
-            String sign = Tools.bh3Sign(login_map);
-            ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
-            Collections.sort(arrayList);
-
-            JSONObject login_json = new JSONObject();
+            JSONObject data_json = new JSONObject();
             try {
-                for (String str : arrayList) {
+                data_json.put("uid", uid).put("token", token).put("guest", false);
+                Message msg = new Message();
+                Bundle data = new Bundle();
+                data.putString("value", verifyAccount(activity, "1", data_json.toString()));
+                msg.setData(data);
+                login_handler2.sendMessage(msg);
 
-                    login_json.put(str, login_map.get(str));
-
-                }
-
-                login_json.put("sign", sign);
-
-//                Logger.debug(login_json.toString());
-                BuglyLog.d(TAG, "run: " + login_json.toString());
             } catch (JSONException e) {
-//                Logger.warning("JSON PUT ERROR");
                 BuglyLog.w(TAG, "run: JSON WRONG\n" + e);
             }
-
-            //https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
-            Message msg = new Message();
-            Bundle data = new Bundle();
-            data.putString("value", feedback);
-            msg.setData(data);
-            login_handler2.sendMessage(msg);
         }
     };
 
@@ -217,7 +182,7 @@ public class Official implements LoginImpl {
         login_json = new JSONObject();
         try {
             login_json.put("account", username);
-            login_json.put("password", Tools.encryptByPublicKey(password, "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDvekdPMHN3AYhm/vktJT+YJr7cI5DcsNKqdsx5DZX0gDuWFuIjzdwButrIYPNmRJ1G8ybDIF7oDW2eEpm5sMbL9zs\n9ExXCdvqrn51qELbqj0XxtMTIpaCHFSI50PfPpTFV9Xt/hmyVwokoOXFlAEgCn+Q\nCgGs52bFoYMtyi+xEQIDAQAB\n"));
+            login_json.put("password", Encrypt.encryptByPublicKey(password, BH_PUBLIC_KEY));
             login_json.put("is_crypto", "true");
             preferences.edit().putString("account", username).apply();
             new Thread(login_runnable).start();

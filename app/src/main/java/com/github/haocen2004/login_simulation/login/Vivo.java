@@ -11,9 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.github.haocen2004.login_simulation.BuildConfig;
+import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.util.Network;
-import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.vivo.unionsdk.open.VivoAccountCallback;
@@ -22,10 +21,8 @@ import com.vivo.unionsdk.open.VivoUnionSDK;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import static com.github.haocen2004.login_simulation.util.Constant.VIVO_APP_KEY;
+import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 public class Vivo implements LoginImpl {
     private final Activity activity;
@@ -33,7 +30,6 @@ public class Vivo implements LoginImpl {
     private String uid;
     private String token;
     private RoleData roleData;
-    private final String appId = "94c93e8ac604d1909943862f12803ac9";
     private final String device_id;
     private static final String TAG = "Vivo Login";
 
@@ -61,7 +57,7 @@ public class Vivo implements LoginImpl {
     public Vivo(Activity activity){
         this.activity = activity;
         device_id = Tools.getDeviceID(activity);
-        VivoUnionSDK.initSdk(activity, appId, BuildConfig.DEBUG);
+        VivoUnionSDK.initSdk(activity, VIVO_APP_KEY, BuildConfig.DEBUG);
         VivoUnionSDK.registerAccountCallback(activity, callback);
     }
     @Override
@@ -130,44 +126,12 @@ public class Vivo implements LoginImpl {
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
-
-            Map<String, Object> login_map = new HashMap<>();
-
-            login_map.put("device", device_id);
-            login_map.put("app_id", "1");
-            login_map.put("channel_id", "19");
-
             String data_json = "{\"authtoken\":\"" + token + "\"}";
-
-            login_map.put("data", data_json);
-
-            String sign = Tools.bh3Sign(login_map);
-            ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
-            Collections.sort(arrayList);
-
-            JSONObject login_json = new JSONObject();
-
-            try {
-
-                for (String str : arrayList) {
-
-                    login_json.put(str, login_map.get(str));
-
-                }
-
-                login_json.put("sign", sign);
-
-//                Logger.info(login_json.toString());
-                BuglyLog.i(TAG, "run: " + login_json.toString());
-                String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
-
-                Message msg = new Message();
-                Bundle data = new Bundle();
-                data.putString("value", feedback);
-                msg.setData(data);
-                login_handler.sendMessage(msg);
-            } catch (Exception ignore) {
-            }
+            Message msg = new Message();
+            Bundle data = new Bundle();
+            data.putString("value", verifyAccount(activity, "19", data_json));
+            msg.setData(data);
+            login_handler.sendMessage(msg);
         }
 
     };

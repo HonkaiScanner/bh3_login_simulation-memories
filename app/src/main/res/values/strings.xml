@@ -59,5 +59,7 @@
     <string name="adv_header">Advanced</string>
     <string name="report_hand">Submit Bugly feedback when there is no crash</string>
     <string name="types_flyme">Flyme Server</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

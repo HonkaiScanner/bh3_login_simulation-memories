@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 BuglyLog.d("Update", "Check Update Failed");
 
-                app_pref.edit().putString("bh_ver", "4.5.0").apply();
+                app_pref.edit().putString("bh_ver", BH_VER).apply();
             }
-            BH_VER = app_pref.getString("bh_ver", "4.5.0");
+            BH_VER = app_pref.getString("bh_ver", BH_VER);
         }
     };
 

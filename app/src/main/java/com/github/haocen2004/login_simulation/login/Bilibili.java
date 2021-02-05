@@ -13,20 +13,16 @@ import com.bsgamesdk.android.BSGameSdk;
 import com.bsgamesdk.android.callbacklistener.BSGameSdkError;
 import com.bsgamesdk.android.callbacklistener.CallbackListener;
 import com.bsgamesdk.android.callbacklistener.InitCallbackListener;
+import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.util.Network;
-import com.github.haocen2004.login_simulation.util.RoleData;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.tencent.bugly.crashreport.BuglyLog;
+import com.tencent.bugly.crashreport.CrashReport;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.github.haocen2004.login_simulation.util.Constant.BS_APP_KEY;
+import static com.github.haocen2004.login_simulation.util.Constant.BILI_APP_KEY;
 
 public class Bilibili implements LoginImpl {
 
@@ -60,10 +56,44 @@ public class Bilibili implements LoginImpl {
                 access_token = arg0.getString("access_token");
 
                 preferences.edit().clear().apply();
-                preferences.edit().putString("username", username)
-                        .apply();
-                preferences.edit().putString("uid", uid).apply();
-                doBHLogin();
+                preferences.edit().putString("username", username).putString("uid", uid).apply();
+
+                String data_json = "{\"uid\":" +
+                        uid +
+                        ",\"access_key\":\"" +
+                        access_token +
+                        "\"}";
+
+                JSONObject feedback_json = null;
+                try {
+                    feedback_json = new JSONObject(Tools.verifyAccount(activity, "14", data_json));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+
+
+                    if (feedback_json == null) {
+                        makeToast("Empty Return");
+                    } else if (feedback_json.getInt("retcode") != 0) {
+                        makeToast(feedback_json.getString("message"));
+                    } else {
+                        JSONObject data_json2 = feedback_json.getJSONObject("data");
+                        String combo_id = data_json2.getString("combo_id");
+                        String open_id = data_json2.getString("open_id");
+                        String combo_token = data_json2.getString("combo_token");
+                        String account_type = data_json2.getString("account_type");
+
+                        roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", account_type, "bilibili", 0);
+                        isLogin = true;
+                        makeToast(activity.getString(R.string.login_succeed));
+                    }
+//                doBHLogin();
+                } catch (JSONException e) {
+                    CrashReport.postCatchedException(e);
+                    makeToast("parse ERROR");
+                }
+
             }
 
             @Override
@@ -134,7 +164,7 @@ public class Bilibili implements LoginImpl {
     public void login() {
 
         BSGameSdk.initialize(true, activity, "590", "180",
-                "378", BS_APP_KEY, new InitCallbackListener() {
+                "378", BILI_APP_KEY, new InitCallbackListener() {
                     @Override
                     public void onSuccess() {
 //                        Logger.info("Bilibili SDK setup succeed");
@@ -175,66 +205,66 @@ public class Bilibili implements LoginImpl {
         return isLogin;
     }
 
-    public void doBHLogin() {
-
-        Map<String, Object> login_map = new HashMap<>();
-
-        login_map.put("device", device_id);
-        login_map.put("app_id", "1");
-        login_map.put("channel_id", "14");
-
-        String data_json = "{\"uid\":" +
-                uid +
-                ",\"access_key\":\"" +
-                access_token +
-                "\"}";
-
-        login_map.put("data", data_json);
-
-        String sign = Tools.bh3Sign(login_map);
-        ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
-        Collections.sort(arrayList);
-
-        JSONObject login_json = new JSONObject();
-
-        try {
-
-            for (String str : arrayList) {
-
-                login_json.put(str, login_map.get(str));
-
-            }
-
-            login_json.put("sign", sign);
-
-            BuglyLog.i(TAG, "doBHLogin: " + login_json.toString());
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
-            JSONObject feedback_json = new JSONObject(feedback);
-            BuglyLog.i(TAG, "doBHLogin: " + feedback);
-
-            if (feedback_json.getInt("retcode") == 0) {
-
-                JSONObject data_json2 = feedback_json.getJSONObject("data");
-                String combo_id = data_json2.getString("combo_id");
-                String combo_token = data_json2.getString("combo_token");
-                String open_id = data_json2.getString("open_id");
-                roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", "2", "bilibili");
-
-                isLogin = true;
-                makeToast(activity.getString(R.string.login_succeed));
-
-
-            } else {
-
-                makeToast(feedback_json.getString("message"));
-                isLogin = false;
-
-            }
-
-        } catch (Exception ignore) {
-        }
-
-    }
+//    public void doBHLogin() {
+//
+//        Map<String, Object> login_map = new HashMap<>();
+//
+//        login_map.put("device", device_id);
+//        login_map.put("app_id", "1");
+//        login_map.put("channel_id", "14");
+//
+//        String data_json = "{\"uid\":" +
+//                uid +
+//                ",\"access_key\":\"" +
+//                access_token +
+//                "\"}";
+//
+//        login_map.put("data", data_json);
+//
+//        String sign = Encrypt.bh3Sign(login_map);
+//        ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
+//        Collections.sort(arrayList);
+//
+//        JSONObject login_json = new JSONObject();
+//
+//        try {
+//
+//            for (String str : arrayList) {
+//
+//                login_json.put(str, login_map.get(str));
+//
+//            }
+//
+//            login_json.put("sign", sign);
+//
+//            BuglyLog.i(TAG, "doBHLogin: " + login_json.toString());
+//            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
+//            JSONObject feedback_json = new JSONObject(feedback);
+//            BuglyLog.i(TAG, "doBHLogin: " + feedback);
+//
+//            if (feedback_json.getInt("retcode") == 0) {
+//
+//                JSONObject data_json2 = feedback_json.getJSONObject("data");
+//                String combo_id = data_json2.getString("combo_id");
+//                String combo_token = data_json2.getString("combo_token");
+//                String open_id = data_json2.getString("open_id");
+//                roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", "2", "bilibili",0);
+//
+//                isLogin = true;
+//                makeToast(activity.getString(R.string.login_succeed));
+//
+//
+//            } else {
+//
+//                makeToast(feedback_json.getString("message"));
+//                isLogin = false;
+//
+//            }
+//
+//        } catch (Exception ignore) {
+//        }
+//
+//    }
 
 }
 

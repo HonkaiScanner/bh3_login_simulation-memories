@@ -19,7 +19,6 @@ package com.google.zxing.camera;
 import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.os.Build;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -193,17 +192,7 @@ final class CameraConfigurationManager {
     }
 
     private void setFlash(Camera.Parameters parameters) {
-        // FIXME: This is a hack to turn the flash off on the Samsung Galaxy.
-        // And this is a hack-hack to work around a different value on the Behold II
-        // Restrict Behold II check to Cupcake, per Samsung's advice
-        //if (Build.MODEL.contains("Behold II") &&
-        //    CameraManager.SDK_INT == Build.VERSION_CODES.CUPCAKE) {
-        if (Build.MODEL.contains("Behold II") && CameraManager.SDK_INT == 3) { // 3 = Cupcake
-            parameters.set("flash-value", 1);
-        } else {
-            parameters.set("flash-value", 2);
-        }
-        // This is the standard setting to turn the flash off that all devices should honor.
+        parameters.set("flash-value", 2);
         parameters.set("flash-mode", "off");
     }
 

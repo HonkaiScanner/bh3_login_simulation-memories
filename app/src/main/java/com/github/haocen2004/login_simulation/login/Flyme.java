@@ -12,7 +12,7 @@
 //
 //import com.github.haocen2004.login_simulation.R;
 //import com.github.haocen2004.login_simulation.util.Network;
-//import com.github.haocen2004.login_simulation.util.RoleData;
+//import com.github.haocen2004.login_simulation.Data.RoleData;
 //import com.github.haocen2004.login_simulation.util.Tools;
 //import com.meizu.gamesdk.model.model.LoginResultCode;
 //import com.meizu.gamesdk.online.core.MzGameCenterPlatform;

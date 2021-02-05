@@ -1,17 +1,30 @@
 # 崩坏3扫码器 / bh3_login_simulation
 
-免去每次登陆桌面服要打开臃肿的客户端的麻烦  
+节省你的手机空间  
+节省启动桌面服时等待手机客户端启动的时间  
+  
 
 ## 支持协议 / Supported protocol
 
-Official  
+官服   
 Bilibili  
+Vivo  
 UC(豌豆荚/九游)    
   
-华为因为开发者账号需要18岁暂不支持  
-小米SDK有包名和签名验证暂时无解（等待有缘人破解  
+## 不支持协议 / Unsupported protocol
+华为  
+小米  
+应用宝  
+魅族  
+oppo  
+
+以上SDK有包名和签名验证暂时无解（等待有缘人破解  
 
 
 ## B站演示视频 / Video
 
 https://www.bilibili.com/video/BV1hA411e7s3/
+
+## 其他 / Other
+米忽悠登录sdk错误码:  
+-107 参数错误

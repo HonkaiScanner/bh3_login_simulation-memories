@@ -11,8 +11,10 @@ public class Constant {
 
     public static final String INTENT_EXTRA_KEY_QR_SCAN = "qr_scan_result";
     public static final String BH_APP_KEY = "0ebc517adb1b62c6b408df153331f9aa";
+    public static final String BH_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDvekdPMHN3AYhm/vktJT+YJr7cI5DcsNKqdsx5DZX0gDuWFuIjzdwButrIYPNmRJ1G8ybDIF7oDW2eEpm5sMbL9zs\n9ExXCdvqrn51qELbqj0XxtMTIpaCHFSI50PfPpTFV9Xt/hmyVwokoOXFlAEgCn+Q\nCgGs52bFoYMtyi+xEQIDAQAB\n";
     //    public static final String BH_APP_KEY = "86d0629f8498e55344a68d9ac1ee2c34";
-    public static final String BS_APP_KEY = "dbf8f1b4496f430b8a3c0f436a35b931";
+    public static final String BILI_APP_KEY = "dbf8f1b4496f430b8a3c0f436a35b931";
+    public static final String VIVO_APP_KEY = "94c93e8ac604d1909943862f12803ac9";
 
     public static String BH_VER = "4.6.0";
 }

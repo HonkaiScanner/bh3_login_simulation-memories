@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
 import android.annotation.SuppressLint;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,19 +11,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.util.Network;
-import com.github.haocen2004.login_simulation.util.RoleData;
-import com.github.haocen2004.login_simulation.util.Tools;
 import com.tencent.bugly.crashreport.BuglyLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import cn.gundam.sdk.shell.even.SDKEventKey;
 import cn.gundam.sdk.shell.even.SDKEventReceiver;
@@ -34,6 +28,8 @@ import cn.gundam.sdk.shell.open.UCOrientation;
 import cn.gundam.sdk.shell.param.SDKParamKey;
 import cn.gundam.sdk.shell.param.SDKParams;
 import cn.uc.gamesdk.UCGameSdk;
+
+import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 public class UC implements LoginImpl {
 
@@ -55,7 +51,6 @@ public class UC implements LoginImpl {
 //            System.out.println("开始登陆" + sid);
             BuglyLog.i("UCSDK", "onLoginSucc: sid:" + sid);
             setSid(sid);
-
             doBHLogin();
         }
 
@@ -80,9 +75,11 @@ public class UC implements LoginImpl {
         ParamInfo gpi = new ParamInfo();
 
         gpi.setGameId(654463);
-
-        gpi.setOrientation(UCOrientation.PORTRAIT);
-
+        if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            gpi.setOrientation(UCOrientation.PORTRAIT);
+        } else {
+            gpi.setOrientation(UCOrientation.LANDSCAPE);
+        }
         SDKParams sdkParams = new SDKParams();
         sdkParams.put(SDKParamKey.GAME_PARAMS, gpi);
         try {
@@ -139,45 +136,12 @@ public class UC implements LoginImpl {
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
-
-            Map<String, Object> login_map = new HashMap<>();
-
-            String device_id = Tools.getDeviceID(activity);
-            login_map.put("device", device_id);
-            login_map.put("app_id", "1");
-            login_map.put("channel_id", "20");
-
             String data_json = "{\"sid\":\"" + sid + "\"}";
-
-            login_map.put("data", data_json);
-
-            String sign = Tools.bh3Sign(login_map);
-            ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
-            Collections.sort(arrayList);
-
-            JSONObject login_json = new JSONObject();
-
-            try {
-
-                for (String str : arrayList) {
-
-                    login_json.put(str, login_map.get(str));
-
-                }
-
-                login_json.put("sign", sign);
-
-//                Logger.info(login_json.toString());
-                BuglyLog.i(TAG, "run: " + login_json.toString());
-                String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
-
-                Message msg = new Message();
-                Bundle data = new Bundle();
-                data.putString("value", feedback);
-                msg.setData(data);
-                login_handler.sendMessage(msg);
-            } catch (Exception ignore) {
-            }
+            Message msg = new Message();
+            Bundle data = new Bundle();
+            data.putString("value", verifyAccount(activity, "20", data_json));
+            msg.setData(data);
+            login_handler.sendMessage(msg);
         }
 
     };

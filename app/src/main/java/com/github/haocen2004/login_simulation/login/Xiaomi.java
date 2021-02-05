@@ -6,32 +6,30 @@
 //
 //import androidx.appcompat.app.AppCompatActivity;
 //
-//import com.github.haocen2004.login_simulation.util.Network;
-//import com.github.haocen2004.login_simulation.util.RoleData;
+//import com.github.haocen2004.login_simulation.Data.RoleData;
+//import com.github.haocen2004.login_simulation.R;
 //import com.github.haocen2004.login_simulation.util.Tools;
 //import com.tencent.bugly.crashreport.BuglyLog;
+//import com.tencent.bugly.crashreport.CrashReport;
 //import com.xiaomi.gamecenter.sdk.MiCommplatform;
 //import com.xiaomi.gamecenter.sdk.MiErrorCode;
 //import com.xiaomi.gamecenter.sdk.OnInitProcessListener;
 //import com.xiaomi.gamecenter.sdk.entry.MiAppInfo;
 //
+//import org.json.JSONException;
 //import org.json.JSONObject;
 //
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.HashMap;
 //import java.util.List;
-//import java.util.Map;
 //
 //public class Xiaomi extends Application implements LoginImpl {
 //
 //
 //    private final AppCompatActivity activity;
+//    private final String TAG = "MiLogin";
 //    private boolean isLogin;
 //    private String uid;
 //    private String session;
 //    private RoleData roleData;
-//    private final String TAG="MiLogin";
 //
 //    public Xiaomi(AppCompatActivity activity) {
 //        this.activity = activity;
@@ -47,7 +45,7 @@
 //            @Override
 //            public void finishInitProcess(List<String> loginMethod, int gameConfig) {
 //                BuglyLog.i(TAG, "finishInitProcess: Init success");
-//                MiCommplatform.getInstance().onMainActivityCreate(activity);
+////                MiCommplatform.getInstance().onMainActivityCreate(activity);
 //                MiCommplatform.getInstance().miLogin(activity,
 //                        (code, arg1) -> {
 //                            switch (code) {
@@ -88,66 +86,99 @@
 //    }
 //
 //    public void doBHLogin() {
-//
-//        Map<String, Object> login_map = new HashMap<>();
-//
-//        String device_id = Tools.getDeviceID(activity);
-//        login_map.put("device", device_id);
-//        login_map.put("app_id", 1);
-//        login_map.put("channel_id", 11);
-//
-//        String data_json = "{\"uid\":" +
-//                uid +
-//                ",\"session\":\"" +
+//        String data_json = "{\"session\":\"" +
 //                session +
+//                "\",\"uid\":\"" +
+//                uid +
 //                "\"}";
-//
-//        login_map.put("data", data_json);
-//
-//        String sign = Tools.bh3Sign(login_map);
-//        ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
-//        Collections.sort(arrayList);
-//
-//        JSONObject login_json = new JSONObject();
-//
+//        JSONObject feedback_json = null;
+//        try {
+//            feedback_json = new JSONObject(Tools.verifyAccount(activity, "11", data_json));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 //        try {
 //
-//            for (String str : arrayList) {
 //
-//                login_json.put(str, login_map.get(str));
-//
-//            }
-//
-//            login_json.put("sign", sign);
-//            BuglyLog.d(TAG, "doBHLogin: login_json: " + login_json.toString());
-////            Logger.info(login_json.toString());
-//            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
-//            JSONObject feedback_json = new JSONObject(feedback);
-////            Logger.info(feedback);
-//            BuglyLog.d(TAG, "doBHLogin: feedback: " + feedback);
-//            if (feedback_json.getInt("retcode") == 0) {
-//
+//            if (feedback_json == null) {
+//                makeToast("Empty Return");
+//            } else if (feedback_json.getInt("retcode") != 0) {
+//                makeToast(feedback_json.getString("message"));
+//            } else {
 //                JSONObject data_json2 = feedback_json.getJSONObject("data");
 //                String combo_id = data_json2.getString("combo_id");
-//                String combo_token = data_json2.getString("combo_token");
 //                String open_id = data_json2.getString("open_id");
+//                String combo_token = data_json2.getString("combo_token");
 //                String account_type = data_json2.getString("account_type");
-//                roleData = new RoleData(open_id, "", combo_id, combo_token, "11", account_type, "xiaomi");
 //
-//
+//                roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "11", account_type, "xiaomi", 0);
 //                isLogin = true;
-//                makeToast("登录成功");
-//
-//
-//            } else {
-//
-//                makeToast(feedback_json.getString("message"));
-//                isLogin = false;
-//
+//                makeToast(activity.getString(R.string.login_succeed));
 //            }
-//
-//        } catch (Exception ignore) {
+//        } catch (JSONException e) {
+//            CrashReport.postCatchedException(e);
+//            makeToast("parse ERROR");
 //        }
+//
+////        Map<String, Object> login_map = new HashMap<>();
+////
+////        String device_id = Tools.getDeviceID(activity);
+////        login_map.put("device", device_id);
+////        login_map.put("app_id", 1);
+////        login_map.put("channel_id", 11);
+////
+////        String data_json = "{\"uid\":" +
+////                uid +
+////                ",\"session\":\"" +
+////                session +
+////                "\"}";
+////
+////        login_map.put("data", data_json);
+////
+////        String sign = Tools.bh3Sign(login_map);
+////        ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
+////        Collections.sort(arrayList);
+////
+////        JSONObject login_json = new JSONObject();
+////
+////        try {
+////
+////            for (String str : arrayList) {
+////
+////                login_json.put(str, login_map.get(str));
+////
+////            }
+////
+////            login_json.put("sign", sign);
+////            BuglyLog.d(TAG, "doBHLogin: login_json: " + login_json.toString());
+//////            Logger.info(login_json.toString());
+////            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
+////            JSONObject feedback_json = new JSONObject(feedback);
+//////            Logger.info(feedback);
+////            BuglyLog.d(TAG, "doBHLogin: feedback: " + feedback);
+////            if (feedback_json.getInt("retcode") == 0) {
+////
+////                JSONObject data_json2 = feedback_json.getJSONObject("data");
+////                String combo_id = data_json2.getString("combo_id");
+////                String combo_token = data_json2.getString("combo_token");
+////                String open_id = data_json2.getString("open_id");
+////                String account_type = data_json2.getString("account_type");
+////                roleData = new RoleData(open_id, "", combo_id, combo_token, "11", account_type, "xiaomi");
+////
+////
+////                isLogin = true;
+////                makeToast("登录成功");
+////
+////
+////            } else {
+////
+////                makeToast(feedback_json.getString("message"));
+////                isLogin = false;
+////
+////            }
+////
+////        } catch (Exception ignore) {
+////        }
 //
 //    }
 //
