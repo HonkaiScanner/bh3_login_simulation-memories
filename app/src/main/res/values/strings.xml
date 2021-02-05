@@ -58,5 +58,6 @@
     <string name="report_qq">QQ Group</string>
     <string name="adv_header">Advanced</string>
     <string name="report_hand">Submit Bugly feedback when there is no crash</string>
+    <string name="types_flyme">Flyme Server</string>
 
 </resources>

@@ -1,9 +1,11 @@
 package com.github.haocen2004.login_simulation.util;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -27,6 +29,7 @@ public class RoleData {
     private final String oa_req_key;
     private boolean is_setup;
     private boolean uc_sign;
+    private final Activity activity;
 
     Handler getOA_handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -37,6 +40,13 @@ public class RoleData {
             try {
                 oaserver = new JSONObject(feedback);
                 BuglyLog.i("GetOAServer", "handleMessage: " + oaserver.toString());
+                if (!oaserver.getBoolean("is_data_ready")) {
+                    String msg1 = oaserver.getString("msg");
+                    if (msg1.contains("更新")) msg1 = "崩坏3维护中，请等待维护完成后登陆";
+
+                    Toast.makeText(activity, "OA服务器获取错误\n" + msg1, Toast.LENGTH_LONG).show();
+                    return;
+                }
                 is_setup = true;
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -52,7 +62,8 @@ public class RoleData {
         getOA_handler.sendMessage(msg);
     };
 
-    public RoleData(String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key) {
+    public RoleData(Activity activity, String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key) {
+        this.activity = activity;
         this.open_id = open_id;
         this.open_token = open_token;
         this.combo_id = combo_id;
@@ -64,7 +75,8 @@ public class RoleData {
         new Thread(getOA_runnable).start();
     }
 
-    public RoleData(String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key, int special_tag) {
+    public RoleData(Activity activity, String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key, int special_tag) {
+        this.activity = activity;
         this.open_id = open_id;
         this.open_token = open_token;
         this.combo_id = combo_id;

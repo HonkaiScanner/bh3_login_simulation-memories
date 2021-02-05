@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.widget.Toast;
 
@@ -88,6 +89,7 @@ public class QRScanner {
     Runnable runnable2 = new Runnable() {
         @Override
         public void run() {
+            Looper.prepare();
             genRequest();
             BuglyLog.d("Network", "biz_key: " + biz_key);
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString());
@@ -101,7 +103,7 @@ public class QRScanner {
         }
     };
     @SuppressLint("HandlerLeak")
-    Handler handler = new Handler() {
+    Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -159,7 +161,7 @@ public class QRScanner {
         qr_check_map = new HashMap<>();
     }
 
-    public void parseUrl(String paramResult) {
+    public boolean parseUrl(String paramResult) {
         if (paramResult.contains("qr_code_in_game.html")) {
             String[] split = paramResult.split("\\?");
             String[] param = split[1].split("&");
@@ -180,7 +182,9 @@ public class QRScanner {
         } else {
             BuglyLog.w("Parse QRCode", "Wrong QRCode,result: " + paramResult);
             makeToast("请扫描正确的二维码");
+            return false;
         }
+        return true;
     }
 
     public void getScanRequest() {

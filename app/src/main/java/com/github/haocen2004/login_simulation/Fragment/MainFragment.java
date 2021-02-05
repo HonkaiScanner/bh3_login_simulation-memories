@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.login.Bilibili;
+import com.github.haocen2004.login_simulation.login.Flyme;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.UC;
@@ -111,6 +112,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
             case "Oppo":
                 server_type = getString(R.string.types_oppo);
                 break;
+            case "Flyme":
+                server_type = getString(R.string.types_flyme);
+                break;
             default:
                 server_type = "DEBUG -- SERVER ERROR";
         }
@@ -135,7 +139,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     } else {
                         qrScanner = new QRScanner(activity, loginImpl.getRole());
                     }
-                    qrScanner.parseUrl(result);
+                    if (!qrScanner.parseUrl(result)) return;
                     qrScanner.getScanRequest();
                 } else {
                     makeToast(getString(R.string.error_scan));
@@ -232,6 +236,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
 //                    case "Oppo":
 //                        loginImpl = new Oppo(activity);
 //                        break;
+                    case "Flyme":
+                        loginImpl = new Flyme(activity);
+                        break;
                     default:
                         makeToast(getString(R.string.error_wrong_server));
                         break;

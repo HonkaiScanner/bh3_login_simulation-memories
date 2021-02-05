@@ -109,7 +109,7 @@ public class Official implements LoginImpl {
                     String combo_id = account_json.getString("combo_id");
                     String combo_token = account_json.getString("combo_token");
 
-                    roleData = new RoleData(uid, token, combo_id, combo_token, "1", "1", "");
+                    roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "");
                     isLogin = true;
                     Toast.makeText(activity, R.string.login_succeed, Toast.LENGTH_LONG).show();
 

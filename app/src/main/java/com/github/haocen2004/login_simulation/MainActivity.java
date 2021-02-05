@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", true);
-        BuglyLog.d("Main", "OnCreate");
         super.onCreate(savedInstanceState);
         app_pref = getDefaultSharedPreferences(this);
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
