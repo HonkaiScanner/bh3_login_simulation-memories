@@ -4,9 +4,11 @@
     <PreferenceCategory app:title="@string/basic_header">
 
         <ListPreference
+            android:id="@+id/listPrefServer"
             android:entries="@array/server_types"
             android:entryValues="@array/server_types_value"
             android:key="server_type"
+            android:summary="@array/server_types"
             android:title="@string/settings_servers" />
         <SwitchPreferenceCompat
             app:key="auto_confirm"

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.haocen2004.login_simulation.Data.SponsorData;
+import com.github.haocen2004.login_simulation.Database.SponsorData;
 import com.github.haocen2004.login_simulation.R;
 
 import java.util.List;

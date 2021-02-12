@@ -5,10 +5,10 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".Activity.MainActivity"
     tools:openDrawer="start">
 
-    <include layout="@layout/content_layout" />
+    <include layout="@layout/content_layout"/>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
@@ -19,7 +19,7 @@
         app:headerLayout="@layout/navigation_view_header_layout"
         app:itemIconTint="@color/navigation_item_color"
         app:itemTextAppearance="@style/TextAppearance.AppCompat.Large"
-        app:itemTextColor="@color/navigation_item_color"
+        app:itemTextColor="@color/navigationFontColor"
         app:menu="@menu/menu">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,6 +43,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/nav_header_pid"
+                android:textColor="#FFFFFF"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

@@ -9,21 +9,23 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission
         android:name="android.permission.READ_LOGS"
-        tools:ignore="ProtectedPermissions" />     <!--  Ignore system app   -->
-    <!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
-    <!--    <uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
-    <!--    <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" />-->
-    <!--    <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />-->
+        tools:ignore="ProtectedPermissions" /> <!-- Ignore system app -->
+    <!-- <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> -->
+    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
+    <!-- <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" /> -->
+    <!-- <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" /> -->
     <uses-permission android:name="vivo.game.permission.OPEN_JUMP_INTENTS" />
-    <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
 
+    <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -32,6 +34,7 @@
         android:smallScreens="true" />
 
     <application
+        android:name=".MainApplication"
         android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -40,14 +43,17 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".MainActivity">
-            <!--            android:screenOrientation="portrait">-->
+        <activity android:name=".Activity.MainActivity">
+
+            <!-- android:screenOrientation="portrait"> -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -55,9 +61,7 @@
 
         <meta-data
             android:name="BSGameSdk_PaidGame"
-            android:value="false" />
-
-        <!-- oppo options -->
+            android:value="false" /> <!-- oppo options -->
         <meta-data
             android:name="debug_mode"
             android:value="true" />
@@ -67,7 +71,6 @@
         <meta-data
             android:name="app_key"
             android:value="7NEgcusdF1ss0cK8CSwo8Ksk0" />
-
         <meta-data
             android:name="vivo_union_sdk"
             android:value="4.6.0.1" />
@@ -132,7 +135,6 @@
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
             android:launchMode="singleTop"
             android:theme="@style/bsgamesdk_customDialog" />
-
         <activity
             android:name="cn.uc.gamesdk.activity.PullupActivity"
             android:excludeFromRecents="true"
@@ -142,7 +144,6 @@
             android:taskAffinity="cn.uc.gamesdk.demo.diff"
             android:theme="@android:style/Theme.Translucent"
             tools:node="replace">
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -152,7 +153,6 @@
                 <data android:scheme="ng119474" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="cn.gundam.sdk.shell.activity.ProxyActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -165,7 +165,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.vivo.unionsdk.ui.UnionActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenSize"
@@ -181,13 +180,11 @@
                     android:path="/openjump"
                     android:scheme="vivounion" />
             </intent-filter>
-        </activity>
-        <!-- sdk service -->
+        </activity> <!-- sdk service -->
         <service
             android:name="cn.gundam.sdk.shell.service.ProxyService"
             android:exported="true"
-            android:process=":bgservice" />
-        <!-- sdk service end -->
+            android:process=":bgservice" /> <!-- sdk service end -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -197,7 +194,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
     </application>
 
 </manifest>

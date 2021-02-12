@@ -49,12 +49,12 @@ public class Tools {
         return null;
     }
 
-    public static void openUrl(String url, Activity activity) {
+    public static void openUrl(String url, Context context) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
         intent.setData(uri);
-        activity.startActivity(intent);
+        context.startActivity(intent);
     }
 
     public static String getDeviceID(Context paramContext) {

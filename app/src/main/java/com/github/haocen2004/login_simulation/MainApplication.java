@@ -1,74 +1,44 @@
 package com.github.haocen2004.login_simulation;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.github.haocen2004.login_simulation.util.Network;
-import com.google.android.material.navigation.NavigationView;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
+import cn.leancloud.AVLogger;
+import cn.leancloud.AVOSCloud;
+import cn.leancloud.AVObject;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
-import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.util.Tools.getDeviceID;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
-public class MainActivity extends AppCompatActivity {
-    private NavController navController;
-    private AppBarConfiguration appBarConfiguration;
+public class MainApplication extends Application {
     private SharedPreferences app_pref;
-    @SuppressLint("HandlerLeak")
-    Handler update_check_hd = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String feedback = data.getString("value");
-            feedback = feedback.substring(1, feedback.length() - 1).replaceAll("\\\\", "");
-            BuglyLog.i("Update", "handleMessage: " + feedback);
-            try {
-                JSONObject json = new JSONObject(feedback);
-                app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
-                if (!getPackageName().contains("dev") && app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
-                    showUpdateDialog(
-                            json.getString("ver_name"),
-                            json.getString("update_url"),
-                            json.getString("logs").replaceAll("&n", "\n")
-                    );
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                BuglyLog.d("Update", "Check Update Failed");
-
-                app_pref.edit().putString("bh_ver", BH_VER).apply();
-            }
-            BH_VER = app_pref.getString("bh_ver", BH_VER);
-        }
-    };
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
+    public void onCreate() {
+        super.onCreate();
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", true);
-        super.onCreate(savedInstanceState);
+        AVOSCloud.initialize(this, "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", "https://vmh6lryy.lc-cn-n1-shared.com");
+        if(DEBUG) {
+            AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
+        }
         app_pref = getDefaultSharedPreferences(this);
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             app_pref.edit()
@@ -108,37 +78,67 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-
-
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        navController = Navigation.findNavController(this, R.id.hostFragment);
-        DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
-        appBarConfiguration = new AppBarConfiguration
-                .Builder(R.id.mainFragment, R.id.settingsFragment)
-                .setOpenableLayout(drawerLayout)
-                .build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationView navigationView = findViewById(R.id.navigationView);
-        NavigationUI.setupWithNavController(navigationView, navController);
-        ((TextView) findViewById(R.id.textView2)).setText(VERSION_NAME);
-
         if (app_pref.getBoolean("showBetaInfo", DEBUG)) {
             showBetaInfoDialog();
         }
         if (app_pref.getBoolean("check_update", true)) {
             new Thread(update_rb).start();
         }
+
+        AVObject object = new AVObject("Sponsors");
+
+        object.put("name","Hao_cen");
+        object.put("desc","The Master of Scanner");
+        object.put("avatarImgUrl","https://i0.hdslb.com/bfs/face/db851963b92b11c891aa9e034511fe1ca117aef9.jpg");
+        object.put("personalPageUrl","https://space.bilibili.com/269140934");
+        object.put("deviceId",getDeviceID(getApplicationContext()));
+        object.put("scannerKey","scanner_key_sz123433900");
+
+
+// 将对象保存到云端
+        object.saveInBackground().subscribe(new Observer<AVObject>() {
+            public void onSubscribe(Disposable disposable) {}
+            public void onNext(AVObject todo) {
+                // 成功保存之后，执行其他逻辑
+                System.out.println("保存成功。objectId：" + todo.getObjectId());
+            }
+            public void onError(Throwable throwable) {
+                // 异常处理
+            }
+            public void onComplete() {}
+        });
+
+
     }
+    @SuppressLint("HandlerLeak")
+    Handler update_check_hd = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+            feedback = feedback.substring(1, feedback.length() - 1).replaceAll("\\\\", "");
+            BuglyLog.i("Update", "handleMessage: " + feedback);
+            try {
+                JSONObject json = new JSONObject(feedback);
+                app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
+                if (!getPackageName().contains("dev") && app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
+                    showUpdateDialog(
+                            json.getString("ver_name"),
+                            json.getString("update_url"),
+                            json.getString("logs").replaceAll("&n", "\n")
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                BuglyLog.d("Update", "Check Update Failed");
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+                app_pref.edit().putString("bh_ver", BH_VER).apply();
+            }
+            BH_VER = app_pref.getString("bh_ver", BH_VER);
 
-    }
-
+        }
+    };
     private void showBetaInfoDialog() {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);

@@ -17,7 +17,7 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
+        viewBinding true
     }
 
     buildTypes {
@@ -57,6 +57,10 @@ dependencies {
 //    implementation project(':mi_sdk')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.tencent.bugly:crashreport:3.2.422'
+    implementation 'cn.leancloud:storage-android:7.2.2'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation "androidx.room:room-runtime:2.2.6"
+    annotationProcessor "androidx.room:room-compiler:2.2.6"
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
