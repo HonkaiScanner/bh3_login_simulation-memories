@@ -1,5 +1,6 @@
 package com.github.haocen2004.login_simulation.Adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -11,13 +12,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.github.haocen2004.login_simulation.Database.SponsorData;
 import com.github.haocen2004.login_simulation.R;
 
 import java.util.List;
 
-public class SupportTabLayoutAdapter extends RecyclerView.Adapter<SupportTabLayoutAdapter.MyViewHolder> {
+public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.MyViewHolder> {
     private List<SponsorData> allSponsors;
+    private final Activity activity;
+
+    public SponsorAdapter(Activity activity) {
+        this.activity = activity;
+    }
 
     @NonNull
     @Override
@@ -36,7 +43,8 @@ public class SupportTabLayoutAdapter extends RecyclerView.Adapter<SupportTabLayo
         SponsorData sponsorData = allSponsors.get(position);
         holder.textViewName.setText(sponsorData.getName());
         holder.textViewDesc.setText(sponsorData.getDesc());
-        holder.imageViewAvatar.setImageURI(Uri.parse(""));
+        holder.imageViewAvatar.setImageURI(Uri.parse(sponsorData.getAvatarImgUrl()));
+        Glide.with(activity).load(sponsorData.getAvatarImgUrl()).circleCrop().into(holder.imageViewAvatar);
         holder.itemView.setOnClickListener(v -> {
             Uri uri = Uri.parse(sponsorData.getPersonalPageUrl());
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -63,5 +71,3 @@ public class SupportTabLayoutAdapter extends RecyclerView.Adapter<SupportTabLayo
         }
     }
 }
-
-//proxy sps -S ss -H rc4-md5 -J oYbxV6 -T tcp -P sz-ap03.hkix.xyz:57932 -t tcp -p :30067 -h chacha20 -j fszyytz --disable-http --disable-socks --disable-proxy-host

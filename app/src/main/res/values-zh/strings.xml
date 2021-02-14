@@ -53,11 +53,15 @@
     <string name="use_token_true">Token登录模式</string>
     <string name="settings_bh_ver">崩坏3版本号</string>
     <string name="report_github">Github</string>
-    <string name="report_bili">B站私信</string>
+    <string name="report_bili">B站主页</string>
     <string name="report_qq">QQ群</string>
     <string name="settings_update">检查更新</string>
     <string name="adv_header">高级设置</string>
-    <string name="report_hand">无崩溃时提交Bugly反馈</string>
+    <string name="report_hand">强制发送错误数据</string>
+    <string name="btn_register">注册</string>
+    <string name="sponsors_list">赞助者列表</string>
+    <string name="become_sp">加入赞助者</string>
+    <string name="user_rule">《用户协议》</string>
 
 
 </resources>

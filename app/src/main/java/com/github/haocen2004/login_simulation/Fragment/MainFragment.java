@@ -11,9 +11,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +22,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
@@ -31,7 +30,6 @@ import com.github.haocen2004.login_simulation.login.Oppo;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
 import com.github.haocen2004.login_simulation.util.QRScanner;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.zxing.activity.CaptureActivity;
 import com.google.zxing.util.Constant;
 
@@ -54,50 +52,48 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     private Context context;
     private Boolean isOfficial = false;
     private SharedPreferences pref;
+    private FragmentMainBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((CollapsingToolbarLayout) requireActivity().findViewById(R.id.collapsingToolbarLayout))
-                .setTitle(getString(R.string.page_main));
         activity = (AppCompatActivity) getActivity();
         context = getContext();
         pref = getDefaultSharedPreferences(context);
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        binding = FragmentMainBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        requireActivity().findViewById(R.id.btn_login).setOnClickListener(this);
-        requireActivity().findViewById(R.id.btn_scan).setOnClickListener(this);
-        requireActivity().findViewById(R.id.btn_logout).setOnClickListener(this);
-        ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).setOnCheckedChangeListener(this);
-        ((CheckBox) requireActivity().findViewById(R.id.token_checkBox)).setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
+        binding.btnLogin.setOnClickListener(this);
+        binding.btnScan.setOnClickListener(this);
+        binding.btnLogout.setOnClickListener(this);
+        binding.officialSlotSelect.setOnCheckedChangeListener(this);
+        binding.tokenCheckBox.setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
 
-        String server_type;
-        requireActivity().findViewById(R.id.official_slot_select).setVisibility(View.GONE);
-        requireActivity().findViewById(R.id.token_checkBox).setVisibility(View.GONE);
+        String server_type = "DEBUG SERVER ERROR";
+        binding.officialSlotSelect.setVisibility(View.GONE);
+        binding.tokenCheckBox.setVisibility(View.GONE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = getString(R.string.types_official);
-                requireActivity().findViewById(R.id.official_slot_select).setVisibility(View.VISIBLE);
-                requireActivity().findViewById(R.id.token_checkBox).setVisibility(View.VISIBLE);
+                binding.officialSlotSelect.setVisibility(View.VISIBLE);
+                binding.tokenCheckBox.setVisibility(View.VISIBLE);
                 switch (pref.getInt("official_slot", 1)) {
                     case 1:
-                        ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).check(R.id.slot1);
+                        binding.officialSlotSelect.check(R.id.slot1);
                         break;
                     case 2:
-                        ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).check(R.id.slot2);
+                        binding.officialSlotSelect.check(R.id.slot2);
                         break;
                     case 3:
-                        ((RadioGroup) requireActivity().findViewById(R.id.official_slot_select)).check(R.id.slot3);
+                        binding.officialSlotSelect.check(R.id.slot3);
                         break;
                 }
-                requireActivity().findViewById(R.id.token_checkBox).setSelected(pref.getBoolean("use_token", false));
-
-
+                binding.tokenCheckBox.setSelected(pref.getBoolean("use_token", false));
                 break;
             case "Bilibili":
                 server_type = getString(R.string.types_bilibili);
@@ -120,9 +116,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
             default:
                 server_type = "DEBUG -- SERVER ERROR";
         }
-        ((TextView) requireActivity().findViewById(R.id.text_select_server)).setText(getString(R.string.types_prefix) + server_type);
-        ((TextView) requireActivity().findViewById(R.id.text_auto_confirm)).setText(getString(R.string.confirm_prefix) + (pref.getBoolean("auto_confirm", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
-
+        binding.textSelectServer.setText(getString(R.string.types_prefix) + server_type);
+        binding.textAutoConfirm.setText(getString(R.string.confirm_prefix) + (pref.getBoolean("auto_confirm", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
         checkPermissions();
     }
 

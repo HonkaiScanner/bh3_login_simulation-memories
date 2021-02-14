@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.haocen2004.login_simulation.R;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -31,8 +30,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ((CollapsingToolbarLayout) requireActivity().findViewById(R.id.collapsingToolbarLayout))
-                .setTitle(getString(R.string.list_settings));
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

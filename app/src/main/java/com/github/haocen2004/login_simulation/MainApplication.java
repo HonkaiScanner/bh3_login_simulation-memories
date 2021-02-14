@@ -10,6 +10,7 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import com.github.haocen2004.login_simulation.Database.SponsorRepo;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -18,15 +19,11 @@ import org.json.JSONObject;
 
 import cn.leancloud.AVLogger;
 import cn.leancloud.AVOSCloud;
-import cn.leancloud.AVObject;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
-import static com.github.haocen2004.login_simulation.util.Tools.getDeviceID;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class MainApplication extends Application {
@@ -85,30 +82,6 @@ public class MainApplication extends Application {
             new Thread(update_rb).start();
         }
 
-        AVObject object = new AVObject("Sponsors");
-
-        object.put("name","Hao_cen");
-        object.put("desc","The Master of Scanner");
-        object.put("avatarImgUrl","https://i0.hdslb.com/bfs/face/db851963b92b11c891aa9e034511fe1ca117aef9.jpg");
-        object.put("personalPageUrl","https://space.bilibili.com/269140934");
-        object.put("deviceId",getDeviceID(getApplicationContext()));
-        object.put("scannerKey","scanner_key_sz123433900");
-
-
-// 将对象保存到云端
-        object.saveInBackground().subscribe(new Observer<AVObject>() {
-            public void onSubscribe(Disposable disposable) {}
-            public void onNext(AVObject todo) {
-                // 成功保存之后，执行其他逻辑
-                System.out.println("保存成功。objectId：" + todo.getObjectId());
-            }
-            public void onError(Throwable throwable) {
-                // 异常处理
-            }
-            public void onComplete() {}
-        });
-
-
     }
     @SuppressLint("HandlerLeak")
     Handler update_check_hd = new Handler() {
@@ -122,6 +95,12 @@ public class MainApplication extends Application {
             try {
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
+                int sp_ver = app_pref.getInt("sponsors_db_ver", 0);
+                if (sp_ver < json.getInt("sponsors_db_ver")) {
+                    new SponsorRepo(getApplicationContext()).refreshSponsors();
+                    app_pref.edit().putInt("sponsors_db_ver", json.getInt("sponsors_db_ver")).apply();
+                }
+
                 if (!getPackageName().contains("dev") && app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
                     showUpdateDialog(
                             json.getString("ver_name"),
@@ -136,6 +115,7 @@ public class MainApplication extends Application {
                 app_pref.edit().putString("bh_ver", BH_VER).apply();
             }
             BH_VER = app_pref.getString("bh_ver", BH_VER);
+
 
         }
     };

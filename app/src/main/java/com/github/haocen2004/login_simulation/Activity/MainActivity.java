@@ -1,42 +1,56 @@
 package com.github.haocen2004.login_simulation.Activity;
 
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.github.haocen2004.login_simulation.R;
-import com.google.android.material.navigation.NavigationView;
+import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
+    private ActivityMainBinding binding;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(binding.mainInclude.toolbar);
         navController = Navigation.findNavController(this, R.id.hostFragment);
-        DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
         appBarConfiguration = new AppBarConfiguration
                 .Builder(R.id.mainFragment)
-                .setOpenableLayout(drawerLayout)
+                .setOpenableLayout(binding.drawerLayout)
                 .build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationView navigationView = findViewById(R.id.navigationView);
-        NavigationUI.setupWithNavController(navigationView, navController);
-        ((TextView) findViewById(R.id.textView2)).setText(VERSION_NAME);
+        NavigationUI.setupWithNavController(binding.navigationView, navController);
+        binding.textView2.setText(VERSION_NAME);
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            String toolbarTitle = "DEBUG WRONG TITLE";
+            if (destination.getId() == R.id.mainFragment) {
+                toolbarTitle = getString(R.string.page_main);
+            }
+            if (destination.getId() == R.id.reportFragment) {
+                toolbarTitle = getString(R.string.list_report);
+            }
+            if (destination.getId() == R.id.supportFragment) {
+                toolbarTitle = getString(R.string.list_pay);
+            }
+            if (destination.getId() == R.id.settingsFragment) {
+                toolbarTitle = getString(R.string.list_settings);
+            }
+            binding.mainInclude.collapsingToolbarLayout.setTitle(toolbarTitle);
+//            ((CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout)).setTitle(toolbarTitle);
+        });
 
     }
 
@@ -45,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
 
 
 }

@@ -57,25 +57,11 @@
     <string name="report_bili">BiliBili</string>
     <string name="report_qq">QQ Group</string>
     <string name="adv_header">Advanced</string>
-    <string name="report_hand">Submit Bugly feedback when there is no crash</string>
+    <string name="report_hand">Force submit Error data</string>
     <string name="types_flyme">Flyme Server</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="btn_register">Register</string>
+    <string name="sponsors_list">Sponsors List</string>
+    <string name="become_sp">Donate</string>
+    <string name="user_rule">User Rules</string>
 
 </resources>

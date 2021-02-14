@@ -11,16 +11,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.github.haocen2004.login_simulation.databinding.FragmentReportBinding;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class ReportFragment extends Fragment implements View.OnClickListener {
-
-    public ReportFragment() {
-        // Required empty public constructor
-    }
+    private FragmentReportBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,18 +27,17 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((CollapsingToolbarLayout) requireActivity().findViewById(R.id.collapsingToolbarLayout))
-                .setTitle(getString(R.string.list_report));
-        return inflater.inflate(R.layout.fragment_report, container, false);
+        binding = FragmentReportBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 //        openUrl("https://github.com/Haocen2004/bh3_login_simulation/issues", requireActivity());
-        requireActivity().findViewById(R.id.report_bili).setOnClickListener(this);
-        requireActivity().findViewById(R.id.report_github).setOnClickListener(this);
-        requireActivity().findViewById(R.id.report_qq).setOnClickListener(this);
-        requireActivity().findViewById(R.id.report_hand).setOnClickListener(this);
+        binding.reportGithub.setOnClickListener(this);
+        binding.reportBili.setOnClickListener(this);
+        binding.reportQq.setOnClickListener(this);
+        binding.reportHand.setOnClickListener(this);
         super.onViewCreated(view, savedInstanceState);
     }
 
