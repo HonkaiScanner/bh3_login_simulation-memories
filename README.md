@@ -28,3 +28,9 @@ https://www.bilibili.com/video/BV1hA411e7s3/
 ## 其他 / Other
 米忽悠登录sdk错误码:  
 -107 参数错误
+
+## 开源库 / Open Source
+ZXing  
+Glide  
+LeanCloud  
+Bugly  
