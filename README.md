@@ -9,6 +9,7 @@
 官服   
 Bilibili  
 Vivo  
+oppo  
 UC(豌豆荚/九游)    
   
 ## 不支持协议 / Unsupported protocol
@@ -16,7 +17,6 @@ UC(豌豆荚/九游)
 小米  
 应用宝  
 魅族  
-oppo  
 
 以上SDK有包名和签名验证暂时无解（等待有缘人破解  
 
