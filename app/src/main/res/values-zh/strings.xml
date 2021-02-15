@@ -61,8 +61,16 @@
     <string name="btn_register">注册</string>
     <string name="sponsors_list">赞助者列表</string>
     <string name="become_sp">加入赞助者</string>
-    <string name="user_rule">《用户协议》</string>
+    <string name="user_rule">同意 《用户协议》</string>
     <string name="checkbox_wdj">使用豌豆荚账号</string>
+    <string name="reg_email">邮箱</string>
+    <string name="reg_scanner_key">赞助者身份码</string>
+    <string name="error_email">请输入正确的邮箱</string>
+    <string name="error_key">请输入正确的赞助者身份码</string>
+    <string name="error_ver_outdate">该版本不支持此操作</string>
+    <string name="error_network">网络错误</string>
+    <string name="reg_succ">注册成功</string>
+    <string name="error_key_used">该身份码已被使用</string>
 
 
 </resources>

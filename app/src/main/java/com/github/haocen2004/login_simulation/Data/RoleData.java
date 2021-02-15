@@ -71,6 +71,7 @@ public class RoleData {
         this.combo_token = combo_token;
         this.channel_id = channel_id;
         this.account_type = account_type;
+        this.accountType = account_type;
         this.oa_req_key = BH_VER + "_gf_android" + (oa_req_key.isEmpty() ? "" : "_" + oa_req_key);
         if (special_tag == 1) {
             this.uc_sign = true;

@@ -12,7 +12,6 @@ public abstract class SponsorDatabase extends RoomDatabase {
     static synchronized SponsorDatabase getDatabase(Context context){
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), SponsorDatabase.class, "sponsors_db")
-                    .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
                     .build();
         }

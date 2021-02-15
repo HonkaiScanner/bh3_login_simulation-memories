@@ -19,6 +19,8 @@ import com.github.haocen2004.login_simulation.databinding.FragmentSpDisplayBindi
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+
 public class DisplayFragment extends Fragment {
     private RecyclerView recyclerViewSp;
     private SponsorAdapter sponsorAdapter;
@@ -45,10 +47,12 @@ public class DisplayFragment extends Fragment {
         List<SponsorData> sponsorDataOld = new ArrayList<>();
         sponsorDataOld.add(new SponsorData("Loading...", "", "a", "b", "c", "d"));
         adapter.setAllSponsors(sponsorDataOld);
-        new Thread(() -> {
-            SponsorRepo sponsorRepo = new SponsorRepo(getContext());
-            adapter.setAllSponsors(sponsorRepo.getAllSponsors());
-            adapter.notifyDataSetChanged();
-        }).run();
+        if (CHECK_VER) {
+            new Thread(() -> {
+                SponsorRepo sponsorRepo = new SponsorRepo(getContext());
+                adapter.setAllSponsors(sponsorRepo.getAllSponsors());
+                adapter.notifyDataSetChanged();
+            }).start();
+        }
     }
 }

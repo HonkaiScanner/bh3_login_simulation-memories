@@ -62,7 +62,15 @@
     <string name="btn_register">Register</string>
     <string name="sponsors_list">Sponsors List</string>
     <string name="become_sp">Donate</string>
-    <string name="user_rule">User Rules</string>
+    <string name="user_rule">Agree User Rules</string>
     <string name="checkbox_wdj">WandouJia Account</string>
+    <string name="reg_email">Email</string>
+    <string name="reg_scanner_key">Sponsor Key</string>
+    <string name="error_email">Wrong Email Address</string>
+    <string name="error_key">Wrong Sponsor Key</string>
+    <string name="error_ver_outdate">Scanner is OUTDATED</string>
+    <string name="error_network">Network Error</string>
+    <string name="reg_succ">Registered successfully</string>
+    <string name="error_key_used">This Key is USED</string>
 
 </resources>

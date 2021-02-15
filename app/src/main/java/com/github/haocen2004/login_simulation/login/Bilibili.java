@@ -82,9 +82,9 @@ public class Bilibili implements LoginImpl {
                         String combo_id = data_json2.getString("combo_id");
                         String open_id = data_json2.getString("open_id");
                         String combo_token = data_json2.getString("combo_token");
-                        String account_type = data_json2.getString("account_type");
+//                        String account_type = data_json2.getString("account_type");
 
-                        roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", account_type, "bilibili", 0);
+                        roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", "2", "bilibili", 0);
                         isLogin = true;
                         makeToast(activity.getString(R.string.login_succeed));
                     }

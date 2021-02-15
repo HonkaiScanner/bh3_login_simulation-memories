@@ -26,7 +26,7 @@ public class SponsorRepo {
     }
 
     public void refreshSponsors() {
-        ((Runnable) () -> {
+        new Thread(() -> {
             getSponsorDao().deleteAllSponsors();
             AVQuery<AVObject> query = new AVQuery<>("Sponsors");
             query.findInBackground().subscribe(new Observer<List<AVObject>>() {
@@ -35,9 +35,11 @@ public class SponsorRepo {
 
                 public void onNext(List<AVObject> Sponsors) {
                     // students 是包含满足条件的 Student 对象的数组
-                    for (AVObject object : Sponsors) {
-                        getSponsorDao().insertSponsors(new SponsorData(object.getString("name"), object.getString("desc"), object.getString("avatarImgUrl"), object.getString("personalPageUrl"), object.getString("deviceId"), object.getString("scannerKey")));
-                    }
+                    new Thread(() -> {
+                        for (AVObject object : Sponsors) {
+                            getSponsorDao().insertSponsors(new SponsorData(object.getString("name"), object.getString("desc"), object.getString("avatarImgUrl"), object.getString("personalPageUrl"), object.getString("deviceId"), object.getString("scannerKey")));
+                        }
+                    }).start();
                 }
 
                 public void onError(Throwable throwable) {
@@ -47,7 +49,7 @@ public class SponsorRepo {
                 public void onComplete() {
                 }
             });
-        }).run();
+        }).start();
     }
 
 

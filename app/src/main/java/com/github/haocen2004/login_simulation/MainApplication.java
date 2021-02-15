@@ -24,6 +24,7 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class MainApplication extends Application {
@@ -75,8 +76,9 @@ public class MainApplication extends Application {
             }
 
         }
+        CHECK_VER = app_pref.getBoolean("check_update", true);
 
-        if (app_pref.getBoolean("check_update", true)) {
+        if (CHECK_VER) {
             new Thread(update_rb).start();
         }
 
