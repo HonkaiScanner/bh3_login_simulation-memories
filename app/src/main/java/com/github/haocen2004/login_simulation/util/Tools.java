@@ -26,7 +26,20 @@ public class Tools {
     private static final String TAG = "Tools";
     private static final String name = "scanner_pref";
 
-
+public static void changeToWDJ(Activity activity) {
+    activity.getSharedPreferences("cn.uc.gamesdk.pref", 0).edit()//.clear()
+            .putString("cn.uc.gamesdk.res.flag", "r28Or5WQ9/hgeEMZQTX6Bg==")
+            .putString("cn.uc.gamesdk.channelid.encrypt.aes", "stEbrNaiO7JuNgae7SN+lQ==")
+            .putBoolean("cn.uc.gamesdk.brand.support_splash", true)
+            .putBoolean("cn.uc.gamesdk.lib.sdk.model.first.start.814", true)
+            .putString("cn.uc.gamesdk.channelid", "WJ_1")
+            .putString("cn.uc.gamesdk.setting.packfile.md5", "9477d6d1f66bc094ab24cdb1ff8e572e")
+            .putString("cn.uc.gamesdk.systemConfigFile.md5", "aad006450f07047effe757719e444528")
+            .putString("cn.uc.gamesdk.channelid.encrypt", "bTkwBQrKJI6Ee+NjoEI=")
+            .putString("cn.uc.gamesdk.html.verify", "a16c3a5c249d6ae6721533b9863b0a13")
+            .putInt("cn.uc.gamesdk.appcachepolicy", 0)
+            .apply();
+}
 
     public static String getOAServer(RoleData roleData) {
 //        http://106.14.51.73/query_gameserver?version=4.2.0_gf_pc&t=1598631898&uid=21097880

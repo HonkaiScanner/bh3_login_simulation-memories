@@ -30,7 +30,7 @@
             android:gravity="center_horizontal"
             android:orientation="horizontal"
             android:saveEnabled="true"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,9 +62,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/use_token_true"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/official_slot_select" />
+
+        <CheckBox
+            android:id="@+id/checkBoxWDJ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/checkbox_wdj"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/token_checkBox" />
 
         <Button
             android:id="@+id/btn_scan"
@@ -74,13 +86,13 @@
             android:text="@string/btn_scan"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/token_checkBox" />
+            app:layout_constraintTop_toBottomOf="@+id/checkBoxWDJ" />
 
         <Button
             android:id="@+id/btn_logout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:text="@string/btn_logout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -39,11 +39,7 @@ import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
-
-//import com.github.haocen2004.login_simulation.login.Flyme;
-
-//import com.github.haocen2004.login_simulation.login.Oppo;
-
+import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
 
 public class MainFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
@@ -64,7 +60,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         return binding.getRoot();
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -73,10 +68,17 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         binding.btnLogout.setOnClickListener(this);
         binding.officialSlotSelect.setOnCheckedChangeListener(this);
         binding.tokenCheckBox.setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
-
+        binding.checkBoxWDJ.setOnCheckedChangeListener((compoundButton, b) -> {
+            SharedPreferences ucsp = activity.getSharedPreferences("cn.uc.gamesdk.pref", 0);
+//            activity.getSharedPreferences("cn.uc.gamesdk.pref.usr_simple_cache",0).edit().clear().apply();
+            pref.edit().putBoolean("use_wdj", b).apply();
+            if (b) {
+                changeToWDJ(activity);
+            } else {
+                ucsp.edit().clear().apply();
+            }
+        });
         String server_type = "DEBUG SERVER ERROR";
-        binding.officialSlotSelect.setVisibility(View.GONE);
-        binding.tokenCheckBox.setVisibility(View.GONE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = getString(R.string.types_official);
@@ -93,7 +95,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                         binding.officialSlotSelect.check(R.id.slot3);
                         break;
                 }
-                binding.tokenCheckBox.setSelected(pref.getBoolean("use_token", false));
+                binding.tokenCheckBox.setChecked(pref.getBoolean("use_token", false));
                 break;
             case "Bilibili":
                 server_type = getString(R.string.types_bilibili);
@@ -103,6 +105,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                 break;
             case "UC":
                 server_type = getString(R.string.types_uc);
+                binding.checkBoxWDJ.setVisibility(View.VISIBLE);
+                binding.checkBoxWDJ.setChecked(pref.getBoolean("use_wdj", false));
                 break;
             case "Vivo":
                 server_type = getString(R.string.types_vivo);
@@ -224,6 +228,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                         //14
                         break;
                     case "UC":
+                        if (pref.getBoolean("use_wdj", false)) {
+                            changeToWDJ(activity);
+                        }
                         loginImpl = new UC(activity);
                         //20
                         break;

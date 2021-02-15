@@ -115,8 +115,13 @@ public class UC implements LoginImpl {
                     String open_id = data_json2.getString("open_id");
                     String combo_token = data_json2.getString("combo_token");
                     String account_type = data_json2.getString("account_type");
+                    String data2 = data_json2.getString("data");
+                    int special_tag = 1;
+                    if (data2.contains("true")) {
+                        special_tag = 3;
+                    }
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "20", account_type, "uc", 1);
+                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "20", account_type, "uc", special_tag);
 
                     isLogin = true;
                     makeToast(activity.getString(R.string.login_succeed));

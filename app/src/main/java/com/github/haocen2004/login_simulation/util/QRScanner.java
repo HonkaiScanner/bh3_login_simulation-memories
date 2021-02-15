@@ -274,7 +274,7 @@ public class QRScanner {
                 .put("account_type", account_type);
 
         if (roleData.isUc_sign()) {
-            raw_json.put("is_wdj", false);
+            raw_json.put("is_wdj", getDefaultSharedPreferences(activity).getBoolean("use_wdj", false));
         }
         if (!open_token.isEmpty()) {
             raw_json.put("open_token", open_token)

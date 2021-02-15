@@ -75,9 +75,7 @@ public class MainApplication extends Application {
             }
 
         }
-        if (app_pref.getBoolean("showBetaInfo", DEBUG)) {
-            showBetaInfoDialog();
-        }
+
         if (app_pref.getBoolean("check_update", true)) {
             new Thread(update_rb).start();
         }
@@ -119,19 +117,7 @@ public class MainApplication extends Application {
 
         }
     };
-    private void showBetaInfoDialog() {
 
-        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("Beta使用须知");
-        normalDialog.setMessage("你现在使用的是内部测试版本\n请及时通过左边侧滑栏反馈bug\n此消息只会出现一次");
-        normalDialog.setPositiveButton("我已知晓",
-                (dialog, which) -> {
-                    getDefaultSharedPreferences(this).edit().putBoolean("showBetaInfo", false).apply();
-                    dialog.dismiss();
-                });
-        normalDialog.setCancelable(false);
-        normalDialog.show();
-    }
 
     private void showUpdateDialog(String ver, String url, String logs) {
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
@@ -147,7 +133,11 @@ public class MainApplication extends Application {
     }
     Runnable update_rb = () -> {
         String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
-        if (feedback.isEmpty()) {
+        try {
+            if (feedback.isEmpty()) {
+                return;
+            }
+        } catch (Exception e) {
             return;
         }
         Message msg = new Message();

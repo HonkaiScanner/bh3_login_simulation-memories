@@ -2,6 +2,7 @@ package com.github.haocen2004.login_simulation.Activity;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -11,6 +12,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,8 +52,10 @@ public class MainActivity extends AppCompatActivity {
                 toolbarTitle = getString(R.string.list_settings);
             }
             binding.mainInclude.collapsingToolbarLayout.setTitle(toolbarTitle);
-//            ((CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout)).setTitle(toolbarTitle);
         });
+        if (getDefaultSharedPreferences(this).getBoolean("showBetaInfo", DEBUG)) {
+            showBetaInfoDialog();
+        }
 
     }
 
@@ -58,6 +63,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    private void showBetaInfoDialog() {
+
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+        normalDialog.setTitle("Beta使用须知");
+        normalDialog.setMessage("你现在使用的是内部测试版本\n请及时通过左边侧滑栏反馈bug\n此消息只会出现一次");
+        normalDialog.setPositiveButton("我已知晓",
+                (dialog, which) -> {
+                    getDefaultSharedPreferences(this).edit().putBoolean("showBetaInfo", false).apply();
+                    dialog.dismiss();
+                });
+        normalDialog.setCancelable(false);
+        normalDialog.show();
     }
 
 

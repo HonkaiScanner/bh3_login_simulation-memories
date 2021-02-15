@@ -54,6 +54,8 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                 openUrl("https://jq.qq.com/?_wv=1027&k=v4Z91CMR", requireActivity());
                 break;
             case R.id.report_hand:
+                int i = 1 / 0;
+                CrashReport.testANRCrash();
                 CrashReport.testJavaCrash();
                 break;
             default:
