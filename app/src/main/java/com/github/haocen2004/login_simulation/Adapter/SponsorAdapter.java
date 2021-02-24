@@ -46,10 +46,13 @@ public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.MyViewHo
         holder.imageViewAvatar.setImageURI(Uri.parse(sponsorData.getAvatarImgUrl()));
         Glide.with(activity).load(sponsorData.getAvatarImgUrl()).circleCrop().into(holder.imageViewAvatar);
         holder.itemView.setOnClickListener(v -> {
-            Uri uri = Uri.parse(sponsorData.getPersonalPageUrl());
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(uri);
-            holder.itemView.getContext().startActivity(intent);
+            try {
+                Uri uri = Uri.parse(sponsorData.getPersonalPageUrl());
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(uri);
+                holder.itemView.getContext().startActivity(intent);
+            } catch (Exception ignore) {
+            }
         });
     }
 

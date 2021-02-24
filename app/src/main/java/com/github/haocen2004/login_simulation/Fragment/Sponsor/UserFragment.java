@@ -38,8 +38,8 @@ public class UserFragment extends Fragment {
     private int sp_level;
     private AVUser user;
     private final String TAG = "SponsorManager";
-    private final String emailPattern = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
-    private final String scKeyPattern = "^scanner_key_+[a-zA-Z0-9_-]{16}*";
+    private final String emailPattern = "^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
+    private final String scKeyPattern = "^scanner_key_+[a-zA-Z0-9_-]{16}";
     private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -71,147 +71,178 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.editTextName.addTextChangedListener(textWatcher);
-        binding.editTextKey.addTextChangedListener(textWatcher);
-        binding.editTextRegEmail.addTextChangedListener(textWatcher);
-        binding.editTextPassword.addTextChangedListener(textWatcher);
-        binding.buttonRegStep1.setOnClickListener(view1 -> {
-            binding.buttonLogin.setVisibility(View.GONE);
-            binding.buttonRegStep1.setVisibility(View.GONE);
-            binding.buttonRegisterStep2.setVisibility(View.VISIBLE);
-            binding.editTextName.setVisibility(View.VISIBLE);
-            binding.editTextKey.setVisibility(View.VISIBLE);
-        });
 
-        binding.checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
+        if (AVUser.getCurrentUser() != null) {
 
-        });
-        binding.buttonRegisterStep2.setOnClickListener(view1 -> {
-            String sc_key = binding.editTextKey.getText().toString();
-            if (Pattern.matches(scKeyPattern, sc_key)) {
-                String content = binding.editTextRegEmail.getText().toString();
-                if (Pattern.matches(emailPattern, content)) {
-                    String postParam = "{\"app_ver\":" + VERSION_CODE + ",\"sponsor_key\":\"" + sc_key + "\"}";
-                    AVQuery<AVObject> query = new AVQuery<>("Sponsors");
-                    query.whereEqualTo("scannerKey", sc_key);
-                    query.findInBackground().subscribe(new Observer<List<AVObject>>() {
-                        public void onSubscribe(Disposable disposable) {
-                        }
+//            requireActivity().findViewById(R.id.includeAfterLogin).setVisibility(View.VISIBLE);
+//            requireActivity().findViewById(R.id.includeBeforeLogin).setVisibility(View.GONE);
+//                    .setVisibility(View.VISIBLE);
+//            binding.getRoot().setVisibility(View.GONE);
 
-                        public void onNext(List<AVObject> sp) {
-                            makeToast(getString(R.string.error_key_used));
-                        }
+        } else {
 
-                        public void onError(Throwable throwable) {
-                            new Thread(() -> {
-                                String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
-                                if (feedback == null) {
-                                    makeToast(getString(R.string.error_network));
-                                    return;
-                                }
-                                try {
-                                    JSONObject feedback_json = new JSONObject(feedback);
-                                    int retCode = feedback_json.getInt("ret");
-                                    if (retCode > 0) {
-                                        sp_level = retCode;
 
-                                        AVUser user = new AVUser();
+            binding.editTextName.addTextChangedListener(textWatcher);
+            binding.editTextKey.addTextChangedListener(textWatcher);
+            binding.editTextRegEmail.addTextChangedListener(textWatcher);
+            binding.editTextPassword.addTextChangedListener(textWatcher);
+            binding.buttonRegStep1.setOnClickListener(view1 -> {
+                binding.buttonLogin.setVisibility(View.GONE);
+                binding.buttonRegStep1.setVisibility(View.GONE);
+                binding.buttonRegisterStep2.setVisibility(View.VISIBLE);
+                binding.editTextName.setVisibility(View.VISIBLE);
+                binding.editTextKey.setVisibility(View.VISIBLE);
+            });
 
-                                        user.setUsername(binding.editTextName.getText().toString());
-                                        user.setPassword(binding.editTextPassword.getText().toString());
+            binding.checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
 
-                                        user.setEmail(content);
+            });
+            binding.buttonRegisterStep2.setOnClickListener(view1 -> {
+                showProgressBar();
+                String sc_key = binding.editTextKey.getText().toString();
+                if (Pattern.matches(scKeyPattern, sc_key)) {  // 正则匹配格式
+                    String content = binding.editTextRegEmail.getText().toString();
+                    if (Pattern.matches(emailPattern, content)) {
+                        String postParam = "{\"app_ver\":" + VERSION_CODE + ",\"sponsor_key\":\"" + sc_key + "\"}";
+                        AVQuery<AVObject> query = new AVQuery<>("Sponsors"); // 请求云端查重 1  LeanCloud
+                        query.whereEqualTo("scannerKey", sc_key);
+                        query.findInBackground().subscribe(new Observer<List<AVObject>>() {
+                            public void onSubscribe(Disposable disposable) {
+                            }
 
-                                        user.put("sp_level", sp_level);
+                            public void onNext(List<AVObject> sp) {
+                                if (sp.size() == 0) {
+                                    new Thread(() -> {  // 请求云端查询身份码是否有绑定用户  Tencent Cloud
+                                        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
+                                        if (feedback == null) {
+                                            makeToast(getString(R.string.error_network));
+                                            return;
+                                        }
+                                        try {
+                                            JSONObject feedback_json = new JSONObject(feedback);
+                                            int retCode = feedback_json.getInt("ret");
+                                            if (retCode > 0) {
+                                                sp_level = retCode;
 
-                                        user.signUpInBackground().subscribe(new Observer<AVUser>() {
-                                            public void onSubscribe(Disposable disposable) {
-                                            }
+                                                AVUser user = new AVUser(); //账号创建
 
-                                            public void onNext(AVUser user) {
-                                                // 注册成功
-                                                makeToast(getString(R.string.reg_succ));
-                                                setUser(user);
-                                                AVObject sponsor = new AVObject("Sponsors");
+                                                user.setUsername(binding.editTextName.getText().toString());
+                                                user.setPassword(binding.editTextPassword.getText().toString());
 
-                                                sponsor.put("scannerKey", sc_key);
-                                                sponsor.put("user", user);
+                                                user.setEmail(content);
 
-                                                sponsor.saveInBackground().subscribe(new Observer<AVObject>() {
+                                                user.put("sp_level", sp_level);
+
+                                                user.signUpInBackground().subscribe(new Observer<AVUser>() {
                                                     public void onSubscribe(Disposable disposable) {
                                                     }
 
-                                                    public void onNext(AVObject todo) {
-                                                        // 成功保存之后，执行其他逻辑
-                                                        BuglyLog.i(TAG, "注册成功");
+                                                    public void onNext(AVUser user) {
+                                                        // 注册成功
+                                                        makeToast(getString(R.string.reg_succ));
+                                                        setUser(user);
+                                                        // 将身份码与用户绑定
+                                                        AVObject sponsor = new AVObject("Sponsors");
+
+                                                        sponsor.put("scannerKey", sc_key);
+                                                        sponsor.put("user", user);
+
+                                                        sponsor.saveInBackground().subscribe(new Observer<AVObject>() {
+                                                            public void onSubscribe(Disposable disposable) {
+                                                            }
+
+                                                            public void onNext(AVObject todo) {
+                                                                // 保存完成 写入本地 ui切换
+                                                                // TODO:UI切换
+                                                                BuglyLog.i(TAG, "注册成功");
+                                                                hideProgressBar();
+                                                            }
+
+                                                            public void onError(Throwable throwable) {
+                                                                CrashReport.postCatchedException(throwable);
+                                                            }
+
+                                                            public void onComplete() {
+                                                            }
+                                                        });
                                                     }
 
-                                                    public void onError(Throwable throwable) {
-                                                        CrashReport.postCatchedException(throwable);
+                                                    public void onError(@NotNull Throwable throwable) {
+                                                        makeToast(throwable.getMessage());
+                                                        hideProgressBar();
                                                     }
 
                                                     public void onComplete() {
                                                     }
                                                 });
+
+
+                                            } else if (retCode == -2) {
+                                                makeToast(getString(R.string.error_ver_outdate));
+                                                hideProgressBar();
+                                            } else {
+                                                makeToast(getString(R.string.error_key));
+                                                hideProgressBar();
                                             }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
 
-                                            public void onError(@NotNull Throwable throwable) {
-                                                makeToast(throwable.getMessage());
-                                            }
-
-                                            public void onComplete() {
-                                            }
-                                        });
-
-
-                                    } else if (retCode == -2) {
-                                        makeToast(getString(R.string.error_ver_outdate));
-                                    } else {
-                                        makeToast(getString(R.string.error_key));
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                    }).start();
+                                } else {
+                                    makeToast(getString(R.string.error_key_used));
+                                    hideProgressBar();
                                 }
+                            }
 
-                            }).start();
+                            public void onError(Throwable throwable) {
+
+                            }
+
+                            public void onComplete() {
+                            }
+                        });
+
+                    } else {
+                        makeToast(getString(R.string.error_email));
+                        hideProgressBar();
+                    }
+                } else {
+                    makeToast(getString(R.string.error_key));
+                    hideProgressBar();
+                }
+
+
+            });
+            binding.buttonLogin.setOnClickListener(view1 -> {
+                showProgressBar();
+                String content = binding.editTextRegEmail.getText().toString();
+                if (Pattern.matches(emailPattern, content)) {
+                    AVUser.loginByEmail(content, binding.editTextPassword.getText().toString()).subscribe(new Observer<AVUser>() {
+                        public void onSubscribe(Disposable disposable) {
+                        }
+
+                        public void onNext(AVUser user) {
+                            setUser(user);
+                            makeToast(getString(R.string.login_succeed));
+                            hideProgressBar();
+                        }
+
+                        public void onError(Throwable throwable) {
+                            makeToast(throwable.getMessage());
+                            hideProgressBar();
                         }
 
                         public void onComplete() {
                         }
                     });
-
                 } else {
                     makeToast(getString(R.string.error_email));
+                    hideProgressBar();
                 }
-            } else {
-                makeToast(getString(R.string.error_key));
-            }
+            });
 
-
-        });
-        binding.buttonLogin.setOnClickListener(view1 -> {
-            String content = binding.editTextRegEmail.getText().toString();
-            if (Pattern.matches(emailPattern, content)) {
-                AVUser.loginByEmail(content, binding.editTextPassword.getText().toString()).subscribe(new Observer<AVUser>() {
-                    public void onSubscribe(Disposable disposable) {
-                    }
-
-                    public void onNext(AVUser user) {
-                        setUser(user);
-                        makeToast(getString(R.string.login_succeed));
-                    }
-
-                    public void onError(Throwable throwable) {
-                        makeToast(throwable.getMessage());
-                    }
-
-                    public void onComplete() {
-                    }
-                });
-            } else {
-                makeToast(getString(R.string.error_email));
-            }
-        });
+        }
 
     }
 
@@ -226,4 +257,13 @@ public class UserFragment extends Fragment {
     private void makeToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
     }
+
+    private void showProgressBar() {
+        binding.progessBarUser.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBar() {
+        binding.progessBarUser.setVisibility(View.GONE);
+    }
+
 }
