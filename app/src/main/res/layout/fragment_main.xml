@@ -30,7 +30,6 @@
             android:gravity="center_horizontal"
             android:orientation="horizontal"
             android:saveEnabled="true"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,16 +55,44 @@
 
         </RadioGroup>
 
+        <RadioGroup
+            android:id="@+id/official_type_sel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/official_slot_select">
+
+            <RadioButton
+                android:id="@+id/radioPc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sel_pc" />
+
+            <RadioButton
+                android:id="@+id/radioAndroid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sel_android" />
+
+            <RadioButton
+                android:id="@+id/radioIOS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sel_ios" />
+        </RadioGroup>
+
         <CheckBox
             android:id="@+id/token_checkBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/use_token_true"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/official_slot_select" />
+            app:layout_constraintTop_toBottomOf="@+id/official_type_sel" />
 
         <CheckBox
             android:id="@+id/checkBoxWDJ"
@@ -73,7 +100,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/checkbox_wdj"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/token_checkBox" />

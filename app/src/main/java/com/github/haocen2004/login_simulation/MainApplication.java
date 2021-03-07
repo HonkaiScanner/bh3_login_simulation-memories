@@ -74,6 +74,11 @@ public class MainApplication extends Application {
                         .putBoolean("check_update", !getPackageName().contains("dev"))
                         .apply();
             }
+            if (!app_pref.contains("official_type")) {
+                app_pref.edit()
+                        .putInt("official_type", 0)
+                        .apply();
+            }
 
         }
         CHECK_VER = app_pref.getBoolean("check_update", true);

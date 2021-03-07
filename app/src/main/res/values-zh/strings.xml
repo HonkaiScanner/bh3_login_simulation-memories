@@ -71,6 +71,9 @@
     <string name="error_network">网络错误</string>
     <string name="reg_succ">注册成功</string>
     <string name="error_key_used">该身份码已被使用</string>
+    <string name="sel_pc">桌面服</string>
+    <string name="sel_android">安卓服</string>
+    <string name="sel_ios">IOS服</string>
 
 
 </resources>

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import java.util.Objects;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
 import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
@@ -49,6 +51,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     private Boolean isOfficial = false;
     private SharedPreferences pref;
     private FragmentMainBinding binding;
+    private final String TAG = "MainFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,6 +70,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         binding.btnScan.setOnClickListener(this);
         binding.btnLogout.setOnClickListener(this);
         binding.officialSlotSelect.setOnCheckedChangeListener(this);
+        binding.officialTypeSel.setOnCheckedChangeListener(this);
         binding.tokenCheckBox.setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
         binding.checkBoxWDJ.setOnCheckedChangeListener((compoundButton, b) -> {
             SharedPreferences ucsp = activity.getSharedPreferences("cn.uc.gamesdk.pref", 0);
@@ -79,20 +83,36 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
             }
         });
         String server_type = "DEBUG SERVER ERROR";
+        binding.officialSlotSelect.setVisibility(View.GONE);
+        binding.tokenCheckBox.setVisibility(View.GONE);
+        binding.officialTypeSel.setVisibility(View.GONE);
+        binding.checkBoxWDJ.setVisibility(View.GONE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = getString(R.string.types_official);
                 binding.officialSlotSelect.setVisibility(View.VISIBLE);
                 binding.tokenCheckBox.setVisibility(View.VISIBLE);
+                binding.officialTypeSel.setVisibility(View.VISIBLE);
                 switch (pref.getInt("official_slot", 1)) {
                     case 1:
-                        binding.officialSlotSelect.check(R.id.slot1);
+                        binding.officialSlotSelect.check(binding.slot1.getId());
                         break;
                     case 2:
-                        binding.officialSlotSelect.check(R.id.slot2);
+                        binding.officialSlotSelect.check(binding.slot2.getId());
                         break;
                     case 3:
-                        binding.officialSlotSelect.check(R.id.slot3);
+                        binding.officialSlotSelect.check(binding.slot3.getId());
+                        break;
+                }
+                switch (pref.getInt("official_type", 0)) {
+                    case 1:
+                        binding.officialTypeSel.check(binding.radioPc.getId());
+                        break;
+                    case 2:
+                        binding.officialTypeSel.check(binding.radioIOS.getId());
+                        break;
+                    default:
+                        binding.officialTypeSel.check(binding.radioAndroid.getId());
                         break;
                 }
                 binding.tokenCheckBox.setChecked(pref.getBoolean("use_token", false));
@@ -307,23 +327,58 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
 
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        SharedPreferences app_pref = getDefaultSharedPreferences(activity);
         switch (i) {
             case R.id.slot1:
-                getDefaultSharedPreferences(activity).edit().putInt("official_slot", 1).apply();
+                app_pref.edit().putInt("official_slot", 1).apply();
+                Log.d(TAG, "onCheckedChanged: Switch To Slot 1");
                 break;
             case R.id.slot2:
-                getDefaultSharedPreferences(activity).edit().putInt("official_slot", 2).apply();
+                app_pref.edit().putInt("official_slot", 2).apply();
+                Log.d(TAG, "onCheckedChanged: Switch To Slot 2");
                 break;
             case R.id.slot3:
-                getDefaultSharedPreferences(activity).edit().putInt("official_slot", 3).apply();
+                app_pref.edit().putInt("official_slot", 3).apply();
+                Log.d(TAG, "onCheckedChanged: Switch To Slot 3");
+                break;
+            case R.id.radioPc:
+                app_pref.edit().putInt("official_type", 1).apply();
+                Log.d(TAG, "onCheckedChanged: Switch To PC");
+                break;
+            case R.id.radioAndroid:
+                app_pref.edit().putInt("official_type", 0).apply();
+                Log.d(TAG, "onCheckedChanged: Switch To Android");
+                break;
+            case R.id.radioIOS:
+                app_pref.edit().putInt("official_type", 2).apply();
+                Log.d(TAG, "onCheckedChanged: Switch To IOS");
                 break;
         }
+        resetOfficialServerType();
         try {
             if (loginImpl.isLogin()) {
                 loginImpl = new Official(activity);
+                makeToast("切换后需重新登录");
             }
         } catch (Exception ignore) {
         }
 //        Toast.makeText(getContext(), i+"", Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetOfficialServerType() {
+        int i = getDefaultSharedPreferences(activity).getInt("official_type", 0);
+        Log.d(TAG, "resetOfficialServerType: " + i);
+        switch (i) {
+            case 1:
+                OFFICIAL_TYPE = "pc01";
+                break;
+            case 2:
+                OFFICIAL_TYPE = "ios01";
+                break;
+            default:
+                OFFICIAL_TYPE = "android01";
+                break;
+        }
+        Log.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
     }
 }

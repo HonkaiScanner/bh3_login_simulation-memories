@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.tencent.bugly.crashreport.BuglyLog;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
 import static com.github.haocen2004.login_simulation.util.Network.sendPost;
 
 public class Tools {
@@ -51,6 +53,15 @@ public static void changeToWDJ(Activity activity) {
             JSONObject json1 = new JSONObject(feedback);
             JSONArray jsonArray = json1.getJSONArray("region_list");
             JSONObject json2 = jsonArray.getJSONObject(0);
+            Log.d(TAG, "Official Server Type: " + OFFICIAL_TYPE);
+            if (roleData.getAccount_type().equals("1")) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    if (jsonObject.getString("name").equals(OFFICIAL_TYPE)) {
+                        json2 = jsonObject;
+                    }
+                }
+            }
             String url = json2.getString("dispatch_url");
             feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
             BuglyLog.i(TAG, "getOAServer: " + feedback);
