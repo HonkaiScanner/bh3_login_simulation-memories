@@ -19,5 +19,6 @@ public class Constant {
     public static String BH_VER = "4.6.0";
     public static String OFFICIAL_TYPE = "android01";
     public static boolean CHECK_VER = true;
+    public static boolean HAS_ACCOUNT = false;
 
 }

@@ -9,6 +9,7 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.github.haocen2004.login_simulation.Database.SponsorRepo;
 import com.github.haocen2004.login_simulation.util.Network;
@@ -17,14 +18,20 @@ import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
+import java.util.concurrent.Executors;
+
 import cn.leancloud.AVLogger;
 import cn.leancloud.AVOSCloud;
+import cn.leancloud.AVUser;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class MainApplication extends Application {
@@ -48,11 +55,11 @@ public class MainApplication extends Application {
                         .putBoolean("auto_confirm", false)
                         .apply();
             }
-            if (!app_pref.contains("enable_ad")) {
-                app_pref.edit()
-                        .putBoolean("enable_ad", true)
-                        .apply();
-            }
+//            if (!app_pref.contains("enable_ad")) {
+//                app_pref.edit()
+//                        .putBoolean("enable_ad", true)
+//                        .apply();
+//            }
             if (!app_pref.contains("server_type")) {
                 app_pref.edit()
                         .putString("server_type", "Official")
@@ -79,13 +86,63 @@ public class MainApplication extends Application {
                         .putInt("official_type", 0)
                         .apply();
             }
+            if (!app_pref.contains("dark_type")) {
+                app_pref.edit()
+                        .putInt("dark_type", -1)
+                        .apply();
+
+            }
 
         }
         CHECK_VER = app_pref.getBoolean("check_update", true);
 
         if (CHECK_VER) {
             new Thread(update_rb).start();
+            Executors.newSingleThreadExecutor().execute(() -> new SponsorRepo(getApplicationContext()).refreshSponsors());
         }
+
+        if (app_pref.getBoolean("has_account", false)) {
+            String TAG = "login check";
+
+            BuglyLog.d(TAG, "Start.");
+            Executors.newSingleThreadExecutor().execute(() -> {
+                AVUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<AVUser>() {
+                    public void onSubscribe(Disposable disposable) {
+                    }
+
+                    public void onNext(AVUser user) {
+                        AVUser.changeCurrentUser(user, true);
+                        HAS_ACCOUNT = true;
+                        app_pref.edit().putString("custom_username", user.getString("custom_username")).apply();
+                        BuglyLog.d(TAG, "Succeed.");
+
+                    }
+
+                    public void onError(Throwable throwable) {
+                        AVUser.changeCurrentUser(null, true);
+                        app_pref.edit().putBoolean("has_account", false).apply();
+                        throwable.printStackTrace();
+                        BuglyLog.d(TAG, "Failed.");
+                    }
+
+                    public void onComplete() {
+                    }
+                });
+            });
+
+        }
+        switch (app_pref.getString("dark_type", "-1")) {
+            case "-1":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                break;
+            case "1":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case "2":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+        }
+
 
     }
     @SuppressLint("HandlerLeak")
@@ -100,11 +157,6 @@ public class MainApplication extends Application {
             try {
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
-                int sp_ver = app_pref.getInt("sponsors_db_ver", 0);
-                if (sp_ver < json.getInt("sponsors_db_ver")) {
-                    new SponsorRepo(getApplicationContext()).refreshSponsors();
-                    app_pref.edit().putInt("sponsors_db_ver", json.getInt("sponsors_db_ver")).apply();
-                }
 
                 if (!getPackageName().contains("dev") && app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
                     showUpdateDialog(

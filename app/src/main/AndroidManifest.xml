@@ -43,10 +43,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity
-            android:name=".Activity.UserActivity"
-            android:label="@string/title_activity_user"
-            android:theme="@style/AppTheme" />
+        <activity android:name=".Activity.LoginActivity" />
+        <activity android:name=".Activity.UserActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"

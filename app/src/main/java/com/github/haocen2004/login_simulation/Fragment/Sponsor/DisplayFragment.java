@@ -1,6 +1,8 @@
 package com.github.haocen2004.login_simulation.Fragment.Sponsor;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +53,10 @@ public class DisplayFragment extends Fragment {
             new Thread(() -> {
                 SponsorRepo sponsorRepo = new SponsorRepo(getContext());
                 adapter.setAllSponsors(sponsorRepo.getAllSponsors());
-                adapter.notifyDataSetChanged();
+                // 刷新操作
+                Looper.prepare();
+                new Handler().post(adapter::notifyDataSetChanged);
+
             }).start();
         }
     }

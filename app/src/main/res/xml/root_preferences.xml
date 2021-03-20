@@ -8,7 +8,6 @@
             android:entries="@array/server_types"
             android:entryValues="@array/server_types_value"
             android:key="server_type"
-            android:summary="@array/server_types"
             android:title="@string/settings_servers" />
         <SwitchPreferenceCompat
             app:key="auto_confirm"
@@ -28,6 +27,13 @@
             android:defaultValue="true"
             android:key="check_update"
             android:title="@string/settings_update" />
+        <ListPreference
+            android:id="@+id/dark_switch"
+            android:defaultValue="-1"
+            android:entries="@array/dark_type"
+            android:entryValues="@array/dark_type_values"
+            android:key="dark_type"
+            android:title="@string/dark_mode" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/adv_header">
 
