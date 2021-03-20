@@ -88,7 +88,7 @@ public class MainApplication extends Application {
             }
             if (!app_pref.contains("dark_type")) {
                 app_pref.edit()
-                        .putInt("dark_type", -1)
+                        .putString("dark_type", "-1")
                         .apply();
 
             }
