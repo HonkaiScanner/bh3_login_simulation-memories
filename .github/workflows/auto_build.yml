@@ -17,6 +17,9 @@ jobs:
 
       - name: Build APK with Gradle
         run: |
+          mkdir -p out
+          chmod +x gradlew
+          ./gradlew clean
           ./gradlew assembleDebug
           mv app/build/outputs/apk/debug/app-debug.apk out/app-debug.apk
 
