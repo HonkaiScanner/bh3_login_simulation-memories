@@ -12,8 +12,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.github.haocen2004.login_simulation.Database.SponsorRepo;
+import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
-import com.tencent.bugly.crashreport.BuglyLog;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
@@ -36,9 +36,11 @@ import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class MainApplication extends Application {
     private SharedPreferences app_pref;
+    private Logger Log;
     @Override
     public void onCreate() {
         super.onCreate();
+        Log = Logger.getLogger(this);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", true);
         AVOSCloud.initialize(this, "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", "https://vmh6lryy.lc-cn-n1-shared.com");
         if(DEBUG) {
@@ -104,7 +106,7 @@ public class MainApplication extends Application {
         if (app_pref.getBoolean("has_account", false)) {
             String TAG = "login check";
 
-            BuglyLog.d(TAG, "Start.");
+            Logger.d(TAG, "Start.");
             Executors.newSingleThreadExecutor().execute(() -> {
                 AVUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<AVUser>() {
                     public void onSubscribe(Disposable disposable) {
@@ -114,7 +116,7 @@ public class MainApplication extends Application {
                         AVUser.changeCurrentUser(user, true);
                         HAS_ACCOUNT = true;
                         app_pref.edit().putString("custom_username", user.getString("custom_username")).apply();
-                        BuglyLog.d(TAG, "Succeed.");
+                        Logger.d(TAG, "Succeed.");
 
                     }
 
@@ -122,7 +124,7 @@ public class MainApplication extends Application {
                         AVUser.changeCurrentUser(null, true);
                         app_pref.edit().putBoolean("has_account", false).apply();
                         throwable.printStackTrace();
-                        BuglyLog.d(TAG, "Failed.");
+                        Logger.d(TAG, "Failed.");
                     }
 
                     public void onComplete() {
@@ -153,7 +155,7 @@ public class MainApplication extends Application {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
             feedback = feedback.substring(1, feedback.length() - 1).replaceAll("\\\\", "");
-            BuglyLog.i("Update", "handleMessage: " + feedback);
+            Logger.i("Update", "handleMessage: " + feedback);
             try {
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
@@ -167,7 +169,7 @@ public class MainApplication extends Application {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                BuglyLog.d("Update", "Check Update Failed");
+                Logger.d("Update", "Check Update Failed");
 
                 app_pref.edit().putString("bh_ver", BH_VER).apply();
             }

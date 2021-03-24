@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +29,15 @@ import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.Oppo;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
+import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.QRScanner;
 import com.google.zxing.activity.CaptureActivity;
 import com.google.zxing.util.Constant;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 
+import java.util.List;
 import java.util.Objects;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
@@ -52,6 +56,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     private SharedPreferences pref;
     private FragmentMainBinding binding;
     private final String TAG = "MainFragment";
+    private Logger Log;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +64,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         activity = (AppCompatActivity) getActivity();
         context = getContext();
         pref = getDefaultSharedPreferences(context);
+        Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -292,32 +298,38 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     @SuppressLint("ShowToast")
     private void makeToast(String result) {
         try {
-            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+
+            Log.makeToast(result);
+//            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Looper.prepare();
-            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+            Log.makeToast(result);
             Looper.loop();
         }
     }
 
     private void checkPermissions() {
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // 申请权限
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
-                Toast.makeText(getContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
-            }
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                Toast.makeText(getContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
-            }
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_PHONE_STATE)) {
-                Toast.makeText(getContext(), R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
-            }
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getContext());
             normalDialog.setTitle("权限说明");
-            normalDialog.setMessage("使用扫码器需要以下权限:\n1.读取设备识别码\n用于标识用户及米哈游登录传参\n\n2.使用摄像头\n用于扫描登录二维码\n\n3.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK强行加入\n可不授予权限");
+            normalDialog.setMessage("使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK适配所需\n可不授予权限");
             normalDialog.setPositiveButton("我已知晓",
                     (dialog, which) -> {
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
+                        XXPermissions.with(this)
+                                .permission(Permission.CAMERA)
+                                .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                                .request(new OnPermissionCallback() {
+                                    @Override
+                                    public void onGranted(List<String> permissions, boolean all) {
+
+                                    }
+
+                                    @Override
+                                    public void onDenied(List<String> permissions, boolean never) {
+
+                                    }
+                                });
                         dialog.dismiss();
                     });
             normalDialog.setCancelable(false);
@@ -331,27 +343,27 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         switch (i) {
             case R.id.slot1:
                 app_pref.edit().putInt("official_slot", 1).apply();
-                Log.d(TAG, "onCheckedChanged: Switch To Slot 1");
+                Logger.d(TAG, "onCheckedChanged: Switch To Slot 1");
                 break;
             case R.id.slot2:
                 app_pref.edit().putInt("official_slot", 2).apply();
-                Log.d(TAG, "onCheckedChanged: Switch To Slot 2");
+                Logger.d(TAG, "onCheckedChanged: Switch To Slot 2");
                 break;
             case R.id.slot3:
                 app_pref.edit().putInt("official_slot", 3).apply();
-                Log.d(TAG, "onCheckedChanged: Switch To Slot 3");
+                Logger.d(TAG, "onCheckedChanged: Switch To Slot 3");
                 break;
             case R.id.radioPc:
                 app_pref.edit().putInt("official_type", 1).apply();
-                Log.d(TAG, "onCheckedChanged: Switch To PC");
+                Logger.d(TAG, "onCheckedChanged: Switch To PC");
                 break;
             case R.id.radioAndroid:
                 app_pref.edit().putInt("official_type", 0).apply();
-                Log.d(TAG, "onCheckedChanged: Switch To Android");
+                Logger.d(TAG, "onCheckedChanged: Switch To Android");
                 break;
             case R.id.radioIOS:
                 app_pref.edit().putInt("official_type", 2).apply();
-                Log.d(TAG, "onCheckedChanged: Switch To IOS");
+                Logger.d(TAG, "onCheckedChanged: Switch To IOS");
                 break;
         }
         resetOfficialServerType();
@@ -367,7 +379,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
 
     private void resetOfficialServerType() {
         int i = getDefaultSharedPreferences(activity).getInt("official_type", 0);
-        Log.d(TAG, "resetOfficialServerType: " + i);
+        Logger.d(TAG, "resetOfficialServerType: " + i);
         switch (i) {
             case 1:
                 OFFICIAL_TYPE = "pc01";
@@ -379,6 +391,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                 OFFICIAL_TYPE = "android01";
                 break;
         }
-        Log.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
+        Logger.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
     }
 }

@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Encrypt;
+import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
-import com.tencent.bugly.crashreport.BuglyLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,15 +38,16 @@ public class Official implements LoginImpl {
     private boolean isLogin;
     private final SharedPreferences preferences;
     private static final String TAG = "Official Login.";
+    private final Logger Log;
     @SuppressLint("HandlerLeak")
-    Handler login_handler = new Handler() {
+    Handler login_handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 //            Logger.debug(feedback);
-            BuglyLog.d(TAG, "handleMessage: " + feedback);
+            Logger.d(TAG, "handleMessage: " + feedback);
 
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
@@ -64,7 +65,7 @@ public class Official implements LoginImpl {
                     new Thread(login_runnable2).start();
                 } else {
 //                    Logger.warning("登录失败");
-                    BuglyLog.w(TAG, "handleMessage: 登录失败" + feedback);
+                    Logger.w(TAG, "handleMessage: 登录失败" + feedback);
 //                    Logger.warning(feedback);
                 }
             } catch (JSONException e) {
@@ -90,14 +91,14 @@ public class Official implements LoginImpl {
     };
     private RoleData roleData;
     @SuppressLint("HandlerLeak")
-    Handler login_handler2 = new Handler() {
+    Handler login_handler2 = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 //            Logger.debug(feedback);
-            BuglyLog.d(TAG, "handleMessage: " + feedback);
+            Logger.d(TAG, "handleMessage: " + feedback);
 
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
@@ -108,11 +109,11 @@ public class Official implements LoginImpl {
 
                     roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "", 0);
                     isLogin = true;
-                    Toast.makeText(activity, R.string.login_succeed, Toast.LENGTH_LONG).show();
+                    Log.makeToast(R.string.login_succeed);
 
                 } else {
-                    BuglyLog.w(TAG, "handleMessage: 登录失败：" + feedback);
-                    Toast.makeText(activity, "登录失败：" + feedback, Toast.LENGTH_LONG).show();
+                    Logger.w(TAG, "handleMessage: 登录失败：" + feedback);
+                    Log.makeToast("登录失败：" + feedback);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -132,7 +133,7 @@ public class Official implements LoginImpl {
                 login_handler2.sendMessage(msg);
 
             } catch (JSONException e) {
-                BuglyLog.w(TAG, "run: JSON WRONG\n" + e);
+                Logger.w(TAG, "run: JSON WRONG\n" + e);
             }
         }
     };
@@ -141,6 +142,7 @@ public class Official implements LoginImpl {
         isLogin = false;
         this.activity = activity;
         preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
+        Log = Logger.getLogger(activity);
     }
 
     @Override

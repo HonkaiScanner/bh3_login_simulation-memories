@@ -10,16 +10,15 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityLoginBinding;
+import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.Tools;
-import com.tencent.bugly.crashreport.BuglyLog;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import cn.leancloud.AVObject;
@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private final String emailPattern = "^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
     private final String scKeyPattern = "^scanner_key_+[a-zA-Z0-9_-]{16}";
     private ActivityLoginBinding binding;
+    private Logger Log;
     private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -64,12 +65,25 @@ public class LoginActivity extends AppCompatActivity {
             binding.buttonLogin.setEnabled(!t2 && !t3);
         }
     };
+    @SuppressLint("HandlerLeak")
+    Handler accessProgressBar = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (msg.getData().getBoolean("type")) {
+                showProgressBar();
+            } else {
+                hideProgressBar();
+            }
+        }
+    };
     private int sp_level;
     private AVUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log = Logger.getLogger(this);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.editTextName.addTextChangedListener(textWatcher);
@@ -107,107 +121,18 @@ public class LoginActivity extends AppCompatActivity {
                         public void onSubscribe(Disposable disposable) {
                         }
 
+                        public void onError(Throwable throwable) {
+                        }
+
+                        public void onComplete() {
+                        }
+
                         public void onNext(List<AVObject> sp) {
                             if (sp.size() == 0) {
-                                new Thread(() -> {  // 请求云端查询身份码是否有绑定用户  Tencent Cloud
-                                    String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
-                                    if (feedback == null) {
-                                        Looper.prepare();
-                                        makeToast(getString(R.string.error_network));
-                                        return;
-                                    }
-                                    BuglyLog.d(TAG, feedback);
-                                    try {
-                                        JSONObject feedback_json = new JSONObject(feedback);
-                                        int retCode = feedback_json.getInt("ret");
-                                        if (retCode > 0) {
-                                            sp_level = retCode;
-
-                                            AVUser user = new AVUser(); //账号创建
-
-                                            user.setUsername(binding.editTextName.getText().toString());
-                                            user.setPassword(binding.editTextPassword.getText().toString());
-
-                                            user.setEmail(content);
-
-                                            user.put("sp_level", sp_level);
-                                            user.put("desc", "该用户还没有设置签名哦");
-                                            user.put("custom_username", "崩坏3扫码器用户");
-
-
-                                            user.signUpInBackground().subscribe(new Observer<AVUser>() {
-                                                public void onSubscribe(Disposable disposable) {
-                                                }
-
-                                                public void onNext(AVUser user) {
-                                                    // 注册成功
-                                                    makeToast(getString(R.string.reg_succ));
-                                                    setUser(user);
-                                                    // 将身份码与用户绑定
-                                                    AVObject sponsor = new AVObject("Sponsors");
-
-                                                    sponsor.put("scannerKey", sc_key);
-                                                    sponsor.put("user", user);
-                                                    sponsor.put("name", user.getUsername());
-                                                    sponsor.put("deviceId", Tools.getDeviceID(getApplicationContext()));
-                                                    sponsor.put("desc", "该用户还没有设置签名哦");
-                                                    sponsor.put("avatarImgUrl", " ");
-                                                    sponsor.put("personalPageUrl", " ");
-
-                                                    sponsor.saveInBackground().subscribe(new Observer<AVObject>() {
-                                                        public void onSubscribe(Disposable disposable) {
-                                                        }
-
-                                                        public void onNext(AVObject todo) {
-
-                                                            BuglyLog.i(TAG, "注册成功");
-                                                            hideProgressBar();
-                                                        }
-
-                                                        public void onError(Throwable throwable) {
-                                                            CrashReport.postCatchedException(throwable);
-                                                        }
-
-                                                        public void onComplete() {
-                                                        }
-                                                    });
-                                                    finish();
-
-                                                }
-
-                                                public void onError(@NotNull Throwable throwable) {
-                                                    makeToast(throwable.getMessage());
-                                                    hideProgressBar();
-                                                }
-
-                                                public void onComplete() {
-                                                }
-                                            });
-
-
-                                        } else if (retCode == -2) {
-                                            Looper.prepare();
-                                            makeToast(getString(R.string.error_ver_outdate));
-                                            Message msg = new Message();
-                                            Bundle data = new Bundle();
-                                            data.putBoolean("type", false);
-                                            msg.setData(data);
-                                            accessProgressBar.sendMessage(msg);
-                                            hideProgressBar();
-                                        } else {
-                                            Looper.prepare();
-                                            makeToast(getString(R.string.error_key));
-                                            Message msg = new Message();
-                                            Bundle data = new Bundle();
-                                            data.putBoolean("type", false);
-                                            msg.setData(data);
-                                            accessProgressBar.sendMessage(msg);
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                }).start();
+                                Executors.newSingleThreadExecutor().execute(() -> {
+                                    startCodeCheck(content, postParam, sc_key);
+                                });
+//                                new Thread(() -> {
                             } else {
                                 Looper.prepare();
                                 makeToast(getString(R.string.error_key_used));
@@ -215,12 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
 
-                        public void onError(Throwable throwable) {
 
-                        }
-
-                        public void onComplete() {
-                        }
                     });
 
                 } else {
@@ -242,6 +162,9 @@ public class LoginActivity extends AppCompatActivity {
                     public void onSubscribe(Disposable disposable) {
                     }
 
+                    public void onComplete() {
+                    }
+
                     public void onNext(AVUser user) {
                         setUser(user);
                         makeToast(getString(R.string.login_succeed));
@@ -254,8 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                         hideProgressBar();
                     }
 
-                    public void onComplete() {
-                    }
+
                 });
             } else {
                 makeToast(getString(R.string.error_email));
@@ -265,8 +187,109 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public AVUser getUser() {
-        return user;
+    private void startCodeCheck(String content, String postParam, String sc_key) {
+        // 请求云端查询身份码是否有绑定用户  Tencent Cloud
+        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
+        if (feedback == null) {
+            Looper.prepare();
+            makeToast(getString(R.string.error_network));
+            return;
+        }
+        Logger.d(TAG, feedback);
+        try {
+            JSONObject feedback_json = new JSONObject(feedback);
+            int retCode = feedback_json.getInt("ret");
+            if (retCode > 0) {
+                sp_level = retCode;
+
+                AVUser user = new AVUser(); //账号创建
+
+                user.setUsername(binding.editTextName.getText().toString());
+                user.setPassword(binding.editTextPassword.getText().toString());
+
+                user.setEmail(content);
+
+                user.put("sp_level", sp_level);
+                user.put("desc", "该用户还没有设置签名哦");
+                user.put("custom_username", "崩坏3扫码器用户");
+
+
+                user.signUpInBackground().subscribe(new Observer<AVUser>() {
+                    public void onSubscribe(Disposable disposable) {
+                    }
+
+                    public void onNext(AVUser user) {
+                        onRegistered(sc_key);
+                    }
+
+                    public void onError(@NotNull Throwable throwable) {
+                        makeToast(throwable.getMessage());
+                        hideProgressBar();
+                    }
+
+                    public void onComplete() {
+                    }
+                });
+
+
+            } else if (retCode == -2) {
+                Looper.prepare();
+                makeToast(getString(R.string.error_ver_outdate));
+                Message msg = new Message();
+                Bundle data = new Bundle();
+                data.putBoolean("type", false);
+                msg.setData(data);
+                accessProgressBar.sendMessage(msg);
+                hideProgressBar();
+            } else {
+                Looper.prepare();
+                makeToast(getString(R.string.error_key));
+                Message msg = new Message();
+                Bundle data = new Bundle();
+                data.putBoolean("type", false);
+                msg.setData(data);
+                accessProgressBar.sendMessage(msg);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void onRegistered(String sc_key) {
+        // 注册成功
+        makeToast(getString(R.string.reg_succ));
+        setUser(user);
+        // 将身份码与用户绑定
+        AVObject sponsor = new AVObject("Sponsors");
+
+        sponsor.put("scannerKey", sc_key);
+        sponsor.put("user", user);
+        sponsor.put("name", user.getUsername());
+        sponsor.put("deviceId", Tools.getDeviceID(getApplicationContext()));
+        sponsor.put("desc", "该用户还没有设置签名哦");
+        sponsor.put("avatarImgUrl", " ");
+        sponsor.put("personalPageUrl", " ");
+        sponsor.put("sp_level", sp_level);
+
+        sponsor.saveInBackground().subscribe(new Observer<AVObject>() {
+            public void onSubscribe(Disposable disposable) {
+            }
+
+            public void onNext(AVObject todo) {
+
+                Logger.i(TAG, "注册成功");
+                hideProgressBar();
+            }
+
+            public void onError(Throwable throwable) {
+                CrashReport.postCatchedException(throwable);
+            }
+
+            public void onComplete() {
+            }
+        });
+        finish();
     }
 
     public void setUser(AVUser user) {
@@ -280,21 +303,8 @@ public class LoginActivity extends AppCompatActivity {
         HAS_ACCOUNT = true;
     }
 
-    @SuppressLint("HandlerLeak")
-    Handler accessProgressBar = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            if (msg.getData().getBoolean("type")) {
-                showProgressBar();
-            } else {
-                hideProgressBar();
-            }
-        }
-    };
-
     private void makeToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        Log.makeToast(this, msg);
     }
 
     private void showProgressBar() {

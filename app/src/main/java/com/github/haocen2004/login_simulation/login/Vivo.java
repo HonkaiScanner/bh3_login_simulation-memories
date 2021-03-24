@@ -6,15 +6,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
-import com.tencent.bugly.crashreport.BuglyLog;
 import com.vivo.unionsdk.open.VivoAccountCallback;
 import com.vivo.unionsdk.open.VivoUnionSDK;
 
@@ -32,6 +31,7 @@ public class Vivo implements LoginImpl {
     private RoleData roleData;
     private final String device_id;
     private static final String TAG = "Vivo Login";
+    private final Logger Log;
 
     private final VivoAccountCallback callback = new VivoAccountCallback() {
         @Override
@@ -59,6 +59,7 @@ public class Vivo implements LoginImpl {
         device_id = Tools.getDeviceID(activity);
         VivoUnionSDK.initSdk(activity, VIVO_APP_KEY, BuildConfig.DEBUG);
         VivoUnionSDK.registerAccountCallback(activity, callback);
+        Log = Logger.getLogger(activity);
     }
     @Override
     public void login() {
@@ -88,7 +89,7 @@ public class Vivo implements LoginImpl {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 //            Logger.debug(feedback);
-            BuglyLog.d(TAG, "handleMessage: " + feedback);
+            Logger.d(TAG, "handleMessage: " + feedback);
             JSONObject feedback_json = null;
             try {
                 feedback_json = new JSONObject(feedback);
@@ -96,7 +97,7 @@ public class Vivo implements LoginImpl {
                 e.printStackTrace();
             }
 //            Logger.info(feedback);
-            BuglyLog.i(TAG, "handleMessage: " + feedback);
+            Logger.i(TAG, "handleMessage: " + feedback);
             try {
                 if (feedback_json.getInt("retcode") == 0) {
 
@@ -143,10 +144,12 @@ public class Vivo implements LoginImpl {
     @SuppressLint("ShowToast")
     private void makeToast(String result) {
         try {
-            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+            Log.makeToast(result);
+//            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Looper.prepare();
-            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+            Log.makeToast(result);
+//            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
             Looper.loop();
         }
     }

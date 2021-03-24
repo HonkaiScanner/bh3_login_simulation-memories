@@ -42,9 +42,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:targetApi="m">
+        tools:targetApi="m"
+        android:allowBackup="true">
         <activity android:name=".Activity.LoginActivity" />
-        <activity android:name=".Activity.UserActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"

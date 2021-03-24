@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.tencent.bugly.crashreport.BuglyLog;
+import com.github.haocen2004.login_simulation.util.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +39,7 @@ public class RoleData {
             String feedback = data.getString("value");
             try {
                 oaserver = new JSONObject(feedback);
-                BuglyLog.i("GetOAServer", "handleMessage: " + oaserver.toString());
+                Logger.i("GetOAServer", "handleMessage: " + oaserver.toString());
                 if (!oaserver.getBoolean("is_data_ready")) {
                     String msg1 = oaserver.getString("msg");
                     if (msg1.contains("更新"))

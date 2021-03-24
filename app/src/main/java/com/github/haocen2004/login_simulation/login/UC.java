@@ -6,14 +6,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
-import com.tencent.bugly.crashreport.BuglyLog;
+import com.github.haocen2004.login_simulation.util.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +38,7 @@ public class UC implements LoginImpl {
     private boolean isLogin;
     private RoleData roleData;
     private static final String TAG = "UC Login";
+    private final Logger Log;
     private final SDKEventReceiver eventReceiver = new SDKEventReceiver() {
 
         @Subscribe(event = SDKEventKey.ON_INIT_SUCC)
@@ -49,7 +49,7 @@ public class UC implements LoginImpl {
         @Subscribe(event = SDKEventKey.ON_LOGIN_SUCC)
         private void onLoginSucc(String sid) {
 //            System.out.println("开始登陆" + sid);
-            BuglyLog.i("UCSDK", "onLoginSucc: sid:" + sid);
+            Logger.i("UCSDK", "onLoginSucc: sid:" + sid);
             setSid(sid);
             doBHLogin();
         }
@@ -64,7 +64,7 @@ public class UC implements LoginImpl {
     public UC(AppCompatActivity activity) {
         this.activity = activity;
         isLogin = false;
-
+        Log = Logger.getLogger(activity);
 
     }
 
@@ -98,7 +98,7 @@ public class UC implements LoginImpl {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 //            Logger.debug(feedback);
-            BuglyLog.d(TAG, "handleMessage: " + feedback);
+            Logger.d(TAG, "handleMessage: " + feedback);
             JSONObject feedback_json = null;
             try {
                 feedback_json = new JSONObject(feedback);
@@ -106,7 +106,7 @@ public class UC implements LoginImpl {
                 e.printStackTrace();
             }
 //            Logger.info(feedback);
-            BuglyLog.i(TAG, "handleMessage: " + feedback);
+            Logger.i(TAG, "handleMessage: " + feedback);
             try {
                 if (feedback_json.getInt("retcode") == 0) {
 
@@ -157,10 +157,12 @@ public class UC implements LoginImpl {
 
     private void makeToast(String result) {
         try {
-            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+            Log.makeToast(result);
+//            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Looper.prepare();
-            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+            Log.makeToast(result);
+//            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
             Looper.loop();
         }
     }

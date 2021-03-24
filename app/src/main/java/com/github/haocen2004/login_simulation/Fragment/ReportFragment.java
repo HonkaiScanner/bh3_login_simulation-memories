@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +13,7 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.FragmentReportBinding;
 import com.tencent.bugly.crashreport.CrashReport;
 
+import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class ReportFragment extends Fragment implements View.OnClickListener {
@@ -59,7 +59,8 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                 CrashReport.testJavaCrash();
                 break;
             default:
-                Toast.makeText(requireActivity(), "Wrong Button", Toast.LENGTH_LONG).show();
+                getLogger(getContext()).makeToast("Wrong Button");
+//                Toast.makeText(requireActivity(), "Wrong Button", Toast.LENGTH_LONG).show();
         }
     }
 }

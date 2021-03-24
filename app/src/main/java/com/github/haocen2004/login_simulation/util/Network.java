@@ -1,7 +1,5 @@
 package com.github.haocen2004.login_simulation.util;
 
-import com.tencent.bugly.crashreport.BuglyLog;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,7 +41,8 @@ public class Network {
                 result.append(line);
             }
         } catch (Exception e) {
-            BuglyLog.i("HTTP", "sendPost: Failed.");
+            Logger.i("Network", "sendPost: Failed.");
+//            BuglyLog.i("HTTP", "sendPost: Failed.");
             e.printStackTrace();
             return null;
         }

@@ -55,7 +55,7 @@ public class DisplayFragment extends Fragment {
                 adapter.setAllSponsors(sponsorRepo.getAllSponsors());
                 // 刷新操作
                 Looper.prepare();
-                new Handler().post(adapter::notifyDataSetChanged);
+                new Handler(Looper.getMainLooper()).post(adapter::notifyDataSetChanged);
 
             }).start();
         }

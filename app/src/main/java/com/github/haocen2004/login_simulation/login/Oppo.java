@@ -12,10 +12,10 @@ import androidx.annotation.NonNull;
 
 import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.nearme.game.sdk.GameCenterSDK;
 import com.nearme.game.sdk.callback.ApiCallback;
-import com.tencent.bugly.crashreport.BuglyLog;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONException;
@@ -33,6 +33,7 @@ public class Oppo implements LoginImpl {
     private static final String TAG = "Oppo Login";
     private final String appSecret = "f303388D89043bfEB1A667cfE42ea47E";
     private final GameCenterSDK sdk;
+    private final Logger Log;
 
 
     public Oppo(Activity activity) {
@@ -40,6 +41,7 @@ public class Oppo implements LoginImpl {
         device_id = Tools.getDeviceID(activity);
         GameCenterSDK.init(appSecret, activity);
         sdk = GameCenterSDK.getInstance();
+        Log = Logger.getLogger(activity);
     }
 
     @Override
@@ -50,11 +52,11 @@ public class Oppo implements LoginImpl {
                 sdk.doGetTokenAndSsoid(new ApiCallback() {
                     public void onFailure(String param2String, int param2Int) {
                         makeToast("登录失败");
-                        BuglyLog.w(TAG, "Login Failed. " + param2String + "," + param2Int);
+                        Logger.w(TAG, "Login Failed. " + param2String + "," + param2Int);
                     }
 
                     public void onSuccess(String param2String) {
-                        BuglyLog.d(TAG, param2String);
+                        Logger.d(TAG, param2String);
                         try {
                             JSONObject json = new JSONObject(param2String);
                             token = json.getString("token");
@@ -72,8 +74,8 @@ public class Oppo implements LoginImpl {
             @Override
             public void onFailure(String s, int i) {
                 makeToast("error:" + s + "\ncode:" + i);
-                BuglyLog.d(TAG, "onFailure: s:" + s);
-                BuglyLog.d(TAG, "onFailure: i:" + i);
+                Logger.d(TAG, "onFailure: s:" + s);
+                Logger.d(TAG, "onFailure: i:" + i);
             }
         });
     }
@@ -101,18 +103,18 @@ public class Oppo implements LoginImpl {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 //            Logger.debug(feedback);
-            BuglyLog.d(TAG, "handleMessage: " + feedback);
+            Logger.d(TAG, "handleMessage: " + feedback);
             JSONObject feedback_json = null;
             try {
                 feedback_json = new JSONObject(feedback);
             } catch (JSONException e) {
-                BuglyLog.w(TAG, "Login Failed.");
+                Logger.w(TAG, "Login Failed.");
                 CrashReport.postCatchedException(e);
                 e.printStackTrace();
                 return;
             }
 //            Logger.info(feedback);
-            BuglyLog.i(TAG, "handleMessage: " + feedback);
+            Logger.i(TAG, "handleMessage: " + feedback);
             try {
                 if (feedback_json.getInt("retcode") == 0) {
 
@@ -169,9 +171,11 @@ public class Oppo implements LoginImpl {
     @SuppressLint("ShowToast")
     private void makeToast(String result) {
         try {
-            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+            Log.makeToast(result);
+//            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Looper.prepare();
+            Log.makeToast(result);
             Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
             Looper.loop();
         }

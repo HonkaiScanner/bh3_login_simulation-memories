@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.tencent.bugly.crashreport.BuglyLog;
@@ -49,11 +48,11 @@ public static void changeToWDJ(Activity activity) {
 //        https://global1.bh3.com/query_dispatch?version=4.2.0_gf_pc&t=1598673811
         try {
             String feedback = sendPost("https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
-            BuglyLog.i(TAG, "getOAServer: " + feedback);
+            Logger.i(TAG, "getOAServer: " + feedback);
             JSONObject json1 = new JSONObject(feedback);
             JSONArray jsonArray = json1.getJSONArray("region_list");
             JSONObject json2 = jsonArray.getJSONObject(0);
-            Log.d(TAG, "Official Server Type: " + OFFICIAL_TYPE);
+            Logger.d(TAG, "Official Server Type: " + OFFICIAL_TYPE);
             if (roleData.getAccount_type().equals("1")) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -64,7 +63,7 @@ public static void changeToWDJ(Activity activity) {
             }
             String url = json2.getString("dispatch_url");
             feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
-            BuglyLog.i(TAG, "getOAServer: " + feedback);
+            Logger.i(TAG, "getOAServer: " + feedback);
 
             return feedback;
         } catch (JSONException e) {
@@ -137,9 +136,9 @@ public static void changeToWDJ(Activity activity) {
             login_json.put("sign", sign);
 
 //                Logger.info(login_json.toString());
-            BuglyLog.i(TAG, "run: " + login_json.toString());
+            Logger.i(TAG, "run: " + login_json.toString());
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
-            BuglyLog.d(TAG, "handleMessage: " + feedback);
+            Logger.d(TAG, "handleMessage: " + feedback);
             return feedback;
 //            JSONObject feedback_json = null;
 //            try {
