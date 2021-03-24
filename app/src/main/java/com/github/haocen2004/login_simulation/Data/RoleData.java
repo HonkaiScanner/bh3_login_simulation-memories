@@ -81,6 +81,8 @@ public class RoleData {
         } else if (special_tag == 3) {
             uc_sign = true;
             accountType = "15";
+        } else if (special_tag == 4) {
+            accountType = "17";
         }
         new Thread(getOA_runnable).start();
     }
@@ -132,4 +134,3 @@ public class RoleData {
         return uc_sign;
     }
 }
-

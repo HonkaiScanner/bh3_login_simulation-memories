@@ -124,7 +124,7 @@ public class Oppo implements LoginImpl {
                     String combo_token = data_json2.getString("combo_token");
                     String account_type = data_json2.getString("account_type");
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "18", account_type, "oppo", 0);
+                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "18", account_type, "oppo", 4);
 
                     isLogin = true;
                     makeToast(activity.getString(R.string.login_succeed));

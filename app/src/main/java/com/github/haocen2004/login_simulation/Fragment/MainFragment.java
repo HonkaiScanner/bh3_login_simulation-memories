@@ -66,6 +66,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
+        setRetainInstance(true);
+
         return binding.getRoot();
     }
 
@@ -356,17 +358,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
             case R.id.radioPc:
                 app_pref.edit().putInt("official_type", 1).apply();
                 Logger.d(TAG, "onCheckedChanged: Switch To PC");
+                resetOfficialServerType();
                 break;
             case R.id.radioAndroid:
                 app_pref.edit().putInt("official_type", 0).apply();
                 Logger.d(TAG, "onCheckedChanged: Switch To Android");
+                resetOfficialServerType();
                 break;
             case R.id.radioIOS:
                 app_pref.edit().putInt("official_type", 2).apply();
                 Logger.d(TAG, "onCheckedChanged: Switch To IOS");
+                resetOfficialServerType();
                 break;
         }
-        resetOfficialServerType();
         try {
             if (loginImpl.isLogin()) {
                 loginImpl = new Official(activity);
