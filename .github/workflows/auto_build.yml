@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkoutu
         uses: actions/checkout@master
 
       - name: set up JDK 1.8
@@ -20,16 +20,10 @@ jobs:
           mkdir -p out
           chmod +x gradlew
           ./gradlew assembleRelease
-          cd app
-          cd build
-          cd outputs
-          cd apk
-          cd release
-          ls
-          mv ~/app/build/outputs/apk/release/app-release.apk out/app-release.apk
+          mv ~/app/build/outputs/apk/release/app-release-unsigned.apk out/app-release.apk
           
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: app-release.zip
-          path: out/app-debug.apk
+          path: out/app-release.apk
