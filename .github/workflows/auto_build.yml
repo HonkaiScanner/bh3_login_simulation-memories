@@ -23,6 +23,7 @@ jobs:
       - name: Build APK with Gradle
         run: |
           chmod +x gradlew
+          ./gradlew clean
           ./gradlew build
 
         env:
