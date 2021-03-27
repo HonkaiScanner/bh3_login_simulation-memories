@@ -16,7 +16,7 @@ jobs:
           java-version: 1.8
 
       - name: gen JKS File
-        run: echo $ENCODED_KEYSTORE | base64 -di > android/app/keystore.jks
+        run: echo $ENCODED_KEYSTORE | base64 -di > app/keystore.jks
         env:
           ENCODED_KEYSTORE: ${{ secrets.ENCODED_KEYSTORE }}
 
