@@ -23,7 +23,7 @@ jobs:
           cd app
           cd build
           cd outputs
-          cd ap
+          cd apk
           cd release
           ls
           mv ~/app/build/outputs/apk/release/app-release.apk out/app-release.apk
