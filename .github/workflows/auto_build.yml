@@ -1,4 +1,4 @@
-name: Auto Build Scanner
+name: Auto Build Scanner Release
 on:
   push:
     branches:
@@ -15,16 +15,26 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: gen JKS File
+        run: echo $ENCODED_KEYSTORE | base64 -di > android/app/keystore.jks
+        env:
+          ENCODED_KEYSTORE: ${{ secrets.ENCODED_KEYSTORE }}
+
       - name: Build APK with Gradle
         run: |
           mkdir -p out
           chmod +x gradlew
           ./gradlew clean
-          ./gradlew assembleRelease
-          mv app/build/outputs/apk/release/app-release-unsigned.apk out/app-release.apk
-          
-      - name: Upload APK
+          ./gradlew build
+          mv app/build/outputs/apk/release/app-release.apk out/app-release.apk
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          NAME_SUFFIX: ${{ GITHUB_SHA }}
+
+      - name: Upload Released APK
         uses: actions/upload-artifact@v2
         with:
-          name: app-release.zip
+          name: app-release
           path: out/app-release.apk
