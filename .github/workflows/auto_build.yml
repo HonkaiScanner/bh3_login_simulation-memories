@@ -22,20 +22,9 @@ jobs:
 
       - name: Build APK with Gradle
         run: |
-          mkdir -p out
           chmod +x gradlew
           ./gradlew build
-          cd app
-          ls
-          cd build
-          ls
-          cd outputs
-          ls
-          cd apk
-          ls
-          cd release
-          ls
-          mv app/build/release/app-release.apk out/app-release.apk
+
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -46,4 +35,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: app-release
-          path: out/app-release.apk
+          path: app/build/outputs/apk/release/app-release.apk
