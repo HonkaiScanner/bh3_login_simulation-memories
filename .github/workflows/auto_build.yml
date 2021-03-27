@@ -31,7 +31,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          NAME_SUFFIX: ${{ GITHUB_SHA }}
+          NAME_SUFFIX: ${{ github.sha }}
 
       - name: Upload Released APK
         uses: actions/upload-artifact@v2
