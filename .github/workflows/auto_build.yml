@@ -20,11 +20,11 @@ jobs:
           mkdir -p out
           chmod +x gradlew
           ./gradlew clean
-          ./gradlew assembleDebug
-          mv app/build/outputs/apk/debug/app-debug.apk out/app-debug.apk
-
+          ./gradlew assembleRelease
+          mv app/build/outputs/apk/release/app-release.apk out/app-release.apk
+          
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: app-debug
+          name: app-release.zip
           path: out/app-debug.apk
