@@ -24,8 +24,17 @@ jobs:
         run: |
           mkdir -p out
           chmod +x gradlew
-          ./gradlew clean
           ./gradlew build
+          cd app
+          ls
+          cd build
+          ls
+          cd outputs
+          ls
+          cd apk
+          ls
+          cd release
+          ls
           mv app/build/release/app-release.apk out/app-release.apk
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
