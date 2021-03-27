@@ -1,4 +1,4 @@
-name: Auto Build Scanner Release
+name: Auto Build Scanner
 on:
   push:
     branches:
