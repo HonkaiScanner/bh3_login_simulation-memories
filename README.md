@@ -1,5 +1,6 @@
 # 崩坏3扫码器 / bh3_login_simulation
 
+![scanner](https://github.com/Haocen2004/bh3_login_simulation/actions/workflows/auto_build.yml/badge.svg)
 节省你的手机空间  
 节省启动桌面服时等待手机客户端启动的时间  
   
