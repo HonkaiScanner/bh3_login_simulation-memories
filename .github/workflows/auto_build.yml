@@ -19,8 +19,9 @@ jobs:
         run: |
           mkdir -p out
           chmod +x gradlew
+          ./gradlew clean
           ./gradlew assembleRelease
-          mv ~/app/build/outputs/apk/release/app-release-unsigned.apk out/app-release.apk
+          mv app/build/outputs/apk/release/app-release-unsigned.apk out/app-release.apk
           
       - name: Upload APK
         uses: actions/upload-artifact@v2
