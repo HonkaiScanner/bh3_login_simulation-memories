@@ -22,7 +22,7 @@ jobs:
 
       - name: Get commit SHA
         id: get_commit_sha
-        run: 'echo ::set-output name=VERSION::"-"+${GITHUB_SHA: 0: 6}'
+        run: 'echo ::set-output name=VERSION::-{GITHUB_SHA: 0: 6}'
 
       - name: Build APK with Gradle
         run: |
