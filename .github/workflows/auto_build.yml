@@ -19,16 +19,12 @@ jobs:
         run: |
           mkdir -p out
           chmod +x gradlew
-          ./gradlew clean
           ./gradlew assembleRelease
-          ls
           cd app
-          ls
           cd build
-          ls
           cd outputs
-          ls
-          cd apk
+          cd ap
+          cd release
           ls
           mv ~/app/build/outputs/apk/release/app-release.apk out/app-release.apk
           
