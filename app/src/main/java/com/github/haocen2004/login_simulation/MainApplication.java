@@ -101,6 +101,8 @@ public class MainApplication extends Application {
         if (CHECK_VER) {
             new Thread(update_rb).start();
             Executors.newSingleThreadExecutor().execute(() -> new SponsorRepo(getApplicationContext()).refreshSponsors());
+        } else {
+            BH_VER = app_pref.getString("bh_ver", BH_VER);
         }
 
         if (app_pref.getBoolean("has_account", false)) {
@@ -171,7 +173,7 @@ public class MainApplication extends Application {
                 e.printStackTrace();
                 Logger.d("Update", "Check Update Failed");
 
-                app_pref.edit().putString("bh_ver", BH_VER).apply();
+                //app_pref.edit().putString("bh_ver", BH_VER).apply();
             }
             BH_VER = app_pref.getString("bh_ver", BH_VER);
 
