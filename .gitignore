@@ -10,3 +10,6 @@
 /app/release/
 *.log
 /app/debug/
+*.jks
+app/src/androidTest/
+app/src/test/

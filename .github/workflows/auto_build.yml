@@ -26,8 +26,6 @@ jobs:
           chmod +x gradlew
           ./gradlew clean
           ./gradlew build
-          cd app/build/release
-          ls
           mv app/build/release/app-release.apk out/app-release.apk
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}

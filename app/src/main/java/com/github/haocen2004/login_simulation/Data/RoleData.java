@@ -82,7 +82,7 @@ public class RoleData {
             uc_sign = true;
             accountType = "15";
         } else if (special_tag == 4) {
-            accountType = "17";
+            accountType = "8";
         }
         new Thread(getOA_runnable).start();
     }
