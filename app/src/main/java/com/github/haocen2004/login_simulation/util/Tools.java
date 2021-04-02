@@ -106,6 +106,14 @@ public static void changeToWDJ(Activity activity) {
         return paramContext.getSharedPreferences(name, 0).getString(paramString, "");
     }
 
+    public static boolean saveInt(Context paramContext, String paramString, int paramInt) {
+        return paramContext.getSharedPreferences(name, 0).edit().putInt(paramString, paramInt).commit();
+    }
+
+    public static Integer getInt(Context paramContext, String paramString) {
+        return paramContext.getSharedPreferences(name, 0).getInt(paramString, 0);
+    }
+
     public static boolean saveString(Context paramContext, String paramString1, String paramString2) {
         return paramContext.getSharedPreferences(name, 0).edit().putString(paramString1, paramString2).commit();
     }

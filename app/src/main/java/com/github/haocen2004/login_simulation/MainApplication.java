@@ -149,6 +149,8 @@ public class MainApplication extends Application {
 
 
     }
+
+
     @SuppressLint("HandlerLeak")
     Handler update_check_hd = new Handler() {
         @Override

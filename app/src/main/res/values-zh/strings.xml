@@ -78,6 +78,7 @@
     <string name="dark_mode">深色模式状态</string>
     <string name="reg_new">新用户注册</string>
     <string name="btn_get_key">获取赞助者身份码</string>
+    <string name="btn_pic">从相册选择</string>
 
 
 </resources>

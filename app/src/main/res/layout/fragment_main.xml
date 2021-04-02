@@ -115,6 +115,16 @@
             app:layout_constraintTop_toBottomOf="@+id/checkBoxWDJ" />
 
         <Button
+            android:id="@+id/btn_selpic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/btn_pic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_scan" />
+
+        <Button
             android:id="@+id/btn_logout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -122,7 +132,7 @@
             android:text="@string/btn_logout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_scan" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_selpic" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline4"

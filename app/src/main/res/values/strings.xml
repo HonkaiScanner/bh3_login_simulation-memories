@@ -79,5 +79,6 @@
     <string name="dark_mode">Dark Mode Type</string>
     <string name="reg_new">Register</string>
     <string name="btn_get_key">Get Sponsor Key</string>
+    <string name="btn_pic">Select from album</string>
 
 </resources>

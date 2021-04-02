@@ -8,6 +8,7 @@ public class Constant {
     public static final int REQ_QR_CODE = 11002; // // 打开扫描界面请求码
     public static final int REQ_PERM_CAMERA = 11003; // 打开摄像头
     public static final int REQ_PERM_EXTERNAL_STORAGE = 11004; // 读写文件
+    public static final int REQ_CODE_SCAN_GALLERY = 11005;
 
     public static final String INTENT_EXTRA_KEY_QR_SCAN = "qr_scan_result";
     public static final String BH_APP_KEY = "0ebc517adb1b62c6b408df153331f9aa";
@@ -17,8 +18,8 @@ public class Constant {
     public static final String VIVO_APP_KEY = "94c93e8ac604d1909943862f12803ac9";
 
     public static String BH_VER = "4.7.0";
+    public static String MDK_VERSION = "1.17.1";
     public static String OFFICIAL_TYPE = "android01";
     public static boolean CHECK_VER = true;
     public static boolean HAS_ACCOUNT = false;
-
 }

@@ -2,10 +2,13 @@ package com.github.haocen2004.login_simulation.Fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.LayoutInflater;
@@ -31,20 +34,29 @@ import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.QRScanner;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.ChecksumException;
+import com.google.zxing.DecodeHintType;
+import com.google.zxing.FormatException;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.Result;
 import com.google.zxing.activity.CaptureActivity;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.decoding.RGBLuminanceSource;
+import com.google.zxing.qrcode.QRCodeReader;
+import com.google.zxing.util.BitmapUtil;
 import com.google.zxing.util.Constant;
-import com.hjq.permissions.OnPermissionCallback;
-import com.hjq.permissions.Permission;
-import com.hjq.permissions.XXPermissions;
 
-import java.util.List;
+import java.util.Hashtable;
 import java.util.Objects;
 
-import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
+import static android.app.Activity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_CODE_SCAN_GALLERY;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE;
 import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
 
 public class MainFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
@@ -67,7 +79,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
         setRetainInstance(true);
-
         return binding.getRoot();
     }
 
@@ -88,6 +99,17 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                 changeToWDJ(activity);
             } else {
                 ucsp.edit().clear().apply();
+            }
+        });
+        binding.btnSelpic.setOnClickListener(view1 -> {
+            try {
+                if (loginImpl.isLogin()) {
+                    Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
+                    innerIntent.setType("image/*");
+                    startActivityForResult(innerIntent, REQ_CODE_SCAN_GALLERY);
+                }
+            } catch (Exception e) {
+                makeToast(getString(R.string.error_not_login));
             }
         });
         String server_type = "DEBUG SERVER ERROR";
@@ -157,25 +179,75 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constant.REQ_QR_CODE && resultCode == RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            if (bundle != null) {
-                String result = bundle.getString(com.github.haocen2004.login_simulation.util.Constant.INTENT_EXTRA_KEY_QR_SCAN);
-                if (result != null) {
-                    QRScanner qrScanner;
-                    if (isOfficial) {
-                        qrScanner = new QRScanner(activity, true);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == Constant.REQ_QR_CODE) {
+                Bundle bundle = data.getExtras();
+                if (bundle != null) {
+                    String result = bundle.getString(Constant.INTENT_EXTRA_KEY_QR_SCAN);
+                    if (result != null) {
+                        QRScanner qrScanner;
+                        if (isOfficial) {
+                            qrScanner = new QRScanner(activity, true);
+                        } else {
+                            qrScanner = new QRScanner(activity, loginImpl.getRole());
+                        }
+                        if (!qrScanner.parseUrl(result)) return;
+                        qrScanner.getScanRequest();
                     } else {
-                        qrScanner = new QRScanner(activity, loginImpl.getRole());
+                        makeToast(getString(R.string.error_scan));
                     }
-                    if (!qrScanner.parseUrl(result)) return;
-                    qrScanner.getScanRequest();
-                } else {
-                    makeToast(getString(R.string.error_scan));
                 }
+            }
+            if (requestCode == REQ_CODE_SCAN_GALLERY) {
+                final Uri uri = data.getData();
+
+                ProgressDialog mProgress = new ProgressDialog(getContext());
+                mProgress.setMessage("正在扫描...");
+                mProgress.setCancelable(false);
+                mProgress.show();
+                activity.runOnUiThread(() -> {
+                    Result result = scanningImage(uri);
+                    mProgress.dismiss();
+                    if (result != null) {
+                        Intent resultIntent = new Intent();
+                        Bundle bundle = resultIntent.getExtras();
+                        if (bundle == null) {
+                            bundle = new Bundle();
+                        }
+                        bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, result.getText());
+
+                        resultIntent.putExtras(bundle);
+                        onActivityResult(REQ_QR_CODE, RESULT_OK, resultIntent);
+                    } else {
+                        Log.makeToast(com.google.zxing.R.string.note_identify_failed);
+                    }
+                });
             }
         }
 
+    }
+
+    public Result scanningImage(Uri uri) {
+        if (uri == null) {
+            return null;
+        }
+        Hashtable<DecodeHintType, String> hints = new Hashtable<>();
+        hints.put(DecodeHintType.CHARACTER_SET, "UTF8"); //设置二维码内容的编码
+
+        Bitmap scanBitmap = BitmapUtil.decodeUri(getContext(), uri, 500, 500);
+        RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
+        BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
+        QRCodeReader reader = new QRCodeReader();
+        try {
+            return reader.decode(bitmap1, hints);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (ChecksumException e) {
+            e.printStackTrace();
+        } catch (FormatException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -318,20 +390,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
             normalDialog.setMessage("使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK适配所需\n可不授予权限");
             normalDialog.setPositiveButton("我已知晓",
                     (dialog, which) -> {
-                        XXPermissions.with(this)
-                                .permission(Permission.CAMERA)
-                                .permission(Permission.WRITE_EXTERNAL_STORAGE)
-                                .request(new OnPermissionCallback() {
-                                    @Override
-                                    public void onGranted(List<String> permissions, boolean all) {
-
-                                    }
-
-                                    @Override
-                                    public void onDenied(List<String> permissions, boolean never) {
-
-                                    }
-                                });
+                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
                         dialog.dismiss();
                     });
             normalDialog.setCancelable(false);
