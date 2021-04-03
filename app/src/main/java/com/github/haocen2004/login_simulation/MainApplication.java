@@ -32,6 +32,8 @@ import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
+import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class MainApplication extends Application {
@@ -42,10 +44,6 @@ public class MainApplication extends Application {
         super.onCreate();
         Log = Logger.getLogger(this);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", true);
-        AVOSCloud.initialize(this, "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", "https://vmh6lryy.lc-cn-n1-shared.com");
-        if(DEBUG) {
-            AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
-        }
         app_pref = getDefaultSharedPreferences(this);
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             app_pref.edit()
@@ -92,7 +90,11 @@ public class MainApplication extends Application {
                 app_pref.edit()
                         .putString("dark_type", "-1")
                         .apply();
-
+            }
+            if (!app_pref.contains("mdk_ver")) {
+                app_pref.edit()
+                        .putString("mdk_ver", MDK_VERSION)
+                        .apply();
             }
 
         }
@@ -100,9 +102,13 @@ public class MainApplication extends Application {
 
         if (CHECK_VER) {
             new Thread(update_rb).start();
-            Executors.newSingleThreadExecutor().execute(() -> new SponsorRepo(getApplicationContext()).refreshSponsors());
         } else {
             BH_VER = app_pref.getString("bh_ver", BH_VER);
+            MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
+            AVOSCloud.initialize(this, "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
+            if (DEBUG) {
+                AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
+            }
         }
 
         if (app_pref.getBoolean("has_account", false)) {
@@ -124,9 +130,11 @@ public class MainApplication extends Application {
 
                     public void onError(Throwable throwable) {
                         AVUser.changeCurrentUser(null, true);
-                        app_pref.edit().putBoolean("has_account", false).apply();
+                        app_pref.edit().putBoolean("has_account", false)
+                                .putString("custom_username", "崩坏3扫码器用户").apply();
                         throwable.printStackTrace();
                         Logger.d(TAG, "Failed.");
+                        Log.makeToast("赞助者身份验证已过期...");
                     }
 
                     public void onComplete() {
@@ -162,7 +170,9 @@ public class MainApplication extends Application {
             Logger.i("Update", "handleMessage: " + feedback);
             try {
                 JSONObject json = new JSONObject(feedback);
-                app_pref.edit().putString("bh_ver", json.getString("bh_ver")).apply();
+                app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
+                        .putString("mdk_ver", json.getString("mdk_ver"))
+                        .putString("sp_url", json.getString("sp_url")).apply();
 
                 if (!getPackageName().contains("dev") && app_pref.getInt("version", VERSION_CODE) < json.getInt("ver")) {
                     showUpdateDialog(
@@ -178,7 +188,14 @@ public class MainApplication extends Application {
                 //app_pref.edit().putString("bh_ver", BH_VER).apply();
             }
             BH_VER = app_pref.getString("bh_ver", BH_VER);
+            MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
+            SP_URL = app_pref.getString("sp_url", SP_URL);
+            AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
+            if (DEBUG) {
+                AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
+            }
 
+            Executors.newSingleThreadExecutor().execute(() -> new SponsorRepo(getApplicationContext()).refreshSponsors());
 
         }
     };
@@ -198,13 +215,6 @@ public class MainApplication extends Application {
     }
     Runnable update_rb = () -> {
         String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
-        try {
-            if (feedback.isEmpty()) {
-                return;
-            }
-        } catch (Exception e) {
-            return;
-        }
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);

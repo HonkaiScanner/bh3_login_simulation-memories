@@ -49,9 +49,9 @@ public class Network {
             return null;
         }
         //使用finally块来关闭输出流、输入流
-        finally{
-            try{
-                if(out!=null){
+        finally {
+            try {
+                if (out != null) {
                     out.close();
                 }
                 if (in != null) {

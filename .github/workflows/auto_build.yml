@@ -20,9 +20,9 @@ jobs:
         env:
           ENCODED_KEYSTORE: ${{ secrets.ENCODED_KEYSTORE }}
 
-      - name: Get commit SHA
-        id: get_commit_sha
-        run: 'echo ::set-output name=VERSION::-{GITHUB_SHA: 0: 6}'
+      #      - name: Get commit SHA
+      #        id: get_commit_sha
+      #        run: 'echo ::set-output name=VERSION::-{GITHUB_SHA: 0: 6}'
 
       - name: Build APK with Gradle
         run: |
@@ -34,7 +34,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          NAME_SUFFIX: ${{ steps.get_commit_sha.outputs.VERSION }}
+      #          NAME_SUFFIX: ${{ steps.get_commit_sha.outputs.VERSION }}
 
       - name: Upload Released APK
         uses: actions/upload-artifact@v2
