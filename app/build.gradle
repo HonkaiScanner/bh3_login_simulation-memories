@@ -1,4 +1,10 @@
 apply plugin: 'com.android.application'
+apply plugin: 'bugly'
+
+bugly {
+    appId = '4bfa7b722e' // 注册时分配的App ID
+    appKey = '07d45019-657c-4c7d-8ef6-7e8c0457f878' // 注册时分配的App Key
+}
 
 android {
     signingConfigs {

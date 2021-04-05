@@ -13,3 +13,4 @@
 *.jks
 app/src/androidTest/
 app/src/test/
+/app/bugly/
