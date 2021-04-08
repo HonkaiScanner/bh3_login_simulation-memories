@@ -212,6 +212,8 @@ public class LoginActivity extends AppCompatActivity {
                 user.put("sp_level", sp_level);
                 user.put("desc", "该用户还没有设置签名哦");
                 user.put("custom_username", "崩坏3扫码器用户");
+                user.put("scanner_key", sc_key);
+                user.put("deviceId", Tools.getDeviceID(getApplicationContext()));
 
 
                 user.signUpInBackground().subscribe(new Observer<AVUser>() {
@@ -267,8 +269,7 @@ public class LoginActivity extends AppCompatActivity {
         sponsor.put("user", user);
         sponsor.put("name", user.getUsername());
         sponsor.put("deviceId", Tools.getDeviceID(getApplicationContext()));
-        sponsor.put("desc", "该用户还没有设置签名哦");
-        sponsor.put("avatarImgUrl", " ");
+//        sponsor.put("desc", "该用户还没有设置签名哦");
         sponsor.put("personalPageUrl", " ");
         sponsor.put("sp_level", sp_level);
 
@@ -293,14 +294,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void setUser(AVUser user) {
-        this.user = user;
-        AVUser.changeCurrentUser(user, true);
-        getDefaultSharedPreferences(this).edit()
-                .putBoolean("has_account", true)
-                .putString("account_token", user.getSessionToken())
-                .putString("custom_username", user.getString("custom_username"))
-                .apply();
-        HAS_ACCOUNT = true;
+        try {
+            this.user = user;
+            AVUser.changeCurrentUser(user, true);
+            getDefaultSharedPreferences(this).edit()
+                    .putBoolean("has_account", true)
+                    .putString("account_token", user.getSessionToken())
+                    .putString("custom_username", user.getString("custom_username"))
+                    .apply();
+            HAS_ACCOUNT = true;
+        } catch (Exception ignore) {
+        }
     }
 
     private void makeToast(String msg) {

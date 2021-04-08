@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.github.haocen2004.login_simulation.Database.SponsorData;
+import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorData;
 import com.github.haocen2004.login_simulation.R;
 
 import java.util.List;

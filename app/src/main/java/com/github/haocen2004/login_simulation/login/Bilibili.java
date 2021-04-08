@@ -37,6 +37,7 @@ public class Bilibili implements LoginImpl {
     private boolean isLogin;
     private RoleData roleData;
     private final Logger Log;
+    private Boolean hasInit = false;
 
     public Bilibili(AppCompatActivity activity) {
         this.activity = activity;
@@ -164,26 +165,30 @@ public class Bilibili implements LoginImpl {
 
     @Override
     public void login() {
-
-        BSGameSdk.initialize(true, activity, "590", "180",
-                "378", BILI_APP_KEY, new InitCallbackListener() {
-                    @Override
-                    public void onSuccess() {
+        if (hasInit) {
+            doBiliLogin();
+        } else {
+            BSGameSdk.initialize(true, activity, "590", "180",
+                    "378", BILI_APP_KEY, new InitCallbackListener() {
+                        @Override
+                        public void onSuccess() {
 //                        Logger.info("Bilibili SDK setup succeed");
-                        Logger.i(TAG, "onSuccess: Setup Succeed");
-                        doBiliLogin();
-                    }
+                            Logger.i(TAG, "onSuccess: Setup Succeed");
+                            doBiliLogin();
+                            hasInit = true;
+                        }
 
-                    @Override
-                    public void onFailed() {
+                        @Override
+                        public void onFailed() {
 
-                        Logger.w(TAG, "Bilibili SDK setup Failed");
+                            Logger.w(TAG, "Bilibili SDK setup Failed");
 
-                    }
-                }, () -> System.exit(0));
+                        }
+                    }, () -> System.exit(0));
 
-        gameSdk = BSGameSdk.getInstance();
-        preferences = activity.getSharedPreferences("bili_user", Context.MODE_PRIVATE);
+            gameSdk = BSGameSdk.getInstance();
+            preferences = activity.getSharedPreferences("bili_user", Context.MODE_PRIVATE);
+        }
     }
 
     @Override

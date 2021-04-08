@@ -107,6 +107,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
                     innerIntent.setType("image/*");
                     startActivityForResult(innerIntent, REQ_CODE_SCAN_GALLERY);
+                } else {
+                    makeToast(getString(R.string.error_not_login));
                 }
             } catch (Exception e) {
                 makeToast(getString(R.string.error_not_login));
@@ -315,37 +317,39 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     }
                 } catch (Exception ignore) {
                 }
-                switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
-                    case "Official":
-                        loginImpl = new Official(activity);
-                        break;
+                if (loginImpl == null) {
+                    switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
+                        case "Official":
+                            loginImpl = new Official(activity);
+                            break;
 //                    case "Xiaomi":
 //                        loginImpl = new Xiaomi(activity);
 //                        //11
 //                        break;
-                    case "Bilibili":
-                        loginImpl = new Bilibili(activity);
-                        //14
-                        break;
-                    case "UC":
-                        if (pref.getBoolean("use_wdj", false)) {
-                            changeToWDJ(activity);
-                        }
-                        loginImpl = new UC(activity);
-                        //20
-                        break;
-                    case "Vivo":
-                        loginImpl = new Vivo(activity);
-                        break;
-                    case "Oppo":
-                        loginImpl = new Oppo(activity);
-                        break;
+                        case "Bilibili":
+                            loginImpl = new Bilibili(activity);
+                            //14
+                            break;
+                        case "UC":
+                            if (pref.getBoolean("use_wdj", false)) {
+                                changeToWDJ(activity);
+                            }
+                            loginImpl = new UC(activity);
+                            //20
+                            break;
+                        case "Vivo":
+                            loginImpl = new Vivo(activity);
+                            break;
+                        case "Oppo":
+                            loginImpl = new Oppo(activity);
+                            break;
 //                    case "Flyme":
 //                        loginImpl = new Flyme(activity);
 //                        break;
-                    default:
-                        makeToast(getString(R.string.error_wrong_server));
-                        break;
+                        default:
+                            makeToast(getString(R.string.error_wrong_server));
+                            break;
+                    }
                 }
                 loginImpl.login();
                 break;
@@ -357,6 +361,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     }
                     if (loginImpl.isLogin()) {
                         loginImpl.logout();
+                    } else {
+                        makeToast(getString(R.string.error_not_login));
                     }
                 } catch (Exception e) {
                     makeToast(getString(R.string.error_not_login));

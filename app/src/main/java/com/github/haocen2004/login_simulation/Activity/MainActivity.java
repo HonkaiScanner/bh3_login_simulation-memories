@@ -14,7 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.github.haocen2004.login_simulation.Database.SponsorRepo;
+import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.github.haocen2004.login_simulation.util.Logger;

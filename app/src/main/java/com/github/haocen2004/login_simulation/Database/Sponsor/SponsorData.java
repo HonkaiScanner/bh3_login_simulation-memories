@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.Database;
+package com.github.haocen2004.login_simulation.Database.Sponsor;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
