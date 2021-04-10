@@ -29,7 +29,10 @@ public class MainApplication extends Application {
                     .putBoolean("is_first_run", false)
                     .putInt("version", VERSION_CODE)
                     .apply();
-            new SponsorRepo(getApplicationContext()).reset();
+            try {
+                new SponsorRepo(getApplicationContext()).reset();
+            } catch (Exception ignore) {
+            }
             if (!app_pref.contains("auto_confirm")) {
                 app_pref.edit()
                         .putBoolean("auto_confirm", false)
