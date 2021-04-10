@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -28,6 +29,7 @@ public class MainApplication extends Application {
                     .putBoolean("is_first_run", false)
                     .putInt("version", VERSION_CODE)
                     .apply();
+            new SponsorRepo(getApplicationContext()).reset();
             if (!app_pref.contains("auto_confirm")) {
                 app_pref.edit()
                         .putBoolean("auto_confirm", false)

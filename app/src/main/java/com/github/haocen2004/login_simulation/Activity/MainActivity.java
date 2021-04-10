@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.github.haocen2004.login_simulation.Database.Announcement.AnnouncementRepo;
 import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
@@ -47,10 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private SharedPreferences app_pref;
     private Logger Log;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
@@ -136,12 +140,13 @@ public class MainActivity extends AppCompatActivity {
                 AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
             }
 
-            Executors.newSingleThreadExecutor().execute(() -> new SponsorRepo(getApplicationContext()).refreshSponsors());
-            if (app_pref.getBoolean("has_account", false)) {
-                String TAG = "login check";
+            Executors.newSingleThreadExecutor().execute(() -> {
+                new SponsorRepo(getApplicationContext()).refreshSponsors();
+                new AnnouncementRepo(activity).refreshAnnouncements();
+                if (app_pref.getBoolean("has_account", false)) {
+                    String TAG = "login check";
 
-                Logger.d(TAG, "Start.");
-                Executors.newSingleThreadExecutor().execute(() -> {
+                    Logger.d(TAG, "Start.");
                     AVUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<AVUser>() {
                         public void onSubscribe(Disposable disposable) {
                         }
@@ -166,9 +171,10 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete() {
                         }
                     });
-                });
 
-            }
+                }
+            });
+
         }
     };
 

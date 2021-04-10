@@ -11,9 +11,6 @@ import cn.leancloud.AVQuery;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
-import static com.github.haocen2004.login_simulation.util.Tools.getInt;
-import static com.github.haocen2004.login_simulation.util.Tools.saveInt;
-
 public class SponsorRepo {
     private final List<SponsorData> allSponsors;
     private final SponsorDao sponsorDao;
@@ -24,6 +21,10 @@ public class SponsorRepo {
         SponsorDatabase sponsorDatabase = SponsorDatabase.getDatabase(context.getApplicationContext());
         sponsorDao = sponsorDatabase.getSponsorDao();
         allSponsors = sponsorDao.getAllSponsors();
+    }
+
+    public void reset() {
+        sponsorDao.deleteAllSponsors();
     }
 
     public SponsorDao getSponsorDao() {
@@ -39,15 +40,36 @@ public class SponsorRepo {
 
                 public void onNext(List<AVObject> Sponsors) {
                     // students 是包含满足条件的 Student 对象的数组
-                    if (Sponsors.size() > getInt(context, "sp_count")) {
-                        saveInt(context, "sp_count", Sponsors.size());
                         new Thread(() -> {
-                            getSponsorDao().deleteAllSponsors();
                             for (AVObject object : Sponsors) {
-                                getSponsorDao().insertSponsors(new SponsorData(object.getString("name"), object.getString("desc"), object.getString("avatarImgUrl"), object.getString("personalPageUrl"), object.getString("deviceId"), object.getString("scannerKey")));
+                                boolean hasData = false;
+                                for (SponsorData sponsorData : allSponsors) {
+                                    if (sponsorData.getScannerKey().equals(object.getString("scannerKey"))) {
+                                        hasData = true;
+                                        sponsorData.setName(object.getString("name"));
+                                        sponsorData.setDesc(object.getString("desc"));
+                                        sponsorData.setAvatarImgUrl(object.getString("avatarImgUrl"));
+                                        sponsorData.setPersonalPageUrl(object.getString("personalPageUrl"));
+                                        sponsorData.setDeviceId(object.getString("deviceId"));
+                                        sponsorDao.updateSponsors(sponsorData);
+                                    }
+                                }
+                                if (!hasData) {
+                                    sponsorDao.insertSponsors(
+                                            new SponsorData(
+                                                    object.getString("name"),
+                                                    object.getString("desc"),
+                                                    object.getString("avatarImgUrl"),
+                                                    object.getString("personalPageUrl"),
+                                                    object.getString("deviceId"),
+                                                    object.getString("scannerKey")
+                                            )
+                                    );
+                                }
                             }
+
                         }).start();
-                    }
+
                 }
 
                 public void onError(Throwable throwable) {
