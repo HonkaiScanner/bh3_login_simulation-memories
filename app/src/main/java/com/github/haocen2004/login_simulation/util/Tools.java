@@ -62,7 +62,16 @@ public static void changeToWDJ(Activity activity) {
                 }
             }
             String url = json2.getString("dispatch_url");
-            feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
+            boolean loop = true;
+            while (loop) {
+                try {
+                    feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
+                    if (feedback != null) {
+                        loop = false;
+                    }
+                } catch (Exception ignore) {
+                }
+            }
             Logger.i(TAG, "getOAServer: " + feedback);
 
             return feedback;

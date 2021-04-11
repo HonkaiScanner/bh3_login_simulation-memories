@@ -22,12 +22,12 @@ android {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 15
-        versionName '1.3.5'
+        versionCode 16
+        versionName '1.3.6'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 //        versionNameSuffix System.getenv("NAME_SUFFIX")
-//        versionNameSuffix '-preRelease3'
+        versionNameSuffix '-CaptureScreenTest'
         signingConfig signingConfigs.releaseSign
 
     }
@@ -66,8 +66,8 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.navigation:navigation-fragment:2.3.4'
-    implementation 'androidx.navigation:navigation-ui:2.3.4'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
     implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
     implementation project(':zxing-lib')
 //    implementation project(':mi_sdk')

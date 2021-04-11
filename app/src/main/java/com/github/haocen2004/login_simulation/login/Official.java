@@ -289,6 +289,8 @@ public class Official implements LoginImpl {
 
                         loginByAccount();
                     });
+            customizeDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> Log.makeToast(R.string.login_cancel));
+            customizeDialog.setCancelable(false);
             customizeDialog.show();
         } else {
             //https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify?

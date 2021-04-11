@@ -185,9 +185,34 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.setMessage("更新日志：\n" + logs);
         normalDialog.setPositiveButton("打开更新链接",
                 (dialog, which) -> {
+                    openUrl("https://www.coolapk.com/apk/com.github.haocen2004.bh3_login_simulation", this);
+                    dialog.dismiss();
+                });
+        normalDialog.setNeutralButton("蓝奏云",
+                (dialog, which) -> {
                     openUrl(url, this);
                     dialog.dismiss();
                 });
+        normalDialog.setNegativeButton(R.string.btn_cancel,
+                (dialog, which) -> {
+                    showCloseUpdateDialog();
+                    dialog.dismiss();
+                });
+        normalDialog.setCancelable(false);
+        normalDialog.show();
+    }
+
+    private void showCloseUpdateDialog() {
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+        normalDialog.setTitle("是否关闭更新检查？");
+        normalDialog.setMessage("将无法获取扫码器最新更新\n\n以下功能将会一起关闭：\n赞助者列表更新\n公告更新");
+        normalDialog.setPositiveButton(R.string.btn_close_update,
+                (dialog, which) -> {
+                    app_pref.edit().putBoolean("check_update", false).apply();
+                    dialog.dismiss();
+                });
+        normalDialog.setNegativeButton(R.string.btn_cancel,
+                (dialog, which) -> dialog.dismiss());
         normalDialog.setCancelable(false);
         normalDialog.show();
     }

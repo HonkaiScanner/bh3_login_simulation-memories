@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 摄像头权限 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -19,10 +20,6 @@
     <uses-permission
         android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" /> <!-- Ignore system app -->
-    <!-- <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> -->
-    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
-    <!-- <uses-permission android:name="com.xiaomi.sdk.permission.PAYMENT" /> -->
-    <!-- <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" /> -->
     <uses-permission android:name="vivo.game.permission.OPEN_JUMP_INTENTS" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
@@ -50,15 +47,21 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".Activity.MainActivity">
+        <activity
+            android:name=".Activity.MainActivity"
+            android:launchMode="singleInstance">
 
-            <!-- android:screenOrientation="portrait"> -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".util.FabScanner"
+            android:enabled="true"
+            android:foregroundServiceType="mediaProjection" />
         <activity android:name="com.google.zxing.activity.CaptureActivity" />
 
         <meta-data

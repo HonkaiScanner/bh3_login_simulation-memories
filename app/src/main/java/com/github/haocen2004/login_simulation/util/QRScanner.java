@@ -199,7 +199,7 @@ public class QRScanner {
         return true;
     }
 
-    public void getScanRequest() {
+    public void start() {
         if (app_id.contains("4")) {
             if (!account_type.equals("1")) {
 

@@ -80,5 +80,8 @@
     <string name="reg_new">Register</string>
     <string name="btn_get_key">Get Sponsor Key</string>
     <string name="btn_pic">Select from album</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="login_cancel">Login Cancelled</string>
+    <string name="btn_close_update">Close Update</string>
 
 </resources>

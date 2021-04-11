@@ -9,8 +9,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,7 @@ import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.Oppo;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
+import com.github.haocen2004.login_simulation.util.FabScanner;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.QRScanner;
 import com.google.zxing.BinaryBitmap;
@@ -56,10 +59,12 @@ import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_CODE_SCAN_GALLERY;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_WINDOW;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE;
 import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
 
-public class MainFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class MainFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener, View.OnLongClickListener {
 
     private LoginImpl loginImpl;
     private AppCompatActivity activity;
@@ -69,12 +74,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
     private FragmentMainBinding binding;
     private final String TAG = "MainFragment";
     private Logger Log;
+    private FabScanner fabScanner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         activity = (AppCompatActivity) getActivity();
         context = getContext();
+        fabScanner = new FabScanner(this);
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
@@ -87,6 +94,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         super.onViewCreated(view, savedInstanceState);
         binding.btnLogin.setOnClickListener(this);
         binding.btnScan.setOnClickListener(this);
+        binding.btnScan.setOnLongClickListener(this);
         binding.btnLogout.setOnClickListener(this);
         binding.officialSlotSelect.setOnCheckedChangeListener(this);
         binding.officialTypeSel.setOnCheckedChangeListener(this);
@@ -194,7 +202,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                             qrScanner = new QRScanner(activity, loginImpl.getRole());
                         }
                         if (!qrScanner.parseUrl(result)) return;
-                        qrScanner.getScanRequest();
+                        qrScanner.start();
                     } else {
                         makeToast(getString(R.string.error_scan));
                     }
@@ -225,6 +233,21 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
                     }
                 });
             }
+            if (requestCode == REQ_PERM_WINDOW) {
+                fabScanner.showAlertScanner();
+            }
+            if (requestCode == REQ_PERM_RECORD) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Intent service = new Intent(activity, FabScanner.class);
+                    service.putExtra("code", resultCode);
+                    service.putExtra("data", data);
+//                    service.putExtra("fragment");
+                    activity.startForegroundService(service);
+                } else {
+                    fabScanner.setData(resultCode, data);
+                }
+
+            }
         }
 
     }
@@ -242,11 +265,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         QRCodeReader reader = new QRCodeReader();
         try {
             return reader.decode(bitmap1, hints);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        } catch (ChecksumException e) {
-            e.printStackTrace();
-        } catch (FormatException e) {
+        } catch (NotFoundException | ChecksumException | FormatException e) {
             e.printStackTrace();
         }
         return null;
@@ -462,4 +481,65 @@ public class MainFragment extends Fragment implements View.OnClickListener, Radi
         }
         Logger.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
     }
+
+    @Override
+    public boolean onLongClick(View view) {
+        if (pref.getBoolean("auto_confirm", false)) {
+            try {
+                if (loginImpl.isLogin()) {
+                    QRScanner qrScanner;
+                    if (isOfficial) {
+                        qrScanner = new QRScanner(activity, true);
+                    } else {
+                        qrScanner = new QRScanner(activity, loginImpl.getRole());
+                    }
+                    fabScanner.setQrScanner(qrScanner);
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        if (!Settings.canDrawOverlays(activity)) {
+                            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(activity);
+                            normalDialog.setTitle("悬浮窗扫码");
+                            normalDialog.setMessage("使用悬浮窗扫码器需要悬浮窗权限和屏幕捕获权限\n请在接下来打开的窗口中授予权限");
+                            normalDialog.setPositiveButton("我已知晓",
+                                    (dialog, which) -> {
+//                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, REQ_PERM_WINDOW);
+                                        dialog.dismiss();
+                                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                                        activity.startActivityForResult(intent, REQ_PERM_WINDOW);
+
+                                    });
+                            normalDialog.setCancelable(false);
+                            normalDialog.show();
+                        } else {
+                            fabScanner.showAlertScanner();
+                        }
+                    } else {
+                        fabScanner.showAlertScanner();
+                    }
+
+                } else {
+                    Log.makeToast(R.string.error_not_login);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.makeToast(R.string.error_not_login);
+            }
+        } else {
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(activity);
+            normalDialog.setTitle("悬浮窗扫码");
+            normalDialog.setMessage("使用悬浮窗扫码器需要开启自动确认\n是否快捷启用？");
+            normalDialog.setPositiveButton("启用",
+                    (dialog, which) -> {
+//                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, REQ_PERM_WINDOW);
+                        dialog.dismiss();
+                        pref.edit().putBoolean("auto_confirm", true).apply();
+                        onLongClick(view);
+
+                    });
+            normalDialog.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
+            normalDialog.setCancelable(false);
+            normalDialog.show();
+        }
+        return true;
+    }
+
 }
