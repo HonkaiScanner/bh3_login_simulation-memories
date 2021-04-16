@@ -25,6 +25,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -140,7 +141,9 @@ public class FabScanner extends Service {
                         }
 
                         isScreenCaptureStarted = true;
-                        mDisplay = activity.getDisplay();
+                        WindowManager window = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                        mDisplay = window.getDefaultDisplay();
+                        //mDisplay = activity.getDisplay();
                         final DisplayMetrics metrics = new DisplayMetrics();
                         mDisplay.getRealMetrics(metrics);
                         mDensity = metrics.densityDpi;
