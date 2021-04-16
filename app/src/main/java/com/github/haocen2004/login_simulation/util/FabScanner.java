@@ -141,7 +141,7 @@ public class FabScanner extends Service {
                         }
 
                         isScreenCaptureStarted = true;
-                        WindowManager window = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                        WindowManager window = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
                         mDisplay = window.getDefaultDisplay();
                         //mDisplay = activity.getDisplay();
                         final DisplayMetrics metrics = new DisplayMetrics();
