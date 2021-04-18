@@ -141,9 +141,12 @@ public class FabScanner extends Service {
                         }
 
                         isScreenCaptureStarted = true;
-                        WindowManager window = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-                        mDisplay = window.getDefaultDisplay();
-                        //mDisplay = activity.getDisplay();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            mDisplay = activity.getDisplay();
+                        } else {
+                            WindowManager window = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+                            mDisplay = window.getDefaultDisplay();
+                        }
                         final DisplayMetrics metrics = new DisplayMetrics();
                         mDisplay.getRealMetrics(metrics);
                         mDensity = metrics.densityDpi;

@@ -47,9 +47,7 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity
-            android:name=".Activity.MainActivity"
-            android:launchMode="singleInstance">
+        <activity android:name=".Activity.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -155,7 +153,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="ng119474" />
+                <data android:scheme="ng654463" />
             </intent-filter>
         </activity>
         <activity

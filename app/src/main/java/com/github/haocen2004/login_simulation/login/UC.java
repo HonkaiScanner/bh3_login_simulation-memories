@@ -39,17 +39,25 @@ public class UC implements LoginImpl {
     private RoleData roleData;
     private static final String TAG = "UC Login";
     private final Logger Log;
+    private Boolean init = false;
     private final SDKEventReceiver eventReceiver = new SDKEventReceiver() {
 
         @Subscribe(event = SDKEventKey.ON_INIT_SUCC)
-        private void onInitSucc() throws AliNotInitException, AliLackActivityException {
-            sdk.login(activity, null);
+        private void onInitSucc() {
+            Logger.d(TAG, "Init SUCCEED");
+            init = true;
+            try {
+                sdk.login(activity, null);
+            } catch (AliNotInitException | AliLackActivityException e) {
+                Logger.d(TAG, "Login Failed.");
+                e.printStackTrace();
+            }
         }
 
         @Subscribe(event = SDKEventKey.ON_LOGIN_SUCC)
         private void onLoginSucc(String sid) {
 //            System.out.println("开始登陆" + sid);
-            Logger.i("UCSDK", "onLoginSucc: sid:" + sid);
+            Logger.i(TAG, "onLoginSucc: sid:" + sid);
             setSid(sid);
             doBHLogin();
         }
@@ -70,23 +78,35 @@ public class UC implements LoginImpl {
 
     @Override
     public void login() {
-        sdk = UCGameSdk.defaultSdk();
-        sdk.registerSDKEventReceiver(this.eventReceiver);
-        ParamInfo gpi = new ParamInfo();
+        if (!init) {
+            sdk = UCGameSdk.defaultSdk();
+            sdk.registerSDKEventReceiver(this.eventReceiver);
+            ParamInfo gpi = new ParamInfo();
 
-        gpi.setGameId(654463);
-        if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            gpi.setOrientation(UCOrientation.PORTRAIT);
+            gpi.setGameId(654463);
+
+            if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                gpi.setOrientation(UCOrientation.PORTRAIT);
+            } else {
+                gpi.setOrientation(UCOrientation.LANDSCAPE);
+            }
+            SDKParams sdkParams = new SDKParams();
+            sdkParams.put(SDKParamKey.GAME_PARAMS, gpi);
+            try {
+
+                sdk.initSdk(activity, sdkParams);
+
+            } catch (AliLackActivityException e) {
+                e.printStackTrace();
+            }
         } else {
-            gpi.setOrientation(UCOrientation.LANDSCAPE);
-        }
-        SDKParams sdkParams = new SDKParams();
-        sdkParams.put(SDKParamKey.GAME_PARAMS, gpi);
-        try {
-            sdk.initSdk(activity, sdkParams);
-
-        } catch (AliLackActivityException e) {
-            e.printStackTrace();
+            try {
+                Logger.d(TAG, "try to login...");
+                sdk.login(activity, null);
+            } catch (AliNotInitException | AliLackActivityException e) {
+                Logger.d(TAG, "Login Failed.");
+                e.printStackTrace();
+            }
         }
     }
 
