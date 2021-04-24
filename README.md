@@ -24,7 +24,7 @@ UC(豌豆荚/九游)
 
 ## B站演示视频 / Video
 
-https://www.bilibili.com/video/BV1hA411e7s3/
+https://www.bilibili.com/video/BV1RB4y1P7MQ/
 
 ## 其他 / Other
 米忽悠登录sdk错误码:  
