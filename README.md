@@ -35,3 +35,7 @@ ZXing
 Glide  
 LeanCloud  
 Bugly  
+
+## 关联项目
+- [米忽悠助手](https://github.com/Haocen2004/mihoyo-helper)
+
