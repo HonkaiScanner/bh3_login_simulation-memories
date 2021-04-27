@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        Logger.setView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
         Log = Logger.getLogger(this);
 //        Toolbar toolbar = findViewById(R.id.toolbar);

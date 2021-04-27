@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.FragmentReportBinding;
+import com.github.haocen2004.login_simulation.util.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
@@ -28,6 +29,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentReportBinding.inflate(inflater, container, false);
+        Logger.setView(binding.getRoot());
         return binding.getRoot();
     }
 

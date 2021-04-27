@@ -32,6 +32,7 @@ public class Vivo implements LoginImpl {
     private final String device_id;
     private static final String TAG = "Vivo Login";
     private final Logger Log;
+    private final LoginCallback loginCallback;
 
     private final VivoAccountCallback callback = new VivoAccountCallback() {
         @Override
@@ -54,13 +55,15 @@ public class Vivo implements LoginImpl {
         }
     };
 
-    public Vivo(Activity activity){
+    public Vivo(Activity activity, LoginCallback callback) {
+        loginCallback = callback;
         this.activity = activity;
         device_id = Tools.getDeviceID(activity);
         VivoUnionSDK.initSdk(activity, VIVO_APP_KEY, BuildConfig.DEBUG);
-        VivoUnionSDK.registerAccountCallback(activity, callback);
+        VivoUnionSDK.registerAccountCallback(activity, this.callback);
         Log = Logger.getLogger(activity);
     }
+
     @Override
     public void login() {
         VivoUnionSDK.login(activity);
@@ -95,6 +98,7 @@ public class Vivo implements LoginImpl {
                 feedback_json = new JSONObject(feedback);
             } catch (JSONException e) {
                 e.printStackTrace();
+                loginCallback.onLoginFailed();
             }
 //            Logger.info(feedback);
             Logger.i(TAG, "handleMessage: " + feedback);
@@ -107,7 +111,7 @@ public class Vivo implements LoginImpl {
                     String combo_token = data_json2.getString("combo_token");
                     String account_type = data_json2.getString("account_type");
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "19", account_type, "vivo", 2);
+                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "19", account_type, "vivo", 2, loginCallback);
 
                     isLogin = true;
                     makeToast(activity.getString(R.string.login_succeed));
@@ -116,10 +120,12 @@ public class Vivo implements LoginImpl {
 
                     makeToast(feedback_json.getString("message"));
                     isLogin = false;
+                    loginCallback.onLoginFailed();
 
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                loginCallback.onLoginFailed();
             }
         }
     };

@@ -45,6 +45,7 @@ public class Official implements LoginImpl {
     private final Logger Log;
     private JSONObject login_json;
     private final Map<String, String> login_map = new HashMap<>();
+    private final LoginCallback loginCallback;
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
@@ -98,6 +99,7 @@ public class Official implements LoginImpl {
 
             } catch (JSONException e) {
                 Logger.w(TAG, "run: JSON WRONG\n" + e);
+                loginCallback.onLoginFailed();
             }
         }
     };
@@ -128,10 +130,12 @@ public class Official implements LoginImpl {
                 } else {
 //                    Logger.warning("登录失败");
                     Logger.w(TAG, "handleMessage: 登录失败1" + feedback);
+                    loginCallback.onLoginFailed();
 //                    Logger.warning(feedback);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                loginCallback.onLoginFailed();
             }
         }
     };
@@ -197,6 +201,7 @@ public class Official implements LoginImpl {
                             login_map.put("x-rpc-risky", stringBuilder.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            loginCallback.onLoginFailed();
                         }
 
                         gt3GeetestUtils.showSuccessDialog();
@@ -214,6 +219,7 @@ public class Official implements LoginImpl {
                         stringBuilder.append("onError :");
                         stringBuilder.append(param1GT3ErrorBean.toString());
                         Logger.d(TAG, stringBuilder.toString());
+                        loginCallback.onLoginFailed();
                     }
                 });
                 gt3GeetestUtils.init(gt3ConfigBean);
@@ -222,6 +228,7 @@ public class Official implements LoginImpl {
                 e.printStackTrace();
                 Log.makeToast("验证信息请求失败：");
                 Logger.e(TAG, "验证信息请求失败：" + feedback);
+                loginCallback.onLoginFailed();
             }
         }
     };
@@ -245,21 +252,25 @@ public class Official implements LoginImpl {
                     String combo_id = account_json.getString("combo_id");
                     String combo_token = account_json.getString("combo_token");
 
-                    roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "", 0);
+                    roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "", 0, loginCallback);
                     isLogin = true;
-                    Log.makeToast(R.string.login_succeed);
+//                    Log.makeToast(R.string.login_succeed);
+//                    loginCallback.onLoginSucceed();
 
                 } else {
                     Logger.w(TAG, "handleMessage: 登录失败2：" + feedback);
                     Log.makeToast("登录失败：" + feedback);
+                    loginCallback.onLoginFailed();
                 }
             } catch (JSONException e) {
+                loginCallback.onLoginFailed();
                 e.printStackTrace();
             }
         }
     };
 
-    public Official(AppCompatActivity activity) {
+    public Official(AppCompatActivity activity, LoginCallback callback) {
+        loginCallback = callback;
         isLogin = false;
         this.activity = activity;
         preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
@@ -289,7 +300,10 @@ public class Official implements LoginImpl {
 
                         loginByAccount();
                     });
-            customizeDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> Log.makeToast(R.string.login_cancel));
+            customizeDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
+                Log.makeToast(R.string.login_cancel);
+                loginCallback.onLoginFailed();
+            });
             customizeDialog.setCancelable(false);
             customizeDialog.show();
         } else {
@@ -303,6 +317,7 @@ public class Official implements LoginImpl {
                 new Thread(login_runnable).start();
             } catch (JSONException e) {
                 e.printStackTrace();
+                loginCallback.onLoginFailed();
             }
         }
     }
@@ -319,6 +334,7 @@ public class Official implements LoginImpl {
             new Thread(risky_check_runnable).start();
         } catch (JSONException e) {
             e.printStackTrace();
+            loginCallback.onLoginFailed();
         }
 
 
@@ -331,6 +347,7 @@ public class Official implements LoginImpl {
 //            new Thread(login_runnable).start();
         } catch (JSONException e) {
             e.printStackTrace();
+            loginCallback.onLoginFailed();
         }
 
 //        https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login?

@@ -34,9 +34,11 @@ public class Oppo implements LoginImpl {
     private final String appSecret = "f303388D89043bfEB1A667cfE42ea47E";
     private final GameCenterSDK sdk;
     private final Logger Log;
+    private final LoginCallback callback;
 
 
-    public Oppo(Activity activity) {
+    public Oppo(Activity activity, LoginCallback callback) {
+        this.callback = callback;
         this.activity = activity;
         device_id = Tools.getDeviceID(activity);
         GameCenterSDK.init(appSecret, activity);
@@ -53,6 +55,7 @@ public class Oppo implements LoginImpl {
                     public void onFailure(String param2String, int param2Int) {
                         makeToast("登录失败");
                         Logger.w(TAG, "Login Failed. " + param2String + "," + param2Int);
+                        callback.onLoginFailed();
                     }
 
                     public void onSuccess(String param2String) {
@@ -76,6 +79,7 @@ public class Oppo implements LoginImpl {
                 makeToast("error:" + s + "\ncode:" + i);
                 Logger.d(TAG, "onFailure: s:" + s);
                 Logger.d(TAG, "onFailure: i:" + i);
+                callback.onLoginFailed();
             }
         });
     }
@@ -111,6 +115,7 @@ public class Oppo implements LoginImpl {
                 Logger.w(TAG, "Login Failed.");
                 CrashReport.postCatchedException(e);
                 e.printStackTrace();
+                callback.onLoginFailed();
                 return;
             }
 //            Logger.info(feedback);
@@ -124,7 +129,7 @@ public class Oppo implements LoginImpl {
                     String combo_token = data_json2.getString("combo_token");
                     String account_type = data_json2.getString("account_type");
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "18", account_type, "oppo", 4);
+                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "18", account_type, "oppo", 4, callback);
 
                     isLogin = true;
                     makeToast(activity.getString(R.string.login_succeed));
@@ -133,10 +138,12 @@ public class Oppo implements LoginImpl {
 
                     makeToast(feedback_json.getString("message"));
                     isLogin = false;
+                    callback.onLoginFailed();
 
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                callback.onLoginFailed();
             }
         }
     };

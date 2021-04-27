@@ -38,8 +38,10 @@ public class Bilibili implements LoginImpl {
     private RoleData roleData;
     private final Logger Log;
     private Boolean hasInit = false;
+    private final LoginCallback callback;
 
-    public Bilibili(AppCompatActivity activity) {
+    public Bilibili(AppCompatActivity activity, LoginCallback loginCallback) {
+        callback = loginCallback;
         this.activity = activity;
         device_id = Tools.getDeviceID(activity);
         Log = getLogger(activity);
@@ -87,7 +89,7 @@ public class Bilibili implements LoginImpl {
                         String combo_token = data_json2.getString("combo_token");
 //                        String account_type = data_json2.getString("account_type");
 
-                        roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", "2", "bilibili", 0);
+                        roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", "2", "bilibili", 0, callback);
                         isLogin = true;
                         makeToast(activity.getString(R.string.login_succeed));
                     }
@@ -95,6 +97,7 @@ public class Bilibili implements LoginImpl {
                 } catch (JSONException e) {
                     CrashReport.postCatchedException(e);
                     makeToast("parse ERROR");
+                    callback.onLoginFailed();
                 }
 
             }
@@ -108,6 +111,7 @@ public class Bilibili implements LoginImpl {
                 makeToast("onFailed\nErrorCode : "
                         + arg0.getErrorCode() + "\nErrorMessage : "
                         + arg0.getErrorMessage());
+                callback.onLoginFailed();
             }
 
             @Override
@@ -118,6 +122,7 @@ public class Bilibili implements LoginImpl {
                         + arg0.getErrorMessage());
                 makeToast("onError\nErrorCode : " + arg0.getErrorCode()
                         + "\nErrorMessage : " + arg0.getErrorMessage());
+                callback.onLoginFailed();
             }
         });
     }

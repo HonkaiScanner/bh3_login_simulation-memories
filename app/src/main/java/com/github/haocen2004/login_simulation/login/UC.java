@@ -33,6 +33,7 @@ import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 public class UC implements LoginImpl {
 
     private final AppCompatActivity activity;
+    private final LoginCallback callback;
     private UCGameSdk sdk;
     private String sid;
     private boolean isLogin;
@@ -69,7 +70,8 @@ public class UC implements LoginImpl {
         this.sid = sid;
     }
 
-    public UC(AppCompatActivity activity) {
+    public UC(AppCompatActivity activity, LoginCallback callback) {
+        this.callback = callback;
         this.activity = activity;
         isLogin = false;
         Log = Logger.getLogger(activity);
@@ -98,6 +100,7 @@ public class UC implements LoginImpl {
 
             } catch (AliLackActivityException e) {
                 e.printStackTrace();
+                callback.onLoginFailed();
             }
         } else {
             try {
@@ -105,6 +108,7 @@ public class UC implements LoginImpl {
                 sdk.login(activity, null);
             } catch (AliNotInitException | AliLackActivityException e) {
                 Logger.d(TAG, "Login Failed.");
+                callback.onLoginFailed();
                 e.printStackTrace();
             }
         }
@@ -124,6 +128,7 @@ public class UC implements LoginImpl {
                 feedback_json = new JSONObject(feedback);
             } catch (JSONException e) {
                 e.printStackTrace();
+                callback.onLoginFailed();
             }
 //            Logger.info(feedback);
             Logger.i(TAG, "handleMessage: " + feedback);
@@ -141,7 +146,7 @@ public class UC implements LoginImpl {
                         special_tag = 3;
                     }
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "20", account_type, "uc", special_tag);
+                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "20", account_type, "uc", special_tag, callback);
 
                     isLogin = true;
                     makeToast(activity.getString(R.string.login_succeed));
@@ -150,10 +155,12 @@ public class UC implements LoginImpl {
 
                     makeToast(feedback_json.getString("message"));
                     isLogin = false;
+                    callback.onLoginFailed();
 
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                callback.onLoginFailed();
             }
         }
     };

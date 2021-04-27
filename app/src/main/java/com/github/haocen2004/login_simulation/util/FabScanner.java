@@ -226,6 +226,7 @@ public class FabScanner extends Service {
                         sMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
                     })
                     .show();
+            Logger.setUseSnackbar(false);
         }
     }
 

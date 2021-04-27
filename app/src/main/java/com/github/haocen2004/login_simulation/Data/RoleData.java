@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.util.Logger;
 
 import org.json.JSONException;
@@ -30,6 +31,7 @@ public class RoleData {
     private boolean is_setup;
     private boolean uc_sign;
     private final Activity activity;
+    private final LoginCallback callback;
 
     Handler getOA_handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -44,11 +46,12 @@ public class RoleData {
                     String msg1 = oaserver.getString("msg");
                     if (msg1.contains("更新"))
                         msg1 = "崩坏3维护中或热更新服务器离线\n请等待维护完成\n或尝试在设置里手动更改崩坏3版本并重新启动";
-
+                    callback.onLoginFailed();
                     Toast.makeText(activity, "OA服务器获取错误\n" + msg1, Toast.LENGTH_LONG).show();
                     return;
                 }
                 is_setup = true;
+                callback.onLoginSucceed();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -63,7 +66,8 @@ public class RoleData {
         getOA_handler.sendMessage(msg);
     };
 
-    public RoleData(Activity activity, String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key, int special_tag) {
+    public RoleData(Activity activity, String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key, int special_tag, LoginCallback callback) {
+        this.callback = callback;
         this.activity = activity;
         this.open_id = open_id;
         this.open_token = open_token;
