@@ -26,8 +26,9 @@ android {
         versionName '1.3.6'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-//        versionNameSuffix System.getenv("NAME_SUFFIX")
-        versionNameSuffix '-CaptureScreenTestV2'
+        applicationIdSuffix System.getenv("NAME_SUFFIX")
+        versionNameSuffix System.getenv("NAME_SUFFIX")
+//        versionNameSuffix '-CaptureScreenTestV2'
         signingConfig signingConfigs.releaseSign
 
     }

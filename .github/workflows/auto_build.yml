@@ -2,7 +2,7 @@ name: Auto Build Scanner
 on:
   push:
     branches:
-      - master
+      - dev
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,6 +34,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          NAME_SUFFIX: '.dev'
       #          NAME_SUFFIX: ${{ steps.get_commit_sha.outputs.VERSION }}
 
       - name: Upload Released APK

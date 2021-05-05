@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
         normalDialog.setTitle("Beta使用须知");
-        normalDialog.setMessage("你现在使用的是内部测试版本\n请及时通过左边侧滑栏反馈bug\n此消息只会出现一次");
+        normalDialog.setMessage("你现在使用的是自动构建版本\n请及时通过左边侧滑栏反馈bug\n此消息只会出现一次");
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     getDefaultSharedPreferences(this).edit().putBoolean("showBetaInfo", false).apply();
@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.setMessage("1.主界面优化\n将更多常用的功能放到主页\n点击卡片登录账号，长按卡片退出账号\n\n2.自动登录\n现在可以在扫码器启动后自动尝试登录已有的账号了\n\n3.悬浮窗扫码\n登录后【长按】扫码按钮即可打开\n该功能需要一些额外权限\n\n新Icon：Pixiv-77505884\n新侧拉顶图：Pixiv-89418903\n");
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
-                    app_pref.edit().putBoolean("show140NewFeature", false).apply();
+                    app_pref.edit().putBoolean("show140NewFeature", true).apply();
                     dialog.dismiss();
                 });
         normalDialog.setCancelable(false);
