@@ -14,8 +14,9 @@ import com.github.haocen2004.login_simulation.Fragment.Sponsor.DisplayFragment;
 import com.github.haocen2004.login_simulation.Fragment.Sponsor.UserFragment;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.FragmentSupportBinding;
-import com.github.haocen2004.login_simulation.util.Logger;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import org.jetbrains.annotations.NotNull;
 
 public class SupportFragment extends Fragment {
     private FragmentSupportBinding binding;
@@ -26,9 +27,9 @@ public class SupportFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentSupportBinding.inflate(inflater, container, false);
-        Logger.setView(binding.getRoot());
+//        Logger.setView(binding.getRoot());
         return binding.getRoot();
 
     }

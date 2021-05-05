@@ -91,7 +91,7 @@ public class Bilibili implements LoginImpl {
 
                         roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", "2", "bilibili", 0, callback);
                         isLogin = true;
-                        makeToast(activity.getString(R.string.login_succeed));
+//                        makeToast(activity.getString(R.string.login_succeed));
                     }
 //                doBHLogin();
                 } catch (JSONException e) {

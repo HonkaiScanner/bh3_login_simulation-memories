@@ -38,8 +38,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="TextView"
-                android:textSize="20dp"
+                android:text="服务器：xx"
+                android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="TextView"
+                android:text="登录状态："
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/serverText" />
 
@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="TextView"
+                android:text="赞助者状态：检查中..."
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/loginText" />
 
@@ -107,7 +107,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="服务器"
+                android:text="@string/btn_server"
+                app:icon="@drawable/ic_baseline_storage_24"
+                app:iconGravity="textStart"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btn_card_1_action2"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -120,7 +122,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/btn_card_1_action1"
-                android:text="自动登录"
+                android:text="@string/btn_auto_login"
+                app:icon="@drawable/ic_baseline_done_24"
                 app:layout_constraintBottom_toBottomOf="@+id/btn_card_1_action1"
                 app:layout_constraintEnd_toStartOf="@+id/btn_card_1_action3"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -133,7 +136,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/btn_card_1_action1"
-                android:text="自动确认"
+                android:text="@string/btn_auto_confirm"
+                app:icon="@drawable/ic_baseline_done_24"
                 app:layout_constraintBottom_toBottomOf="@+id/btn_card_1_action2"
                 app:layout_constraintStart_toEndOf="@+id/btn_card_1_action2"
                 app:layout_constraintTop_toTopOf="@+id/btn_card_1_action2" />

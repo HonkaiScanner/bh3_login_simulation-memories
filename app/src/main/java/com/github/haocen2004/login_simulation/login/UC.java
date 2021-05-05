@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.Data.RoleData;
-import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Logger;
 
 import org.json.JSONException;
@@ -63,6 +62,15 @@ public class UC implements LoginImpl {
             doBHLogin();
         }
 
+        @Subscribe(event = SDKEventKey.ON_LOGIN_FAILED)
+        private void onLoginFailed() {
+            callback.onLoginFailed();
+        }
+
+        @Subscribe(event = SDKEventKey.ON_INIT_FAILED)
+        private void onInitFailed() {
+            callback.onLoginFailed();
+        }
 
     };
 
@@ -149,7 +157,7 @@ public class UC implements LoginImpl {
                     roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "20", account_type, "uc", special_tag, callback);
 
                     isLogin = true;
-                    makeToast(activity.getString(R.string.login_succeed));
+//                    makeToast(activity.getString(R.string.login_succeed));
 
                 } else {
 

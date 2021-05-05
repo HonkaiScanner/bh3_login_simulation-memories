@@ -49,12 +49,20 @@ public class Official implements LoginImpl {
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
-            String feedback;
-            if (!preferences.getBoolean("has_token", false)) {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login", login_json.toString(), login_map);
-            } else {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString());
+            String feedback = null;
+            boolean needLoop = true;
+            while (needLoop) {
+                if (!preferences.getBoolean("has_token", false)) {
+                    feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login", login_json.toString(), login_map);
+                } else {
+                    feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString());
+                }
+                if (feedback != null) {
+                    needLoop = false;
+                }
             }
+
+
             Message msg = new Message();
             Bundle data = new Bundle();
             data.putString("value", feedback);

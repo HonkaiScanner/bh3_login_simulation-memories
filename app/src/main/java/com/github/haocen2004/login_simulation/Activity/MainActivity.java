@@ -40,6 +40,7 @@ import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
+import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        Logger.setView(binding.getRoot());
+//        Logger.setView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
         Log = Logger.getLogger(this);
 //        Toolbar toolbar = findViewById(R.id.toolbar);
@@ -86,9 +87,14 @@ public class MainActivity extends AppCompatActivity {
             }
             binding.mainInclude.collapsingToolbarLayout.setTitle(toolbarTitle);
         });
-        if (getDefaultSharedPreferences(this).getBoolean("showBetaInfo", DEBUG)) {
+        if (app_pref.getBoolean("showBetaInfo", DEBUG)) {
             showBetaInfoDialog();
         }
+
+        if (VERSION_CODE >= 16 && !app_pref.getBoolean("show140NewFeature", false)) {
+            show14NewFeatureDialog();
+        }
+
 
         if (CHECK_VER) {
             new Thread(update_rb).start();
@@ -157,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                             HAS_ACCOUNT = true;
                             app_pref.edit().putString("custom_username", user.getString("custom_username")).apply();
                             Logger.d(TAG, "Succeed.");
+                            SP_CHECKED = true;
 
                         }
 
@@ -167,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
                             throwable.printStackTrace();
                             Logger.d(TAG, "Failed.");
                             Log.makeToast("赞助者身份验证已过期...");
+                            SP_CHECKED = true;
                         }
 
                         public void onComplete() {
@@ -219,7 +227,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Runnable update_rb = () -> {
-        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
+        boolean needLoop = true;
+        String feedback = null;
+        while (needLoop) {
+            feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
+            if (feedback != null) {
+                needLoop = false;
+            }
+        }
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);
@@ -241,6 +256,20 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     getDefaultSharedPreferences(this).edit().putBoolean("showBetaInfo", false).apply();
+                    dialog.dismiss();
+                });
+        normalDialog.setCancelable(false);
+        normalDialog.show();
+    }
+
+    private void show14NewFeatureDialog() {
+
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+        normalDialog.setTitle("1.4.0 新功能介绍");
+        normalDialog.setMessage("1.主界面优化\n将更多常用的功能放到主页\n点击卡片登录账号，长按卡片退出账号\n\n2.自动登录\n现在可以在扫码器启动后自动尝试登录已有的账号了\n\n3.悬浮窗扫码\n登录后【长按】扫码按钮即可打开\n该功能需要一些额外权限\n\n新Icon：Pixiv-77505884\n新侧拉顶图：Pixiv-89418903\n");
+        normalDialog.setPositiveButton("我已知晓",
+                (dialog, which) -> {
+                    app_pref.edit().putBoolean("show140NewFeature", false).apply();
                     dialog.dismiss();
                 });
         normalDialog.setCancelable(false);

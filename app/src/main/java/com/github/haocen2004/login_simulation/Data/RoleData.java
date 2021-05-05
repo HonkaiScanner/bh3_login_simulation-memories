@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.util.Logger;
 
@@ -30,7 +30,7 @@ public class RoleData {
     private final String oa_req_key;
     private boolean is_setup;
     private boolean uc_sign;
-    private final Activity activity;
+    private Activity activity;
     private final LoginCallback callback;
 
     Handler getOA_handler = new Handler(Looper.getMainLooper()) {
@@ -47,7 +47,7 @@ public class RoleData {
                     if (msg1.contains("更新"))
                         msg1 = "崩坏3维护中或热更新服务器离线\n请等待维护完成\n或尝试在设置里手动更改崩坏3版本并重新启动";
                     callback.onLoginFailed();
-                    Toast.makeText(activity, "OA服务器获取错误\n" + msg1, Toast.LENGTH_LONG).show();
+                    Logger.getLogger(activity).makeToast("OA服务器获取错误\n" + msg1);
                     return;
                 }
                 is_setup = true;
@@ -58,7 +58,7 @@ public class RoleData {
         }
     };
     Runnable getOA_runnable = () -> {
-
+        Logger.getLogger(activity).makeToast(R.string.msg_getOa);
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", getOAServer(RoleData.this));

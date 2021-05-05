@@ -189,11 +189,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startCodeCheck(String content, String postParam, String sc_key) {
         // 请求云端查询身份码是否有绑定用户  Tencent Cloud
-        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
-        if (feedback == null) {
-            Looper.prepare();
-            makeToast(getString(R.string.error_network));
-            return;
+        boolean needLoop = true;
+        String feedback = null;
+        while (needLoop) {
+            feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
+            if (feedback != null) {
+                needLoop = false;
+            }
         }
         Logger.d(TAG, feedback);
         try {
@@ -267,7 +269,7 @@ public class LoginActivity extends AppCompatActivity {
 
         sponsor.put("scannerKey", sc_key);
         sponsor.put("user", user);
-        sponsor.put("name", user.getUsername());
+        sponsor.put("name", binding.editTextName.getText().toString());
         sponsor.put("deviceId", Tools.getDeviceID(getApplicationContext()));
 //        sponsor.put("desc", "该用户还没有设置签名哦");
         sponsor.put("personalPageUrl", " ");

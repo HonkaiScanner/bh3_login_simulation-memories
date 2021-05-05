@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">崩坏3外置扫码器</string>
     <string name="btn_login">登录</string>
-    <string name="btn_login_finished">登录成功</string>
+    <string name="login_finished">登录成功</string>
     <string name="btn_scan">扫描二维码</string>
     <string name="btn_logout">退出登录</string>
     <string name="list_main">主页</string>
@@ -82,6 +82,19 @@
     <string name="btn_cancel">取消</string>
     <string name="login_cancel">已取消登录</string>
     <string name="btn_close_update">关闭更新检查</string>
+    <string name="bh_login_pref">崩坏3账号：</string>
+    <string name="sp_login_pref">赞助者账号：</string>
+    <string name="login_true">已登录</string>
+    <string name="login_false">未登录</string>
+    <string name="update_check_off">检查更新关闭</string>
+    <string name="sel_server">选择服务器</string>
+    <string name="auto_login_pref">自动登录：</string>
+    <string name="logged_and_restart">当前账号已登录\n请重启扫码器以应用更改</string>
+    <string name="login_process">登录中</string>
+    <string name="btn_server">服务器</string>
+    <string name="btn_auto_login">自动登录</string>
+    <string name="btn_auto_confirm">自动确认</string>
+    <string name="msg_getOa">获取OA服务器中</string>
 
 
 </resources>

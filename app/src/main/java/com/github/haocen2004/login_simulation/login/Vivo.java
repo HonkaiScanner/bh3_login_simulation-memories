@@ -114,7 +114,7 @@ public class Vivo implements LoginImpl {
                     roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "19", account_type, "vivo", 2, loginCallback);
 
                     isLogin = true;
-                    makeToast(activity.getString(R.string.login_succeed));
+//                    makeToast(activity.getString(R.string.login_succeed));
 
                 } else {
 

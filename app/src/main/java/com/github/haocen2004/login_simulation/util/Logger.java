@@ -1,12 +1,15 @@
 package com.github.haocen2004.login_simulation.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.BuglyLog;
 
+@SuppressLint("StaticFieldLeak")
 public class Logger {
     private static Logger INSTANCE;
     private final Context context;
@@ -22,15 +25,12 @@ public class Logger {
 
     public Logger(Context context) {
         this.context = context;
-        useSnackbar = true;
+        useSnackbar = false;
+//        ToastUtils.init();
     }
 
     public static void setView(View view) {
         Logger.view = view;
-    }
-
-    public static void setUseSnackbar(boolean useSnackbar) {
-        Logger.useSnackbar = useSnackbar;
     }
 
     public static void e(String TAG, String msg) {
@@ -68,10 +68,10 @@ public class Logger {
             } else if (length == Toast.LENGTH_LONG) {
                 length = Snackbar.LENGTH_LONG;
             }
-            d("ShowSnackBar", "Length: " + length);
+            d("Logger", "Transfer Toast Length to SnackBar Length: " + length);
             Snackbar.make(view, msg, length).show();
         } else {
-            Toast.makeText(context, msg, length).show();
+            ToastUtils.show(msg);
         }
     }
 }

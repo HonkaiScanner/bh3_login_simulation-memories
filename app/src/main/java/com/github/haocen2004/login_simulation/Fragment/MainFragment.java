@@ -11,7 +11,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +58,7 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_CODE_SCAN_GALLERY;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
@@ -63,6 +66,7 @@ import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTE
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_WINDOW;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE;
+import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
 
 public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
@@ -79,6 +83,36 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private Boolean loginProgress = false;
     private int currSlot = 999;
     private int currType = 999;
+    private final Handler spCheckHandle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+        }
+    };
+    private boolean needRestart = false;
+    private boolean accSwitch = false;
+
+    @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
+    private void delaySPCheck() {
+        Logger.d("SPCheck", "checking...");
+        if (!CHECK_VER) {
+            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
+            return;
+        }
+        if (!SP_CHECKED) {
+            if (pref.getBoolean("has_account", false)) {
+                Logger.d("SPCheck", "wait....");
+                spCheckHandle.postDelayed((Runnable) this::delaySPCheck, 3000);
+            } else {
+                binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
+                SP_CHECKED = true;
+            }
+        } else {
+            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
+        }
+
+    }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -90,46 +124,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
         setRetainInstance(true);
-        Logger.setView(binding.getRoot());
+//        Logger.setView(binding.getRoot());
         return binding.getRoot();
     }
 
     @SuppressLint("SetTextI18n")
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-//        binding.btnLogin.setOnClickListener(this);
-        binding.btnScan.setOnClickListener(this);
-        binding.btnScan.setOnLongClickListener(this);
-//        binding.btnLogout.setOnClickListener(this);
-        binding.cardViewMain.cardView2.setOnClickListener(this);
-        binding.cardViewMain.cardView2.setOnLongClickListener(this);
-        binding.officialSlotSelect.addOnButtonCheckedListener(this);
-        binding.officialTypeSel.addOnButtonCheckedListener(this);
-        binding.tokenCheckBox.setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
-        binding.checkBoxWDJ.setOnCheckedChangeListener((compoundButton, b) -> {
-            SharedPreferences ucSharedPref = activity.getSharedPreferences("cn.uc.gamesdk.pref", 0);
-//            activity.getSharedPreferences("cn.uc.gamesdk.pref.usr_simple_cache",0).edit().clear().apply();
-            pref.edit().putBoolean("use_wdj", b).apply();
-            if (b) {
-                changeToWDJ(activity);
-            } else {
-                ucSharedPref.edit().clear().apply();
-            }
-        });
-        binding.btnSelpic.setOnClickListener(view1 -> {
-            try {
-                if (loginImpl.isLogin()) {
-                    Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
-                    innerIntent.setType("image/*");
-                    startActivityForResult(innerIntent, REQ_CODE_SCAN_GALLERY);
-                } else {
-                    makeToast(getString(R.string.error_not_login));
-                }
-            } catch (Exception e) {
-                makeToast(getString(R.string.error_not_login));
-            }
-        });
+    private void refreshView() {
         String server_type;
         binding.officialSlotSelect.setVisibility(View.GONE);
         binding.tokenCheckBox.setVisibility(View.GONE);
@@ -189,42 +189,128 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 server_type = "DEBUG -- SERVER ERROR";
         }
         binding.cardViewMain.serverText.setText(getString(R.string.types_prefix) + server_type);
-        binding.cardViewMain.loginText.setText(getString(R.string.confirm_prefix) + (pref.getBoolean("auto_confirm", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
-        binding.cardViewMain.loginText2.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
-        binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
-        binding.cardViewMain.btnCard1Action1.setOnClickListener(view1 -> {
+        boolean isLogin = false;
+        if (loginImpl != null && loginImpl.isLogin()) isLogin = true;
 
-        });
-        binding.cardViewMain.btnCard1Action2.setOnClickListener(view1 -> {
-            pref.edit().putBoolean("auto_login", !pref.getBoolean("auto_login", false)).apply();
-            makeToast("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
-            binding.cardViewMain.loginText2.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
-        });
-        binding.cardViewMain.btnCard1Action3.setOnClickListener(view1 -> {
-            pref.edit().putBoolean("auto_confirm", !pref.getBoolean("auto_confirm", false)).apply();
-            makeToast(getString(R.string.confirm_prefix) + (pref.getBoolean("auto_confirm", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
-            binding.cardViewMain.loginText.setText(getString(R.string.confirm_prefix) + (pref.getBoolean("auto_confirm", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
-        });
+        binding.cardViewMain.loginText.setText(getString(R.string.bh_login_pref) + getString(isLogin ? R.string.login_true : R.string.login_false));
+        binding.cardViewMain.btnCard1Action2.setIconResource(pref.getBoolean("auto_login", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
+        binding.cardViewMain.btnCard1Action3.setIconResource(pref.getBoolean("auto_confirm", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
+//        binding.cardViewMain.loginText2.setText("赞助者状态：" + (HAS_ACCOUNT ? "已登录" : "未登录"));
+        binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
 
         if (!(loginImpl != null && loginImpl.isLogin())) {
             binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
             binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
         }
 
+        if (needRestart) {
+            binding.cardViewMain.serverText.setText(R.string.logged_and_restart);
+            binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
+        }
+
+    }
+
+    private void setupListener() {
+        //        binding.btnLogin.setOnClickListener(this);
+        binding.btnScan.setOnClickListener(this);
+        binding.btnScan.setOnLongClickListener(this);
+//        binding.btnLogout.setOnClickListener(this);
+        binding.cardViewMain.cardView2.setOnClickListener(this);
+        binding.cardViewMain.cardView2.setOnLongClickListener(this);
+        binding.officialSlotSelect.addOnButtonCheckedListener(this);
+        binding.officialTypeSel.addOnButtonCheckedListener(this);
+        binding.tokenCheckBox.setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
+        binding.checkBoxWDJ.setOnCheckedChangeListener((compoundButton, b) -> {
+            SharedPreferences ucSharedPref = activity.getSharedPreferences("cn.uc.gamesdk.pref", 0);
+//            activity.getSharedPreferences("cn.uc.gamesdk.pref.usr_simple_cache",0).edit().clear().apply();
+            pref.edit().putBoolean("use_wdj", b).apply();
+            if (b) {
+                changeToWDJ(activity);
+            } else {
+                ucSharedPref.edit().clear().apply();
+            }
+        });
+        binding.btnSelpic.setOnClickListener(view1 -> {
+            try {
+                if (loginImpl.isLogin()) {
+                    Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
+                    innerIntent.setType("image/*");
+                    startActivityForResult(innerIntent, REQ_CODE_SCAN_GALLERY);
+                } else {
+                    makeToast(R.string.error_not_login);
+                }
+            } catch (Exception e) {
+                makeToast(R.string.error_not_login);
+            }
+        });
+        binding.cardViewMain.btnCard1Action1.setOnClickListener(view1 -> {
+            String[] singleChoiceItems = getResources().getStringArray(R.array.server_types);
+            String[] serverList = getResources().getStringArray(R.array.server_types_value);
+            String currServer = pref.getString("server_type", "");
+
+            int itemSelected = 0;
+            for (String s : serverList) {
+                if (currServer.equals(s)) {
+                    break;
+                }
+                itemSelected++;
+            }
+            new AlertDialog.Builder(getContext())
+                    .setTitle(getString(R.string.sel_server))
+                    .setSingleChoiceItems(singleChoiceItems, itemSelected, (dialogInterface, i) -> {
+
+                        pref.edit().putString("server_type", serverList[i]).apply();
+                        if (loginImpl != null && loginImpl.isLogin()) {
+                            Log.makeToast(R.string.logged_and_restart);
+                            needRestart = true;
+                        }
+                        refreshView();
+                        dialogInterface.dismiss();
+                    })
+                    .setNegativeButton(getString(R.string.btn_cancel), null)
+                    .show();
+        });
+        binding.cardViewMain.btnCard1Action2.setOnClickListener(view1 -> {
+            boolean newStatus = !pref.getBoolean("auto_login", false);
+            pref.edit().putBoolean("auto_login", newStatus).apply();
+            makeToast(getString(R.string.auto_login_pref) + (newStatus ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
+//            binding.cardViewMain.loginText2.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
+            binding.cardViewMain.btnCard1Action2.setIconResource(newStatus ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
+        });
+        binding.cardViewMain.btnCard1Action3.setOnClickListener(view1 -> {
+            boolean newStatus = !pref.getBoolean("auto_confirm", false);
+            pref.edit().putBoolean("auto_confirm", newStatus).apply();
+            makeToast(getString(R.string.confirm_prefix) + (newStatus ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
+//            binding.cardViewMain.loginText2.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
+            binding.cardViewMain.btnCard1Action3.setIconResource(newStatus ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
+        });
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupListener();
+        refreshView();
         if (pref.getBoolean("last_login_succeed", false) && pref.getBoolean("auto_login", false)) {
             doLogin();
         }
         checkPermissions();
+        delaySPCheck();
     }
 
+
     private void doLogin() {
+        if (needRestart) {
+            makeToast(R.string.logged_and_restart);
+            return;
+        }
         if (loginProgress) {
-            makeToast("正在登录中...");
+            makeToast(R.string.login_process);
             return;
         }
         try {
             if (loginImpl.isLogin()) {
-                makeToast(getString(R.string.has_login));
+                makeToast(R.string.has_login);
                 return;
             }
         } catch (Exception ignore) {
@@ -261,7 +347,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //                        loginImpl = new Flyme(activity);
 //                        break;
                 default:
-                    makeToast(getString(R.string.error_wrong_server));
+                    makeToast(R.string.error_wrong_server);
                     break;
             }
         }
@@ -287,7 +373,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         if (!qrScanner.parseUrl(result)) return;
                         qrScanner.start();
                     } else {
-                        makeToast(getString(R.string.error_scan));
+                        makeToast(R.string.error_scan);
                     }
                 }
             }
@@ -390,7 +476,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     public void onClick(View view) {
         if (binding.btnScan.equals(view)) {
             if (Objects.equals(pref.getString("server_type", ""), "Official") && pref.getBoolean("use_token", false) && activity.getSharedPreferences("official_user_" + pref.getInt("official_slot", 1), Context.MODE_PRIVATE).getBoolean("has_token", false)) {
-                makeToast("Token 登录模式");
+//                makeToast("Token 登录模式");
                 isOfficial = true;
                 startQrCode();
                 return;
@@ -400,14 +486,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     if (loginImpl.getRole().is_setup()) {
                         startQrCode();
                     } else {
-                        makeToast(getString(R.string.error_oa_process));
+                        makeToast(R.string.error_oa_process);
                     }
                 } else {
-                    makeToast(getString(R.string.error_not_login));
+                    makeToast(R.string.error_not_login);
                 }
             } catch (NullPointerException e) {
 //                    e.printStackTrace();
-                makeToast(getString(R.string.error_not_login));
+                makeToast(R.string.error_not_login);
             }
         } else if (binding.cardViewMain.cardView2.equals(view)) {
             doLogin();
@@ -416,8 +502,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
 
-    @SuppressLint("ShowToast")
+
     private void makeToast(String result) {
+        try {
+
+            Log.makeToast(result);
+//            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Looper.prepare();
+            Log.makeToast(result);
+            Looper.loop();
+        }
+    }
+
+    private void makeToast(Integer result) {
         try {
 
             Log.makeToast(result);
@@ -468,17 +566,17 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             try {
                 if ("Official".equals(pref.getString("server_type", ""))) {
                     activity.getSharedPreferences("official_user", Context.MODE_PRIVATE).edit().clear().apply();
-                    makeToast(getString(R.string.cache_delete));
+                    makeToast(R.string.cache_delete);
                     onLoginFailed();
                 }
                 if (loginImpl.isLogin()) {
                     loginImpl.logout();
                     onLoginFailed();
                 } else {
-                    makeToast(getString(R.string.error_not_login));
+                    makeToast(R.string.error_not_login);
                 }
             } catch (Exception e) {
-                makeToast(getString(R.string.error_not_login));
+                makeToast(R.string.error_not_login);
             }
         } else if (binding.btnScan.equals(view)) {
             if (pref.getBoolean("auto_confirm", false)) {
@@ -545,8 +643,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-        Logger.d(TAG, "onButtonChecked: group" + group);
-        Logger.d(TAG, "onButtonChecked: isChecked" + isChecked);
         if (group.equals(binding.officialSlotSelect)) {
             if (checkedId == currSlot) {
                 return;
@@ -565,43 +661,38 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
 
         SharedPreferences app_pref = getDefaultSharedPreferences(activity);
-        switch (checkedId) {
-            case R.id.slot1:
-                app_pref.edit().putInt("official_slot", 1).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch To Slot 1");
-                currSlot = checkedId;
-                break;
-            case R.id.slot2:
-                app_pref.edit().putInt("official_slot", 2).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch To Slot 2");
-                currSlot = checkedId;
-                break;
-            case R.id.slot3:
-                app_pref.edit().putInt("official_slot", 3).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch To Slot 3");
-                currSlot = checkedId;
-                break;
-            case R.id.radioPc:
-                app_pref.edit().putInt("official_type", 1).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch To PC");
-                resetOfficialServerType();
-                currType = checkedId;
-                break;
-            case R.id.radioAndroid:
-                app_pref.edit().putInt("official_type", 0).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch To Android");
-                resetOfficialServerType();
-                currType = checkedId;
-                break;
-            case R.id.radioIOS:
-                app_pref.edit().putInt("official_type", 2).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch To IOS");
-                resetOfficialServerType();
-                currType = checkedId;
-                break;
+        View viewById = activity.findViewById(checkedId);
+        if (binding.slot1.equals(viewById)) {
+            app_pref.edit().putInt("official_slot", 1).apply();
+            Logger.d(TAG, "onCheckedChanged: Switch To Slot 1");
+            currSlot = checkedId;
+        } else if (binding.slot2.equals(viewById)) {
+            app_pref.edit().putInt("official_slot", 2).apply();
+            Logger.d(TAG, "onCheckedChanged: Switch To Slot 2");
+            currSlot = checkedId;
+        } else if (binding.slot3.equals(viewById)) {
+            app_pref.edit().putInt("official_slot", 3).apply();
+            Logger.d(TAG, "onCheckedChanged: Switch To Slot 3");
+            currSlot = checkedId;
+        } else if (binding.radioPc.equals(viewById)) {
+            app_pref.edit().putInt("official_type", 1).apply();
+            Logger.d(TAG, "onCheckedChanged: Switch To PC");
+            resetOfficialServerType();
+            currType = checkedId;
+        } else if (binding.radioAndroid.equals(viewById)) {
+            app_pref.edit().putInt("official_type", 0).apply();
+            Logger.d(TAG, "onCheckedChanged: Switch To Android");
+            resetOfficialServerType();
+            currType = checkedId;
+        } else if (binding.radioIOS.equals(viewById)) {
+            app_pref.edit().putInt("official_type", 2).apply();
+            Logger.d(TAG, "onCheckedChanged: Switch To IOS");
+            resetOfficialServerType();
+            currType = checkedId;
         }
         try {
-            if (loginImpl.isLogin()) {
+            if (loginImpl.isLogin() || accSwitch) {
+                accSwitch = true;
                 loginImpl = new Official(activity, this);
                 makeToast("切换后需重新登录");
             }
@@ -617,7 +708,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_check_circle_outline_24);
         pref.edit().putBoolean("last_login_succeed", true).apply();
         loginProgress = false;
-        makeToast("登录成功");
+        makeToast(R.string.login_succeed);
+        refreshView();
     }
 
     @Override
@@ -627,5 +719,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
         pref.edit().putBoolean("last_login_succeed", false).apply();
         loginProgress = false;
+        refreshView();
+//        makeToast(R);
     }
 }

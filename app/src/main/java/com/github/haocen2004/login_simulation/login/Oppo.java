@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.github.haocen2004.login_simulation.Data.RoleData;
-import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.nearme.game.sdk.GameCenterSDK;
@@ -132,7 +131,7 @@ public class Oppo implements LoginImpl {
                     roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "18", account_type, "oppo", 4, callback);
 
                     isLogin = true;
-                    makeToast(activity.getString(R.string.login_succeed));
+//                    makeToast(activity.getString(R.string.login_succeed));
 
                 } else {
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.github.haocen2004.login_simulation.Activity.LoginActivity;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.FragmentSpUserBinding;
+import com.github.haocen2004.login_simulation.util.Logger;
 
 import cn.leancloud.AVUser;
 
@@ -23,12 +23,14 @@ import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
 public class UserFragment extends Fragment {
     private FragmentSpUserBinding binding;
     private AVUser user;
+    private Logger Log;
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSpUserBinding.inflate(inflater, container, false);
+        Log = Logger.getLogger(getContext());
         return binding.getRoot();
     }
 
@@ -46,7 +48,7 @@ public class UserFragment extends Fragment {
             binding.userCard.textViewDesc.setText(user.getString("desc"));
             Glide.with(this).load(user.getString("avatarImgUrl")).circleCrop().into(binding.userCard.imageViewAvatar);
             binding.userCard.cardView.setOnClickListener(v -> {
-                Toast.makeText(getActivity(), "用户设置功能还在制作中...\n修改信息请私聊作者", Toast.LENGTH_LONG).show();
+                Log.makeToast("用户设置功能还在制作中...\n修改信息请私聊作者");
             });
         }
     }
@@ -59,7 +61,7 @@ public class UserFragment extends Fragment {
             binding.userCard.textViewDesc.setText(user.getString("desc"));
             Glide.with(this).load(user.getString("avatarImgUrl")).circleCrop().into(binding.userCard.imageViewAvatar);
             binding.userCard.cardView.setOnClickListener(v -> {
-                Toast.makeText(getActivity(), "用户设置功能还在制作中...\n修改信息请私聊作者", Toast.LENGTH_LONG).show();
+                Log.makeToast("用户设置功能还在制作中...\n修改信息请私聊作者");
             });
         }
         super.onResume();

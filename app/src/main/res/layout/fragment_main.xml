@@ -98,8 +98,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:text="@string/sel_pc"
-                android:focusable="true" />
+                android:focusable="true"
+                android:text="@string/sel_pc" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/radioAndroid"
@@ -116,8 +116,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:text="@string/sel_ios"
-                android:focusable="true" />
+                android:focusable="true"
+                android:text="@string/sel_ios" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <com.google.android.material.checkbox.MaterialCheckBox
@@ -128,7 +128,7 @@
             android:text="@string/use_token_true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/official_type_sel" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_selpic" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/checkBoxWDJ"
@@ -146,12 +146,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/btn_scan"
+            app:icon="@drawable/ic_baseline_qr_code_scanner_24"
+            app:iconGravity="textStart"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkBoxWDJ" />
+            app:layout_constraintTop_toBottomOf="@+id/official_type_sel" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_selpic"
@@ -162,6 +164,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:text="@string/btn_pic"
+            app:icon="@drawable/ic_baseline_photo_library_24"
+            app:iconGravity="textStart"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_scan" />
