@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.Activity;
+package com.github.haocen2004.login_simulation.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,9 +15,9 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.github.haocen2004.login_simulation.Database.Announcement.AnnouncementRepo;
-import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.database.announcement.AnnouncementRepo;
+import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;

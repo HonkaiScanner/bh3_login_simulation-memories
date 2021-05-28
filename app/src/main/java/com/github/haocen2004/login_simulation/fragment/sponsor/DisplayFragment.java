@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.Fragment.Sponsor;
+package com.github.haocen2004.login_simulation.fragment.sponsor;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,9 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.haocen2004.login_simulation.Adapter.SponsorAdapter;
-import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorData;
-import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorRepo;
+import com.github.haocen2004.login_simulation.adapter.SponsorAdapter;
+import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorData;
+import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.FragmentSpDisplayBinding;
 
 import java.util.ArrayList;

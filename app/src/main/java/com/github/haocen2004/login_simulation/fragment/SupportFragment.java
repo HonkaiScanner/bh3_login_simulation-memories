@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.Fragment;
+package com.github.haocen2004.login_simulation.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,10 +10,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.github.haocen2004.login_simulation.Fragment.Sponsor.DisplayFragment;
-import com.github.haocen2004.login_simulation.Fragment.Sponsor.UserFragment;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.FragmentSupportBinding;
+import com.github.haocen2004.login_simulation.fragment.sponsor.DisplayFragment;
+import com.github.haocen2004.login_simulation.fragment.sponsor.UserFragment;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.jetbrains.annotations.NotNull;

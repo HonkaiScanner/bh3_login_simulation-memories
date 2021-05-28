@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.github.haocen2004.login_simulation.Data.RoleData;
+import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.nearme.game.sdk.GameCenterSDK;
@@ -63,6 +63,7 @@ public class Oppo implements LoginImpl {
                             JSONObject json = new JSONObject(param2String);
                             token = json.getString("token");
                             uid = json.getString("ssoid");
+                            Logger.addBlacklist(token);
                             doBHLogin();
                         } catch (JSONException e) {
                             CrashReport.postCatchedException(e);
@@ -127,6 +128,7 @@ public class Oppo implements LoginImpl {
                     String open_id = data_json2.getString("open_id");
                     String combo_token = data_json2.getString("combo_token");
                     String account_type = data_json2.getString("account_type");
+                    Logger.addBlacklist(combo_token);
 
                     roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "18", account_type, "oppo", 4, callback);
 

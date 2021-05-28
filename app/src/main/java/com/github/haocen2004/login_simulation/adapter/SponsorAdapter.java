@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.Adapter;
+package com.github.haocen2004.login_simulation.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,8 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorData;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorData;
 
 import java.util.List;
 

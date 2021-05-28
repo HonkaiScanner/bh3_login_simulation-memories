@@ -6,7 +6,7 @@ import android.view.Gravity;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorRepo;
+import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;

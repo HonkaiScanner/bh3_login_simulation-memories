@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.Fragment;
+package com.github.haocen2004.login_simulation.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;

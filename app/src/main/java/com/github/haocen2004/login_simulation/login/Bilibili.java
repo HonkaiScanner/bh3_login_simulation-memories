@@ -12,8 +12,8 @@ import com.bsgamesdk.android.BSGameSdk;
 import com.bsgamesdk.android.callbacklistener.BSGameSdkError;
 import com.bsgamesdk.android.callbacklistener.CallbackListener;
 import com.bsgamesdk.android.callbacklistener.InitCallbackListener;
-import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -68,7 +68,7 @@ public class Bilibili implements LoginImpl {
                         ",\"access_key\":\"" +
                         access_token +
                         "\"}";
-
+                Logger.addBlacklist(access_token);
                 JSONObject feedback_json = null;
                 try {
                     feedback_json = new JSONObject(Tools.verifyAccount(activity, "14", data_json));

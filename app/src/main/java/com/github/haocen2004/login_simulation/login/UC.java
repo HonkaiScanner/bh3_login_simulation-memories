@@ -10,7 +10,7 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.haocen2004.login_simulation.Data.RoleData;
+import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Logger;
 
 import org.json.JSONException;
@@ -76,6 +76,7 @@ public class UC implements LoginImpl {
 
     public void setSid(String sid) {
         this.sid = sid;
+        Logger.addBlacklist(sid);
     }
 
     public UC(AppCompatActivity activity, LoginCallback callback) {
@@ -149,6 +150,7 @@ public class UC implements LoginImpl {
                     String combo_token = data_json2.getString("combo_token");
                     String account_type = data_json2.getString("account_type");
                     String data2 = data_json2.getString("data");
+                    Logger.addBlacklist(combo_token);
                     int special_tag = 1;
                     if (data2.contains("true")) {
                         special_tag = 3;

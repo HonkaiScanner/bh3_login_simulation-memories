@@ -8,7 +8,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 
-import com.github.haocen2004.login_simulation.Data.RoleData;
+import com.github.haocen2004.login_simulation.data.RoleData;
 
 import org.json.JSONArray;
 import org.json.JSONException;

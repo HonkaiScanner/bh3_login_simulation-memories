@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.Data;
+package com.github.haocen2004.login_simulation.data;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -88,6 +88,8 @@ public class RoleData {
         } else if (special_tag == 4) {
             accountType = "8";
         }
+        Logger.addBlacklist(combo_token);
+        Logger.addBlacklist(open_token);
         new Thread(getOA_runnable).start();
     }
 

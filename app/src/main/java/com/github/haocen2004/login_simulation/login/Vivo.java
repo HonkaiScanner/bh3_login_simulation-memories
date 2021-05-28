@@ -10,8 +10,8 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 
 import com.github.haocen2004.login_simulation.BuildConfig;
-import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.vivo.unionsdk.open.VivoAccountCallback;
@@ -39,6 +39,7 @@ public class Vivo implements LoginImpl {
         public void onVivoAccountLogin(String s, String s1, String s2) {
             uid = s1;
             token = s2;
+            Logger.addBlacklist(token);
             doBHLogin();
 //            roleData = new RoleData()
         }
@@ -110,6 +111,7 @@ public class Vivo implements LoginImpl {
                     String open_id = data_json2.getString("open_id");
                     String combo_token = data_json2.getString("combo_token");
                     String account_type = data_json2.getString("account_type");
+                    Logger.addBlacklist(combo_token);
 
                     roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "19", account_type, "vivo", 2, loginCallback);
 

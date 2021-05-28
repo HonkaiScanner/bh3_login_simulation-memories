@@ -19,8 +19,8 @@ import com.geetest.sdk.GT3ConfigBean;
 import com.geetest.sdk.GT3ErrorBean;
 import com.geetest.sdk.GT3GeetestUtils;
 import com.geetest.sdk.GT3Listener;
-import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Encrypt;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
@@ -134,6 +134,7 @@ public class Official implements LoginImpl {
                             .putString("uid", uid)
                             .putBoolean("has_token", true)
                             .apply();
+                    Logger.addBlacklist(token);
                     new Thread(login_runnable2).start();
                 } else {
 //                    Logger.warning("登录失败");
@@ -259,6 +260,8 @@ public class Official implements LoginImpl {
                     JSONObject account_json = feedback_json.getJSONObject("data");
                     String combo_id = account_json.getString("combo_id");
                     String combo_token = account_json.getString("combo_token");
+                    Logger.addBlacklist(combo_token);
+                    Logger.addBlacklist(token);
 
                     roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "", 0, loginCallback);
                     isLogin = true;
@@ -318,10 +321,10 @@ public class Official implements LoginImpl {
             //https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify?
             login_json = new JSONObject();
             try {
-
+                String localToken = preferences.getString("token", "");
                 login_json.put("uid", preferences.getString("uid", ""));
-                login_json.put("token", preferences.getString("token", ""));
-
+                login_json.put("token", localToken);
+                Logger.addBlacklist(localToken);
                 new Thread(login_runnable).start();
             } catch (JSONException e) {
                 e.printStackTrace();

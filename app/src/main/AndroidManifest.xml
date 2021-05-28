@@ -41,13 +41,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m"
         android:allowBackup="true">
-        <activity android:name=".Activity.LoginActivity" />
+        <activity android:name=".activity.LoginActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".Activity.MainActivity">
+        <activity android:name=".activity.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.Fragment;
+package com.github.haocen2004.login_simulation.fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -102,7 +102,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         if (!SP_CHECKED) {
             if (pref.getBoolean("has_account", false)) {
                 Logger.d("SPCheck", "wait....");
-                spCheckHandle.postDelayed((Runnable) this::delaySPCheck, 3000);
+                spCheckHandle.postDelayed(this::delaySPCheck, 3000);
             } else {
                 binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
                 SP_CHECKED = true;
@@ -703,23 +703,28 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onLoginSucceed() {
-        binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
-        binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
-        binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_check_circle_outline_24);
-        pref.edit().putBoolean("last_login_succeed", true).apply();
-        loginProgress = false;
-        makeToast(R.string.login_succeed);
-        refreshView();
+        spCheckHandle.post(() -> {
+            binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
+            binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
+            binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_check_circle_outline_24);
+            pref.edit().putBoolean("last_login_succeed", true).apply();
+            loginProgress = false;
+            makeToast(R.string.login_succeed);
+            refreshView();
+        });
     }
 
     @Override
     public void onLoginFailed() {
-        binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
-        binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
-        binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
-        pref.edit().putBoolean("last_login_succeed", false).apply();
-        loginProgress = false;
-        refreshView();
+        spCheckHandle.post(() -> {
+            binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
+            binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
+            binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
+            pref.edit().putBoolean("last_login_succeed", false).apply();
+            loginProgress = false;
+            loginImpl = null;
+            refreshView();
+        });
 //        makeToast(R);
     }
 }

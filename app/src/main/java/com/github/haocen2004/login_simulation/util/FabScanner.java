@@ -30,8 +30,8 @@ import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.github.haocen2004.login_simulation.Activity.MainActivity;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.activity.MainActivity;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;

@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.Activity;
+package com.github.haocen2004.login_simulation.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
