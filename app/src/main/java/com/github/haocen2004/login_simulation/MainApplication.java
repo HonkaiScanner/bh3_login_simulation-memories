@@ -2,11 +2,13 @@ package com.github.haocen2004.login_simulation;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.view.Gravity;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.github.haocen2004.login_simulation.Database.Sponsor.SponsorRepo;
+import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.util.Logger;
+import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -22,6 +24,8 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Log = Logger.getLogger(this);
+        ToastUtils.init(this);
+        ToastUtils.setGravity(Gravity.BOTTOM, 0, 50);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", true);
         app_pref = getDefaultSharedPreferences(this);
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {

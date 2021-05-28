@@ -19,8 +19,8 @@ import com.geetest.sdk.GT3ConfigBean;
 import com.geetest.sdk.GT3ErrorBean;
 import com.geetest.sdk.GT3GeetestUtils;
 import com.geetest.sdk.GT3Listener;
-import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Encrypt;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
@@ -45,15 +45,24 @@ public class Official implements LoginImpl {
     private final Logger Log;
     private JSONObject login_json;
     private final Map<String, String> login_map = new HashMap<>();
+    private final LoginCallback loginCallback;
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
-            String feedback;
-            if (!preferences.getBoolean("has_token", false)) {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login", login_json.toString(), login_map);
-            } else {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString());
+            String feedback = null;
+            boolean needLoop = true;
+            while (needLoop) {
+                if (!preferences.getBoolean("has_token", false)) {
+                    feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login", login_json.toString(), login_map);
+                } else {
+                    feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString());
+                }
+                if (feedback != null) {
+                    needLoop = false;
+                }
             }
+
+
             Message msg = new Message();
             Bundle data = new Bundle();
             data.putString("value", feedback);
@@ -98,6 +107,7 @@ public class Official implements LoginImpl {
 
             } catch (JSONException e) {
                 Logger.w(TAG, "run: JSON WRONG\n" + e);
+                loginCallback.onLoginFailed();
             }
         }
     };
@@ -124,14 +134,17 @@ public class Official implements LoginImpl {
                             .putString("uid", uid)
                             .putBoolean("has_token", true)
                             .apply();
+                    Logger.addBlacklist(token);
                     new Thread(login_runnable2).start();
                 } else {
 //                    Logger.warning("登录失败");
                     Logger.w(TAG, "handleMessage: 登录失败1" + feedback);
+                    loginCallback.onLoginFailed();
 //                    Logger.warning(feedback);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                loginCallback.onLoginFailed();
             }
         }
     };
@@ -197,6 +210,7 @@ public class Official implements LoginImpl {
                             login_map.put("x-rpc-risky", stringBuilder.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            loginCallback.onLoginFailed();
                         }
 
                         gt3GeetestUtils.showSuccessDialog();
@@ -214,6 +228,7 @@ public class Official implements LoginImpl {
                         stringBuilder.append("onError :");
                         stringBuilder.append(param1GT3ErrorBean.toString());
                         Logger.d(TAG, stringBuilder.toString());
+                        loginCallback.onLoginFailed();
                     }
                 });
                 gt3GeetestUtils.init(gt3ConfigBean);
@@ -222,6 +237,7 @@ public class Official implements LoginImpl {
                 e.printStackTrace();
                 Log.makeToast("验证信息请求失败：");
                 Logger.e(TAG, "验证信息请求失败：" + feedback);
+                loginCallback.onLoginFailed();
             }
         }
     };
@@ -244,22 +260,28 @@ public class Official implements LoginImpl {
                     JSONObject account_json = feedback_json.getJSONObject("data");
                     String combo_id = account_json.getString("combo_id");
                     String combo_token = account_json.getString("combo_token");
+                    Logger.addBlacklist(combo_token);
+                    Logger.addBlacklist(token);
 
-                    roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "", 0);
+                    roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "", 0, loginCallback);
                     isLogin = true;
-                    Log.makeToast(R.string.login_succeed);
+//                    Log.makeToast(R.string.login_succeed);
+//                    loginCallback.onLoginSucceed();
 
                 } else {
                     Logger.w(TAG, "handleMessage: 登录失败2：" + feedback);
                     Log.makeToast("登录失败：" + feedback);
+                    loginCallback.onLoginFailed();
                 }
             } catch (JSONException e) {
+                loginCallback.onLoginFailed();
                 e.printStackTrace();
             }
         }
     };
 
-    public Official(AppCompatActivity activity) {
+    public Official(AppCompatActivity activity, LoginCallback callback) {
+        loginCallback = callback;
         isLogin = false;
         this.activity = activity;
         preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
@@ -289,20 +311,24 @@ public class Official implements LoginImpl {
 
                         loginByAccount();
                     });
-            customizeDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> Log.makeToast(R.string.login_cancel));
+            customizeDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
+                Log.makeToast(R.string.login_cancel);
+                loginCallback.onLoginFailed();
+            });
             customizeDialog.setCancelable(false);
             customizeDialog.show();
         } else {
             //https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify?
             login_json = new JSONObject();
             try {
-
+                String localToken = preferences.getString("token", "");
                 login_json.put("uid", preferences.getString("uid", ""));
-                login_json.put("token", preferences.getString("token", ""));
-
+                login_json.put("token", localToken);
+                Logger.addBlacklist(localToken);
                 new Thread(login_runnable).start();
             } catch (JSONException e) {
                 e.printStackTrace();
+                loginCallback.onLoginFailed();
             }
         }
     }
@@ -319,6 +345,7 @@ public class Official implements LoginImpl {
             new Thread(risky_check_runnable).start();
         } catch (JSONException e) {
             e.printStackTrace();
+            loginCallback.onLoginFailed();
         }
 
 
@@ -331,6 +358,7 @@ public class Official implements LoginImpl {
 //            new Thread(login_runnable).start();
         } catch (JSONException e) {
             e.printStackTrace();
+            loginCallback.onLoginFailed();
         }
 
 //        https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login?

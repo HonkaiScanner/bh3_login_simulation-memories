@@ -54,7 +54,7 @@ public class Encrypt {
         return sha256HMAC(stringBuilder.toString().substring(0, stringBuilder.length() - 1), BH_APP_KEY);
     }
 
-    private static String byteArrayToHexString(byte[] paramArrayOfbyte) {
+    public static String byteArrayToHexString(byte[] paramArrayOfbyte) {
         StringBuilder stringBuilder = new StringBuilder();
         for (byte b = 0; paramArrayOfbyte != null && b < paramArrayOfbyte.length; b++) {
             String str = Integer.toHexString(0xFF & paramArrayOfbyte[b]);

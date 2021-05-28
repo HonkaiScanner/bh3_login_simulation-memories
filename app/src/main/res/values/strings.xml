@@ -3,7 +3,7 @@
     <string name="app_info" translatable="false">Powered By Hao_cen</string>
     <string name="app_ver" translatable="false">ver_placeholder</string>
     <string name="btn_login">Login</string>
-    <string name="btn_login_finished">Logged</string>
+    <string name="login_finished">Login Succeed</string>
     <string name="btn_scan">Scan Qr Code</string>
     <string name="btn_logout">Logout</string>
     <string name="list_main">Main</string>
@@ -17,7 +17,7 @@
     <string name="settings_update">Check Update</string>
 
     <string name="toolbar_icon_description">Icon PlaceHolder</string>
-    <string name="nav_header_pid" translatable="false">Pixiv:82665700</string>
+    <string name="nav_header_pid" translatable="false">Pixiv:89418903</string>
     <string name="request_permission_failed">Request permission FAILED</string>
     <string name="types_official">Official Server</string>
     <string name="types_prefix">"Selected : "</string>
@@ -83,5 +83,18 @@
     <string name="btn_cancel">Cancel</string>
     <string name="login_cancel">Login Cancelled</string>
     <string name="btn_close_update">Close Update</string>
+    <string name="bh_login_pref">Honkai Account:</string>
+    <string name="sp_login_pref">Sponsor Account:</string>
+    <string name="login_true">Logged</string>
+    <string name="login_false">Not Login</string>
+    <string name="update_check_off">Update Check Disable</string>
+    <string name="sel_server">Select Server</string>
+    <string name="auto_login_pref">Auto Login:</string>
+    <string name="logged_and_restart">Account Logged\nPlease restart to apply change</string>
+    <string name="login_process">Login…</string>
+    <string name="btn_server">Server</string>
+    <string name="btn_auto_login">Auto\nLogin</string>
+    <string name="btn_auto_confirm">Auto\nConfirm</string>
+    <string name="msg_getOa">Getting OA Server</string>
 
 </resources>

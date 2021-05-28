@@ -45,7 +45,7 @@ public class Network {
         } catch (Exception e) {
             Logger.i("Network", "sendPost: Failed.");
 //            BuglyLog.i("HTTP", "sendPost: Failed.");
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
         //使用finally块来关闭输出流、输入流
@@ -59,6 +59,7 @@ public class Network {
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
+                return null;
             }
         }
         return result.toString();
@@ -101,7 +102,7 @@ public class Network {
         } catch (Exception e) {
             Logger.i("Network", "sendPost: Failed.");
 //            BuglyLog.i("HTTP", "sendPost: Failed.");
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
         //使用finally块来关闭输出流、输入流
@@ -115,6 +116,7 @@ public class Network {
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
+                return null;
             }
         }
         return result.toString();

@@ -6,21 +6,21 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.github.haocen2004.login_simulation.Fragment.MainFragment"
+        android:name="com.github.haocen2004.login_simulation.fragment.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.github.haocen2004.login_simulation.Fragment.SettingsFragment"
+        android:name="com.github.haocen2004.login_simulation.fragment.SettingsFragment"
         android:label="SettingsFragment" />
     <fragment
         android:id="@+id/reportFragment"
-        android:name="com.github.haocen2004.login_simulation.Fragment.ReportFragment"
+        android:name="com.github.haocen2004.login_simulation.fragment.ReportFragment"
         android:label="fragment_report"
         tools:layout="@layout/fragment_report" />
     <fragment
         android:id="@+id/supportFragment"
-        android:name="com.github.haocen2004.login_simulation.Fragment.SupportFragment"
+        android:name="com.github.haocen2004.login_simulation.fragment.SupportFragment"
         android:label="fragment_support"
         tools:layout="@layout/fragment_support" />
 </navigation>

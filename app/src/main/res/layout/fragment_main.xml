@@ -4,58 +4,83 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.MainFragment">
+    tools:context=".fragment.MainFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btn_login"
+        <!--        <Button-->
+        <!--            android:id="@+id/btn_login"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="32dp"-->
+        <!--            android:text="@string/btn_login"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+        <include
+            android:id="@+id/cardViewMain"
+            layout="@layout/card_main"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/btn_login"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <RadioGroup
+        <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/official_slot_select"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
             android:layout_marginTop="16dp"
-            android:checkedButton="@id/slot1"
-            android:drawingCacheQuality="auto"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:saveEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_login">
+            app:layout_constraintTop_toBottomOf="@+id/cardViewMain"
+            app:selectionRequired="true"
+            app:singleSelection="true">
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/slot1"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/slot1" />
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/slot1"
+                app:strokeColor="@color/gray"
+                app:strokeWidth="1dp" />
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/slot2"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/slot2" />
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/slot2"
+                app:strokeColor="@color/gray"
+                app:strokeWidth="1dp" />
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/slot3"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/slot3" />
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/slot3"
+                app:strokeColor="@color/gray"
+                app:strokeWidth="1dp" />
 
-        </RadioGroup>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        <RadioGroup
+        <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/official_type_sel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,28 +88,39 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/official_slot_select">
+            app:layout_constraintTop_toBottomOf="@+id/official_slot_select"
+            app:selectionRequired="true"
+            app:singleSelection="true">
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/radioPc"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/sel_pc" />
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/radioAndroid"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/sel_android" />
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/radioIOS"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/sel_ios" />
-        </RadioGroup>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        <CheckBox
+        <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/token_checkBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,9 +128,9 @@
             android:text="@string/use_token_true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/official_type_sel" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_selpic" />
 
-        <CheckBox
+        <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/checkBoxWDJ"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -104,35 +140,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/token_checkBox" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_scan"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/btn_scan"
+            app:icon="@drawable/ic_baseline_qr_code_scanner_24"
+            app:iconGravity="textStart"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkBoxWDJ" />
+            app:layout_constraintTop_toBottomOf="@+id/official_type_sel" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_selpic"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/btn_pic"
+            app:icon="@drawable/ic_baseline_photo_library_24"
+            app:iconGravity="textStart"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_scan" />
-
-        <Button
-            android:id="@+id/btn_logout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/btn_logout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_selpic" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline4"
@@ -140,25 +176,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.9" />
-
-        <TextView
-            android:id="@+id/text_select_server"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_logout" />
-
-        <TextView
-            android:id="@+id/text_auto_confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/guideline4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_select_server"
-            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/textView"

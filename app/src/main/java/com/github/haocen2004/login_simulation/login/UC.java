@@ -10,8 +10,7 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.haocen2004.login_simulation.Data.RoleData;
-import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Logger;
 
 import org.json.JSONException;
@@ -33,6 +32,7 @@ import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 public class UC implements LoginImpl {
 
     private final AppCompatActivity activity;
+    private final LoginCallback callback;
     private UCGameSdk sdk;
     private String sid;
     private boolean isLogin;
@@ -62,14 +62,25 @@ public class UC implements LoginImpl {
             doBHLogin();
         }
 
+        @Subscribe(event = SDKEventKey.ON_LOGIN_FAILED)
+        private void onLoginFailed() {
+            callback.onLoginFailed();
+        }
+
+        @Subscribe(event = SDKEventKey.ON_INIT_FAILED)
+        private void onInitFailed() {
+            callback.onLoginFailed();
+        }
 
     };
 
     public void setSid(String sid) {
         this.sid = sid;
+        Logger.addBlacklist(sid);
     }
 
-    public UC(AppCompatActivity activity) {
+    public UC(AppCompatActivity activity, LoginCallback callback) {
+        this.callback = callback;
         this.activity = activity;
         isLogin = false;
         Log = Logger.getLogger(activity);
@@ -98,6 +109,7 @@ public class UC implements LoginImpl {
 
             } catch (AliLackActivityException e) {
                 e.printStackTrace();
+                callback.onLoginFailed();
             }
         } else {
             try {
@@ -105,6 +117,7 @@ public class UC implements LoginImpl {
                 sdk.login(activity, null);
             } catch (AliNotInitException | AliLackActivityException e) {
                 Logger.d(TAG, "Login Failed.");
+                callback.onLoginFailed();
                 e.printStackTrace();
             }
         }
@@ -124,6 +137,7 @@ public class UC implements LoginImpl {
                 feedback_json = new JSONObject(feedback);
             } catch (JSONException e) {
                 e.printStackTrace();
+                callback.onLoginFailed();
             }
 //            Logger.info(feedback);
             Logger.i(TAG, "handleMessage: " + feedback);
@@ -136,24 +150,27 @@ public class UC implements LoginImpl {
                     String combo_token = data_json2.getString("combo_token");
                     String account_type = data_json2.getString("account_type");
                     String data2 = data_json2.getString("data");
+                    Logger.addBlacklist(combo_token);
                     int special_tag = 1;
                     if (data2.contains("true")) {
                         special_tag = 3;
                     }
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "20", account_type, "uc", special_tag);
+                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "20", account_type, "uc", special_tag, callback);
 
                     isLogin = true;
-                    makeToast(activity.getString(R.string.login_succeed));
+//                    makeToast(activity.getString(R.string.login_succeed));
 
                 } else {
 
                     makeToast(feedback_json.getString("message"));
                     isLogin = false;
+                    callback.onLoginFailed();
 
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                callback.onLoginFailed();
             }
         }
     };

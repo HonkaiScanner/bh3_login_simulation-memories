@@ -8,8 +8,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 
-import com.github.haocen2004.login_simulation.Data.RoleData;
-import com.tencent.bugly.crashreport.BuglyLog;
+import com.github.haocen2004.login_simulation.data.RoleData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +46,14 @@ public static void changeToWDJ(Activity activity) {
 //        https://global2.bh3.com/query_dispatch  version=4.2.0_gf_android_xiaomi
 //        https://global1.bh3.com/query_dispatch?version=4.2.0_gf_pc&t=1598673811
         try {
-            String feedback = sendPost("https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
+            boolean needLoop = true;
+            String feedback = null;
+            while (needLoop) {
+                feedback = sendPost("https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
+                if (feedback != null) {
+                    needLoop = false;
+                }
+            }
             Logger.i(TAG, "getOAServer: " + feedback);
             JSONObject json1 = new JSONObject(feedback);
             JSONArray jsonArray = json1.getJSONArray("region_list");
@@ -136,7 +142,7 @@ public static void changeToWDJ(Activity activity) {
         login_map.put("app_id", "1");
         login_map.put("channel_id", channel_id);
         login_map.put("data", data_json);
-        BuglyLog.d(TAG, login_map.toString());
+        Logger.d(TAG, login_map.toString());
         String sign = Encrypt.bh3Sign(login_map);
         ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
         Collections.sort(arrayList);
@@ -154,7 +160,14 @@ public static void changeToWDJ(Activity activity) {
 
 //                Logger.info(login_json.toString());
             Logger.i(TAG, "run: " + login_json.toString());
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
+            boolean needLoop = true;
+            String feedback = null;
+            while (needLoop) {
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
+                if (feedback != null) {
+                    needLoop = false;
+                }
+            }
             Logger.d(TAG, "handleMessage: " + feedback);
             return feedback;
 //            JSONObject feedback_json = null;

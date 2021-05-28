@@ -11,8 +11,8 @@ import android.os.Message;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.haocen2004.login_simulation.Data.RoleData;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.RoleData;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONException;
@@ -43,7 +43,14 @@ public class QRScanner {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
+            boolean needLoop = true;
+            String feedback = null;
+            while (needLoop) {
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
+                if (feedback != null) {
+                    needLoop = false;
+                }
+            }
             Message msg = new Message();
             Bundle data = new Bundle();
             data.putString("value", feedback);
@@ -96,7 +103,14 @@ public class QRScanner {
             genRequest();
 
             Logger.d("Network", "biz_key: " + biz_key);
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString());
+            boolean needLoop = true;
+            String feedback = null;
+            while (needLoop) {
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString());
+                if (feedback != null) {
+                    needLoop = false;
+                }
+            }
 
             Logger.d("Network", "feedback: " + feedback);
 

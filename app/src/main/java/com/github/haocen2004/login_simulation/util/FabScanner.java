@@ -30,8 +30,8 @@ import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.github.haocen2004.login_simulation.Activity.MainActivity;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.activity.MainActivity;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
@@ -141,12 +141,8 @@ public class FabScanner extends Service {
                         }
 
                         isScreenCaptureStarted = true;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            mDisplay = activity.getDisplay();
-                        } else {
-                            WindowManager window = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-                            mDisplay = window.getDefaultDisplay();
-                        }
+                        WindowManager window = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+                        mDisplay = window.getDefaultDisplay();
                         final DisplayMetrics metrics = new DisplayMetrics();
                         mDisplay.getRealMetrics(metrics);
                         mDensity = metrics.densityDpi;
@@ -226,6 +222,7 @@ public class FabScanner extends Service {
                         sMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
                     })
                     .show();
+//            Logger.setUseSnackbar(false);
         }
     }
 

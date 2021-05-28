@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
-import com.github.haocen2004.login_simulation.Data.RoleData;
+import com.github.haocen2004.login_simulation.data.RoleData;
 
 public interface LoginImpl {
     void login();
@@ -10,5 +10,6 @@ public interface LoginImpl {
     RoleData getRole();
 
     boolean isLogin();
+
 
 }
