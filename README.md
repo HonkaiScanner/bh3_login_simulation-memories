@@ -18,8 +18,8 @@ UC(豌豆荚/九游)
 小米  
 应用宝  
 魅族  
-
-以上SDK有包名和签名验证暂时无解（等待有缘人破解  
+以上SDK有包名和签名验证暂时无解（等待有缘人破解
+360 (获取sdk需要开发者账号，必须年满18)  
 
 
 ## B站演示视频 / Video
@@ -35,3 +35,7 @@ ZXing
 Glide  
 LeanCloud  
 Bugly  
+
+## 关联项目
+- [米忽悠助手](https://github.com/Haocen2004/mihoyo-helper)
+
