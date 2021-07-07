@@ -137,6 +137,7 @@ public class FabScanner extends Service {
                     .setOnClickListener((XToast.OnClickListener<View>) (toast, view1) -> {
                         if (needStop) {
                             toast.cancel();
+                            stopForeground(true);
                             return;
                         }
 
@@ -151,16 +152,22 @@ public class FabScanner extends Service {
 
                         //start capture reader
                         mImageReader = ImageReader.newInstance(mWidth, mHeight, 1, 2);
-                        mVirtualDisplay = sMediaProjection.createVirtualDisplay(
-                                "ScreenShot",
-                                mWidth,
-                                mHeight,
-                                mDensity,
-                                DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY | DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
-                                mImageReader.getSurface(),
-                                null,
-                                mHandler);
-
+                        try {
+                            mVirtualDisplay = sMediaProjection.createVirtualDisplay(
+                                    "ScreenShot",
+                                    mWidth,
+                                    mHeight,
+                                    mDensity,
+                                    DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY | DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
+                                    mImageReader.getSurface(),
+                                    null,
+                                    mHandler);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.makeToast("悬浮窗进程异常！");
+                            toast.cancel();
+                            stopForeground(true);
+                        }
                         mImageReader.setOnImageAvailableListener(reader -> {
 
                             if (isScreenCaptureStarted) {
@@ -264,7 +271,7 @@ public class FabScanner extends Service {
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher))
                 .setContentTitle("扫码器悬浮窗扫码后台进程")
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentText("安卓10及以上强制需求")
+                .setContentText("安卓10及以上适配所需")
                 .setWhen(System.currentTimeMillis());
 
         /*以下是对Android 8.0的适配*/
@@ -275,7 +282,7 @@ public class FabScanner extends Service {
         //前台服务notification适配
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            NotificationChannel channel = new NotificationChannel("scanner_alert_channel", "scanner_alert_channel", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel = new NotificationChannel("scanner_alert_channel", "扫码器悬浮窗后台进程", NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(channel);
         }
 

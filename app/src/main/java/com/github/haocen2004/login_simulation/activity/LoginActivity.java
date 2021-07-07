@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
     private final String emailPattern = "^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
     private final String scKeyPattern = "^scanner_key_+[a-zA-Z0-9_-]{16}";
     private ActivityLoginBinding binding;
-    private Logger Log;
     private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -77,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     };
+    private Logger Log;
     private int sp_level;
     private AVUser user;
 
