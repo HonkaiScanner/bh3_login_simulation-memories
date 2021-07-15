@@ -56,7 +56,8 @@ public class AnnouncementRepo {
                                         data.setTitle(object.getString("title"));
                                         data.setDesc(object.getString("desc"));
                                         data.setDisplay(object.getBoolean("display"));
-                                        if (object.getBoolean("reshow")) {
+                                        data.setChecked(true);
+                                        if (object.getBoolean("reshow") && object.getBoolean("display")) {
                                             data.setReadable(true);
                                             showAnnDialog(data);
                                         }
@@ -71,10 +72,20 @@ public class AnnouncementRepo {
                                         object.getInt("level"),
                                         object.getString("title"),
                                         object.getString("desc"),
-                                        object.getDate("updatedAt").toString()
+                                        object.getDate("updatedAt").toString(),
+                                        object.getBoolean("display")
                                 );
+                                if (object.getBoolean("reshow") && object.getBoolean("display")) {
+                                    data.setReadable(true);
+                                    showAnnDialog(data);
+                                }
                                 announcementDao.insertAnnouncement(data);
-                                showAnnDialog(data);
+
+                            }
+                        }
+                        for (AnnouncementData data : allAnnouncements) {
+                            if (!data.isChecked()) {
+                                announcementDao.deleteAnnouncement(data);
                             }
                         }
                         allAnnouncements = announcementDao.getAllAnnouncements();

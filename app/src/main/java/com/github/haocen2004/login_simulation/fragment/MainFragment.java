@@ -98,15 +98,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         if (pref.getBoolean("last_login_succeed", false) && pref.getBoolean("auto_login", false) && !loginProgress) {
             if (currLoginTry) {
                 doLogin();
+                currLoginTry = false;
             } else {
                 makeToast("自动登录将在3s后开始");
                 currLoginTry = true;
             }
+        } else {
+            currLoginTry = false;
         }
         Logger.d("SPCheck", "checking...");
         if (!CHECK_VER) {
             binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
-            if (!currLoginTry) {
+            if (currLoginTry) {
                 spCheckHandle.postDelayed(this::delaySPCheck, 3000);
             }
             return;
@@ -115,18 +118,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             if (pref.getBoolean("has_account", false)) {
                 Logger.d("SPCheck", "wait....");
                 spCheckHandle.postDelayed(this::delaySPCheck, 3000);
+                return;
             } else {
                 binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
                 SP_CHECKED = true;
-                if (!currLoginTry) {
-                    spCheckHandle.postDelayed(this::delaySPCheck, 3000);
-                }
             }
         } else {
             binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
-            if (!currLoginTry) {
-                spCheckHandle.postDelayed(this::delaySPCheck, 3000);
-            }
+        }
+        if (currLoginTry) {
+            spCheckHandle.postDelayed(this::delaySPCheck, 3000);
         }
 
     }

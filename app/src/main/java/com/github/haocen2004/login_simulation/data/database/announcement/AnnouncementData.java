@@ -22,15 +22,24 @@ public class AnnouncementData {
     private Boolean display;
     @ColumnInfo
     private int level;
+    private boolean isChecked = false;
 
-    public AnnouncementData(String aid, Integer level, String title, String desc, String time) {
+    public AnnouncementData(String aid, Integer level, String title, String desc, String time, Boolean display) {
         this.aid = aid;
         this.level = level;
         this.title = title;
         this.desc = desc;
         this.time = time;
+        this.display = display;
         readable = true;
-        display = true;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 
     public int getId() {

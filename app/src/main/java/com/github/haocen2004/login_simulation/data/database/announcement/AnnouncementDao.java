@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.data.database.announcement;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -14,6 +15,9 @@ public interface AnnouncementDao {
 
     @Update
     void updateAnnouncement(AnnouncementData... announcementData);
+
+    @Delete
+    void deleteAnnouncement(AnnouncementData... announcementData);
 
     @Query("DELETE FROM ANNOUNCEMENT")
     void deleteAllAnnouncements();
