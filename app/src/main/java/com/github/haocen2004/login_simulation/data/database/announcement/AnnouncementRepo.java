@@ -12,6 +12,7 @@ import java.util.List;
 import cn.leancloud.AVObject;
 import cn.leancloud.AVQuery;
 import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 
 public class AnnouncementRepo {
@@ -35,10 +36,10 @@ public class AnnouncementRepo {
         new Thread(() -> {
             AVQuery<AVObject> query = new AVQuery<>("Announcements");
             query.findInBackground().subscribe(new Observer<List<AVObject>>() {
-                public void onSubscribe(Disposable disposable) {
+                public void onSubscribe(@NonNull Disposable disposable) {
                 }
 
-                public void onNext(List<AVObject> Announcements) {
+                public void onNext(@NonNull List<AVObject> Announcements) {
                     // students 是包含满足条件的 Student 对象的数组
                     new Thread(() -> {
                         Looper.prepare();
@@ -56,6 +57,7 @@ public class AnnouncementRepo {
                                         data.setTitle(object.getString("title"));
                                         data.setDesc(object.getString("desc"));
                                         data.setDisplay(object.getBoolean("display"));
+                                        data.setLevel(object.getInt("level"));
                                         data.setChecked(true);
                                         if (object.getBoolean("reshow") && object.getBoolean("display")) {
                                             data.setReadable(true);
@@ -93,7 +95,7 @@ public class AnnouncementRepo {
                     }).start();
                 }
 
-                public void onError(Throwable throwable) {
+                public void onError(@NonNull Throwable throwable) {
                     CrashReport.postCatchedException(throwable);
                 }
 
