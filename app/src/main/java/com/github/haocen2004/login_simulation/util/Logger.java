@@ -10,7 +10,6 @@ import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.BuglyLog;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.github.haocen2004.login_simulation.util.Tools.getString;
@@ -31,7 +30,14 @@ public class Logger {
         logBlackList = new ArrayList();
         blackListString = getString(context, "logBlackLists");
         if (!blackListString.equals("")) {
-            logBlackList.addAll(Arrays.asList(blackListString.split(";")));
+            for (String blackItem : blackListString.split(";")) {
+                if (blackItem.length() < 4) w("BlackList", "blackMsg is too short: " + blackItem);
+                if (!blackItem.equals("")) {
+                    logBlackList.add(blackItem);
+                }
+            }
+            d("BlackList", "Total " + logBlackList.size());
+//            logBlackList.addAll(Arrays.asList(blackListString.split(";")));
         }
 //        ToastUtils.init();
     }
@@ -49,6 +55,7 @@ public class Logger {
 //        d("addBlackList",logBlackList.toString());
         if (logBlackList.contains(blackMsg)) return;
         logBlackList.add(blackMsg);
+        if (blackMsg.length() < 4) d("BlackList", "blackMsg is too short: " + blackMsg);
         if (blackListString.equals("")) {
             blackListString = blackMsg;
         } else {

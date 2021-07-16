@@ -96,15 +96,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        // 优先读取本地数据
+        BH_VER = app_pref.getString("bh_ver", BH_VER);
+        MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
+        AVOSCloud.initialize(this, "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
+        if (DEBUG) {
+            AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
+        }
+
         if (CHECK_VER) {
             new Thread(update_rb).start();
-        } else {
-            BH_VER = app_pref.getString("bh_ver", BH_VER);
-            MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
-            AVOSCloud.initialize(this, "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
-            if (DEBUG) {
-                AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
-            }
         }
     }
 

@@ -83,6 +83,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private Boolean loginProgress = false;
     private int currSlot = 999;
     private int currType = 999;
+    private boolean currLoginTry = false;
     private final Handler spCheckHandle = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -94,21 +95,39 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
     private void delaySPCheck() {
+        if (pref.getBoolean("last_login_succeed", false) && pref.getBoolean("auto_login", false) && !loginProgress) {
+            if (currLoginTry) {
+                doLogin();
+                currLoginTry = false;
+            } else {
+                makeToast("自动登录将在3s后开始");
+                currLoginTry = true;
+            }
+        } else {
+            currLoginTry = false;
+        }
         Logger.d("SPCheck", "checking...");
         if (!CHECK_VER) {
             binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
+            if (currLoginTry) {
+                spCheckHandle.postDelayed(this::delaySPCheck, 3000);
+            }
             return;
         }
         if (!SP_CHECKED) {
             if (pref.getBoolean("has_account", false)) {
                 Logger.d("SPCheck", "wait....");
                 spCheckHandle.postDelayed(this::delaySPCheck, 3000);
+                return;
             } else {
                 binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
                 SP_CHECKED = true;
             }
         } else {
             binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
+        }
+        if (currLoginTry) {
+            spCheckHandle.postDelayed(this::delaySPCheck, 3000);
         }
 
     }
@@ -291,9 +310,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         super.onViewCreated(view, savedInstanceState);
         setupListener();
         refreshView();
-        if (pref.getBoolean("last_login_succeed", false) && pref.getBoolean("auto_login", false)) {
-            doLogin();
-        }
         checkPermissions();
         delaySPCheck();
     }
@@ -317,6 +333,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
         binding.cardViewMain.imageViewChecked.setVisibility(View.INVISIBLE);
         binding.cardViewMain.progressBar.setVisibility(View.VISIBLE);
+        pref.edit().putBoolean("last_login_succeed", false).apply();
         if (loginImpl == null) {
             switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
                 case "Official":

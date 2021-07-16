@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
     private final String emailPattern = "^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
     private final String scKeyPattern = "^scanner_key_+[a-zA-Z0-9_-]{16}";
     private ActivityLoginBinding binding;
-    private Logger Log;
     private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -77,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     };
+    private Logger Log;
     private int sp_level;
     private AVUser user;
 
@@ -212,17 +212,15 @@ public class LoginActivity extends AppCompatActivity {
                 user.setEmail(content);
 
                 user.put("sp_level", sp_level);
-                user.put("desc", "该用户还没有设置签名哦");
-                user.put("custom_username", "崩坏3扫码器用户");
                 user.put("scanner_key", sc_key);
                 user.put("deviceId", Tools.getDeviceID(getApplicationContext()));
 
 
                 user.signUpInBackground().subscribe(new Observer<AVUser>() {
-                    public void onSubscribe(Disposable disposable) {
+                    public void onSubscribe(@NotNull Disposable disposable) {
                     }
 
-                    public void onNext(AVUser user) {
+                    public void onNext(@NotNull AVUser user) {
                         onRegistered(sc_key);
                     }
 

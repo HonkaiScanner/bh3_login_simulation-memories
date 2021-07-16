@@ -14,6 +14,7 @@ import com.tencent.bugly.crashreport.CrashReport;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
+import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
 
@@ -26,7 +27,7 @@ public class MainApplication extends Application {
         Log = Logger.getLogger(this);
         ToastUtils.init(this);
         ToastUtils.setGravity(Gravity.BOTTOM, 0, 50);
-        CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", true);
+        CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG);
         app_pref = getDefaultSharedPreferences(this);
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             app_pref.edit()
@@ -81,6 +82,11 @@ public class MainApplication extends Application {
             if (!app_pref.contains("mdk_ver")) {
                 app_pref.edit()
                         .putString("mdk_ver", MDK_VERSION)
+                        .apply();
+            }
+            if (!app_pref.contains("bh_ver")) {
+                app_pref.edit()
+                        .putString("bh_ver", BH_VER)
                         .apply();
             }
 
