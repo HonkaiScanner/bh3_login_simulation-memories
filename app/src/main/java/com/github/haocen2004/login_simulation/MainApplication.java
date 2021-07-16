@@ -27,7 +27,7 @@ public class MainApplication extends Application {
         Log = Logger.getLogger(this);
         ToastUtils.init(this);
         ToastUtils.setGravity(Gravity.BOTTOM, 0, 50);
-        CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", true);
+        CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG);
         app_pref = getDefaultSharedPreferences(this);
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             app_pref.edit()
