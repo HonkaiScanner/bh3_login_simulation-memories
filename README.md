@@ -31,7 +31,7 @@ https://www.bilibili.com/video/BV1RB4y1P7MQ/
 -107 参数错误
 
 ## 开源库 / Open Source
-ZXing  
+ZXing [Target API 28]
 Glide  
 LeanCloud  
 Bugly  

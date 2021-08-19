@@ -21,9 +21,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 
 
 public class QRScanner {
@@ -106,7 +109,7 @@ public class QRScanner {
             boolean needLoop = true;
             String feedback = null;
             while (needLoop) {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString());
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString().replace("\\/","/"));
                 if (feedback != null) {
                     needLoop = false;
                 }
@@ -308,11 +311,12 @@ public class QRScanner {
         }
 
 
-        dispatch_json.put("account_url", oaserver.get("account_url"))
-                .put("account_url_backup", oaserver.get("account_url_backup"))
-                .put("asset_boundle_url", oaserver.get("asset_boundle_url"))
-                .put("ex_resource_url", oaserver.get("ex_resource_url"))
-                .put("ext", oaserver.getJSONObject("ext"))
+        dispatch_json.put("account_url", oaserver.getString("account_url"))
+                .put("account_url_backup", oaserver.getString("account_url_backup"))
+                .put("asset_bundle_url_list", oaserver.getJSONArray("asset_bundle_url_list"))
+                .put("ex_resource_url_list", oaserver.getJSONArray("ex_resource_url_list"))
+                .put("ex_audio_and_video_url_list",oaserver.getJSONArray("ex_audio_and_video_url_list"))
+                .put("ext", oaserver.getJSONObject("ext").put("is_checksum_off",1))
                 .put("gameserver", oaserver.getJSONObject("gameserver"))
                 .put("gateway", oaserver.getJSONObject("gateway"))
                 .put("oaserver_url", oaserver.get("oaserver_url"))
@@ -332,10 +336,9 @@ public class QRScanner {
 
         payload_json.put("raw", raw_json.toString())
                 .put("proto", "Combo")
-                .put("ext", ext_json.toString());
-
+                .put("ext", ext_json.toString().replace("\\",""));
             confirm_json.put("device", device_id)
-                    .put("app_id", app_id)
+                    .put("app_id", parseInt(app_id))
                     .put("ts", System.currentTimeMillis())
                     .put("ticket", ticket)
                     .put("payload", payload_json);
