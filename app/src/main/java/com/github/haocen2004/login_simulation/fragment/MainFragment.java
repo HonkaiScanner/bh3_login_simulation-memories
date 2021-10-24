@@ -1,5 +1,18 @@
 package com.github.haocen2004.login_simulation.fragment;
 
+import static android.app.Activity.RESULT_OK;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_CODE_SCAN_GALLERY;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_WINDOW;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE;
+import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
+import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -56,19 +69,6 @@ import com.google.zxing.util.Constant;
 import java.util.Hashtable;
 import java.util.Objects;
 
-import static android.app.Activity.RESULT_OK;
-import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
-import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_CODE_SCAN_GALLERY;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_WINDOW;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE;
-import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
-import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
-
 public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
 
     private final String TAG = "MainFragment";
@@ -100,7 +100,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 doLogin();
                 currLoginTry = false;
             } else {
-                makeToast("自动登录将在3s后开始");
+//                makeToast("自动登录将在3s后开始");
                 currLoginTry = true;
             }
         } else {
@@ -110,14 +110,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         if (!CHECK_VER) {
             binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
             if (currLoginTry) {
-                spCheckHandle.postDelayed(this::delaySPCheck, 3000);
+                spCheckHandle.postDelayed(this::delaySPCheck, 1500);
             }
             return;
         }
         if (!SP_CHECKED) {
             if (pref.getBoolean("has_account", false)) {
                 Logger.d("SPCheck", "wait....");
-                spCheckHandle.postDelayed(this::delaySPCheck, 3000);
+                spCheckHandle.postDelayed(this::delaySPCheck, 1500);
                 return;
             } else {
                 binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
@@ -127,7 +127,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
         }
         if (currLoginTry) {
-            spCheckHandle.postDelayed(this::delaySPCheck, 3000);
+            spCheckHandle.postDelayed(this::delaySPCheck, 1500);
         }
 
     }
