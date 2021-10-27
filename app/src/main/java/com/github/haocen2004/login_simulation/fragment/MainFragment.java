@@ -52,6 +52,7 @@ import com.github.haocen2004.login_simulation.login.Vivo;
 import com.github.haocen2004.login_simulation.util.FabScanner;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.QRScanner;
+import com.github.haocen2004.login_simulation.util.SocketHelper;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
@@ -80,6 +81,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private FragmentMainBinding binding;
     private Logger Log;
     private FabScanner fabScanner;
+    private SocketHelper socketHelper;
     private Boolean loginProgress = false;
     private int currSlot = 999;
     private int currType = 999;
@@ -139,6 +141,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         activity = (AppCompatActivity) getActivity();
         context = getContext();
         fabScanner = new FabScanner(this);
+        socketHelper = new SocketHelper();
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
@@ -728,6 +731,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             loginProgress = false;
             makeToast(R.string.login_succeed);
             refreshView();
+            QRScanner qrScanner;
+            if (isOfficial) {
+                qrScanner = new QRScanner(activity, true);
+            } else {
+                qrScanner = new QRScanner(activity, loginImpl.getRole());
+            }
+            socketHelper.setQrScanner(qrScanner);
+            socketHelper.start();
         });
     }
 
