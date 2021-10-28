@@ -14,6 +14,7 @@ jobs:
         uses: actions/setup-java@v2.3.1
         with:
           java-version: 11
+          distribution: temurin
 
       - name: gen JKS File
         run: echo $ENCODED_KEYSTORE | base64 -di > app/keystore.jks
