@@ -1,10 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "app-${variant.name}-${variant.versionName}.apk"
+    
+    if ( !System.getenv("CI") ) {
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = "app-${variant.name}-${variant.versionName}.apk"
+            }
         }
     }
 
