@@ -21,8 +21,10 @@ import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
+import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
 import org.json.JSONObject;
+import org.opencv.OpenCV;
 
 import java.util.concurrent.Executors;
 
@@ -107,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
         if (CHECK_VER) {
             new Thread(update_rb).start();
         }
+
+        OpenCV.initAsync(this);
+        WeChatQRCodeDetector.init(this);
     }
 
     @SuppressLint("HandlerLeak")

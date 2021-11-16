@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.activity.ScannerActivity;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
@@ -49,25 +51,29 @@ import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.Oppo;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
+import com.github.haocen2004.login_simulation.util.Constant;
 import com.github.haocen2004.login_simulation.util.FabScanner;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.QRScanner;
 import com.github.haocen2004.login_simulation.util.SocketHelper;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.ChecksumException;
-import com.google.zxing.DecodeHintType;
-import com.google.zxing.FormatException;
-import com.google.zxing.NotFoundException;
-import com.google.zxing.Result;
-import com.google.zxing.activity.CaptureActivity;
-import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.decoding.RGBLuminanceSource;
-import com.google.zxing.qrcode.QRCodeReader;
-import com.google.zxing.util.BitmapUtil;
-import com.google.zxing.util.Constant;
+//import com.google.zxing.BinaryBitmap;
+//import com.google.zxing.ChecksumException;
+//import com.google.zxing.DecodeHintType;
+//import com.google.zxing.FormatException;
+//import com.google.zxing.NotFoundException;
+//import com.google.zxing.Result;
+//import com.google.zxing.activity.CaptureActivity;
+//import com.google.zxing.common.HybridBinarizer;
+//import com.google.zxing.decoding.RGBLuminanceSource;
+//import com.google.zxing.qrcode.QRCodeReader;
+//import com.google.zxing.util.BitmapUtil;
+//import com.google.zxing.util.Constant;
+import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
+import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Objects;
 
 public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
@@ -255,9 +261,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.btnSelpic.setOnClickListener(view1 -> {
             try {
                 if (loginImpl.isLogin()) {
-                    Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
-                    innerIntent.setType("image/*");
-                    startActivityForResult(innerIntent, REQ_CODE_SCAN_GALLERY);
+
+                    Intent pickIntent = new Intent(Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                    startActivityForResult(pickIntent, REQ_CODE_SCAN_GALLERY);
+
+
+//                    Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
+//                    innerIntent.setType("image/*");
+//                    startActivityForResult(innerIntent, REQ_CODE_SCAN_GALLERY);
                 } else {
                     makeToast(R.string.error_not_login);
                 }
@@ -398,29 +411,50 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 }
             }
             if (requestCode == REQ_CODE_SCAN_GALLERY) {
-                final Uri uri = data.getData();
 
-                ProgressDialog mProgress = new ProgressDialog(getContext());
-                mProgress.setMessage("正在扫描...");
-                mProgress.setCancelable(false);
-                mProgress.show();
-                activity.runOnUiThread(() -> {
-                    Result result = scanningImage(uri);
-                    mProgress.dismiss();
-                    if (result != null) {
+                Bitmap bitmap;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),data.getData());
+                    List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
+                if (result != null) {
                         Intent resultIntent = new Intent();
                         Bundle bundle = resultIntent.getExtras();
                         if (bundle == null) {
                             bundle = new Bundle();
                         }
-                        bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, result.getText());
+                        bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, result.get(0));
 
                         resultIntent.putExtras(bundle);
                         onActivityResult(REQ_QR_CODE, RESULT_OK, resultIntent);
                     } else {
-                        Log.makeToast(com.google.zxing.R.string.note_identify_failed);
+                        Log.makeToast("未找到二维码");
                     }
-                });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+//                final Uri uri = data.getData();
+//
+//                ProgressDialog mProgress = new ProgressDialog(getContext());
+//                mProgress.setMessage("正在扫描...");
+//                mProgress.setCancelable(false);
+//                mProgress.show();
+//                activity.runOnUiThread(() -> {
+//                    List<String> result = scanningImage(uri);
+//                    mProgress.dismiss();
+//                    if (result != null) {
+//                        Intent resultIntent = new Intent();
+//                        Bundle bundle = resultIntent.getExtras();
+//                        if (bundle == null) {
+//                            bundle = new Bundle();
+//                        }
+//                        bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, result.get(0));
+//
+//                        resultIntent.putExtras(bundle);
+//                        onActivityResult(REQ_QR_CODE, RESULT_OK, resultIntent);
+//                    } else {
+//                        Log.makeToast(com.google.zxing.R.string.note_identify_failed);
+//                    }
+//                });
             }
             if (requestCode == REQ_PERM_WINDOW) {
                 fabScanner.showAlertScanner();
@@ -440,26 +474,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
 
     }
-
-    public Result scanningImage(Uri uri) {
-        if (uri == null) {
-            return null;
-        }
-        Hashtable<DecodeHintType, String> hints = new Hashtable<>();
-        hints.put(DecodeHintType.CHARACTER_SET, "UTF8"); //设置二维码内容的编码
-
-        Bitmap scanBitmap = BitmapUtil.decodeUri(getContext(), uri, 500, 500);
-        RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
-        BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
-        QRCodeReader reader = new QRCodeReader();
-        try {
-            return reader.decode(bitmap1, hints);
-        } catch (NotFoundException | ChecksumException | FormatException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -488,7 +502,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQ_PERM_CAMERA);
             return;
         }
-        Intent intent = new Intent(context, CaptureActivity.class);
+        Intent intent = new Intent(context, ScannerActivity.class);
         startActivityForResult(intent, com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE);
     }
 
