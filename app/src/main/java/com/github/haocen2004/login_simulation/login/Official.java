@@ -1,5 +1,11 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.BH_PUBLIC_KEY;
+import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
+import static com.github.haocen2004.login_simulation.util.Tools.getDeviceID;
+import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -30,12 +36,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.util.Constant.BH_PUBLIC_KEY;
-import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
-import static com.github.haocen2004.login_simulation.util.Tools.getDeviceID;
-import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 public class Official implements LoginImpl {
 
@@ -160,14 +160,36 @@ public class Official implements LoginImpl {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
             try {
-                JSONObject feedback_json = new JSONObject(feedback).getJSONObject("data").getJSONObject("geetest");
+                JSONObject data_json = new JSONObject(feedback);
+                if (!data_json.getString("message").equals("OK")) {
+                    Log.makeToast("验证信息请求失败：");
+                    Logger.e(TAG, "验证信息请求失败：" + feedback);
+                    loginCallback.onLoginFailed();
+                    return;
+                }
+                if (feedback.contains("\"geetest\":null")) {
+                    Logger.d(TAG, "无需极验校验，直接开始登陆");
+
+                    login_map.put("x-rpc-device_id", getDeviceID(activity));
+                    login_map.put("x-rpc-client_type", "2");
+                    login_map.put("x-rpc-mdk_version", MDK_VERSION);
+                    login_map.put("x-rpc-game_biz", "bh3_cn");
+                    login_map.put("x-rpc-language", "zh-cn");
+                    login_map.put("x-rpc-channel_version", MDK_VERSION);
+                    login_map.put("x-rpc-channel_id", "1");
+                    login_map.put("User-Agent", "okhttp/3.10.0");
+                    login_map.put("x-rpc-risky", "id=" + data_json.getJSONObject("data").getString("id"));
+                    new Thread(login_runnable).start();
+                    return;
+                }
+                JSONObject feedback_json = data_json.getJSONObject("data").getJSONObject("geetest");
                 JSONObject api1_json = new JSONObject();
                 api1_json.put("challenge", feedback_json.getString("challenge"));
                 api1_json.put("gt", feedback_json.getString("gt"));
                 api1_json.put("success", feedback_json.getString("success"));
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("id=");
-                stringBuilder.append(new JSONObject(feedback).getJSONObject("data").getString("id"));
+                stringBuilder.append(data_json.getJSONObject("data").getString("id"));
                 gt3ConfigBean = new GT3ConfigBean();
                 gt3ConfigBean.setPattern(1);
                 gt3ConfigBean.setCanceledOnTouchOutside(false);
@@ -354,6 +376,7 @@ public class Official implements LoginImpl {
             login_json.put("account", username);
             login_json.put("password", Encrypt.encryptByPublicKey(password, BH_PUBLIC_KEY));
             login_json.put("is_crypto", "true");
+            login_json.put("game_key", "bh3_cn");
             preferences.edit().putString("account", username).apply();
 //            new Thread(login_runnable).start();
         } catch (JSONException e) {
