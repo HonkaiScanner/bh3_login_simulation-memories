@@ -38,8 +38,8 @@ jobs:
           NAME_SUFFIX: '.dev'
       #          NAME_SUFFIX: ${{ steps.get_commit_sha.outputs.VERSION }}
 
-      - name: Upload Released APK
+      - name: Upload Released APKs
         uses: actions/upload-artifact@v2
         with:
-          name: app-release
-          path: app/build/outputs/apk/release/app-release.apk
+          name: app-release-all
+          path: app/build/outputs/apk/release/
