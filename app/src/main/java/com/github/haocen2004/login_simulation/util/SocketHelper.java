@@ -32,48 +32,55 @@ public class SocketHelper {
     public void start() {
         loopHandle.post(() -> {
             Logger.d(TAG, "启动广播监听线程...");
-            Listen();
+
+            new Thread(socket_runnable).start();
         });
     }
 
-    private void Listen() {
-        int port = 12585; // 扫码器监听端口
-        DatagramSocket ds;
-        DatagramPacket dp;
-        byte[] buf = new byte[1024 * 4];//存储发来的消息
-        StringBuilder stringBuilder = new StringBuilder();
-        try {
-            //绑定端口的
-            ds = new DatagramSocket(port);
-            dp = new DatagramPacket(buf, buf.length);
+    Runnable socket_runnable = new Runnable() {
+        @Override
+        public void run() {
             Logger.d(TAG, "开始监听广播");
-            ds.receive(dp);
-            ds.close();
-            int i;
-            for (i = 0; i < 1024; i++) {
-                if (buf[i] == 0) {
-                    break;
+            while (true) {
+                int port = 12585; // 扫码器监听端口
+                DatagramSocket ds;
+                DatagramPacket dp;
+                byte[] buf = new byte[1024 * 4];//存储发来的消息
+                StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    //绑定端口的
+                    ds = new DatagramSocket(port);
+                    dp = new DatagramPacket(buf, buf.length);
+                    ds.receive(dp);
+                    ds.close();
+                    int i;
+                    for (i = 0; i < 1024; i++) {
+                        if (buf[i] == 0) {
+                            break;
+                        }
+                        stringBuilder.append((char) buf[i]);
+                    }
+                    Logger.d(TAG, "接收到消息：" + stringBuilder.toString());
+                    JSONObject receivedJson = new JSONObject(stringBuilder.toString());
+                    if (receivedJson.has("scanner_data")) {
+                        //{"scanner_data":{"url":"xxx","t":time}}
+                        String url = receivedJson.getJSONObject("scanner_data").getString("url");
+                        Logger.d(TAG, "接收到扫码器助手广播：" + receivedJson.getJSONObject("scanner_data").toString());
+                        if (qrScanner.parseUrl(url)) {
+                            qrScanner.start();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                stringBuilder.append((char) buf[i]);
             }
-            Logger.d(TAG, "接收到消息：" + stringBuilder.toString());
-            JSONObject receivedJson = new JSONObject(stringBuilder.toString());
-            if (receivedJson.has("scanner_data")) {
-                //{"scanner_data":{"url":"xxx","t":time}}
-                String url = receivedJson.getJSONObject("scanner_data").getString("url");
-                Logger.d(TAG, "接收到扫码器助手广播：" + receivedJson.getJSONObject("scanner_data").toString());
-                if (qrScanner.parseUrl(url)) {
-                    qrScanner.start();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 //        本段代码参考：
 //        作者：愚公要移山
 //        链接：https://juejin.cn/post/6844903918535720973
 //        来源：稀土掘金
 //        著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
-    }
+
+        }
+    };
 }
