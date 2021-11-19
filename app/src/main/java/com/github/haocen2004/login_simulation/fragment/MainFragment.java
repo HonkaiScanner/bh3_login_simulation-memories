@@ -416,7 +416,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),data.getData());
                     List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
-                if (result != null) {
+                if (result.size() >= 1) {
                         Intent resultIntent = new Intent();
                         Bundle bundle = resultIntent.getExtras();
                         if (bundle == null) {
