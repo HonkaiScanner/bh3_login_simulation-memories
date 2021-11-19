@@ -38,8 +38,24 @@ jobs:
           NAME_SUFFIX: '.dev'
       #          NAME_SUFFIX: ${{ steps.get_commit_sha.outputs.VERSION }}
 
-      - name: Upload Released APKs
+      - name: Upload Released APK armv7
         uses: actions/upload-artifact@v2
         with:
-          name: app-release-all
-          path: app/build/outputs/apk/release/
+          name: scanner-armv7
+          path: app/build/outputs/apk/release/app-armeabi-v7a-release.apk
+      - name: Upload Released APK armv8
+        uses: actions/upload-artifact@v2
+        with:
+          name: scanner-armv8
+          path: app/build/outputs/apk/release/app-arm64-v8a-release.apk
+      - name: Upload Released APK x86
+        uses: actions/upload-artifact@v2
+        with:
+          name: scanner-x86
+          path: app/build/outputs/apk/release/app-x86-release.apk
+      - name: Upload Released APK x86_64
+        uses: actions/upload-artifact@v2
+        with:
+          name: scanner-x86_64(wsa)
+          path: app/build/outputs/apk/release/app-x86_64-release.apk
+
