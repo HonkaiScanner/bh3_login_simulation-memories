@@ -168,7 +168,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.tokenCheckBox.setVisibility(View.GONE);
         binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
-        binding.cardViewMain.loginText2.setVisibility(View.GONE);
+        binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = getString(R.string.types_official);
