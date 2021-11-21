@@ -39,7 +39,7 @@ public class SocketHelper {
         loopHandle.post(() -> {
             Logger.d(TAG, "启动广播监听线程...");
             try {
-                ms = new MulticastSocket(8899);
+                ms = new MulticastSocket(12585);
                 receiveAddress = InetAddress.getByName(multicastHost);
                 ms.joinGroup(receiveAddress);
                 new Thread(socket_runnable).start();
