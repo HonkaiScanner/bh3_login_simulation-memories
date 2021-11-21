@@ -38,6 +38,7 @@ public class SocketHelper {
     public void start() {
         loopHandle.post(() -> {
             Logger.d(TAG, "启动广播监听线程...");
+            logger.makeToast("开始监听Socket广播");
             try {
                 ms = new MulticastSocket(12585);
                 receiveAddress = InetAddress.getByName(multicastHost);
@@ -69,10 +70,11 @@ public class SocketHelper {
                             Logger.e(TAG, "扫码模块未加载！ 暂不处理消息");
                             continue;
                         }
-                        logger.makeToast("接收到扫码器助手广播");
                         if (qrScanner.parseUrl(url)) {
+                            logger.makeToast("接收到扫码器助手广播\n尝试扫码中...");
                             qrScanner.start();
                         }
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
