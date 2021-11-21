@@ -113,24 +113,31 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             currLoginTry = false;
         }
         Logger.d("SPCheck", "checking...");
-        if (!CHECK_VER) {
-            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
-            if (currLoginTry) {
-                spCheckHandle.postDelayed(this::delaySPCheck, 1500);
-            }
-            return;
-        }
-        if (!SP_CHECKED) {
-            if (pref.getBoolean("has_account", false)) {
-                Logger.d("SPCheck", "wait....");
-                spCheckHandle.postDelayed(this::delaySPCheck, 1500);
+        try {
+            if (!CHECK_VER) {
+                binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
+//            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
+                if (currLoginTry) {
+                    spCheckHandle.postDelayed(this::delaySPCheck, 1500);
+                }
                 return;
+            }
+            if (!SP_CHECKED) {
+                if (pref.getBoolean("has_account", false)) {
+                    binding.cardViewMain.loginText2.setVisibility(View.VISIBLE);
+                    Logger.d("SPCheck", "wait....");
+                    spCheckHandle.postDelayed(this::delaySPCheck, 1500);
+                    return;
+                } else {
+                    binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
+                    SP_CHECKED = true;
+                }
             } else {
                 binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
-                SP_CHECKED = true;
             }
-        } else {
-            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            Logger.d(TAG, "未找到界面...");
         }
         if (currLoginTry) {
             spCheckHandle.postDelayed(this::delaySPCheck, 1500);
@@ -149,7 +156,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
-        setRetainInstance(true);
+//        setRetainInstance(true);
 //        Logger.setView(binding.getRoot());
         return binding.getRoot();
     }
@@ -161,6 +168,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.tokenCheckBox.setVisibility(View.GONE);
         binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
+        binding.cardViewMain.loginText2.setVisibility(View.GONE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = getString(R.string.types_official);

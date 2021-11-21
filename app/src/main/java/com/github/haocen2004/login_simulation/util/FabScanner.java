@@ -164,10 +164,13 @@ public class FabScanner extends Service {
                                     null,
                                     mHandler);
                         } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.makeToast("悬浮窗进程异常！");
-                            toast.cancel();
-                            stopForeground(true);
+                            try {
+                                e.printStackTrace();
+                                Log.makeToast("悬浮窗进程异常！");
+                                toast.cancel();
+                                stopForeground(true);
+                            } catch (Exception ignore) {
+                            }
                         }
                         mImageReader.setOnImageAvailableListener(reader -> {
 
@@ -212,7 +215,7 @@ public class FabScanner extends Service {
                                             needStop = true;
                                             toast.cancel();
                                         } else {
-                                            Log.makeToast("未找到二维码");
+//                                            Log.makeToast("未找到二维码");  toast 由 qrScanner 发出
                                             isScreenCaptureStarted = false;
                                         }
 
