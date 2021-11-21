@@ -15,13 +15,11 @@ import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,6 +55,12 @@ import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.QRScanner;
 import com.github.haocen2004.login_simulation.util.SocketHelper;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.king.wechat.qrcode.WeChatQRCodeDetector;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+
 //import com.google.zxing.BinaryBitmap;
 //import com.google.zxing.ChecksumException;
 //import com.google.zxing.DecodeHintType;
@@ -69,12 +73,6 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 //import com.google.zxing.qrcode.QRCodeReader;
 //import com.google.zxing.util.BitmapUtil;
 //import com.google.zxing.util.Constant;
-import com.king.wechat.qrcode.WeChatQRCodeDetector;
-
-import java.io.IOException;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Objects;
 
 public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
 

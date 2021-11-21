@@ -9,11 +9,16 @@ import androidx.annotation.NonNull;
 import org.json.JSONObject;
 
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 
 public class SocketHelper {
     QRScanner qrScanner;
     private final String TAG = "SocketHelper";
+    private MulticastSocket ms;
+    private final String multicastHost = "239.0.1.255";
+    private InetAddress receiveAddress;
+    private final Logger logger;
     private final Handler loopHandle = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -22,6 +27,7 @@ public class SocketHelper {
     };
 
     public SocketHelper() {
+        logger = Logger.getLogger(null);
     }
 
     public void setQrScanner(QRScanner qrScanner) {
@@ -32,8 +38,14 @@ public class SocketHelper {
     public void start() {
         loopHandle.post(() -> {
             Logger.d(TAG, "启动广播监听线程...");
-
-            new Thread(socket_runnable).start();
+            try {
+                ms = new MulticastSocket(8899);
+                receiveAddress = InetAddress.getByName(multicastHost);
+                ms.joinGroup(receiveAddress);
+                new Thread(socket_runnable).start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -41,31 +53,23 @@ public class SocketHelper {
         @Override
         public void run() {
             Logger.d(TAG, "开始监听广播");
+            byte[] buf = new byte[1024];
+            DatagramPacket dp = new DatagramPacket(buf, 1024);
             while (true) {
-                int port = 12585; // 扫码器监听端口
-                DatagramSocket ds;
-                DatagramPacket dp;
-                byte[] buf = new byte[1024 * 4];//存储发来的消息
-                StringBuilder stringBuilder = new StringBuilder();
                 try {
-                    //绑定端口的
-                    ds = new DatagramSocket(port);
-                    dp = new DatagramPacket(buf, buf.length);
-                    ds.receive(dp);
-                    ds.close();
-                    int i;
-                    for (i = 0; i < 1024; i++) {
-                        if (buf[i] == 0) {
-                            break;
-                        }
-                        stringBuilder.append((char) buf[i]);
-                    }
-                    Logger.d(TAG, "接收到消息：" + stringBuilder.toString());
-                    JSONObject receivedJson = new JSONObject(stringBuilder.toString());
+                    ms.receive(dp);
+                    String receiveMsg = new String(buf, 0, dp.getLength());
+                    Logger.d(TAG, dp.getAddress() + ":" + dp.getPort() + ": 接收到消息: " + receiveMsg);
+                    JSONObject receivedJson = new JSONObject(receiveMsg);
                     if (receivedJson.has("scanner_data")) {
                         //{"scanner_data":{"url":"xxx","t":time}}
                         String url = receivedJson.getJSONObject("scanner_data").getString("url");
                         Logger.d(TAG, "接收到扫码器助手广播：" + receivedJson.getJSONObject("scanner_data").toString());
+                        if (qrScanner == null) {
+                            Logger.e(TAG, "扫码模块未加载！ 暂不处理消息");
+                            continue;
+                        }
+                        logger.makeToast("接收到扫码器助手广播");
                         if (qrScanner.parseUrl(url)) {
                             qrScanner.start();
                         }
@@ -74,11 +78,6 @@ public class SocketHelper {
                     e.printStackTrace();
                 }
             }
-//        本段代码参考：
-//        作者：愚公要移山
-//        链接：https://juejin.cn/post/6844903918535720973
-//        来源：稀土掘金
-//        著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
 
         }
