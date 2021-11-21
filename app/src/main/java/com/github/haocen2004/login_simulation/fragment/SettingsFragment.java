@@ -1,5 +1,8 @@
 package com.github.haocen2004.login_simulation.fragment;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
+
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,10 +17,10 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.haocen2004.login_simulation.R;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import com.github.haocen2004.login_simulation.util.Logger;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
+    private final String TAG = "Settings";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +51,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         });
 
+        findPreference("bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
+            Logger.d(TAG, newValue.toString());
+            app_pref.edit().putString("bh_ver", newValue.toString());
+            BH_VER = newValue.toString();
+            return true;
+        });
 
         findPreference("dark_type").setOnPreferenceChangeListener((preference, newValue) -> {
             switch (newValue.toString()) {

@@ -19,7 +19,7 @@ public class Logger {
     private static View view;
     private static boolean useSnackBar;
     private static List<String> logBlackList;
-    private static String blackListString;
+//    private static String blackListString;
 
     public Logger(Context context) {
         Logger.context = context;
