@@ -758,7 +758,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 qrScanner = new QRScanner(activity, loginImpl.getRole());
             }
             socketHelper.setQrScanner(qrScanner);
-            socketHelper.start();
+            if (pref.getBoolean("socket_helper", false)) {
+                socketHelper.start();
+            }
         });
     }
 
