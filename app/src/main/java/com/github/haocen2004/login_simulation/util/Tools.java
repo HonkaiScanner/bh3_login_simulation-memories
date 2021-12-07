@@ -165,7 +165,7 @@ public static void changeToWDJ(Activity activity) {
             while (needLoop) {
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
                 if (feedback != null) {
-                    needLoop = false;
+//                    needLoop = false;
                     JSONObject feedback_json = null;
                     try {
                         feedback_json = new JSONObject(feedback);
@@ -174,7 +174,9 @@ public static void changeToWDJ(Activity activity) {
                     }
                 if (feedback_json != null) {
                     if (feedback_json.getInt("retcode") == 0) {
-                    Logger.addBlacklist(feedback_json.getJSONObject("data").getString("combo_token"));
+                        Logger.addBlacklist(feedback_json.getJSONObject("data").getString("combo_token"));
+                        needLoop = false;
+                    }
                 }
             }
             Logger.d(TAG, "handleMessage: " + feedback);
