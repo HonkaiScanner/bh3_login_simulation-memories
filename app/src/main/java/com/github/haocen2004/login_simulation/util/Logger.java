@@ -51,8 +51,10 @@ public class Logger {
 //        d("addBlackList",blackListString);
 //        d("addBlackList",logBlackList.toString());
         if (logBlackList.contains(blackMsg)) return;
+        if (blackMsg.length() < 2) {
+            d("BlackList", "blackMsg is too short.");
+        }
         logBlackList.add(blackMsg);
-//        if (blackMsg.length() < 4) d("BlackList", "blackMsg is too short: " + blackMsg);
 //        if (blackListString.equals("")) {
 //            blackListString = blackMsg;
 //        } else {
