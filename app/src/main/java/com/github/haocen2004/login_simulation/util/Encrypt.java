@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.util;
 
+import static com.github.haocen2004.login_simulation.util.Constant.BH_APP_KEY;
+
 import android.os.Build;
 
 import java.io.UnsupportedEncodingException;
@@ -15,9 +17,8 @@ import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import static com.github.haocen2004.login_simulation.util.Constant.BH_APP_KEY;
-
 public class Encrypt {
+    private static final String TAG = "Encrypt";
     private static final byte[] base64DecodeChars = new byte[]{
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -71,6 +72,7 @@ public class Encrypt {
         stringBuilder.append(paramString1);
         stringBuilder.append(" secret ");
         stringBuilder.append(paramString2);
+        Logger.d(TAG, stringBuilder.toString());
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(paramString2.getBytes(), "HmacSHA256"));

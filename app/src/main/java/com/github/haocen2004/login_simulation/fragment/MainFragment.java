@@ -129,11 +129,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     spCheckHandle.postDelayed(this::delaySPCheck, 1500);
                     return;
                 } else {
-                    binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
+                    binding.cardViewMain.loginText2.setText(activity.getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
                     SP_CHECKED = true;
                 }
             } else {
-                binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
+                binding.cardViewMain.loginText2.setText(activity.getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
             }
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -171,7 +171,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
-                server_type = getString(R.string.types_official);
+                server_type = activity.getString(R.string.types_official);
                 binding.officialSlotSelect.setVisibility(View.VISIBLE);
                 binding.tokenCheckBox.setVisibility(View.VISIBLE);
                 binding.officialTypeSel.setVisibility(View.VISIBLE);
@@ -200,48 +200,51 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 binding.tokenCheckBox.setChecked(pref.getBoolean("use_token", false));
                 break;
             case "Bilibili":
-                server_type = getString(R.string.types_bilibili);
+                server_type = activity.getString(R.string.types_bilibili);
                 break;
             case "Xiaomi":
-                server_type = getString(R.string.types_xiaomi);
+                server_type = activity.getString(R.string.types_xiaomi);
                 break;
             case "UC":
-                server_type = getString(R.string.types_uc);
+                server_type = activity.getString(R.string.types_uc);
                 binding.checkBoxWDJ.setVisibility(View.VISIBLE);
                 binding.checkBoxWDJ.setChecked(pref.getBoolean("use_wdj", false));
                 break;
             case "Vivo":
-                server_type = getString(R.string.types_vivo);
+                server_type = activity.getString(R.string.types_vivo);
                 break;
             case "Oppo":
-                server_type = getString(R.string.types_oppo);
+                server_type = activity.getString(R.string.types_oppo);
                 break;
             case "Flyme":
-                server_type = getString(R.string.types_flyme);
+                server_type = activity.getString(R.string.types_flyme);
                 break;
             default:
                 server_type = "DEBUG -- SERVER ERROR";
         }
-        binding.cardViewMain.serverText.setText(getString(R.string.types_prefix) + server_type);
+        binding.cardViewMain.serverText.setText(activity.getString(R.string.types_prefix) + server_type);
         boolean isLogin = false;
         if (loginImpl != null && loginImpl.isLogin()) isLogin = true;
+        if (isLogin) {
+            binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
+            binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
+            binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_check_circle_outline_24);
+        } else {
+            binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
+            binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
 
-        binding.cardViewMain.loginText.setText(getString(R.string.bh_login_pref) + getString(isLogin ? R.string.login_true : R.string.login_false));
+        }
+        binding.cardViewMain.loginText.setText(activity.getString(R.string.bh_login_pref) + activity.getString(isLogin ? R.string.login_true : R.string.login_false));
         binding.cardViewMain.btnCard1Action2.setIconResource(pref.getBoolean("auto_login", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
         binding.cardViewMain.btnCard1Action3.setIconResource(pref.getBoolean("auto_confirm", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
 //        binding.cardViewMain.loginText2.setText("赞助者状态：" + (HAS_ACCOUNT ? "已登录" : "未登录"));
         binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
 
-        if (!(loginImpl != null && loginImpl.isLogin())) {
-            binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
-            binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
-        }
 
         if (needRestart) {
             binding.cardViewMain.serverText.setText(R.string.logged_and_restart);
             binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
         }
-
     }
 
     private void setupListener() {
@@ -297,7 +300,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 itemSelected++;
             }
             new AlertDialog.Builder(getContext())
-                    .setTitle(getString(R.string.sel_server))
+                    .setTitle(activity.getString(R.string.sel_server))
                     .setSingleChoiceItems(singleChoiceItems, itemSelected, (dialogInterface, i) -> {
 
                         pref.edit().putString("server_type", serverList[i]).apply();
@@ -308,20 +311,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         refreshView();
                         dialogInterface.dismiss();
                     })
-                    .setNegativeButton(getString(R.string.btn_cancel), null)
+                    .setNegativeButton(activity.getString(R.string.btn_cancel), null)
                     .show();
         });
         binding.cardViewMain.btnCard1Action2.setOnClickListener(view1 -> {
             boolean newStatus = !pref.getBoolean("auto_login", false);
             pref.edit().putBoolean("auto_login", newStatus).apply();
-            makeToast(getString(R.string.auto_login_pref) + (newStatus ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
+            makeToast(activity.getString(R.string.auto_login_pref) + (newStatus ? activity.getString(R.string.boolean_true) : activity.getString(R.string.boolean_false)));
 //            binding.cardViewMain.loginText2.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
             binding.cardViewMain.btnCard1Action2.setIconResource(newStatus ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
         });
         binding.cardViewMain.btnCard1Action3.setOnClickListener(view1 -> {
             boolean newStatus = !pref.getBoolean("auto_confirm", false);
             pref.edit().putBoolean("auto_confirm", newStatus).apply();
-            makeToast(getString(R.string.confirm_prefix) + (newStatus ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
+            makeToast(activity.getString(R.string.confirm_prefix) + (newStatus ? activity.getString(R.string.boolean_true) : activity.getString(R.string.boolean_false)));
 //            binding.cardViewMain.loginText2.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
             binding.cardViewMain.btnCard1Action3.setIconResource(newStatus ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
         });
@@ -743,10 +746,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onLoginSucceed() {
-        spCheckHandle.post(() -> {
-            binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
-            binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
-            binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_check_circle_outline_24);
+        spCheckHandle.postDelayed(() -> {
             pref.edit().putBoolean("last_login_succeed", true).apply();
             loginProgress = false;
             makeToast(R.string.login_succeed);
@@ -761,7 +761,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             if (pref.getBoolean("socket_helper", false)) {
                 socketHelper.start();
             }
-        });
+        }, 500);
     }
 
     @Override
