@@ -162,23 +162,27 @@ public static void changeToWDJ(Activity activity) {
             Logger.i(TAG, "run: " + login_json.toString());
             boolean needLoop = true;
             String feedback = null;
+            JSONObject feedback_json = null;
             while (needLoop) {
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
+                feedback_json = null;
                 if (feedback != null) {
-                    needLoop = false;
+//                    needLoop = false;
+                    try {
+                        feedback_json = new JSONObject(feedback);
+                    } catch (JSONException e) {
+                       e.printStackTrace();
+                    }
+                }
+               if (feedback_json != null) {
+                    if (feedback_json.getInt("retcode") == 0) {
+                        Logger.addBlacklist(feedback_json.getJSONObject("data").getString("combo_token"));
+                        needLoop = false;
+                    }
                 }
             }
             Logger.d(TAG, "handleMessage: " + feedback);
             return feedback;
-//            JSONObject feedback_json = null;
-//            try {
-//                feedback_json = new JSONObject(feedback);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            BuglyLog.i(TAG, "handleMessage: " + feedback);
-//                if (feedback_json != null) {
-//                    if (feedback_json.getInt("retcode") == 0) {
 //
 //                        JSONObject data_json2 = feedback_json.getJSONObject("data");
 //                        String combo_id = data_json2.getString("combo_id");

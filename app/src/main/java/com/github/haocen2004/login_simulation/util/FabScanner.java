@@ -1,5 +1,8 @@
 package com.github.haocen2004.login_simulation.util;
 
+import static com.github.haocen2004.login_simulation.util.Constant.BAG_ALTER_NOTIFICATION;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
@@ -32,23 +35,21 @@ import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.activity.MainActivity;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.ChecksumException;
-import com.google.zxing.DecodeHintType;
-import com.google.zxing.FormatException;
-import com.google.zxing.NotFoundException;
-import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.decoding.RGBLuminanceSource;
-import com.google.zxing.qrcode.QRCodeReader;
 import com.hjq.xtoast.XToast;
 import com.hjq.xtoast.draggable.SpringDraggable;
+import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
 import java.nio.ByteBuffer;
-import java.util.Hashtable;
 import java.util.Objects;
 
-import static com.github.haocen2004.login_simulation.util.Constant.BAG_ALTER_NOTIFICATION;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
+//import com.google.zxing.BinaryBitmap;
+//import com.google.zxing.ChecksumException;
+//import com.google.zxing.DecodeHintType;
+//import com.google.zxing.FormatException;
+//import com.google.zxing.NotFoundException;
+//import com.google.zxing.common.HybridBinarizer;
+//import com.google.zxing.decoding.RGBLuminanceSource;
+//import com.google.zxing.qrcode.QRCodeReader;
 
 public class FabScanner extends Service {
     private static FabScanner INSTANCE;
@@ -163,10 +164,13 @@ public class FabScanner extends Service {
                                     null,
                                     mHandler);
                         } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.makeToast("悬浮窗进程异常！");
-                            toast.cancel();
-                            stopForeground(true);
+                            try {
+                                e.printStackTrace();
+                                Log.makeToast("悬浮窗进程异常！");
+                                toast.cancel();
+                                stopForeground(true);
+                            } catch (Exception ignore) {
+                            }
                         }
                         mImageReader.setOnImageAvailableListener(reader -> {
 
@@ -189,19 +193,20 @@ public class FabScanner extends Service {
                                                 , height, Bitmap.Config.ARGB_8888);
                                         bitmap.copyPixelsFromBuffer(buffer);
                                         mbitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+                                        url = WeChatQRCodeDetector.detectAndDecode(bitmap).get(0);
+//                                        Hashtable<DecodeHintType, String> hints = new Hashtable<>();
+//                                        hints.put(DecodeHintType.CHARACTER_SET, "UTF8");
+//
+//                                        RGBLuminanceSource source = new RGBLuminanceSource(mbitmap);
+//                                        BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
+//                                        QRCodeReader reader2 = new QRCodeReader();
+//                                        try {
+//                                            url = reader2.decode(bitmap1, hints).getText();
+//                                        } catch (NotFoundException | ChecksumException | FormatException e) {
+//                                            url = "";
+//                                            e.printStackTrace();
+//                                        }
 
-                                        Hashtable<DecodeHintType, String> hints = new Hashtable<>();
-                                        hints.put(DecodeHintType.CHARACTER_SET, "UTF8");
-
-                                        RGBLuminanceSource source = new RGBLuminanceSource(mbitmap);
-                                        BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
-                                        QRCodeReader reader2 = new QRCodeReader();
-                                        try {
-                                            url = reader2.decode(bitmap1, hints).getText();
-                                        } catch (NotFoundException | ChecksumException | FormatException e) {
-                                            url = "";
-                                            e.printStackTrace();
-                                        }
                                         if (qrScanner.parseUrl(url)) {
                                             Log.makeToast("扫码成功\n处理中....");
                                             qrScanner.start();
@@ -210,7 +215,7 @@ public class FabScanner extends Service {
                                             needStop = true;
                                             toast.cancel();
                                         } else {
-                                            Log.makeToast("未找到二维码");
+//                                            Log.makeToast("未找到二维码");  toast 由 qrScanner 发出
                                             isScreenCaptureStarted = false;
                                         }
 

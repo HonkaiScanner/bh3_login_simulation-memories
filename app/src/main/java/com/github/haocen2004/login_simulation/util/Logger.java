@@ -12,9 +12,6 @@ import com.tencent.bugly.crashreport.BuglyLog;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.haocen2004.login_simulation.util.Tools.getString;
-import static com.github.haocen2004.login_simulation.util.Tools.saveString;
-
 @SuppressLint("StaticFieldLeak")
 public class Logger {
     private static Logger INSTANCE;
@@ -22,23 +19,23 @@ public class Logger {
     private static View view;
     private static boolean useSnackBar;
     private static List<String> logBlackList;
-    private static String blackListString;
+//    private static String blackListString;
 
     public Logger(Context context) {
         Logger.context = context;
         useSnackBar = false;
         logBlackList = new ArrayList();
-        blackListString = getString(context, "logBlackLists");
-        if (!blackListString.equals("")) {
-            for (String blackItem : blackListString.split(";")) {
-                if (blackItem.length() < 4) w("BlackList", "blackMsg is too short: " + blackItem);
-                if (!blackItem.equals("")) {
-                    logBlackList.add(blackItem);
-                }
-            }
-            d("BlackList", "Total " + logBlackList.size());
-//            logBlackList.addAll(Arrays.asList(blackListString.split(";")));
-        }
+//        blackListString = getString(context, "logBlackLists");
+//        if (!blackListString.equals("")) {
+//            for (String blackItem : blackListString.split(";")) {
+//                if (blackItem.length() < 4) w("BlackList", "blackMsg is too short: " + blackItem);
+//                if (!blackItem.equals("")) {
+//                    logBlackList.add(blackItem);
+//                }
+//            }
+//            d("BlackList", "Total " + logBlackList.size());
+////            logBlackList.addAll(Arrays.asList(blackListString.split(";")));
+//        }
 //        ToastUtils.init();
     }
 
@@ -54,14 +51,17 @@ public class Logger {
 //        d("addBlackList",blackListString);
 //        d("addBlackList",logBlackList.toString());
         if (logBlackList.contains(blackMsg)) return;
-        logBlackList.add(blackMsg);
-        if (blackMsg.length() < 4) d("BlackList", "blackMsg is too short: " + blackMsg);
-        if (blackListString.equals("")) {
-            blackListString = blackMsg;
-        } else {
-            blackListString = blackListString + ";" + blackMsg;
+        if (blackMsg.length() < 2) {
+            d("BlackList", "blackMsg is too short.");
+            return;
         }
-        saveString(context, "logBlackLists", blackListString);
+        logBlackList.add(blackMsg);
+//        if (blackListString.equals("")) {
+//            blackListString = blackMsg;
+//        } else {
+//            blackListString = blackListString + ";" + blackMsg;
+//        }
+//        saveString(context, "logBlackLists", blackListString);
     }
 
     public static void setView(View view) {

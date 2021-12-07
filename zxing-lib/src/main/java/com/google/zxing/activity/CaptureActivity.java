@@ -96,7 +96,7 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
 
     }
 
-    private View.OnClickListener albumOnClick = new View.OnClickListener() {
+    private final View.OnClickListener albumOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             //打开手机中的相册
@@ -341,7 +341,7 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
     /**
      *  闪光灯开关按钮
      */
-    private View.OnClickListener flashListener = new View.OnClickListener() {
+    private final View.OnClickListener flashListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             try {

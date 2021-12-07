@@ -95,6 +95,7 @@
     <string name="btn_auto_login">自动登录</string>
     <string name="btn_auto_confirm">自动确认</string>
     <string name="msg_getOa">获取OA服务器中</string>
+    <string name="use_socket">接收Socket请求</string>
 
 
 </resources>

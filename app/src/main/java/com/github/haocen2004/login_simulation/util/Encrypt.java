@@ -51,7 +51,7 @@ public class Encrypt {
             stringBuilder.append(paramMap.get(str));
             stringBuilder.append("&");
         }
-        return sha256HMAC(stringBuilder.toString().substring(0, stringBuilder.length() - 1), BH_APP_KEY);
+        return sha256HMAC(stringBuilder.substring(0, stringBuilder.length() - 1), BH_APP_KEY);
     }
 
     public static String byteArrayToHexString(byte[] paramArrayOfbyte) {

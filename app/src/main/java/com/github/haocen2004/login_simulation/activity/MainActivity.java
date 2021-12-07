@@ -1,5 +1,17 @@
 package com.github.haocen2004.login_simulation.activity;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
+import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
+import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
+import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
+import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
+import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -21,8 +33,10 @@ import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
+import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
 import org.json.JSONObject;
+import org.opencv.OpenCV;
 
 import java.util.concurrent.Executors;
 
@@ -31,18 +45,6 @@ import cn.leancloud.AVOSCloud;
 import cn.leancloud.AVUser;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
-import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
-import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
-import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
-import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
-import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
-import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
-import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
-import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
-import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
@@ -87,13 +89,14 @@ public class MainActivity extends AppCompatActivity {
             }
             binding.mainInclude.collapsingToolbarLayout.setTitle(toolbarTitle);
         });
-        if (app_pref.getBoolean("showBetaInfo", DEBUG)) {
+        if (app_pref.getBoolean("showBetaInfo", getPackageName().contains("dev"))) {
             showBetaInfoDialog();
         }
 
-        if (VERSION_CODE >= 16 && !app_pref.getBoolean("show140NewFeature", false)) {
-            show14NewFeatureDialog();
-        }
+        // 新版本功能介绍
+//        if (VERSION_CODE >= 24 && !app_pref.getBoolean("show150NewFeature", false)) {
+//            show15NewFeatureDialog();
+//        }
 
 
         // 优先读取本地数据
@@ -107,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
         if (CHECK_VER) {
             new Thread(update_rb).start();
         }
+
+        OpenCV.initAsync(this);
+        WeChatQRCodeDetector.init(this);
     }
 
     @SuppressLint("HandlerLeak")
@@ -263,14 +269,14 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.show();
     }
 
-    private void show14NewFeatureDialog() {
+    private void show15NewFeatureDialog() {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("1.4.0 新功能介绍");
-        normalDialog.setMessage("1.主界面优化\n将更多常用的功能放到主页\n点击卡片登录账号，长按卡片退出账号\n\n2.自动登录\n现在可以在扫码器启动后自动尝试登录已有的账号了\n\n3.悬浮窗扫码\n登录后【长按】扫码按钮即可打开\n该功能需要一些额外权限\n\n新Icon：Pixiv-77505884\n新侧拉顶图：Pixiv-89418903\n");
+        normalDialog.setTitle("1.5.0 新功能介绍");
+        normalDialog.setMessage("TODO");
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
-                    app_pref.edit().putBoolean("show140NewFeature", true).apply();
+                    app_pref.edit().putBoolean("show150NewFeature", true).apply();
                     dialog.dismiss();
                 });
         normalDialog.setCancelable(false);

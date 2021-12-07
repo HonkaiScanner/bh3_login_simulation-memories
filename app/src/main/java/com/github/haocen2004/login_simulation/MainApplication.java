@@ -1,5 +1,12 @@
 package com.github.haocen2004.login_simulation;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
+import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
+import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
+
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.view.Gravity;
@@ -10,13 +17,6 @@ import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
-import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
-import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
-import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
-import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
 
 public class MainApplication extends Application {
     private SharedPreferences app_pref;
@@ -87,6 +87,11 @@ public class MainApplication extends Application {
             if (!app_pref.contains("bh_ver")) {
                 app_pref.edit()
                         .putString("bh_ver", BH_VER)
+                        .apply();
+            }
+            if (!app_pref.contains("use_socket")) {
+                app_pref.edit()
+                        .putBoolean("use_socket", false)
                         .apply();
             }
 

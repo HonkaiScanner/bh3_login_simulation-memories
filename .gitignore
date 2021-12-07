@@ -14,3 +14,7 @@
 app/src/androidTest/
 app/src/test/
 /app/bugly/
+/helper/build/
+/helper/dist/
+/helper/__pycache__/
+main.spec

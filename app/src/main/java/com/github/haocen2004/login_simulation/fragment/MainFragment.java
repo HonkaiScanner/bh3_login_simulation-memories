@@ -1,19 +1,31 @@
 package com.github.haocen2004.login_simulation.fragment;
 
+import static android.app.Activity.RESULT_OK;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_CODE_SCAN_GALLERY;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_WINDOW;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE;
+import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
+import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +40,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.activity.ScannerActivity;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
@@ -36,38 +49,30 @@ import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.Oppo;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
+import com.github.haocen2004.login_simulation.util.Constant;
 import com.github.haocen2004.login_simulation.util.FabScanner;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.QRScanner;
+import com.github.haocen2004.login_simulation.util.SocketHelper;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.ChecksumException;
-import com.google.zxing.DecodeHintType;
-import com.google.zxing.FormatException;
-import com.google.zxing.NotFoundException;
-import com.google.zxing.Result;
-import com.google.zxing.activity.CaptureActivity;
-import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.decoding.RGBLuminanceSource;
-import com.google.zxing.qrcode.QRCodeReader;
-import com.google.zxing.util.BitmapUtil;
-import com.google.zxing.util.Constant;
+import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
-import java.util.Hashtable;
+import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
-import static android.app.Activity.RESULT_OK;
-import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
-import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_CODE_SCAN_GALLERY;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_WINDOW;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE;
-import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
-import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
+//import com.google.zxing.BinaryBitmap;
+//import com.google.zxing.ChecksumException;
+//import com.google.zxing.DecodeHintType;
+//import com.google.zxing.FormatException;
+//import com.google.zxing.NotFoundException;
+//import com.google.zxing.Result;
+//import com.google.zxing.activity.CaptureActivity;
+//import com.google.zxing.common.HybridBinarizer;
+//import com.google.zxing.decoding.RGBLuminanceSource;
+//import com.google.zxing.qrcode.QRCodeReader;
+//import com.google.zxing.util.BitmapUtil;
+//import com.google.zxing.util.Constant;
 
 public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
 
@@ -80,6 +85,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private FragmentMainBinding binding;
     private Logger Log;
     private FabScanner fabScanner;
+    private SocketHelper socketHelper;
     private Boolean loginProgress = false;
     private int currSlot = 999;
     private int currType = 999;
@@ -100,34 +106,41 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 doLogin();
                 currLoginTry = false;
             } else {
-                makeToast("自动登录将在3s后开始");
+//                makeToast("自动登录将在3s后开始");
                 currLoginTry = true;
             }
         } else {
             currLoginTry = false;
         }
         Logger.d("SPCheck", "checking...");
-        if (!CHECK_VER) {
-            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
-            if (currLoginTry) {
-                spCheckHandle.postDelayed(this::delaySPCheck, 3000);
-            }
-            return;
-        }
-        if (!SP_CHECKED) {
-            if (pref.getBoolean("has_account", false)) {
-                Logger.d("SPCheck", "wait....");
-                spCheckHandle.postDelayed(this::delaySPCheck, 3000);
+        try {
+            if (!CHECK_VER) {
+                binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
+//            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
+                if (currLoginTry) {
+                    spCheckHandle.postDelayed(this::delaySPCheck, 1500);
+                }
                 return;
+            }
+            if (!SP_CHECKED) {
+                if (pref.getBoolean("has_account", false)) {
+                    binding.cardViewMain.loginText2.setVisibility(View.VISIBLE);
+                    Logger.d("SPCheck", "wait....");
+                    spCheckHandle.postDelayed(this::delaySPCheck, 1500);
+                    return;
+                } else {
+                    binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
+                    SP_CHECKED = true;
+                }
             } else {
                 binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
-                SP_CHECKED = true;
             }
-        } else {
-            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? getString(R.string.login_true) : getString(R.string.login_false)));
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            Logger.d(TAG, "未找到界面...");
         }
         if (currLoginTry) {
-            spCheckHandle.postDelayed(this::delaySPCheck, 3000);
+            spCheckHandle.postDelayed(this::delaySPCheck, 1500);
         }
 
     }
@@ -139,10 +152,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         activity = (AppCompatActivity) getActivity();
         context = getContext();
         fabScanner = new FabScanner(this);
+        socketHelper = new SocketHelper();
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
-        setRetainInstance(true);
+//        setRetainInstance(true);
 //        Logger.setView(binding.getRoot());
         return binding.getRoot();
     }
@@ -154,6 +168,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.tokenCheckBox.setVisibility(View.GONE);
         binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
+        binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = getString(R.string.types_official);
@@ -252,9 +267,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.btnSelpic.setOnClickListener(view1 -> {
             try {
                 if (loginImpl.isLogin()) {
-                    Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
-                    innerIntent.setType("image/*");
-                    startActivityForResult(innerIntent, REQ_CODE_SCAN_GALLERY);
+
+                    Intent pickIntent = new Intent(Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                    startActivityForResult(pickIntent, REQ_CODE_SCAN_GALLERY);
+
+
+//                    Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
+//                    innerIntent.setType("image/*");
+//                    startActivityForResult(innerIntent, REQ_CODE_SCAN_GALLERY);
                 } else {
                     makeToast(R.string.error_not_login);
                 }
@@ -395,29 +417,50 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 }
             }
             if (requestCode == REQ_CODE_SCAN_GALLERY) {
-                final Uri uri = data.getData();
 
-                ProgressDialog mProgress = new ProgressDialog(getContext());
-                mProgress.setMessage("正在扫描...");
-                mProgress.setCancelable(false);
-                mProgress.show();
-                activity.runOnUiThread(() -> {
-                    Result result = scanningImage(uri);
-                    mProgress.dismiss();
-                    if (result != null) {
+                Bitmap bitmap;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),data.getData());
+                    List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
+                if (result.size() >= 1) {
                         Intent resultIntent = new Intent();
                         Bundle bundle = resultIntent.getExtras();
                         if (bundle == null) {
                             bundle = new Bundle();
                         }
-                        bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, result.getText());
+                        bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, result.get(0));
 
                         resultIntent.putExtras(bundle);
                         onActivityResult(REQ_QR_CODE, RESULT_OK, resultIntent);
                     } else {
-                        Log.makeToast(com.google.zxing.R.string.note_identify_failed);
+                        Log.makeToast("未找到二维码");
                     }
-                });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+//                final Uri uri = data.getData();
+//
+//                ProgressDialog mProgress = new ProgressDialog(getContext());
+//                mProgress.setMessage("正在扫描...");
+//                mProgress.setCancelable(false);
+//                mProgress.show();
+//                activity.runOnUiThread(() -> {
+//                    List<String> result = scanningImage(uri);
+//                    mProgress.dismiss();
+//                    if (result != null) {
+//                        Intent resultIntent = new Intent();
+//                        Bundle bundle = resultIntent.getExtras();
+//                        if (bundle == null) {
+//                            bundle = new Bundle();
+//                        }
+//                        bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, result.get(0));
+//
+//                        resultIntent.putExtras(bundle);
+//                        onActivityResult(REQ_QR_CODE, RESULT_OK, resultIntent);
+//                    } else {
+//                        Log.makeToast(com.google.zxing.R.string.note_identify_failed);
+//                    }
+//                });
             }
             if (requestCode == REQ_PERM_WINDOW) {
                 fabScanner.showAlertScanner();
@@ -437,26 +480,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
 
     }
-
-    public Result scanningImage(Uri uri) {
-        if (uri == null) {
-            return null;
-        }
-        Hashtable<DecodeHintType, String> hints = new Hashtable<>();
-        hints.put(DecodeHintType.CHARACTER_SET, "UTF8"); //设置二维码内容的编码
-
-        Bitmap scanBitmap = BitmapUtil.decodeUri(getContext(), uri, 500, 500);
-        RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
-        BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
-        QRCodeReader reader = new QRCodeReader();
-        try {
-            return reader.decode(bitmap1, hints);
-        } catch (NotFoundException | ChecksumException | FormatException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -485,7 +508,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQ_PERM_CAMERA);
             return;
         }
-        Intent intent = new Intent(context, CaptureActivity.class);
+        Intent intent = new Intent(context, ScannerActivity.class);
         startActivityForResult(intent, com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE);
     }
 
@@ -728,6 +751,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             loginProgress = false;
             makeToast(R.string.login_succeed);
             refreshView();
+            QRScanner qrScanner;
+            if (isOfficial) {
+                qrScanner = new QRScanner(activity, true);
+            } else {
+                qrScanner = new QRScanner(activity, loginImpl.getRole());
+            }
+            socketHelper.setQrScanner(qrScanner);
+            if (pref.getBoolean("socket_helper", false)) {
+                socketHelper.start();
+            }
         });
     }
 

@@ -96,5 +96,6 @@
     <string name="btn_auto_login">Auto\nLogin</string>
     <string name="btn_auto_confirm">Auto\nConfirm</string>
     <string name="msg_getOa">Getting OA Server</string>
+    <string name="use_socket">Receive socket requests</string>
 
 </resources>

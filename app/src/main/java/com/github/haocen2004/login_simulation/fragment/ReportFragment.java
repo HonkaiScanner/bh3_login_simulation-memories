@@ -1,5 +1,8 @@
 package com.github.haocen2004.login_simulation.fragment;
 
+import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
+import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +17,6 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.FragmentReportBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
-
-import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
-import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 public class ReportFragment extends Fragment implements View.OnClickListener {
     private FragmentReportBinding binding;
@@ -55,10 +55,10 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
         } else if (binding.reportQq.equals(view)) {
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getActivity());
             normalDialog.setTitle("加群暗号");
-            normalDialog.setMessage("扫码器");
+            normalDialog.setMessage("Hao_cen");
             normalDialog.setPositiveButton("打开加群界面",
                     (dialog, which) -> {
-                        openUrl("https://jq.qq.com/?_wv=1027&k=v4Z91CMR", requireActivity());
+                        openUrl("https://jq.qq.com/?_wv=1027&k=yym6JCqT", requireActivity());
                         dialog.dismiss();
                     });
             normalDialog.setNegativeButton(R.string.btn_cancel,
