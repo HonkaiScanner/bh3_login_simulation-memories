@@ -172,6 +172,7 @@ public static void changeToWDJ(Activity activity) {
                     } catch (JSONException e) {
                        e.printStackTrace();
                     }
+                }
                 if (feedback_json != null) {
                     if (feedback_json.getInt("retcode") == 0) {
                         Logger.addBlacklist(feedback_json.getJSONObject("data").getString("combo_token"));
