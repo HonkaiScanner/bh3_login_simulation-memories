@@ -53,6 +53,7 @@ public class Logger {
         if (logBlackList.contains(blackMsg)) return;
         if (blackMsg.length() < 2) {
             d("BlackList", "blackMsg is too short.");
+            return;
         }
         logBlackList.add(blackMsg);
 //        if (blackListString.equals("")) {
