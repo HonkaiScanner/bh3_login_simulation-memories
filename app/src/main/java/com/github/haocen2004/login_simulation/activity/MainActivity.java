@@ -15,6 +15,7 @@ import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -113,6 +114,18 @@ public class MainActivity extends AppCompatActivity {
 
         OpenCV.initAsync(this);
         WeChatQRCodeDetector.init(this);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Logger.d("ORIENTATION", "SWITCH");
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Logger.d("ORIENTATION", "LANDSCAPE");
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Logger.d("ORIENTATION", "PORTRAIT");
+        }
     }
 
     @SuppressLint("HandlerLeak")

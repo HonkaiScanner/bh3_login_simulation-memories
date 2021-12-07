@@ -50,6 +50,7 @@
             android:required="false" />
 
         <activity android:name=".activity.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true">
 
             <intent-filter>
