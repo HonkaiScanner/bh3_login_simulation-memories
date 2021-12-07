@@ -162,18 +162,19 @@ public static void changeToWDJ(Activity activity) {
             Logger.i(TAG, "run: " + login_json.toString());
             boolean needLoop = true;
             String feedback = null;
+            JSONObject feedback_json = null;
             while (needLoop) {
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
+                feedback_json = null;
                 if (feedback != null) {
 //                    needLoop = false;
-                    JSONObject feedback_json = null;
                     try {
                         feedback_json = new JSONObject(feedback);
                     } catch (JSONException e) {
                        e.printStackTrace();
                     }
                 }
-                if (feedback_json != null) {
+               if (feedback_json != null) {
                     if (feedback_json.getInt("retcode") == 0) {
                         Logger.addBlacklist(feedback_json.getJSONObject("data").getString("combo_token"));
                         needLoop = false;
