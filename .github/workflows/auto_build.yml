@@ -76,15 +76,3 @@ jobs:
         with:
           name: scanner-x86_64(wsa)
           path: app/build/outputs/apk/release/app-x86_64-release.apk
-
-      - name: Upload File to Release
-        if: ${{ github.ref == 'refs/heads/main' }}
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            app/build/outputs/apk/release/app-armeabi-v7a-release.apk
-            app/build/outputs/apk/release/app-arm64-v8a-release.apk
-            app/build/outputs/apk/release/app-x86-release.apk
-            app/build/outputs/apk/release/app-x86_64-release.apk
-          body: Released By Action
-          generate_release_notes: true
