@@ -40,7 +40,6 @@ jobs:
         if: ${{ github.ref == 'refs/heads/dev' }}
         run: |
           chmod +x gradlew
-        #  ./gradlew clean
           ./gradlew build
 
         env:
