@@ -17,6 +17,16 @@ jobs:
           java-version: 11
           distribution: temurin
 
+      - name: Gradle Cache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            
       - name: gen JKS File
         run: echo $ENCODED_KEYSTORE | base64 -di > app/keystore.jks
         env:
@@ -45,13 +55,17 @@ jobs:
           chmod +x gradlew
           ./gradlew clean
           ./gradlew build
-
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           NAME_SUFFIX: ''
         #          NAME_SUFFIX: ${{ steps.get_commit_sha.outputs.VERSION }}
+      
+      - name: Build File Check
+        run: |
+          cd app/build/outputs/apk/release/
+          ls
 
       - name: Upload Released APK armv7
         uses: actions/upload-artifact@v2
@@ -64,13 +78,7 @@ jobs:
         with:
           name: scanner-armv8
           path: app/build/outputs/apk/release/app-arm64-v8a-release.apk
-
-      - name: Upload Released APK x86
-        uses: actions/upload-artifact@v2
-        with:
-          name: scanner-x86
-          path: app/build/outputs/apk/release/app-x86-release.apk
-
+          
       - name: Upload Released APK x86_64
         uses: actions/upload-artifact@v2
         with:
