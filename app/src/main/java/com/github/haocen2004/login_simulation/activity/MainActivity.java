@@ -111,9 +111,13 @@ public class MainActivity extends AppCompatActivity {
         if (CHECK_VER) {
             new Thread(update_rb).start();
         }
-
-        OpenCV.initAsync(this);
-        WeChatQRCodeDetector.init(this);
+        try {
+            OpenCV.initAsync(this);
+            WeChatQRCodeDetector.init(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showWrongABIDialog();
+        }
     }
 
     @Override
@@ -291,6 +295,21 @@ public class MainActivity extends AppCompatActivity {
                 (dialog, which) -> {
                     app_pref.edit().putBoolean("show150NewFeature", true).apply();
                     dialog.dismiss();
+                });
+        normalDialog.setCancelable(false);
+        normalDialog.show();
+    }
+
+    private void showWrongABIDialog() {
+
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+        normalDialog.setTitle("错误");
+        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:"+android.os.Build.CPU_ABI);
+        normalDialog.setPositiveButton("我已知晓",
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                    System.exit(0);
                 });
         normalDialog.setCancelable(false);
         normalDialog.show();
