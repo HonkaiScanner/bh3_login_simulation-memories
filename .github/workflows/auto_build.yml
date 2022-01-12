@@ -18,7 +18,7 @@ jobs:
           distribution: temurin
 
       - name: Gradle Cache
-      - uses: actions/cache@v2
+        uses: actions/cache@v2
         with:
           path: |
             ~/.gradle/caches
