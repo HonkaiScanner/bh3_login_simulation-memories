@@ -90,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
             }
             binding.mainInclude.collapsingToolbarLayout.setTitle(toolbarTitle);
         });
+        try {
+            OpenCV.initAsync(this);
+            WeChatQRCodeDetector.init(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showWrongABIDialog();
+            return;
+        }
         if (app_pref.getBoolean("showBetaInfo", getPackageName().contains("dev"))) {
             showBetaInfoDialog();
         }
@@ -110,13 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (CHECK_VER) {
             new Thread(update_rb).start();
-        }
-        try {
-            OpenCV.initAsync(this);
-            WeChatQRCodeDetector.init(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-            showWrongABIDialog();
         }
     }
 
