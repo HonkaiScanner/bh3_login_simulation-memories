@@ -26,7 +26,10 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-            
+      
+      - name: show dir info 1
+        run : ls -la
+
       - name: gen JKS File
         run: echo $ENCODED_KEYSTORE | base64 -di > app/keystore.jks
         env:
@@ -65,6 +68,8 @@ jobs:
       #   run: |
       #     cd app/build/outputs/apk/release/
       #     ls
+      - name: show dir info 2
+        run : ls -la
 
       - name: Upload Released APK armv7
         uses: actions/upload-artifact@v2
