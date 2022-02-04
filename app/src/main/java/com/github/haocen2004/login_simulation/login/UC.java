@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
+
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -26,8 +28,6 @@ import cn.gundam.sdk.shell.open.UCOrientation;
 import cn.gundam.sdk.shell.param.SDKParamKey;
 import cn.gundam.sdk.shell.param.SDKParams;
 import cn.uc.gamesdk.UCGameSdk;
-
-import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 public class UC implements LoginImpl {
 
@@ -59,6 +59,7 @@ public class UC implements LoginImpl {
 //            System.out.println("开始登陆" + sid);
             Logger.i(TAG, "onLoginSucc: sid:" + sid);
             setSid(sid);
+            Logger.addBlacklist(sid);
             doBHLogin();
         }
 

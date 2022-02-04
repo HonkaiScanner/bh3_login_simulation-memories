@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
+import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.google.android.material.snackbar.Snackbar;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.BuglyLog;
@@ -19,12 +20,14 @@ public class Logger {
     private static View view;
     private static boolean useSnackBar;
     private static List<String> logBlackList;
+    private static LogLiveData logLiveData;
 //    private static String blackListString;
 
     public Logger(Context context) {
         Logger.context = context;
         useSnackBar = false;
         logBlackList = new ArrayList();
+        logLiveData = LogLiveData.getINSTANCE(context);
 //        blackListString = getString(context, "logBlackLists");
 //        if (!blackListString.equals("")) {
 //            for (String blackItem : blackListString.split(";")) {
@@ -73,6 +76,7 @@ public class Logger {
             msg = msg.replace(b, "******");
         }
         BuglyLog.e(TAG, msg);
+        logLiveData.addNewLog("ERROR", TAG, msg);
     }
 
     public static void d(String TAG, String msg) {
@@ -81,6 +85,7 @@ public class Logger {
             msg = msg.replace(b, "******");
         }
         BuglyLog.d(TAG, msg);
+        logLiveData.addNewLog("DEBUG", TAG, msg);
     }
 
     public static void i(String TAG, String msg) {
@@ -88,6 +93,7 @@ public class Logger {
             msg = msg.replace(b, "******");
         }
         BuglyLog.i(TAG, msg);
+        logLiveData.addNewLog("INFO", TAG, msg);
     }
 
     public static void w(String TAG, String msg) {
@@ -95,6 +101,7 @@ public class Logger {
             msg = msg.replace(b, "******");
         }
         BuglyLog.w(TAG, msg);
+        logLiveData.addNewLog("WARNING", TAG, msg);
     }
 
     public static void makeToast(Context context, String msg, Integer length) {
@@ -108,6 +115,7 @@ public class Logger {
             Snackbar.make(view, msg, length).show();
         } else {
             ToastUtils.show(msg);
+            d("TOAST", "show Toast " + msg);
         }
     }
 

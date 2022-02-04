@@ -8,6 +8,15 @@ android {
                 outputFileName = "app-${variant.name}-${variant.versionName}.apk"
             }
         }
+    } else {
+        splits {
+            abi {
+                enable true
+                reset()
+                include "armeabi-v7a", "arm64-v8a", "x86_64"
+                universalApk true
+            }
+        }
     }
 
     signingConfigs {
@@ -34,14 +43,6 @@ android {
 //        versionNameSuffix '-CaptureScreenTestV2'
         signingConfig signingConfigs.releaseSign
 
-    }
-    splits {
-      abi {
-        enable true
-        reset()
-        include "armeabi-v7a", "arm64-v8a", "x86_64"
-        universalApk true
-      }
     }
 
     buildFeatures {

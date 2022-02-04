@@ -16,6 +16,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -93,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             OpenCV.initAsync(this);
             WeChatQRCodeDetector.init(this);
-        } catch (Exception e) {
+        } catch (UnsatisfiedLinkError e) {
+            Logger.e("ABI", "Wrong ABI");
             e.printStackTrace();
             showWrongABIDialog();
             return;
@@ -305,12 +307,17 @@ public class MainActivity extends AppCompatActivity {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
         normalDialog.setTitle("错误");
-        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:"+android.os.Build.CPU_ABI);
+        StringBuilder supportedABI = new StringBuilder();
+        for (String abi : Build.SUPPORTED_ABIS) {
+            supportedABI.append(abi);
+            supportedABI.append('\n');
+        }
+        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI.toString());
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     dialog.dismiss();
-                    finish();
-                    System.exit(0);
+//                    finish();
+//                    System.exit(0);
                 });
         normalDialog.setCancelable(false);
         normalDialog.show();

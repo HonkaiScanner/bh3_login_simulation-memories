@@ -18,7 +18,7 @@ import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorData;
 
 import java.util.List;
 
-public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.MyViewHolder> {
+public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.SponsorViewHolder> {
     private List<SponsorData> allSponsors;
     private final Activity activity;
 
@@ -28,10 +28,10 @@ public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.MyViewHo
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SponsorViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View itemView = layoutInflater.inflate(R.layout.cell_card, parent, false);
-        return new MyViewHolder(itemView);
+        return new SponsorViewHolder(itemView);
     }
 
     public void setAllSponsors(List<SponsorData> allSponsors) {
@@ -39,7 +39,7 @@ public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final SponsorViewHolder holder, final int position) {
         SponsorData sponsorData = allSponsors.get(position);
         holder.textViewName.setText(sponsorData.getName());
         holder.textViewDesc.setText(sponsorData.getDesc());
@@ -61,14 +61,14 @@ public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.MyViewHo
         return allSponsors.size();
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    static class SponsorViewHolder extends RecyclerView.ViewHolder {
         TextView textViewName, textViewDesc;
         ImageView imageViewAvatar;
 
-        MyViewHolder(@NonNull View itemView) {
+        SponsorViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewName = itemView.findViewById(R.id.textViewName);
-            textViewDesc = itemView.findViewById(R.id.textViewDesc);
+            textViewName = itemView.findViewById(R.id.textViewMessage);
+            textViewDesc = itemView.findViewById(R.id.textViewLevel);
             imageViewAvatar = itemView.findViewById(R.id.imageViewAvatar);
 
         }

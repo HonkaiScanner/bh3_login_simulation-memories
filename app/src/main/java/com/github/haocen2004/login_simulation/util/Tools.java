@@ -1,5 +1,8 @@
 package com.github.haocen2004.login_simulation.util;
 
+import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
+import static com.github.haocen2004.login_simulation.util.Network.sendPost;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,9 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
-import static com.github.haocen2004.login_simulation.util.Network.sendPost;
 
 public class Tools {
     private static final String TAG = "Tools";
@@ -49,6 +49,7 @@ public static void changeToWDJ(Activity activity) {
             boolean needLoop = true;
             String feedback = null;
             while (needLoop) {
+                Logger.i(TAG, "getOAServer-Param: " + "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis());
                 feedback = sendPost("https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
                 if (feedback != null) {
                     needLoop = false;

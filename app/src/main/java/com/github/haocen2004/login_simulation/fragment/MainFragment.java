@@ -80,13 +80,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private LoginImpl loginImpl;
     private AppCompatActivity activity;
     private Context context;
-    private Boolean isOfficial = false;
+    private boolean isOfficial = false;
     private SharedPreferences pref;
     private FragmentMainBinding binding;
     private Logger Log;
     private FabScanner fabScanner;
     private SocketHelper socketHelper;
-    private Boolean loginProgress = false;
+    private boolean loginProgress = false;
     private int currSlot = 999;
     private int currType = 999;
     private boolean currLoginTry = false;
@@ -101,38 +101,64 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
     private void delaySPCheck() {
+        Logger.d("SPCheck", "检查赞助者账号及自动登陆信息中...");
         if (pref.getBoolean("last_login_succeed", false) && pref.getBoolean("auto_login", false) && !loginProgress) {
-            if (currLoginTry) {
-                doLogin();
-                currLoginTry = false;
-            } else {
+            try {
+                if (loginImpl.isLogin()) {
+                    Logger.d("AutoLogin", "当前用户已登录");
+                } else {
+                    if (currLoginTry) {
+                        if (!needRestart) {
+                            Logger.d("AutoLogin", "开始自动登陆...");
+                            doLogin();
+                        }
+                        currLoginTry = false;
+                    } else {
 //                makeToast("自动登录将在3s后开始");
-                currLoginTry = true;
+                        currLoginTry = true;
+                    }
+                }
+            } catch (Exception e) {
+                if (currLoginTry) {
+                    if (!needRestart) {
+                        Logger.d("AutoLogin", "开始自动登陆...");
+                        doLogin();
+
+                    }
+                    currLoginTry = false;
+                } else {
+//                makeToast("自动登录将在3s后开始");
+                    currLoginTry = true;
+                }
             }
         } else {
+            Logger.d("AutoLogin", "无自动登陆任务 上次登陆情况：" + pref.getBoolean("last_login_succeed", false) + " 当前是否已有登陆进程：" + loginProgress);
             currLoginTry = false;
         }
-        Logger.d("SPCheck", "checking...");
         try {
             if (!CHECK_VER) {
                 binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
 //            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
                 if (currLoginTry) {
+                    Logger.d("AutoLogin", "无自动更新 - 等待自动登陆尝试中...");
                     spCheckHandle.postDelayed(this::delaySPCheck, 1500);
                 }
+                Logger.d("SPCheck", "无自动更新 - 无自动登陆 - 当前线程结束");
                 return;
             }
             if (!SP_CHECKED) {
                 if (pref.getBoolean("has_account", false)) {
                     binding.cardViewMain.loginText2.setVisibility(View.VISIBLE);
-                    Logger.d("SPCheck", "wait....");
+                    Logger.d("SPCheck", "等待赞助者账号登陆中...");
                     spCheckHandle.postDelayed(this::delaySPCheck, 1500);
                     return;
                 } else {
+                    Logger.d("SPCheck", "未登录赞助者账号");
                     binding.cardViewMain.loginText2.setText(activity.getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
                     SP_CHECKED = true;
                 }
             } else {
+                Logger.d("SPCheck", "结束赞助者信息检查");
                 binding.cardViewMain.loginText2.setText(activity.getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
             }
         } catch (IllegalStateException e) {
@@ -140,9 +166,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             Logger.d(TAG, "未找到界面...");
         }
         if (currLoginTry) {
+            Logger.d("AutoLogin", "有自动更新 - 等待自动登陆尝试中...");
             spCheckHandle.postDelayed(this::delaySPCheck, 1500);
         }
-
+        Logger.d("SPCheck", "当前线程结束");
     }
 
 
@@ -168,7 +195,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.tokenCheckBox.setVisibility(View.GONE);
         binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
-        binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
+//        binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = activity.getString(R.string.types_official);
@@ -299,7 +326,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 }
                 itemSelected++;
             }
-            new AlertDialog.Builder(getContext())
+            new AlertDialog.Builder(context)
                     .setTitle(activity.getString(R.string.sel_server))
                     .setSingleChoiceItems(singleChoiceItems, itemSelected, (dialogInterface, i) -> {
 
@@ -336,6 +363,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         setupListener();
         refreshView();
         checkPermissions();
+        Logger.d("SPCheck", "初始化检查中...");
         delaySPCheck();
     }
 
@@ -395,6 +423,22 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
         loginImpl.login();
         loginProgress = true;
+        switchButtonState(false);
+    }
+
+    private void switchButtonState(boolean newState) {
+        binding.cardViewMain.cardView2.setEnabled(newState);
+        binding.slot1.setEnabled(newState);
+        binding.slot2.setEnabled(newState);
+        binding.slot3.setEnabled(newState);
+        binding.radioIOS.setEnabled(newState);
+        binding.radioAndroid.setEnabled(newState);
+        binding.radioPc.setEnabled(newState);
+        binding.checkBoxWDJ.setEnabled(newState);
+        binding.tokenCheckBox.setEnabled(newState);
+        binding.btnScan.setEnabled(newState);
+        binding.btnSelpic.setEnabled(newState);
+
     }
 
     @Override
@@ -573,10 +617,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void checkPermissions() {
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getContext());
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(context);
             normalDialog.setTitle("权限说明");
-            normalDialog.setMessage("使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n其他权限为各家SDK适配所需\n可不授予权限");
-            normalDialog.setPositiveButton("我已知晓",
+            normalDialog.setMessage("使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+            normalDialog.setPositiveButton("我已知晓并授权使用",
                     (dialog, which) -> {
                         ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
                         dialog.dismiss();
@@ -664,7 +708,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             } else {
                 final AlertDialog.Builder normalDialog = new AlertDialog.Builder(activity);
                 normalDialog.setTitle("悬浮窗扫码");
-                normalDialog.setMessage("使用悬浮窗扫码器需要开启自动确认\n是否快捷启用？");
+                normalDialog.setMessage("使用悬浮窗扫码器需要开启自动确认\n是否立即启用？");
                 normalDialog.setPositiveButton("启用",
                         (dialog, which) -> {
 //                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, REQ_PERM_WINDOW);
@@ -686,6 +730,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+        if (loginProgress) {
+            Log.makeToast("当前正在登陆进程中，无法切换此项目");
+            Logger.d(TAG, "登陆中 已阻止切换服务器或账户槽位");
+            return;
+        }
         if (group.equals(binding.officialSlotSelect)) {
             if (checkedId == currSlot) {
                 return;
@@ -737,6 +786,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             if (loginImpl.isLogin() || accSwitch) {
                 accSwitch = true;
                 loginImpl = new Official(activity, this);
+                refreshView();
                 makeToast("切换后需重新登录");
             }
         } catch (Exception ignore) {
@@ -748,19 +798,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     public void onLoginSucceed() {
         spCheckHandle.postDelayed(() -> {
             pref.edit().putBoolean("last_login_succeed", true).apply();
-            loginProgress = false;
-            makeToast(R.string.login_succeed);
-            refreshView();
             QRScanner qrScanner;
             if (isOfficial) {
                 qrScanner = new QRScanner(activity, true);
             } else {
                 qrScanner = new QRScanner(activity, loginImpl.getRole());
             }
-            socketHelper.setQrScanner(qrScanner);
             if (pref.getBoolean("socket_helper", false)) {
+                socketHelper.setQrScanner(qrScanner);
                 socketHelper.start();
             }
+            loginProgress = false;
+            makeToast(R.string.login_succeed);
+            refreshView();
+            switchButtonState(true);
         }, 500);
     }
 
@@ -774,6 +825,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             loginProgress = false;
             loginImpl = null;
             refreshView();
+            switchButtonState(true);
         });
 //        makeToast(R);
     }
