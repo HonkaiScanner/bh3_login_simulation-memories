@@ -49,6 +49,7 @@ import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.Oppo;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
+import com.github.haocen2004.login_simulation.login.Xiaomi;
 import com.github.haocen2004.login_simulation.util.Constant;
 import com.github.haocen2004.login_simulation.util.FabScanner;
 import com.github.haocen2004.login_simulation.util.Logger;
@@ -392,10 +393,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 case "Official":
                     loginImpl = new Official(activity, this);
                     break;
-//                    case "Xiaomi":
-//                        loginImpl = new Xiaomi(activity);
-//                        //11
-//                        break;
+                case "Xiaomi":
+                    loginImpl = new Xiaomi(activity, this);
+                    //11
+                    break;
                 case "Bilibili":
                     loginImpl = new Bilibili(activity, this);
                     //14
