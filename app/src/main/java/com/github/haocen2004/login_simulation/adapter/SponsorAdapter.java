@@ -67,8 +67,8 @@ public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.SponsorV
 
         SponsorViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewName = itemView.findViewById(R.id.textViewMessage);
-            textViewDesc = itemView.findViewById(R.id.textViewLevel);
+            textViewName = itemView.findViewById(R.id.textViewName);
+            textViewDesc = itemView.findViewById(R.id.textViewDesc);
             imageViewAvatar = itemView.findViewById(R.id.imageViewAvatar);
 
         }

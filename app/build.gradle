@@ -82,9 +82,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
-//    implementation project(':zxing-lib')
-    // new scanner lib
-    //https://github.com/jenly1314/WeChatQRCode
     implementation 'com.github.jenly1314.WeChatQRCode:opencv:1.1.1'
     implementation 'com.github.jenly1314.WeChatQRCode:opencv-armv7a:1.1.1'
     implementation 'com.github.jenly1314.WeChatQRCode:opencv-armv64:1.1.1'
@@ -104,6 +101,8 @@ dependencies {
     implementation 'com.github.getActivity:ToastUtils:9.1'
     implementation 'com.github.getActivity:XToast:6.9'
     implementation 'com.geetest.sensebot:sensebot:4.3.1'
+    implementation 'com.drakeet.about:about:2.5.0'
+    implementation 'com.drakeet.multitype:multitype:4.3.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     annotationProcessor "androidx.room:room-compiler:2.3.0"
     testImplementation 'junit:junit:4.13.2'
