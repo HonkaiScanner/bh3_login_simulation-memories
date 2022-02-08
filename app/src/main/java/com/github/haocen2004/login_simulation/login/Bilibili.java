@@ -1,5 +1,9 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static com.github.haocen2004.login_simulation.util.Constant.BILI_APP_KEY;
+import static com.github.haocen2004.login_simulation.util.Constant.BILI_INIT;
+import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,8 +25,7 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.github.haocen2004.login_simulation.util.Constant.BILI_APP_KEY;
-import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
+import java.util.Objects;
 
 public class Bilibili implements LoginImpl {
 
@@ -32,18 +35,15 @@ public class Bilibili implements LoginImpl {
     private String uid;
     private BSGameSdk gameSdk;
     private SharedPreferences preferences;
-    private final String device_id;
     private final AppCompatActivity activity;
     private boolean isLogin;
     private RoleData roleData;
     private final Logger Log;
-    private Boolean hasInit = false;
     private final LoginCallback callback;
 
     public Bilibili(AppCompatActivity activity, LoginCallback loginCallback) {
         callback = loginCallback;
         this.activity = activity;
-        device_id = Tools.getDeviceID(activity);
         Log = getLogger(activity);
         //isLogin = false;
     }
@@ -71,7 +71,7 @@ public class Bilibili implements LoginImpl {
                 Logger.addBlacklist(access_token);
                 JSONObject feedback_json = null;
                 try {
-                    feedback_json = new JSONObject(Tools.verifyAccount(activity, "14", data_json));
+                    feedback_json = new JSONObject(Objects.requireNonNull(Tools.verifyAccount(activity, "14", data_json)));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -170,7 +170,7 @@ public class Bilibili implements LoginImpl {
 
     @Override
     public void login() {
-        if (hasInit) {
+        if (BILI_INIT) {
             doBiliLogin();
         } else {
             BSGameSdk.initialize(true, activity, "590", "180",
@@ -180,7 +180,7 @@ public class Bilibili implements LoginImpl {
 //                        Logger.info("Bilibili SDK setup succeed");
                             Logger.i(TAG, "onSuccess: Setup Succeed");
                             doBiliLogin();
-                            hasInit = true;
+                            BILI_INIT = true;
                         }
 
                         @Override
@@ -218,67 +218,6 @@ public class Bilibili implements LoginImpl {
     public boolean isLogin() {
         return isLogin;
     }
-
-//    public void doBHLogin() {
-//
-//        Map<String, Object> login_map = new HashMap<>();
-//
-//        login_map.put("device", device_id);
-//        login_map.put("app_id", "1");
-//        login_map.put("channel_id", "14");
-//
-//        String data_json = "{\"uid\":" +
-//                uid +
-//                ",\"access_key\":\"" +
-//                access_token +
-//                "\"}";
-//
-//        login_map.put("data", data_json);
-//
-//        String sign = Encrypt.bh3Sign(login_map);
-//        ArrayList<String> arrayList = new ArrayList<>(login_map.keySet());
-//        Collections.sort(arrayList);
-//
-//        JSONObject login_json = new JSONObject();
-//
-//        try {
-//
-//            for (String str : arrayList) {
-//
-//                login_json.put(str, login_map.get(str));
-//
-//            }
-//
-//            login_json.put("sign", sign);
-//
-//            Log.i(TAG, "doBHLogin: " + login_json.toString());
-//            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
-//            JSONObject feedback_json = new JSONObject(feedback);
-//            Log.i(TAG, "doBHLogin: " + feedback);
-//
-//            if (feedback_json.getInt("retcode") == 0) {
-//
-//                JSONObject data_json2 = feedback_json.getJSONObject("data");
-//                String combo_id = data_json2.getString("combo_id");
-//                String combo_token = data_json2.getString("combo_token");
-//                String open_id = data_json2.getString("open_id");
-//                roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", "2", "bilibili",0);
-//
-//                isLogin = true;
-//                makeToast(activity.getString(R.string.login_succeed));
-//
-//
-//            } else {
-//
-//                makeToast(feedback_json.getString("message"));
-//                isLogin = false;
-//
-//            }
-//
-//        } catch (Exception ignore) {
-//        }
-//
-//    }
 
 }
 
