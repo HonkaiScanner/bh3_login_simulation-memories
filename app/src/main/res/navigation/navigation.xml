@@ -23,4 +23,8 @@
         android:name="com.github.haocen2004.login_simulation.fragment.SupportFragment"
         android:label="fragment_support"
         tools:layout="@layout/fragment_support" />
+    <activity
+        android:id="@+id/aboutActivity"
+        android:name="com.github.haocen2004.login_simulation.activity.AboutActivity"
+        android:label="activity_about" />
 </navigation>

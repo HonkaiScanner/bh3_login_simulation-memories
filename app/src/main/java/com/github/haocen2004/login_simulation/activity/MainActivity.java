@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences app_pref;
     private Logger Log;
     private Activity activity;
+    private long backTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navigationView, navController);
         binding.textView2.setText(VERSION_NAME);
+        binding.textView3.setOnClickListener(v -> {
+            openUrl("https://www.pixiv.net/artworks/89418903", this);
+        });
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             String toolbarTitle = "DEBUG WRONG TITLE";
             if (destination.getId() == R.id.mainFragment) {
@@ -121,6 +125,20 @@ public class MainActivity extends AppCompatActivity {
         if (CHECK_VER) {
             new Thread(update_rb).start();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        long currTime = System.currentTimeMillis();
+        if (System.currentTimeMillis() - backTime < 2000) {
+            System.exit(0);
+            finish();
+            super.onBackPressed();
+        } else {
+            Log.makeToast("再次返回来退出扫码器");
+            backTime = currTime;
+        }
+        //super.onBackPressed();
     }
 
     @Override
