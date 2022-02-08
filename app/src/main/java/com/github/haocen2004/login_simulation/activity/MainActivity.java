@@ -279,12 +279,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Runnable update_rb = () -> {
-        boolean needLoop = true;
-        String feedback = null;
-        while (needLoop) {
+        String feedback;
+        while (true) {
             feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
             if (feedback != null) {
-                needLoop = false;
+                break;
+            }
+            Log.makeToast("网络请求错误\n2s后重试");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         Message msg = new Message();

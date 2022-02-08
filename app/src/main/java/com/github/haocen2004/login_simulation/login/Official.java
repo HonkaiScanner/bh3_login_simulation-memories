@@ -49,19 +49,23 @@ public class Official implements LoginImpl {
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
-            String feedback = null;
-            boolean needLoop = true;
-            while (needLoop) {
+            String feedback;
+            while (true) {
                 if (!preferences.getBoolean("has_token", false)) {
                     feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login", login_json.toString(), login_map);
                 } else {
                     feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString());
                 }
                 if (feedback != null) {
-                    needLoop = false;
+                    break;
+                }
+                Log.makeToast("网络请求错误\n2s后重试");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-
 
             Message msg = new Message();
             Bundle data = new Bundle();
@@ -83,7 +87,19 @@ public class Official implements LoginImpl {
             map.put("x-rpc-channel_version", MDK_VERSION);
             map.put("x-rpc-channel_id", "1");
             map.put("User-Agent", "okhttp/3.10.0");
-            String feedback = Network.sendPost("https://gameapi-account.mihoyo.com/account/risky/api/check", risky_check_json.toString(), map);
+            String feedback;
+            while (true) {
+                feedback = Network.sendPost("https://gameapi-account.mihoyo.com/account/risky/api/check", risky_check_json.toString(), map);
+                if (feedback != null) {
+                    break;
+                }
+                Log.makeToast("网络请求错误\n2s后重试");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             Message msg = new Message();
             Bundle data = new Bundle();
             data.putString("value", feedback);

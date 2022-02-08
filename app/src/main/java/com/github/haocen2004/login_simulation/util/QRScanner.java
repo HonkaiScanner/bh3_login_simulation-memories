@@ -1,5 +1,8 @@
 package com.github.haocen2004.login_simulation.util;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static java.lang.Integer.parseInt;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,12 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-
-import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static java.lang.Integer.parseInt;
-import static java.lang.Long.parseLong;
 
 
 public class QRScanner {
@@ -46,12 +44,17 @@ public class QRScanner {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            boolean needLoop = true;
-            String feedback = null;
-            while (needLoop) {
+            String feedback;
+            while (true) {
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
                 if (feedback != null) {
-                    needLoop = false;
+                    break;
+                }
+                makeToast("网络请求错误\n2s后重试");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
             Message msg = new Message();
@@ -79,9 +82,7 @@ public class QRScanner {
                 JSONObject feedback_json = new JSONObject(feedback);
                 if (feedback_json.getInt("retcode") == 0) {
                     makeToast(activity.getString(R.string.login_succeed));
-                    new Thread(() -> {
-                        Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", "");
-                    }).start();
+                    new Thread(() -> Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", "")).start();
 //                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && getDefaultSharedPreferences(activity).getBoolean("create_short_cut", false)) {
 //                        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
 //                        shortcutManager.addDynamicShortcuts(new ShortcutInfo.Builder(activity, "test_1").setIcon(R.mipmap.ic_launcher).setShortLabel().setLongLabel().setIntent(new Intent(activity, MainActivity.class)).build());
@@ -106,15 +107,19 @@ public class QRScanner {
             genRequest();
 
             Logger.d("Network", "biz_key: " + biz_key);
-            boolean needLoop = true;
-            String feedback = null;
-            while (needLoop) {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString().replace("\\/","/"));
+            String feedback;
+            while (true) {
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString().replace("\\/", "/"));
                 if (feedback != null) {
-                    needLoop = false;
+                    break;
+                }
+                makeToast("网络请求错误\n2s后重试");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-
             Logger.d("Network", "feedback: " + feedback);
 
             Logger.i("Network", "run: succeed upload");

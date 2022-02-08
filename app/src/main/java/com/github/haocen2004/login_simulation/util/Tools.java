@@ -46,13 +46,18 @@ public static void changeToWDJ(Activity activity) {
 //        https://global2.bh3.com/query_dispatch  version=4.2.0_gf_android_xiaomi
 //        https://global1.bh3.com/query_dispatch?version=4.2.0_gf_pc&t=1598673811
         try {
-            boolean needLoop = true;
-            String feedback = null;
-            while (needLoop) {
+            String feedback;
+            while (true) {
                 Logger.i(TAG, "getOAServer-Param: " + "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis());
                 feedback = sendPost("https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
                 if (feedback != null) {
-                    needLoop = false;
+                    break;
+                }
+                Logger.getLogger(null).makeToast("网络请求错误\n2s后重试");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
             Logger.i(TAG, "getOAServer: " + feedback);
@@ -69,14 +74,16 @@ public static void changeToWDJ(Activity activity) {
                 }
             }
             String url = json2.getString("dispatch_url");
-            boolean loop = true;
-            while (loop) {
+            while (true) {
+                feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
+                if (feedback != null) {
+                    break;
+                }
+                Logger.getLogger(null).makeToast("网络请求错误\n2s后重试");
                 try {
-                    feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
-                    if (feedback != null) {
-                        loop = false;
-                    }
-                } catch (Exception ignore) {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
             Logger.i(TAG, "getOAServer: " + feedback);
@@ -161,10 +168,9 @@ public static void changeToWDJ(Activity activity) {
 
 //                Logger.info(login_json.toString());
             Logger.i(TAG, "run: " + login_json.toString());
-            boolean needLoop = true;
-            String feedback = null;
             JSONObject feedback_json = null;
-            while (needLoop) {
+            String feedback;
+            while (true) {
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
                 feedback_json = null;
                 if (feedback != null) {
@@ -172,14 +178,20 @@ public static void changeToWDJ(Activity activity) {
                     try {
                         feedback_json = new JSONObject(feedback);
                     } catch (JSONException e) {
-                       e.printStackTrace();
+                        e.printStackTrace();
                     }
                 }
-               if (feedback_json != null) {
+                if (feedback_json != null) {
                     if (feedback_json.getInt("retcode") == 0) {
                         Logger.addBlacklist(feedback_json.getJSONObject("data").getString("combo_token"));
-                        needLoop = false;
+                        break;
                     }
+                }
+                Logger.getLogger(null).makeToast("网络请求错误\n2s后重试");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
             Logger.d(TAG, "handleMessage: " + feedback);
