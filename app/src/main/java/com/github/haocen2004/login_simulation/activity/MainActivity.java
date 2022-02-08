@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private Logger Log;
     private Activity activity;
     private long backTime = 0;
+    private boolean catchBackAction = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +84,10 @@ public class MainActivity extends AppCompatActivity {
         });
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             String toolbarTitle = "DEBUG WRONG TITLE";
+            catchBackAction = false;
             if (destination.getId() == R.id.mainFragment) {
                 toolbarTitle = getString(R.string.page_main);
+                catchBackAction = true;
             }
             if (destination.getId() == R.id.reportFragment) {
                 toolbarTitle = getString(R.string.list_report);
@@ -131,14 +134,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        long currTime = System.currentTimeMillis();
-        if (System.currentTimeMillis() - backTime < 2000) {
-            System.exit(0);
-            finish();
-            super.onBackPressed();
+        if (catchBackAction) {
+            long currTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - backTime < 2000) {
+                System.exit(0);
+                finish();
+                super.onBackPressed();
+            } else {
+                Log.makeToast("再次返回来退出扫码器");
+                backTime = currTime;
+            }
         } else {
-            Log.makeToast("再次返回来退出扫码器");
-            backTime = currTime;
+            super.onBackPressed();
         }
         //super.onBackPressed();
     }
