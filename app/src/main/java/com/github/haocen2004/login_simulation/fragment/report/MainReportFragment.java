@@ -1,5 +1,6 @@
 package com.github.haocen2004.login_simulation.fragment.report;
 
+import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
 import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
@@ -58,7 +59,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
             normalDialog.setMessage("Hao_cen");
             normalDialog.setPositiveButton("打开加群界面",
                     (dialog, which) -> {
-                        openUrl("https://jq.qq.com/?_wv=1027&k=yym6JCqT", requireActivity());
+                        openUrl(QQ_GROUP_URL, requireActivity());
                         dialog.dismiss();
                     });
             normalDialog.setNegativeButton(R.string.btn_cancel,

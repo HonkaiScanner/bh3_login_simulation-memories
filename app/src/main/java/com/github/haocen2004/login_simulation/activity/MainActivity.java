@@ -4,10 +4,12 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static com.github.haocen2004.login_simulation.util.Constant.AFD_URL;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
+import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
@@ -166,7 +168,10 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
                         .putString("mdk_ver", json.getString("mdk_ver"))
-                        .putString("sp_url", json.getString("sp_url")).apply();
+                        .putString("sp_url", json.getString("sp_url"))
+                        .putString("afd_url", json.getString("afd_url"))
+                        .putString("qq_group_url", json.getString("qq_group_url"))
+                        .apply();
                 Logger.d("Update", "cloud ver:" + json.getInt("ver"));
                 Logger.d("Update", "local ver:" + VERSION_CODE);
                 Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
@@ -187,6 +192,8 @@ public class MainActivity extends AppCompatActivity {
             BH_VER = app_pref.getString("bh_ver", BH_VER);
             MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
             SP_URL = app_pref.getString("sp_url", SP_URL);
+            AFD_URL = app_pref.getString("afd_url", AFD_URL);
+            QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
             AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
             if (DEBUG) {
                 AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);

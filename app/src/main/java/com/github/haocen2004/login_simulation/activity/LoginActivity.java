@@ -1,5 +1,10 @@
 package com.github.haocen2004.login_simulation.activity;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
+import static com.github.haocen2004.login_simulation.util.Constant.AFD_URL;
+import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,10 +39,6 @@ import cn.leancloud.AVQuery;
 import cn.leancloud.AVUser;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
-import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
 
 public class LoginActivity extends AppCompatActivity {
     private final String TAG = "SponsorManager";
@@ -100,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
         });
         binding.buttonGetCode.setOnClickListener(view -> {
             try {
-                Uri uri = Uri.parse("http://afdian.net/@Haocen20004");
+                Uri uri = Uri.parse(AFD_URL);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(uri);
                 startActivity(intent);
