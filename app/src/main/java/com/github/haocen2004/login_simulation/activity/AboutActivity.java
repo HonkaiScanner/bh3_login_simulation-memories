@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.activity;
 
+import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +35,8 @@ public class AboutActivity extends AbsAboutActivity {
 
         items.add(new Category(getString(R.string.about_repo)));
         items.add(new Card("Github\nhttps://github.com/Haocen2004/bh3_login_simulation"));
+        items.add(new Card("BiliBili\nhttps://space.bilibili.com/269140934"));
+        items.add(new Card("QQ Group\n" + QQ_GROUP_URL));
 
         items.add(new Category(getString(R.string.about_open_source)));
         items.add(new License("MultiType", "drakeet", License.APACHE_2, "https://github.com/drakeet/MultiType"));
@@ -50,4 +54,5 @@ public class AboutActivity extends AbsAboutActivity {
         items.add(new License("okhttp", "square", License.APACHE_2, "https://github.com/square/okhttp"));
         items.add(new License("AndroidX", "Google", License.APACHE_2, "https://github.com/androidx-releases"));
     }
+
 }
