@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
@@ -19,8 +21,6 @@ import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 public class Oppo implements LoginImpl {
     private final Activity activity;
@@ -187,5 +187,10 @@ public class Oppo implements LoginImpl {
             Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
             Looper.loop();
         }
+    }
+
+    @Override
+    public String getUsername() {
+        return uid;
     }
 }

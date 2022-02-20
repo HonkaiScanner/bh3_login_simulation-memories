@@ -40,6 +40,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.activity.AboutActivity;
 import com.github.haocen2004.login_simulation.activity.ScannerActivity;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.Bilibili;
@@ -262,7 +263,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
 
         }
-        binding.cardViewMain.loginText.setText(activity.getString(R.string.bh_login_pref) + activity.getString(isLogin ? R.string.login_true : R.string.login_false));
+        binding.cardViewMain.loginText.setText(activity.getString(R.string.bh_login_pref) + (isLogin ? loginImpl.getUsername() : activity.getString(R.string.login_false)));
         binding.cardViewMain.btnCard1Action2.setIconResource(pref.getBoolean("auto_login", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
         binding.cardViewMain.btnCard1Action3.setIconResource(pref.getBoolean("auto_confirm", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
 //        binding.cardViewMain.loginText2.setText("赞助者状态：" + (HAS_ACCOUNT ? "已登录" : "未登录"));
@@ -355,6 +356,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             makeToast(activity.getString(R.string.confirm_prefix) + (newStatus ? activity.getString(R.string.boolean_true) : activity.getString(R.string.boolean_false)));
 //            binding.cardViewMain.loginText2.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
             binding.cardViewMain.btnCard1Action3.setIconResource(newStatus ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
+        });
+        binding.aboutTextView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, AboutActivity.class);
+            startActivity(intent);
         });
     }
 

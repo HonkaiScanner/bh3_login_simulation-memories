@@ -26,6 +26,7 @@ public class Xiaomi extends Application implements LoginImpl {
     private final String TAG = "MiLogin";
     private boolean isLogin;
     private String uid;
+    private String username;
     private String session;
     private RoleData roleData;
     private final LoginCallback callback;
@@ -52,7 +53,7 @@ public class Xiaomi extends Application implements LoginImpl {
                                 case MiErrorCode.MI_XIAOMI_PAYMENT_SUCCESS:// 登陆成功
                                     //获取用户的登陆后的UID（即用户唯一标识）
                                     uid = arg1.getUid();
-
+                                    username = arg1.getNikename();
                                     //以下为获取session并校验流程，如果是网络游戏必须校验,(12小时过期)
                                     //获取用户的登陆的Session（请参考5.3.3流程校验Session有效性）
                                     session = arg1.getSessionId();
@@ -203,6 +204,11 @@ public class Xiaomi extends Application implements LoginImpl {
     @Override
     public boolean isLogin() {
         return isLogin;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
 

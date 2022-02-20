@@ -222,5 +222,10 @@ public class Bilibili implements LoginImpl {
         return isLogin;
     }
 
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
 }
 

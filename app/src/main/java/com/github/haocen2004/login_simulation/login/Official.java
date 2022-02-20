@@ -108,6 +108,7 @@ public class Official implements LoginImpl {
         }
     };
     private String token;
+    private String email;
     private String uid;
     Runnable login_runnable2 = new Runnable() {
         @Override
@@ -135,7 +136,7 @@ public class Official implements LoginImpl {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
 //            Logger.debug(feedback);
-            Logger.d(TAG, "handleMessage: " + feedback);
+            Logger.d(TAG, "login_handler: " + feedback);
 
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
@@ -144,6 +145,7 @@ public class Official implements LoginImpl {
                     JSONObject account_json = data_json.getJSONObject("account");
                     token = account_json.getString("token");
                     uid = account_json.getString("uid");
+                    email = account_json.getString("email");
                     preferences.edit()
                             .clear()
                             .putString("token", token)
@@ -154,6 +156,7 @@ public class Official implements LoginImpl {
                     new Thread(login_runnable2).start();
                 } else {
 //                    Logger.warning("登录失败");
+                    Log.makeToast("登录失败: " + feedback_json.getInt("retcode") + "\n" + feedback_json.getString("message"));
                     Logger.w(TAG, "handleMessage: 登录失败1" + feedback);
                     loginCallback.onLoginFailed();
 //                    Logger.warning(feedback);
@@ -418,5 +421,10 @@ public class Official implements LoginImpl {
     @Override
     public boolean isLogin() {
         return isLogin;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 }

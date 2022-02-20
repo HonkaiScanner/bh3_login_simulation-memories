@@ -225,4 +225,9 @@ public class UC implements LoginImpl {
     public boolean isLogin() {
         return isLogin;
     }
+
+    @Override
+    public String getUsername() {
+        return sid;
+    }
 }
