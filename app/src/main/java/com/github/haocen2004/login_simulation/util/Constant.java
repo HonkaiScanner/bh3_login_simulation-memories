@@ -21,10 +21,13 @@ public class Constant {
     public static final String VIVO_APP_KEY = "94c93e8ac604d1909943862f12803ac9";
 
     public static String SP_URL = "https://vmh6lryy.lc-cn-n1-shared.com";
-    public static String BH_VER = "5.3.0";
+    public static String AFD_URL = "https://afdian.net/@Haocen2004";
+    public static String QQ_GROUP_URL = "https://jq.qq.com/?_wv=1027&k=yym6JCqT";
+    public static String BH_VER = "5.5.0";
     public static String MDK_VERSION = "1.25.1";
     public static String OFFICIAL_TYPE = "android01";
     public static boolean CHECK_VER = true;
     public static boolean HAS_ACCOUNT = false;
     public static boolean SP_CHECKED = false;
+    public static boolean BILI_INIT = false;
 }

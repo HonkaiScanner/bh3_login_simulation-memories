@@ -1,5 +1,8 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static com.github.haocen2004.login_simulation.util.Constant.VIVO_APP_KEY;
+import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
@@ -19,9 +22,6 @@ import com.vivo.unionsdk.open.VivoUnionSDK;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static com.github.haocen2004.login_simulation.util.Constant.VIVO_APP_KEY;
-import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 public class Vivo implements LoginImpl {
     private final Activity activity;
@@ -160,5 +160,10 @@ public class Vivo implements LoginImpl {
 //            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
             Looper.loop();
         }
+    }
+
+    @Override
+    public String getUsername() {
+        return uid;
     }
 }

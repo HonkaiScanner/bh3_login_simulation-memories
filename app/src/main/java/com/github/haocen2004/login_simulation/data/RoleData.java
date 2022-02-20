@@ -1,5 +1,8 @@
 package com.github.haocen2004.login_simulation.data;
 
+import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.util.Tools.getOAServer;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,9 +17,6 @@ import com.github.haocen2004.login_simulation.util.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
-import static com.github.haocen2004.login_simulation.util.Tools.getOAServer;
 
 public class RoleData {
     private final String open_id;
@@ -87,6 +87,8 @@ public class RoleData {
             accountType = "15";
         } else if (special_tag == 4) {
             accountType = "8";
+        } else if (special_tag == 5) {
+            accountType = "6";
         }
         Logger.addBlacklist(combo_token);
         Logger.addBlacklist(open_token);

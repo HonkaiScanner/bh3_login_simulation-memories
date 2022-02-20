@@ -97,5 +97,13 @@
     <string name="btn_auto_confirm">Auto\nConfirm</string>
     <string name="msg_getOa">Getting OA Server</string>
     <string name="use_socket">Receive socket requests</string>
+    <string name="log_msg">Logger Message</string>
+    <string name="log_level">Logger Level</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="list_log">Logs</string>
+    <string name="feedback_way">Feed Back</string>
+    <string name="logs">Logs</string>
+    <string name="list_about">About</string>
+    <!-- TODO: Remove or change this placeholder text -->
 
 </resources>

@@ -3,7 +3,7 @@
     <string-array name="server_types">
         <item>官服</item>
         <item>B服</item>
-        <!--        <item>小米服</item>-->
+        <item>小米服</item>
         <item>九游服</item>
         <item>Vivo服</item>
         <!--        <item>魅族服</item>-->

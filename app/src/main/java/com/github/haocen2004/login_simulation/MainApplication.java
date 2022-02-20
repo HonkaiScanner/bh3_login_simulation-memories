@@ -13,6 +13,7 @@ import android.view.Gravity;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.hjq.toast.ToastUtils;
@@ -24,6 +25,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LogLiveData.getINSTANCE(this); //init live data
         Log = Logger.getLogger(this);
         ToastUtils.init(this);
         ToastUtils.setGravity(Gravity.BOTTOM, 0, 50);

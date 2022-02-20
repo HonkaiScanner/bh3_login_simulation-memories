@@ -4,10 +4,12 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static com.github.haocen2004.login_simulation.util.Constant.AFD_URL;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
+import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
@@ -16,6 +18,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -54,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences app_pref;
     private Logger Log;
     private Activity activity;
+    private long backTime = 0;
+    private boolean catchBackAction = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +79,15 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navigationView, navController);
         binding.textView2.setText(VERSION_NAME);
+        binding.textView3.setOnClickListener(v -> {
+            openUrl("https://www.pixiv.net/artworks/89418903", this);
+        });
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             String toolbarTitle = "DEBUG WRONG TITLE";
+            catchBackAction = false;
             if (destination.getId() == R.id.mainFragment) {
                 toolbarTitle = getString(R.string.page_main);
+                catchBackAction = true;
             }
             if (destination.getId() == R.id.reportFragment) {
                 toolbarTitle = getString(R.string.list_report);
@@ -90,6 +100,15 @@ public class MainActivity extends AppCompatActivity {
             }
             binding.mainInclude.collapsingToolbarLayout.setTitle(toolbarTitle);
         });
+        try {
+            OpenCV.initAsync(this);
+            WeChatQRCodeDetector.init(this);
+        } catch (UnsatisfiedLinkError e) {
+            Logger.e("ABI", "Wrong ABI");
+            e.printStackTrace();
+            showWrongABIDialog();
+            return;
+        }
         if (app_pref.getBoolean("showBetaInfo", getPackageName().contains("dev"))) {
             showBetaInfoDialog();
         }
@@ -111,9 +130,24 @@ public class MainActivity extends AppCompatActivity {
         if (CHECK_VER) {
             new Thread(update_rb).start();
         }
+    }
 
-        OpenCV.initAsync(this);
-        WeChatQRCodeDetector.init(this);
+    @Override
+    public void onBackPressed() {
+        if (catchBackAction) {
+            long currTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - backTime < 2000) {
+                System.exit(0);
+                finish();
+                super.onBackPressed();
+            } else {
+                Log.makeToast("再次返回来退出扫码器");
+                backTime = currTime;
+            }
+        } else {
+            super.onBackPressed();
+        }
+        //super.onBackPressed();
     }
 
     @Override
@@ -141,7 +175,10 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
                         .putString("mdk_ver", json.getString("mdk_ver"))
-                        .putString("sp_url", json.getString("sp_url")).apply();
+                        .putString("sp_url", json.getString("sp_url"))
+                        .putString("afd_url", json.getString("afd_url"))
+                        .putString("qq_group_url", json.getString("qq_group_url"))
+                        .apply();
                 Logger.d("Update", "cloud ver:" + json.getInt("ver"));
                 Logger.d("Update", "local ver:" + VERSION_CODE);
                 Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
@@ -162,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
             BH_VER = app_pref.getString("bh_ver", BH_VER);
             MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
             SP_URL = app_pref.getString("sp_url", SP_URL);
+            AFD_URL = app_pref.getString("afd_url", AFD_URL);
+            QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
             AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
             if (DEBUG) {
                 AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
@@ -247,12 +286,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Runnable update_rb = () -> {
-        boolean needLoop = true;
-        String feedback = null;
-        while (needLoop) {
+        String feedback;
+        while (true) {
             feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
             if (feedback != null) {
-                needLoop = false;
+                break;
+            }
+            Log.makeToast("网络请求错误\n2s后重试");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         Message msg = new Message();
@@ -291,6 +335,26 @@ public class MainActivity extends AppCompatActivity {
                 (dialog, which) -> {
                     app_pref.edit().putBoolean("show150NewFeature", true).apply();
                     dialog.dismiss();
+                });
+        normalDialog.setCancelable(false);
+        normalDialog.show();
+    }
+
+    private void showWrongABIDialog() {
+
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+        normalDialog.setTitle("错误");
+        StringBuilder supportedABI = new StringBuilder();
+        for (String abi : Build.SUPPORTED_ABIS) {
+            supportedABI.append(abi);
+            supportedABI.append('\n');
+        }
+        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI.toString());
+        normalDialog.setPositiveButton("我已知晓",
+                (dialog, which) -> {
+                    dialog.dismiss();
+//                    finish();
+//                    System.exit(0);
                 });
         normalDialog.setCancelable(false);
         normalDialog.show();

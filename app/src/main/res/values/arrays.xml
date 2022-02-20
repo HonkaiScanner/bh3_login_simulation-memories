@@ -2,7 +2,7 @@
     <string-array name="server_types">
         <item>Official</item>
         <item>Bilibili</item>
-        <!--        <item>Xiaomi</item>-->
+        <item>Xiaomi</item>
         <item>UC</item>
         <item>Vivo</item>
         <!--        <item>Flyme</item>-->
@@ -11,7 +11,7 @@
     <string-array name="server_types_value">
         <item>Official</item>
         <item>Bilibili</item>
-        <!--        <item>Xiaomi</item>-->
+        <item>Xiaomi</item>
         <item>UC</item>
         <item>Vivo</item>
         <!--        <item>Flyme</item>-->

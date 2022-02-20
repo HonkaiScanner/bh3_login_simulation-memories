@@ -11,5 +11,6 @@ public interface LoginImpl {
 
     boolean isLogin();
 
+    String getUsername();
 
 }

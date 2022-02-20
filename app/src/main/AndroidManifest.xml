@@ -44,6 +44,7 @@
         android:allowBackup="true">
 
         <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.ScannerActivity" />
         <uses-library
             android:name="org.apache.http.legacy"
