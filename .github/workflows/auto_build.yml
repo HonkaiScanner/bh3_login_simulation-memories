@@ -1,5 +1,6 @@
 name: Auto Build Scanner
 on:
+  create:
   workflow_dispatch:
   push:
     branches:
@@ -49,7 +50,7 @@ jobs:
           NAME_SUFFIX: '.dev'
 
       - name: Build APK with Gradle (MAIN)
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref != 'refs/heads/dev' }}
         run: |
           chmod +x gradlew
           ./gradlew clean
