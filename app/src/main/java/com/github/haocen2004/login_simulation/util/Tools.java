@@ -47,8 +47,8 @@ public static void changeToWDJ(Activity activity) {
 //        https://global1.bh3.com/query_dispatch?version=4.2.0_gf_pc&t=1598673811
         try {
 
-            String getOAUrl = "getOAServer-Param: " + "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
-            Logger.i(TAG, getOAUrl);
+            String getOAUrl = "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
+            Logger.i(TAG, "getOAServer-Param: " + getOAUrl);
             String feedback = sendPost(getOAUrl, "");
             Logger.i(TAG, "getOAServer: " + feedback);
             JSONObject json1 = new JSONObject(feedback);
