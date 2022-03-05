@@ -353,7 +353,13 @@ public class QRScanner {
     }
 
     private void makeToast(String msg) {
-        Log.makeToast(msg);
+        try {
+            Log.makeToast(msg);
+        } catch (Exception e) {
+            Logger.w(TAG, "Logger Class Missing... try get it.");
+            Log = Logger.getLogger(null);
+            makeToast(msg);
+        }
 //        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
     }
 }
