@@ -46,20 +46,10 @@ public static void changeToWDJ(Activity activity) {
 //        https://global2.bh3.com/query_dispatch  version=4.2.0_gf_android_xiaomi
 //        https://global1.bh3.com/query_dispatch?version=4.2.0_gf_pc&t=1598673811
         try {
-            String feedback;
-            while (true) {
-                Logger.i(TAG, "getOAServer-Param: " + "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis());
-                feedback = sendPost("https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
-                if (feedback != null) {
-                    break;
-                }
-                Logger.getLogger(null).makeToast("网络请求错误\n2s后重试");
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+
+            String getOAUrl = "getOAServer-Param: " + "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
+            Logger.i(TAG, getOAUrl);
+            String feedback = sendPost(getOAUrl, "");
             Logger.i(TAG, "getOAServer: " + feedback);
             JSONObject json1 = new JSONObject(feedback);
             JSONArray jsonArray = json1.getJSONArray("region_list");
@@ -74,18 +64,8 @@ public static void changeToWDJ(Activity activity) {
                 }
             }
             String url = json2.getString("dispatch_url");
-            while (true) {
-                feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
-                if (feedback != null) {
-                    break;
-                }
-                Logger.getLogger(null).makeToast("网络请求错误\n2s后重试");
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
+
             Logger.i(TAG, "getOAServer: " + feedback);
 
             return feedback;
@@ -169,31 +149,22 @@ public static void changeToWDJ(Activity activity) {
 //                Logger.info(login_json.toString());
             Logger.i(TAG, "run: " + login_json.toString());
             JSONObject feedback_json = null;
-            String feedback;
-            while (true) {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
-                feedback_json = null;
-                if (feedback != null) {
-//                    needLoop = false;
-                    try {
-                        feedback_json = new JSONObject(feedback);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (feedback_json != null) {
-                    if (feedback_json.getInt("retcode") == 0) {
-                        Logger.addBlacklist(feedback_json.getJSONObject("data").getString("combo_token"));
-                        break;
-                    }
-                }
-                Logger.getLogger(null).makeToast("网络请求错误\n2s后重试");
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
+
+            try {
+                feedback_json = new JSONObject(feedback);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (feedback_json != null) {
+                if (feedback_json.getInt("retcode") == 0) {
+                    Logger.addBlacklist(feedback_json.getJSONObject("data").getString("combo_token"));
+                } else {
+                    Logger.w(TAG, "wrong feedback: " + feedback);
                 }
             }
+
             Logger.d(TAG, "handleMessage: " + feedback);
             return feedback;
 //

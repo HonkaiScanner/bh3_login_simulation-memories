@@ -44,19 +44,7 @@ public class QRScanner {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            String feedback;
-            while (true) {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
-                if (feedback != null) {
-                    break;
-                }
-                makeToast("网络请求错误\n2s后重试");
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
             Message msg = new Message();
             Bundle data = new Bundle();
             data.putString("value", feedback);
@@ -107,19 +95,8 @@ public class QRScanner {
             genRequest();
 
             Logger.d("Network", "biz_key: " + biz_key);
-            String feedback;
-            while (true) {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString().replace("\\/", "/"));
-                if (feedback != null) {
-                    break;
-                }
-                makeToast("网络请求错误\n2s后重试");
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString().replace("\\/", "/"));
+
             Logger.d("Network", "feedback: " + feedback);
 
             Logger.i("Network", "run: succeed upload");

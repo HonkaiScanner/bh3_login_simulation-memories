@@ -190,19 +190,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startCodeCheck(String content, String postParam, String sc_key) {
         // 请求云端查询身份码是否有绑定用户  Tencent Cloud
-        String feedback;
-        while (true) {
-            feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
-            if (feedback != null) {
-                break;
-            }
-            makeToast("网络请求错误\n2s后重试");
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
         Logger.d(TAG, feedback);
         try {
             JSONObject feedback_json = new JSONObject(feedback);
