@@ -3,14 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/text_color_black_10">
-
     <RelativeLayout
         android:id="@+id/payment_result_main_root_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_dimen_1062"
         android:background="@drawable/mio_corner_24_wite_bg"
         android:layout_alignParentBottom="true">
-
         <ImageView
             android:id="@+id/payment_result_fail_img"
             android:layout_width="@dimen/view_dimen_270"
@@ -28,7 +26,6 @@
             android:textColor="@color/color_black"
             android:alpha="0.9"
             android:textSize="@dimen/text_font_size_60" />
-
         <TextView
             android:id="@+id/payment_result_fail_conent"
             android:layout_width="wrap_content"
@@ -41,7 +38,6 @@
             android:textColor="@color/color_black"
             android:alpha="0.6"
             android:textSize="@dimen/text_font_size_42" />
-
         <LinearLayout
             android:id="@+id/payment_result_fail_quota"
             android:layout_width="match_parent"
@@ -59,7 +55,6 @@
                 android:textColor="@color/color_black"
                 android:text="取消"
                 android:alpha="0.9" />
-
             <ProgressBar
                 android:id="@+id/payment_result_fail_progress_bar"
                 style="?android:attr/progressBarStyleHorizontal"
@@ -70,7 +65,6 @@
                 android:max="100"
                 android:progressDrawable="@drawable/mio_payment_result_progressbar_bg" />
         </LinearLayout>
-
         <Button
             android:id="@+id/payment_result_fail_back"
             android:layout_width="match_parent"

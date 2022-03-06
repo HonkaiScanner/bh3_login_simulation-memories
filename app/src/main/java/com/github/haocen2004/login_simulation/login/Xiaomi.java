@@ -40,7 +40,7 @@ public class Xiaomi extends Application implements LoginImpl {
 
     private void xiaomiLogin() {
 
-//        MiCommplatform.getInstance().onUserAgreed(activity);
+        MiCommplatform.getInstance().onUserAgreed(activity);
         MiCommplatform.getInstance().miLogin(activity,
                 (code, arg1) -> {
                     switch (code) {
@@ -60,7 +60,7 @@ public class Xiaomi extends Application implements LoginImpl {
                         case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_CANCEL:
                         case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_ACTION_EXECUTED:
                         default:
-                            Logger.d(TAG, "err:+" + code);
+                            Logger.d(TAG, "err:" + code);
                             callback.onLoginFailed();
                             // 登录失败
                             break;
