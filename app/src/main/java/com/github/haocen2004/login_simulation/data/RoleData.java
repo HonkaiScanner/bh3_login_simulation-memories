@@ -15,7 +15,6 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.util.Logger;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RoleData {
@@ -52,8 +51,9 @@ public class RoleData {
                 }
                 is_setup = true;
                 callback.onLoginSucceed();
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+                callback.onLoginFailed();
             }
         }
     };
