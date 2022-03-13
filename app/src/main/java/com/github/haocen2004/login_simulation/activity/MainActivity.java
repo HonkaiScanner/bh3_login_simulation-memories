@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
                 Logger.d("Update", "Check Update Failed");
-
+                Log.makeToast("检查更新失败...");
                 //app_pref.edit().putString("bh_ver", BH_VER).apply();
             }
             BH_VER = app_pref.getString("bh_ver", BH_VER);
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
                 new SponsorRepo(getApplicationContext()).refreshSponsors();
                 new AnnouncementRepo(activity).refreshAnnouncements();
                 if (app_pref.getBoolean("has_account", false)) {
-                    String TAG = "login check";
+                    String TAG = "sponsor login check";
 
                     Logger.d(TAG, "Start.");
                     AVUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<AVUser>() {
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                             app_pref.edit().putBoolean("has_account", false)
                                     .putString("custom_username", "崩坏3扫码器用户").apply();
                             throwable.printStackTrace();
-                            Logger.d(TAG, "Failed.");
+                            Logger.d(TAG, "Failed. Reset custom username");
                             Log.makeToast("赞助者身份验证已过期...");
                             SP_CHECKED = true;
                         }
@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Runnable update_rb = () -> {
-        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", "");
+        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", false);
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);

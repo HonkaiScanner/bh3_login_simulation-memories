@@ -70,7 +70,7 @@ public class QRScanner {
                 JSONObject feedback_json = new JSONObject(feedback);
                 if (feedback_json.getInt("retcode") == 0) {
                     makeToast(activity.getString(R.string.login_succeed));
-                    new Thread(() -> Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", "")).start();
+                    new Thread(() -> Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", false)).start();
 //                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && getDefaultSharedPreferences(activity).getBoolean("create_short_cut", false)) {
 //                        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
 //                        shortcutManager.addDynamicShortcuts(new ShortcutInfo.Builder(activity, "test_1").setIcon(R.mipmap.ic_launcher).setShortLabel().setLongLabel().setIntent(new Intent(activity, MainActivity.class)).build());

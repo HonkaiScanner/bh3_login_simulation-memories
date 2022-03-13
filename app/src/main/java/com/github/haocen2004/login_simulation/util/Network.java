@@ -71,15 +71,26 @@ public class Network {
     }
 
     public static String sendPost(String url, String param) {
-        return sendPost(url, param, null);
+        return sendPost(url, param, null, true);
+    }
+
+    public static String sendPost(String url, Boolean autoRetry) {
+        return sendPost(url, "", null, autoRetry);
     }
 
     public static String sendPost(String url, String param, Map<String, String> map) {
+        return sendPost(url, param, map, true);
+    }
+
+    public static String sendPost(String url, String param, Map<String, String> map, Boolean autoRetry) {
         String ret;
         while (true) {
             ret = realSendPost(url, param, map);
             if (ret != null) {
                 break;
+            }
+            if (!autoRetry) {
+                return "";
             }
             Logger.getLogger(null).makeToast("网络请求错误\n2s后自动重试");
             try {
