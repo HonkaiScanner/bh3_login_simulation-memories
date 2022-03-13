@@ -44,14 +44,21 @@ public class LoggerAdapter extends RecyclerView.Adapter<LoggerAdapter.LoggerView
     @Override
     public void onBindViewHolder(@NonNull final LoggerViewHolder holder, final int position) {
         LogData LoggerData = allLogs.get(position);
-        holder.textViewNumber.setText(String.valueOf(position + 1));
+        holder.textViewNumber.setText(String.valueOf(position));
         holder.textViewMessage.setText(LoggerData.getMessage());
         holder.textViewLevel.setText(LoggerData.getLevel() + " - " + LoggerData.getTAG());
+//        holder.itemView.lon
         holder.itemView.setOnLongClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("ScannerLog", LoggerData.getMessage());
-            clipboard.setPrimaryClip(clip);
-            Logger.getLogger(null).makeToast("已复制到剪贴板");
+            if (LoggerData.getLevel().equals("长按")) {
+                ClipData clip = ClipData.newPlainText("ScannerLog", allLogs.toString());
+                clipboard.setPrimaryClip(clip);
+                Logger.getLogger(null).makeToast("已复制全部日志到剪贴板");
+            } else {
+                ClipData clip = ClipData.newPlainText("ScannerLog", LoggerData.toString());
+                clipboard.setPrimaryClip(clip);
+                Logger.getLogger(null).makeToast("已复制到剪贴板");
+            }
             return true;
         });
     }

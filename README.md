@@ -9,7 +9,7 @@
 Bilibili  
 Vivo  
 oppo  
-UC(豌豆荚/九游)
+UC(豌豆荚/九游)  
 小米  
 
 ## 不支持协议 / Unsupported protocol
@@ -22,7 +22,7 @@ UC(豌豆荚/九游)
 
 ## B站演示视频 / Video
 
-https://www.bilibili.com/video/BV1RB4y1P7MQ/
+https://www.bilibili.com/video/BV1oP4y1F7sj/
 
 ## 其他 / Other
 
@@ -31,14 +31,19 @@ https://www.bilibili.com/video/BV1RB4y1P7MQ/
 
 ## 开源库 / Open Source
 
-OpenCV  
+MultiType  
+about-page  
+WeChatQRCode  
+opencv  
+Bugly  
+java-unified-sdk  
+RxJava  
 ToastUtils  
 XToast  
-senseBot[极验]  
-WeChatQRCode  
-MLKit  
-Glide  
-LeanCloud  
-Bugly
+sensebot  
+glide  
+Gson  
+okhttp  
+
 
 [ZXING][已被OPENCV代替]

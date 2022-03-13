@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.haocen2004.login_simulation.adapter.LoggerAdapter;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentLogBinding;
+import com.github.haocen2004.login_simulation.util.Logger;
 
 
 public class LogFragment extends Fragment {
@@ -20,7 +21,7 @@ public class LogFragment extends Fragment {
     private FragmentLogBinding binding;
     private RecyclerView logRecyclerView;
     private LoggerAdapter loggerAdapter;
-    private LogLiveData logLiveData;
+    private boolean loadLogs = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,12 +34,24 @@ public class LogFragment extends Fragment {
         binding = FragmentLogBinding.inflate(inflater, container, false);
         logRecyclerView = binding.logRecycleView;
         loggerAdapter = new LoggerAdapter(getActivity());
+        logRecyclerView.setFocusableInTouchMode(false);
+        logRecyclerView.setHasFixedSize(true);
         logRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         logRecyclerView.setAdapter(loggerAdapter);
+//        loggerAdapter.setAllLogs(logLiveData.getValue());
 //        Logger.setView(binding.getRoot());
         LogLiveData.getINSTANCE(getContext()).observe(getViewLifecycleOwner(), logData -> {
-            loggerAdapter.setAllLogs(logData);
-            loggerAdapter.notifyItemChanged(logData.size() - 1);
+//
+//            loggerAdapter.ins
+            if (!loadLogs) {
+                Logger.d("LogLiveData", "load log data");
+                loggerAdapter.setAllLogs(logData);
+                loadLogs = true;
+            }
+            loggerAdapter.notifyItemInserted(loggerAdapter.getItemCount());
+//            Log.d("test",logData.toString());
+//            Log.d("Logger Adapter",logData.get(loggerAdapter.getItemCount()-1).toString());
+//            loggerAdapter.notifyItemChanged(logData.size() - 1);
         });
 //        adapter.setAllSponsors(sponsorRepo.getAllSponsors());
 //        // 刷新操作

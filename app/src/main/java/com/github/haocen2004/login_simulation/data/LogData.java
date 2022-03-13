@@ -22,4 +22,13 @@ public class LogData {
     public String getMessage() {
         return message;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "level='" + level + '\'' +
+                ", TAG='" + TAG + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

@@ -41,4 +41,10 @@
 
     <string name="no_url" translatable="false">no url</string>
     <string name="download_fail" translatable="false">download fail</string>
+
+    <string name="permission_request">权限申请</string>
+    <string name="permission_request_content">为了更好的提高您的游戏体验及账号安全，请允许我们访问以下权限：</string>
+    <string name="permission_request_phone">获取手机信息</string>
+    <string name="permission_request_storage">读写手机存储</string>
+    <string name="permission_request_to_grant">去授权</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static com.github.haocen2004.login_simulation.util.Constant.MI_INIT;
+
 import android.app.Application;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,8 +38,42 @@ public class Xiaomi extends Application implements LoginImpl {
         callback = loginCallback;
     }
 
+    private void xiaomiLogin() {
+
+        MiCommplatform.getInstance().onUserAgreed(activity);
+        MiCommplatform.getInstance().miLogin(activity,
+                (code, arg1) -> {
+                    switch (code) {
+                        case MiErrorCode.MI_XIAOMI_PAYMENT_SUCCESS:// 登陆成功
+                            Logger.d(TAG, "Mi Login Success:" + arg1.toString());
+                            //获取用户的登陆后的UID（即用户唯一标识）
+                            uid = arg1.getUid();
+                            username = arg1.getNikename();
+                            //以下为获取session并校验流程，如果是网络游戏必须校验,(12小时过期)
+                            //获取用户的登陆的Session（请参考5.3.3流程校验Session有效性）
+                            session = arg1.getSessionId();
+                            //请开发者完成将uid和session提交给开发者自己服务器进行session验证
+                            doBHLogin();
+                            break;
+                        // 登陆失败
+                        case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_LOGIN_FAIL:
+                        case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_CANCEL:
+                        case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_ACTION_EXECUTED:
+                        default:
+                            Logger.d(TAG, "err:" + code);
+                            callback.onLoginFailed();
+                            // 登录失败
+                            break;
+                    }
+                });
+    }
+
     @Override
     public void login() {
+        if (MI_INIT) {
+            xiaomiLogin();
+            return;
+        }
         MiAppInfo appInfo = new MiAppInfo();
         appInfo.setAppId("2882303761517502034");
         appInfo.setAppKey("5841750261034");
@@ -47,34 +83,8 @@ public class Xiaomi extends Application implements LoginImpl {
             public void finishInitProcess(List<String> loginMethod, int gameConfig) {
                 Logger.i(TAG, "finishInitProcess: Init success");
 //                MiCommplatform.getInstance().onMainActivityCreate(activity);
-                MiCommplatform.getInstance().miLogin(activity,
-                        (code, arg1) -> {
-                            switch (code) {
-                                case MiErrorCode.MI_XIAOMI_PAYMENT_SUCCESS:// 登陆成功
-                                    //获取用户的登陆后的UID（即用户唯一标识）
-                                    uid = arg1.getUid();
-                                    username = arg1.getNikename();
-                                    //以下为获取session并校验流程，如果是网络游戏必须校验,(12小时过期)
-                                    //获取用户的登陆的Session（请参考5.3.3流程校验Session有效性）
-                                    session = arg1.getSessionId();
-                                    //请开发者完成将uid和session提交给开发者自己服务器进行session验证
-
-                                    doBHLogin();
-                                    break;
-                                case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_LOGIN_FAIL:
-                                    // 登陆失败
-                                    break;
-                                case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_CANCEL:
-                                    // 取消登录
-                                    break;
-                                case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_ACTION_EXECUTED:
-                                    //登录操作正在进行中
-                                    break;
-                                default:
-                                    // 登录失败
-                                    break;
-                            }
-                        });
+                MI_INIT = true;
+                xiaomiLogin();
             }
 
             @Override

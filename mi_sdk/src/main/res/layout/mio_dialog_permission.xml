@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/mio_bg_corner_white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/confirm_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/view_dimen_80"
+        android:alpha="0.9"
+        android:text="@string/permission_request"
+        android:textColor="@color/color_light_gray"
+        android:textSize="@dimen/text_font_size_50"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/confirm_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/confirm_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/view_dimen_81"
+        android:layout_marginTop="@dimen/view_dimen_66"
+        android:layout_marginEnd="@dimen/view_dimen_79"
+        android:alpha="0.6"
+        android:text="@string/permission_request_content"
+        android:textColor="@color/color_light_gray"
+        android:textSize="@dimen/text_font_size_46" />
+
+    <LinearLayout
+        android:id="@+id/bold_text_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/confirm_content"
+        android:layout_marginStart="@dimen/view_dimen_81"
+        android:layout_marginTop="@dimen/view_dimen_23"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="@dimen/view_dimen_16"
+            android:layout_height="@dimen/view_dimen_16"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/view_dimen_30"
+            android:background="@drawable/mio_round_gray_point" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/permission_request_phone"
+            android:textColor="@color/color_light_gray"
+            android:textSize="@dimen/text_font_size_46"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bold_text_top"
+        android:layout_marginTop="@dimen/view_dimen_84"
+        android:layout_marginBottom="@dimen/view_dimen_100"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/permission_cancel"
+            android:layout_width="@dimen/view_dimen_390"
+            android:layout_height="@dimen/view_dimen_120"
+            android:background="@drawable/mio_cancel_btn"
+            android:gravity="center"
+            android:text="@string/btn_cancel"
+            android:textColor="#33B4FF"
+            android:textSize="@dimen/text_font_size_48" />
+
+        <TextView
+            android:id="@+id/permission_ok"
+            android:layout_width="@dimen/view_dimen_390"
+            android:layout_height="@dimen/view_dimen_120"
+            android:layout_marginStart="@dimen/view_dimen_40"
+            android:background="@drawable/mio_confirm_btn"
+            android:gravity="center"
+            android:text="@string/permission_request_to_grant"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_font_size_48" />
+    </LinearLayout>
+</RelativeLayout>

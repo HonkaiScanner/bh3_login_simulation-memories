@@ -134,12 +134,12 @@
         android:layout_below="@id/mifloat_menu_title_parent"
         android:background="@drawable/mio_corner_16_lb_rb">
 
-        <!--        <com.xiaomi.android.support.v7.widget.RecyclerView
-                    android:id="@+id/mifloat_menu_recyclerview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_dimen_40"
-                    android:layout_marginBottom="@dimen/view_dimen_40" />-->
+<!--        <com.xiaomi.android.support.v7.widget.RecyclerView
+            android:id="@+id/mifloat_menu_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_dimen_40"
+            android:layout_marginBottom="@dimen/view_dimen_40" />-->
         <com.xiaomi.gamecenter.sdk.ui.widget.gridview.FloatMenuGridView
             android:id="@+id/mifloat_menu_gridview"
             android:layout_width="match_parent"

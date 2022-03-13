@@ -50,21 +50,10 @@ public class Official implements LoginImpl {
         @Override
         public void run() {
             String feedback;
-            while (true) {
-                if (!preferences.getBoolean("has_token", false)) {
-                    feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login", login_json.toString(), login_map);
-                } else {
-                    feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString());
-                }
-                if (feedback != null) {
-                    break;
-                }
-                Log.makeToast("网络请求错误\n2s后重试");
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            if (!preferences.getBoolean("has_token", false)) {
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login", login_json.toString(), login_map);
+            } else {
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString());
             }
 
             Message msg = new Message();

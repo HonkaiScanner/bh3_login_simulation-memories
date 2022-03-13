@@ -1,8 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xiaomi">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -11,24 +9,32 @@
     <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+    <!-- Xiaomi SDK Need -->
+    <queries>
+        <package android:name="com.xiaomi.gamecenter" />
+        <package android:name="com.xiaomi.gamecenter.sdk.service" />
+        <package android:name="com.eg.android.AlipayGphone" />
+        <package android:name="com.tencent.mm" />
+        <package android:name="com.tencent.mobileqq" />
+        <package android:name="com.sina.weibo" />
+        <package android:name="com.miui.cloudservice" />
+        <package android:name="com.xiaomi.xmsf" />
+        <package android:name="com.miui.securitycenter" />
+    </queries>
+
+
     <application>
 
         <!-- Xiaomi SDK Need -->
         <meta-data
             android:name="notch.config"
             android:value="portrait|landscape" />
-        <meta-data
-            android:name="android.max_aspect"
-            android:value="2.2" />
-        <meta-data
-            android:name="MiLinkGroupAppID"
-            android:value="@integer/MiLinkGroupAppID" />
 
         <activity
             android:name="com.xiaomi.gamecenter.sdk.ui.MiActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="behind"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
         <activity
             android:name="com.xiaomi.gamecenter.sdk.ui.PayListActivity"
             android:configChanges="orientation|screenSize"
@@ -39,6 +45,12 @@
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <!--不支持${applicationId}的请替换为包名-->
 
         <provider
