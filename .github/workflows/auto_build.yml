@@ -3,6 +3,8 @@ on:
   create:
   workflow_dispatch:
   push:
+    paths-ignore:
+      - '*.md'
     branches:
       - dev
 jobs:
@@ -78,12 +80,18 @@ jobs:
         with:
           name: scanner-armv8
           path: app/build/outputs/apk/release/app-arm64-v8a-release.apk
-          
-      - name: Upload Released APK x86_64
+
+      #      - name: Upload Released APK x86_64
+      #        uses: actions/upload-artifact@v2
+      #        with:
+      #          name: scanner-x86_64(wsa)
+      #          path: app/build/outputs/apk/release/app-x86_64-release.apk
+
+      - name: Upload Released APK x86
         uses: actions/upload-artifact@v2
         with:
-          name: scanner-x86_64(wsa)
-          path: app/build/outputs/apk/release/app-x86_64-release.apk
+          name: scanner-x86 (Emulator)
+          path: app/build/outputs/apk/release/app-x86-release.apk
 
       - name: Upload Released Universal APK
         uses: actions/upload-artifact@v2
@@ -98,5 +106,5 @@ jobs:
           files: |
             app/build/outputs/apk/release/app-armeabi-v7a-release.apk
             app/build/outputs/apk/release/app-arm64-v8a-release.apk
-            app/build/outputs/apk/release/app-x86_64-release.apk
+            app/build/outputs/apk/release/app-x86-release.apk
             app/build/outputs/apk/release/app-universal-release.apk
