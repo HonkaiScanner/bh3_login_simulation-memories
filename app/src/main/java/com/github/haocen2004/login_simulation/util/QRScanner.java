@@ -79,7 +79,7 @@ public class QRScanner {
 //                    Logger.warning("扫码登录失败2");
 
                     Logger.w(TAG, "handleMessage: 扫描登录失败2");
-                    makeToast("登录失败 code:2");
+                    makeToast("登录失败 code: " + feedback_json.getInt("retcode") + "\n" + feedback_json.getString("msg"));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
