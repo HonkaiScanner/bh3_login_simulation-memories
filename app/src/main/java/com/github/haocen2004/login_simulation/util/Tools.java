@@ -52,6 +52,10 @@ public static void changeToWDJ(Activity activity) {
             String feedback = sendPost(getOAUrl, "");
             Logger.i(TAG, "getOAServer: " + feedback);
             JSONObject json1 = new JSONObject(feedback);
+            if (json1.getInt("retcode") != 0) {
+                Logger.getLogger(null).makeToast(json1.getString("msg"));
+                return null;
+            }
             JSONArray jsonArray = json1.getJSONArray("region_list");
             JSONObject json2 = jsonArray.getJSONObject(0);
             Logger.d(TAG, "Official Server Type: " + OFFICIAL_TYPE);
