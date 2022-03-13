@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
+import com.github.haocen2004.login_simulation.util.CrashHandler;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -30,6 +31,8 @@ public class MainApplication extends Application {
         ToastUtils.init(this);
         ToastUtils.setGravity(Gravity.BOTTOM, 0, 50);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG);
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
         app_pref = getDefaultSharedPreferences(this);
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             app_pref.edit()
