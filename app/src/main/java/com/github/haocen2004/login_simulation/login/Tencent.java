@@ -98,6 +98,7 @@ public class Tencent implements LoginImpl, UserListener {
         if (userLoginRet.flag != 0) {
             if (first_auto_login) {
                 YSDKApi.login(ePlatform.QQ);
+                first_auto_login = false;
                 return;
             }
             Logger.d(TAG, userLoginRet.toString());
