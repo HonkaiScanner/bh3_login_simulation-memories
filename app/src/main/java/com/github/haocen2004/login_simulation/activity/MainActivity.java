@@ -16,6 +16,7 @@ import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -24,6 +25,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -38,6 +40,7 @@ import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
+import com.tencent.ysdk.api.YSDKApi;
 
 import org.json.JSONObject;
 import org.opencv.OpenCV;
@@ -246,6 +249,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Logger.d("mainActivity", "reqcode:" + requestCode + ",resultcode:" + resultCode);
+        try {
+            Logger.d("mainActivity", data.getExtras().get("key_response").toString());
+        } catch (Exception ignore) {
+        }
+        YSDKApi.onActivityResult(requestCode, resultCode, data);
+    }
 
     private void showUpdateDialog(String ver, String url, String logs) {
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
@@ -337,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
             supportedABI.append(abi);
             supportedABI.append('\n');
         }
-        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI.toString());
+        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     dialog.dismiss();

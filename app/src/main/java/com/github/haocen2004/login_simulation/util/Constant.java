@@ -30,4 +30,5 @@ public class Constant {
     public static boolean SP_CHECKED = false;
     public static boolean BILI_INIT = false;
     public static boolean MI_INIT = false;
+    public static boolean YYB_INIT = false;
 }

@@ -20,6 +20,7 @@
     <string name="types_vivo">Vivo服</string>
     <string name="types_oppo">Oppo服</string>
     <string name="types_flyme">魅族服</string>
+    <string name="types_yyb">应用宝-QQ</string>
 
     <string name="toolbar_icon_description">占位符</string>
     <string name="request_permission_failed">请求权限失败</string>

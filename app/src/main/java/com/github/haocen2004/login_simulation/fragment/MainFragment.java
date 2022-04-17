@@ -48,6 +48,7 @@ import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.Oppo;
+import com.github.haocen2004.login_simulation.login.Tencent;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
 import com.github.haocen2004.login_simulation.login.Xiaomi;
@@ -248,12 +249,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             case "Flyme":
                 server_type = activity.getString(R.string.types_flyme);
                 break;
+            case "YYB":
+                server_type = activity.getString(R.string.types_yyb);
+                break;
             default:
                 server_type = "DEBUG -- SERVER ERROR";
         }
         binding.cardViewMain.serverText.setText(activity.getString(R.string.types_prefix) + server_type);
-        boolean isLogin = false;
-        if (loginImpl != null && loginImpl.isLogin()) isLogin = true;
+        boolean isLogin = loginImpl != null && loginImpl.isLogin();
         if (isLogin) {
             binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
             binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
@@ -422,6 +425,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //                    case "Flyme":
 //                        loginImpl = new Flyme(activity);
 //                        break;
+                case "YYB":
+                    loginImpl = new Tencent(activity, this);
+                    break;
                 default:
                     makeToast(R.string.error_wrong_server);
                     break;
