@@ -104,4 +104,5 @@
     <string name="logs">Logs</string>
     <string name="list_about">About</string>
     <string name="types_yyb">YYB Server(QQ only)</string>
+    <string name="overwrite_bh_ver">Overwrite Honkai Version</string>
 </resources>

@@ -38,10 +38,14 @@
     <PreferenceCategory android:title="@string/adv_header">
 
         <EditTextPreference
-            android:key="bh_ver"
+            android:key="custom_bh_ver"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/settings_bh_ver" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="bh_ver_overwrite"
+            android:title="@string/overwrite_bh_ver" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="socket_helper"
