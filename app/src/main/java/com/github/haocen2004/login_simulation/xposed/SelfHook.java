@@ -7,6 +7,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class SelfHook {
     public SelfHook(XC_LoadPackage.LoadPackageParam lpparam) {
+        XposedBridge.log("Hook " + lpparam.packageName);
         Class<?> clazz3 = XposedHelpers.findClass("com.github.haocen2004.login_simulation.login.Tencent", lpparam.classLoader);
 
         try {
@@ -15,6 +16,7 @@ public class SelfHook {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) {
                     param.setResult(true);
+                    XposedBridge.log("Self Hooked Success.");
                 }
             });
         } catch (Exception e) {

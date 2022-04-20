@@ -20,7 +20,6 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static final String TAG = "CrashHandler";
@@ -100,13 +99,17 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     private void dumpLogs(PrintWriter pw) {
-        for (LogData logData : Objects.requireNonNull(LogLiveData.getINSTANCE(mContext).getValue())) {
-            if (logData.getTAG().equals("复制日志")) continue;
-            pw.print(logData.getLevel());
-            pw.print("/");
-            pw.print(logData.getTAG());
-            pw.print(": ");
-            pw.println(logData.getMessage());
+        try {
+            for (LogData logData : LogLiveData.getINSTANCE(mContext).getValue()) {
+                if (logData.getTAG().equals("复制日志")) continue;
+                pw.print(logData.getLevel());
+                pw.print("/");
+                pw.print(logData.getTAG());
+                pw.print(": ");
+                pw.println(logData.getMessage());
+            }
+        } catch (NullPointerException e) {
+            pw.println("NO LOGS.");
         }
     }
 

@@ -36,6 +36,7 @@ public class TencentHook {
 
     public TencentHook(XC_LoadPackage.LoadPackageParam lpparam) {
 
+        XposedBridge.log("Hook " + lpparam.packageName);
         Class<?> clazz = XposedHelpers.findClass("com.tencent.open.virtual.OpenSdkVirtualUtil", lpparam.classLoader);
         Class<?> clazz2 = XposedHelpers.findClass("com.tencent.open.agent.strategy.SSOLoginAction", lpparam.classLoader);
         Class<?> clazz3 = XposedHelpers.findClass("com.tencent.open.agent.util.AuthorityUtil", lpparam.classLoader);

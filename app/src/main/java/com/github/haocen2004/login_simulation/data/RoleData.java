@@ -40,7 +40,7 @@ public class RoleData {
             String feedback = data.getString("value");
             try {
                 oaserver = new JSONObject(feedback);
-                Logger.i("GetOAServer", "handleMessage: " + oaserver.toString());
+                Logger.i("GetOAServer", "handleMessage: " + oaserver);
                 if (!oaserver.getBoolean("is_data_ready")) {
                     String msg1 = oaserver.getString("msg");
                     if (msg1.contains("更新"))
@@ -89,6 +89,8 @@ public class RoleData {
             accountType = "8";
         } else if (special_tag == 5) {
             accountType = "6";
+        } else if (special_tag == 7) {
+            accountType = "5";
         }
         Logger.addBlacklist(combo_token);
         Logger.addBlacklist(open_token);
