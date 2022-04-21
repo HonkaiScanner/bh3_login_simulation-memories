@@ -117,13 +117,22 @@ public static void changeToWDJ(Activity activity) {
         return paramContext.getSharedPreferences(name, 0).edit().putInt(paramString, paramInt).commit();
     }
 
-    public static Integer getInt(Context paramContext, String paramString) {
-        return paramContext.getSharedPreferences(name, 0).getInt(paramString, 0);
+    public static Integer getInt(Context paramContext, String key) {
+        return paramContext.getSharedPreferences(name, 0).getInt(key, 0);
     }
 
     public static boolean saveString(Context paramContext, String paramString1, String paramString2) {
         return paramContext.getSharedPreferences(name, 0).edit().putString(paramString1, paramString2).commit();
     }
+
+    public static boolean saveBoolean(Context paramContext, String key, boolean value) {
+        return paramContext.getSharedPreferences(name, 0).edit().putBoolean(key, value).commit();
+    }
+
+    public static boolean getBoolean(Context paramContext, String key) {
+        return paramContext.getSharedPreferences(name, 0).getBoolean(key, false);
+    }
+
 
     public static String verifyAccount(Activity activity, String channel_id, String data_json) {
 
@@ -151,7 +160,7 @@ public static void changeToWDJ(Activity activity) {
             login_json.put("sign", sign);
 
 //                Logger.info(login_json.toString());
-            Logger.i(TAG, "run: " + login_json.toString());
+            Logger.i(TAG, "run: " + login_json);
             JSONObject feedback_json = null;
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
 

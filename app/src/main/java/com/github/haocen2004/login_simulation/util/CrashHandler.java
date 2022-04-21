@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Process;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -30,6 +29,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static final String FILE_NAME_SUFFIX = ".txt";
     private static Context mContext;
 
+
     @Override
     public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
         Log.e(TAG, "DETECT CRASH");
@@ -43,17 +43,31 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        Log.d(TAG, "CRASH DETAIL");
         e.printStackTrace();
-        if (mDefaultCrashHandler != null) {
-            mDefaultCrashHandler.uncaughtException(t, e);
-        } else {
-            try {
-                Thread.sleep(2000); // 延迟2秒杀进程
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-            android.os.Process.killProcess(Process.myPid());
-        }
+
+        Log.d(TAG, "START CRASH ACTIVITY");
+
+        Tools.saveBoolean(mContext, "has_crash", true);
+//        ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+//        activityManager.killBackgroundProcesses(mContext.getPackageName());
+
+        android.os.Process.killProcess(android.os.Process.myPid());
+//        Intent intent = new Intent (mContext.getApplicationContext(), CrashActivity.class);
+////        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+////        mContext.startActivity(intent);
+//        PendingIntent restartIntent = PendingIntent.getActivity(
+//                mContext.getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//        //退出程序
+//        AlarmManager mgr = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+//        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000,
+//                restartIntent); // 1秒钟后重启应用
+//        mContext.
+//        mContext.finishActivity();
+//        Log.d(TAG, "EXIT");
+//        System.exit(2);
+
     }
 
     private CrashHandler() {
@@ -77,9 +91,11 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             dir.mkdirs();
         }
         long current = System.currentTimeMillis();
-        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(new Date(current));
+        String time = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.CHINA).format(new Date(current));
         time = time.replace(":", "-");
         File file = new File(PATH + FILE_NAME + "-" + time + FILE_NAME_SUFFIX);
+        Tools.saveString(mContext, "crash-report-name", FILE_NAME + "-" + time + FILE_NAME_SUFFIX);
+        Log.d(TAG, "crash-report-name: " + file.getName());
 
         try {
             file.createNewFile();

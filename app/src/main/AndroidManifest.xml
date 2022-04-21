@@ -4,23 +4,13 @@
     package="com.github.haocen2004.login_simulation">
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络权限 -->
-    <uses-permission android:name="android.permission.VIBRATE" /> <!-- 震动权限 -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 摄像头权限 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 悬浮窗扫码权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 悬浮窗扫码后台进程权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 相册扫码权限 -->
     <uses-permission
         android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" /> <!-- Ignore system app -->
-    <uses-permission android:name="vivo.game.permission.OPEN_JUMP_INTENTS" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
     <supports-screens
@@ -46,6 +36,7 @@
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.ScannerActivity" />
+        <activity android:name=".activity.CrashActivity" />
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />

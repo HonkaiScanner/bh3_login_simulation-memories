@@ -39,6 +39,7 @@ import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
+import com.github.haocen2004.login_simulation.util.Tools;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
 import com.tencent.ysdk.api.YSDKApi;
 
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
 //        Logger.setView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
         Log = Logger.getLogger(this);
@@ -125,6 +127,13 @@ public class MainActivity extends AppCompatActivity {
         BH_VER = app_pref.getString("bh_ver", BH_VER);
         MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
 
+        if (Tools.getBoolean(this, "has_crash")) {
+            Logger.d("CRASH", "has crash before");
+            Intent intent = new Intent(this, CrashActivity.class);
+            startActivity(intent);
+//            finish();
+//            return;
+        }
 //        if (CHECK_VER) {
         new Thread(update_rb).start();
 //        }

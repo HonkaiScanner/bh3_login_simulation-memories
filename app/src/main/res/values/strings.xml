@@ -105,4 +105,8 @@
     <string name="list_about">About</string>
     <string name="types_yyb">YYB Server(QQ only)</string>
     <string name="overwrite_bh_ver">Overwrite Honkai Version</string>
+
+    <string name="crash_hint">Detected a recent crash happened.\nPlease bring a crash-report to get feedback from the developer in time!</string>
+    <string name="crash_btn">Open CrashReport</string>
+    <string name="crash_hint2">Press the back button / full screen return gesture \n to return to the home page\nFor more crash logs, please go to \n/Android/data/{packageName}/files/crash-report/</string>
 </resources>
