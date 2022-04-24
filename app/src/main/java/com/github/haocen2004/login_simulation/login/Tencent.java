@@ -53,6 +53,7 @@ public class Tencent implements LoginImpl, UserListener {
     }
 
     private boolean getHooked() {
+        Logger.d(TAG, "Xposed Checking..."); // for TaiChi and VXP short method hook compatibility
         return false;
     }
 

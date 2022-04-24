@@ -72,21 +72,7 @@
         <meta-data
             android:name="vivo_union_sdk"
             android:value="4.6.0.1" />
-        <meta-data
-            android:name="xposeddescription"
-            android:value="修改对应渠道的签名验证流程" />
-        <meta-data
-            android:name="xposedminversion"
-            android:value="93" />
-        <meta-data
-            android:name="xposedsharedprefs"
-            android:value="true" />
-        <meta-data
-            android:name="xposedscope"
-            android:resource="@array/xposed_scope" />
 
-
-        <!-- TODO GAME SDK QQ接入配置 START -->
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
@@ -98,14 +84,12 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="tencent1105553399" />
-                <!-- TODO GAME 这里为游戏QQ登录的配置，游戏需要修改为自己手Q的appid -->
             </intent-filter>
         </activity>
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <!-- TODO GAME SDK QQ接入配置 END -->
 
         <activity
             android:name="com.bsgamesdk.android.activity.CaptchaWebActivity"
