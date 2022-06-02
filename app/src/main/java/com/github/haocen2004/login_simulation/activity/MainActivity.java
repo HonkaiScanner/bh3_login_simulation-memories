@@ -12,6 +12,7 @@ import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
 import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
+import static com.github.haocen2004.login_simulation.util.Constant.YYB_INIT;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 import android.annotation.SuppressLint;
@@ -176,9 +177,10 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
-            feedback = feedback.substring(1, feedback.length() - 1).replaceAll("\\\\", "");
-            Logger.i("Update", "handleMessage: " + feedback);
             try {
+                Logger.i("Update", "handleMessage: " + feedback);
+//                feedback = feedback.substring(1, feedback.length() > 1 ? 0 : feedback.length() - 1).replaceAll("\\\\", "");
+
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
                         .putString("mdk_ver", json.getString("mdk_ver"))
@@ -262,12 +264,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Logger.d("mainActivity", "reqcode:" + requestCode + ",resultcode:" + resultCode);
-        try {
-            Logger.d("mainActivity", data.getExtras().get("key_response").toString());
-        } catch (Exception ignore) {
+        if (YYB_INIT) {
+            YSDKApi.onActivityResult(requestCode, resultCode, data);
         }
-        YSDKApi.onActivityResult(requestCode, resultCode, data);
     }
 
     private void showUpdateDialog(String ver, String url, String logs) {
@@ -314,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Runnable update_rb = () -> {
-        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", false);
+        String feedback = Network.sendGet("https://dev.hellocraft.xyz/scanner/update", false);
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);

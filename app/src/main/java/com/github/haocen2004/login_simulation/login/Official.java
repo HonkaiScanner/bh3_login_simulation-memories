@@ -53,7 +53,17 @@ public class Official implements LoginImpl {
             if (!preferences.getBoolean("has_token", false)) {
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login", login_json.toString(), login_map);
             } else {
-                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString());
+
+                Map<String, String> map = new HashMap<>();
+
+                map.put("x-rpc-device_id", getDeviceID(activity));
+                map.put("x-rpc-client_type", "2");
+                map.put("x-rpc-game_biz", "bh3_cn");
+                map.put("x-rpc-language", "zh-cn");
+                map.put("x-rpc-channel_id", "1");
+                map.put("User-Agent", "okhttp/3.10.0");
+
+                feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString(), map);
             }
 
             Message msg = new Message();
@@ -236,7 +246,7 @@ public class Official implements LoginImpl {
                             stringBuilder.append(jsonObject.getString("geetest_seccode"));
                             stringBuilder.append(";v=");
                             stringBuilder.append(jsonObject.getString("geetest_validate"));
-                            Logger.d(TAG, "极验验证完成,risky信息：" + stringBuilder.toString());
+                            Logger.d(TAG, "极验验证完成,risky信息：" + stringBuilder);
                             login_map.put("x-rpc-risky", stringBuilder.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();

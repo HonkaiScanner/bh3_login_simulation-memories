@@ -70,8 +70,82 @@ public class Network {
         return result.toString();
     }
 
+    private static String realSendGet(String url, Map<String, String> map) {
+
+        BufferedReader in = null;
+        StringBuilder result = new StringBuilder();
+        try {
+            URL realUrl = new URL(url);
+            // 打开和URL之间的连接
+            HttpURLConnection conn = (HttpURLConnection) realUrl.openConnection();
+//            URLConnection conn = realUrl.openConnection();
+            // 设置通用的请求属性
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("accept", "*/*");
+            conn.setRequestProperty("connection", "Keep-Alive");
+//            conn.setRequestProperty("user-agent", "okhttp/3.10.0");
+            if (map != null) {
+                ArrayList<String> arrayList = new ArrayList<>(map.keySet());
+                for (String key : arrayList) {
+                    conn.setRequestProperty(key, map.get(key));
+                }
+            }
+            // 定义BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result.append(line);
+            }
+        } catch (Exception e) {
+            Logger.i("Network", "sendGet: Failed. Target: " + url);
+//            BuglyLog.i("HTTP", "sendPost: Failed.");
+            e.printStackTrace();
+            return "null";
+        }
+        //使用finally块来关闭输出流、输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return result.toString();
+    }
+
+    public static String sendGet(String url, Map<String, String> map, Boolean autoRetry) {
+        String ret;
+        while (true) {
+            ret = realSendGet(url, map);
+            if (ret != null && !ret.equals("null")) {
+                break;
+            }
+            if (!autoRetry) {
+                return "";
+            }
+            Logger.getLogger(null).makeToast("网络请求错误\n2s后自动重试");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return ret;
+    }
+
+    public static String sendGet(String url, Boolean autoRetry) {
+        return sendGet(url, null, true);
+    }
+
     public static String sendPost(String url, String param) {
         return sendPost(url, param, null, true);
+    }
+
+    public static String sendPost(String url, String param, Boolean autoRetry) {
+        return sendPost(url, param, null, autoRetry);
     }
 
     public static String sendPost(String url, Boolean autoRetry) {
@@ -86,7 +160,7 @@ public class Network {
         String ret;
         while (true) {
             ret = realSendPost(url, param, map);
-            if (ret != null) {
+            if (ret != null && !ret.equals("null")) {
                 break;
             }
             if (!autoRetry) {

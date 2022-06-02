@@ -71,6 +71,13 @@ public class Logger {
         Logger.view = view;
     }
 
+    public static String processWithBlackList(String msg) {
+        for (String b : logBlackList) {
+            msg = msg.replace(b, "******");
+        }
+        return msg;
+    }
+
     public static void e(String TAG, String msg) {
         for (String b : logBlackList) {
             msg = msg.replace(b, "******");
