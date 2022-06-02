@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Runnable update_rb = () -> {
-        String feedback = Network.sendGet("https://dev.hellocraft.xyz/scanner/update", false);
+        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update", false);
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);
