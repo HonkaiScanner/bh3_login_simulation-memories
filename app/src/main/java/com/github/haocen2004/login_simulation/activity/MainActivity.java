@@ -169,9 +169,8 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
-            feedback = feedback.substring(1, feedback.length() - 1).replaceAll("\\\\", "");
-            Logger.i("Update", "handleMessage: " + feedback);
             try {
+                Logger.i("Update", "handleMessage: " + feedback);
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
                         .putString("mdk_ver", json.getString("mdk_ver"))
@@ -286,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Runnable update_rb = () -> {
-        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/version", false);
+        String feedback = Network.sendGet("https://dev.hellocraft.xyz/scanner/update", false);
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);
@@ -337,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
             supportedABI.append(abi);
             supportedABI.append('\n');
         }
-        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI.toString());
+        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     dialog.dismiss();
