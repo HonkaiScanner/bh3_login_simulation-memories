@@ -190,7 +190,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startCodeCheck(String content, String postParam, String sc_key) {
         // 请求云端查询身份码是否有绑定用户  Tencent Cloud
-        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
+        String feedback = Network.sendPost("https://api.scanner.hellocraft.xyz/sp_check", postParam);
         Logger.d(TAG, feedback);
         try {
             JSONObject feedback_json = new JSONObject(feedback);
