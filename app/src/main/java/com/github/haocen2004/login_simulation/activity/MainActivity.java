@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
             supportedABI.append(abi);
             supportedABI.append('\n');
         }
-        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
+        normalDialog.setMessage("你所下载的版本可能不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     dialog.dismiss();

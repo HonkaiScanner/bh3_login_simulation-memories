@@ -51,12 +51,14 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
         }
         debug {
             versionNameSuffix "-dev"
             applicationIdSuffix '.dev'
             minifyEnabled false
+            shrinkResources false
         }
     }
 
