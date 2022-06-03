@@ -51,10 +51,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         });
 
-        findPreference("bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
+        findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
+            } else {
+                BH_VER = app_pref.getString("bh_ver", BH_VER);
+            }
+            Logger.d(TAG, "new bh version:" + BH_VER);
+            return true;
+        });
+
+        findPreference("custom_bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
             Logger.d(TAG, newValue.toString());
-            app_pref.edit().putString("bh_ver", newValue.toString());
-            BH_VER = newValue.toString();
+            app_pref.edit().putString("custom_bh_ver", newValue.toString());
+            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
+                BH_VER = newValue.toString();
+            }
+            Logger.d(TAG, "new bh version:" + BH_VER);
             return true;
         });
 

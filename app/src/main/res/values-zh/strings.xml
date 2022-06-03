@@ -102,6 +102,6 @@
     <string name="logs">日志</string>
     <string name="feedback_way">反馈途径</string>
     <string name="list_about">关于</string>
-
+    <string name="overwrite_bh_ver">使用自定义崩坏3版本号</string>
 
 </resources>

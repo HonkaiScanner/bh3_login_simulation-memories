@@ -99,11 +99,10 @@
     <string name="use_socket">Receive socket requests</string>
     <string name="log_msg">Logger Message</string>
     <string name="log_level">Logger Level</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="list_log">Logs</string>
     <string name="feedback_way">Feed Back</string>
     <string name="logs">Logs</string>
     <string name="list_about">About</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="overwrite_bh_ver">Overwrite Honkai Version</string>
 
 </resources>

@@ -120,16 +120,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         // 优先读取本地数据
-        BH_VER = app_pref.getString("bh_ver", BH_VER);
+        BH_VER = app_pref.getBoolean("bh_ver_overwrite", false) ? app_pref.getString("custom_bh_ver", BH_VER) : app_pref.getString("bh_ver", BH_VER);
         MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
-        AVOSCloud.initialize(this, "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
-        if (DEBUG) {
-            AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
-        }
 
-        if (CHECK_VER) {
+//        if (CHECK_VER) {
             new Thread(update_rb).start();
-        }
+//        }
     }
 
     @Override
@@ -177,11 +173,12 @@ public class MainActivity extends AppCompatActivity {
                         .putString("sp_url", json.getString("sp_url"))
                         .putString("afd_url", json.getString("afd_url"))
                         .putString("qq_group_url", json.getString("qq_group_url"))
+                        .putString("custom_username", json.getString("default_name"))
                         .apply();
                 Logger.d("Update", "cloud ver:" + json.getInt("ver"));
                 Logger.d("Update", "local ver:" + VERSION_CODE);
                 Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
-                if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver"))) {
+                if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER) {
                     Logger.i("Update", "Start Update window");
                     showUpdateDialog(
                             json.getString("ver_name"),
@@ -195,53 +192,59 @@ public class MainActivity extends AppCompatActivity {
                 Log.makeToast("检查更新失败...");
                 //app_pref.edit().putString("bh_ver", BH_VER).apply();
             }
-            BH_VER = app_pref.getString("bh_ver", BH_VER);
+            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
+                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
+            } else {
+                BH_VER = app_pref.getString("bh_ver", BH_VER);
+            }
             MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
             SP_URL = app_pref.getString("sp_url", SP_URL);
             AFD_URL = app_pref.getString("afd_url", AFD_URL);
             QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
-            AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
-            if (DEBUG) {
-                AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
-            }
-
-            Executors.newSingleThreadExecutor().execute(() -> {
-                new SponsorRepo(getApplicationContext()).refreshSponsors();
-                new AnnouncementRepo(activity).refreshAnnouncements();
-                if (app_pref.getBoolean("has_account", false)) {
-                    String TAG = "sponsor login check";
-
-                    Logger.d(TAG, "Start.");
-                    AVUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<AVUser>() {
-                        public void onSubscribe(Disposable disposable) {
-                        }
-
-                        public void onNext(AVUser user) {
-                            AVUser.changeCurrentUser(user, true);
-                            HAS_ACCOUNT = true;
-                            app_pref.edit().putString("custom_username", user.getString("custom_username")).apply();
-                            Logger.d(TAG, "Succeed.");
-                            SP_CHECKED = true;
-
-                        }
-
-                        public void onError(Throwable throwable) {
-                            AVUser.changeCurrentUser(null, true);
-                            app_pref.edit().putBoolean("has_account", false)
-                                    .putString("custom_username", "崩坏3扫码器用户").apply();
-                            throwable.printStackTrace();
-                            Logger.d(TAG, "Failed. Reset custom username");
-                            Log.makeToast("赞助者身份验证已过期...");
-                            SP_CHECKED = true;
-                        }
-
-                        public void onComplete() {
-                        }
-                    });
-
+            if (CHECK_VER) {
+                AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
+                if (DEBUG) {
+                    AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
                 }
-            });
 
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    new SponsorRepo(getApplicationContext()).refreshSponsors();
+                    new AnnouncementRepo(activity).refreshAnnouncements();
+                    if (app_pref.getBoolean("has_account", false)) {
+                        String TAG = "sponsor login check";
+
+                        Logger.d(TAG, "Start.");
+                        AVUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<AVUser>() {
+                            public void onSubscribe(Disposable disposable) {
+                            }
+
+                            public void onNext(AVUser user) {
+                                AVUser.changeCurrentUser(user, true);
+                                HAS_ACCOUNT = true;
+                                app_pref.edit().putString("custom_username", user.getString("custom_username")).apply();
+                                Logger.d(TAG, "Succeed.");
+                                SP_CHECKED = true;
+
+                            }
+
+                            public void onError(Throwable throwable) {
+                                AVUser.changeCurrentUser(null, true);
+                                app_pref.edit().putBoolean("has_account", false)
+                                        .putString("custom_username", "崩坏3扫码器用户").apply();
+                                throwable.printStackTrace();
+                                Logger.d(TAG, "Failed. Reset custom username");
+                                Log.makeToast("赞助者身份验证已过期...");
+                                SP_CHECKED = true;
+                            }
+
+                            public void onComplete() {
+                            }
+                        });
+
+                    }
+                });
+
+            }
         }
     };
 
