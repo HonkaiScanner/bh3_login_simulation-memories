@@ -71,7 +71,7 @@ public class QRScanner {
                 JSONObject feedback_json = new JSONObject(feedback);
                 if (feedback_json.getInt("retcode") == 0) {
                     makeToast(activity.getString(R.string.login_succeed));
-                    new Thread(() -> Network.sendPost("https://dev.hellocraft.xyz/scanner/scan_succ_upload", processWithBlackList(confirm_json.toString()), false)).start();
+                    new Thread(() -> Network.sendPost("https://api.scanner.hellocraft.xyz/scan_succ_upload", processWithBlackList(confirm_json.toString()), false)).start();
 //                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && getDefaultSharedPreferences(activity).getBoolean("create_short_cut", false)) {
 //                        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
 //                        shortcutManager.addDynamicShortcuts(new ShortcutInfo.Builder(activity, "test_1").setIcon(R.mipmap.ic_launcher).setShortLabel().setLongLabel().setIntent(new Intent(activity, MainActivity.class)).build());

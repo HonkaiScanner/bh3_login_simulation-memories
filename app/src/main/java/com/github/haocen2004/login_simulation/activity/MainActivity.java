@@ -35,7 +35,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.data.database.announcement.AnnouncementRepo;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
@@ -71,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
 //        Logger.setView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
         Log = Logger.getLogger(this);
@@ -124,10 +122,19 @@ public class MainActivity extends AppCompatActivity {
 //            show15NewFeatureDialog();
 //        }
 
+
         // 优先读取本地数据
-        BH_VER = app_pref.getString("bh_ver", BH_VER);
+        BH_VER = app_pref.getBoolean("bh_ver_overwrite", false) ? app_pref.getString("custom_bh_ver", BH_VER) : app_pref.getString("bh_ver", BH_VER);
         MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
 
+//        if (CHECK_VER) {
+        new Thread(update_rb).start();
+//        }
+
+
+        if (app_pref.getBoolean("show_eula", true)) {
+            showEulaDialog();
+        }
         if (Tools.getBoolean(this, "has_crash")) {
             Logger.d("CRASH", "has crash before");
             Intent intent = new Intent(this, CrashActivity.class);
@@ -179,14 +186,13 @@ public class MainActivity extends AppCompatActivity {
             String feedback = data.getString("value");
             try {
                 Logger.i("Update", "handleMessage: " + feedback);
-//                feedback = feedback.substring(1, feedback.length() > 1 ? 0 : feedback.length() - 1).replaceAll("\\\\", "");
-
                 JSONObject json = new JSONObject(feedback);
                 app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
                         .putString("mdk_ver", json.getString("mdk_ver"))
                         .putString("sp_url", json.getString("sp_url"))
                         .putString("afd_url", json.getString("afd_url"))
                         .putString("qq_group_url", json.getString("qq_group_url"))
+                        .putString("custom_username", json.getString("default_name"))
                         .apply();
                 Logger.d("Update", "cloud ver:" + json.getInt("ver"));
                 Logger.d("Update", "local ver:" + VERSION_CODE);
@@ -215,14 +221,13 @@ public class MainActivity extends AppCompatActivity {
             AFD_URL = app_pref.getString("afd_url", AFD_URL);
             QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
             if (CHECK_VER) {
-                AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
+                AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
                 if (DEBUG) {
                     AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
                 }
 
                 Executors.newSingleThreadExecutor().execute(() -> {
                     new SponsorRepo(getApplicationContext()).refreshSponsors();
-                    new AnnouncementRepo(activity).refreshAnnouncements();
                     if (app_pref.getBoolean("has_account", false)) {
                         String TAG = "sponsor login check";
 
@@ -256,11 +261,38 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-            }
 
+            }
         }
     };
 
+    private void showEulaDialog() {
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+        normalDialog.setTitle("用户隐私协议");
+        normalDialog.setMessage(
+                "概要\n" +
+                        "不得用于商业用途。\n" +
+                        "不得以此应用牟利。\n" +
+                        "自行承担一切使用此应用造成的意外和风险。\n" +
+                        "最终解释权归本软件作者所有。\n" +
+                        "未尽之处，以下方链接「最终用户许可协议与隐私条款」为准。");
+        normalDialog.setNegativeButton("打开隐私协议完整链接",
+                (dialog, which) -> {
+                    openUrl("https://github.com/Haocen2004/bh3_login_simulation/blob/main/EULA.md", this);
+                });
+        normalDialog.setPositiveButton("同意",
+                (dialog, which) -> {
+                    app_pref.edit().putBoolean("show_eula", false).apply();
+                    dialog.dismiss();
+                });
+        normalDialog.setNeutralButton(R.string.btn_cancel,
+                (dialog, which) -> {
+                    System.exit(0);
+                    dialog.dismiss();
+                });
+        normalDialog.setCancelable(false);
+        normalDialog.show();
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -313,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Runnable update_rb = () -> {
-        String feedback = Network.sendGet("https://dev.hellocraft.xyz/scanner/update", false);
+        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update", false);
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);
@@ -364,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
             supportedABI.append(abi);
             supportedABI.append('\n');
         }
-        normalDialog.setMessage("你所下载的版本不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
+        normalDialog.setMessage("你所下载的版本可能不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     dialog.dismiss();

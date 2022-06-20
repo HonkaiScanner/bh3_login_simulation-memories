@@ -110,4 +110,5 @@
     <string name="crash_btn">发送崩溃日志</string>
     <string name="crash_hint2">按返回键/全面屏返回手势\n即可返回扫码器主页\n\n\n更多崩溃日志请前往\n/Android/data/{packageName}/files/crash-report/\n查看</string>
 
+
 </resources>

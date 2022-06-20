@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
 
-    if ( !System.getenv("CI") ) {
-        android.applicationVariants.all { variant ->
-            variant.outputs.all {
-                outputFileName = "app-${variant.name}-${variant.versionName}.apk"
-            }
-        }
-    } else {
+//    if ( !System.getenv("CI") ) {
+//        android.applicationVariants.all { variant ->
+//            variant.outputs.all {
+//                outputFileName = "app-${variant.name}-${variant.versionName}.apk"
+//            }
+//        }
+//    } else {
         splits {
             abi {
                 enable true
@@ -17,7 +17,7 @@ android {
                 universalApk true
             }
         }
-    }
+//    }
 
     signingConfigs {
         releaseSign {
@@ -34,9 +34,9 @@ android {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 40
+        versionCode 41
+        versionName '1.6.9'
 //        versionCode Integer.parseInt(System.currentTimeMillis().toString()[7..12])
-        versionName '1.7.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         applicationIdSuffix System.getenv("NAME_SUFFIX")
@@ -52,12 +52,14 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
         }
         debug {
             versionNameSuffix "-dev"
             applicationIdSuffix '.dev'
             minifyEnabled false
+            shrinkResources false
         }
     }
 
@@ -109,4 +111,5 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
 }

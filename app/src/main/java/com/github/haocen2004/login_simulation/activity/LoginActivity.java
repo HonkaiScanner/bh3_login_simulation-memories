@@ -115,7 +115,8 @@ public class LoginActivity extends AppCompatActivity {
             if (Pattern.matches(scKeyPattern, sc_key)) {  // 正则匹配格式
                 String content = binding.editTextRegEmail.getText().toString();
                 if (Pattern.matches(emailPattern, content)) {
-                    String postParam = "{\"app_ver\":" + VERSION_CODE + ",\"sponsor_key\":\"" + sc_key + "\"}";
+                    String postParam = "app_ver=" + VERSION_CODE + "&sponsor_key=" + sc_key;
+//                    String postParam = "{\"app_ver\":" + VERSION_CODE + ",\"sponsor_key\":\"" + sc_key + "\"}";
                     AVQuery<AVObject> query = new AVQuery<>("Sponsors"); // 请求云端查重 1  LeanCloud
                     query.whereEqualTo("scannerKey", sc_key);
                     query.findInBackground().subscribe(new Observer<List<AVObject>>() {
@@ -135,7 +136,10 @@ public class LoginActivity extends AppCompatActivity {
                                 });
 //                                new Thread(() -> {
                             } else {
-                                Looper.prepare();
+                                try {
+                                    Looper.prepare();
+                                } catch (Exception ignore) {
+                                }
                                 makeToast(getString(R.string.error_key_used));
                                 hideProgressBar();
                             }
@@ -190,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startCodeCheck(String content, String postParam, String sc_key) {
         // 请求云端查询身份码是否有绑定用户  Tencent Cloud
-        String feedback = Network.sendPost("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/release/sponsor", postParam);
+        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/sp_check?" + postParam, true);
         Logger.d(TAG, feedback);
         try {
             JSONObject feedback_json = new JSONObject(feedback);
