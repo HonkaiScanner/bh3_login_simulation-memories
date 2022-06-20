@@ -12,6 +12,7 @@ import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
 import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
+import static com.github.haocen2004.login_simulation.util.Constant.UPDATE_TIME;
 import static com.github.haocen2004.login_simulation.util.Constant.YYB_INIT;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
@@ -193,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
                         .putString("afd_url", json.getString("afd_url"))
                         .putString("qq_group_url", json.getString("qq_group_url"))
                         .putString("custom_username", json.getString("default_name"))
+                        .putLong("update_time", json.getLong("update_time"))
                         .apply();
                 Logger.d("Update", "cloud ver:" + json.getInt("ver"));
                 Logger.d("Update", "local ver:" + VERSION_CODE);
@@ -220,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
             SP_URL = app_pref.getString("sp_url", SP_URL);
             AFD_URL = app_pref.getString("afd_url", AFD_URL);
             QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
+            UPDATE_TIME = app_pref.getLong("update_time", 0);
             if (CHECK_VER) {
                 AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
                 if (DEBUG) {
