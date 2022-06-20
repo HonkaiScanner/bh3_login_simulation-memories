@@ -3,15 +3,10 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 30
 
-    lintOptions {
-        abortOnError false
-    }
 
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
     }
 
     buildTypes {
@@ -25,6 +20,9 @@ android {
         main {
             jniLibs.srcDirs = ['libs']
         }
+    }
+    lint {
+        abortOnError false
     }
 
 

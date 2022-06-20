@@ -32,7 +32,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.data.database.announcement.AnnouncementRepo;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
@@ -124,8 +123,13 @@ public class MainActivity extends AppCompatActivity {
         MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
 
 //        if (CHECK_VER) {
-            new Thread(update_rb).start();
+        new Thread(update_rb).start();
 //        }
+
+
+        if (app_pref.getBoolean("show_eula", true)) {
+            showEulaDialog();
+        }
     }
 
     @Override
@@ -202,14 +206,13 @@ public class MainActivity extends AppCompatActivity {
             AFD_URL = app_pref.getString("afd_url", AFD_URL);
             QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
             if (CHECK_VER) {
-                AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", "RWvHCY9qXzX1BH4L72J9RI1I", SP_URL);
+                AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
                 if (DEBUG) {
                     AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
                 }
 
                 Executors.newSingleThreadExecutor().execute(() -> {
                     new SponsorRepo(getApplicationContext()).refreshSponsors();
-                    new AnnouncementRepo(activity).refreshAnnouncements();
                     if (app_pref.getBoolean("has_account", false)) {
                         String TAG = "sponsor login check";
 
@@ -248,6 +251,33 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void showEulaDialog() {
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+        normalDialog.setTitle("用户隐私协议");
+        normalDialog.setMessage(
+                "概要\n" +
+                        "不得用于商业用途。\n" +
+                        "不得以此应用牟利。\n" +
+                        "自行承担一切使用此应用造成的意外和风险。\n" +
+                        "最终解释权归本软件作者所有。\n" +
+                        "未尽之处，以下方链接「最终用户许可协议与隐私条款」为准。");
+        normalDialog.setNegativeButton("打开隐私协议完整链接",
+                (dialog, which) -> {
+                    openUrl("https://github.com/Haocen2004/bh3_login_simulation/blob/main/EULA.md", this);
+                });
+        normalDialog.setPositiveButton("同意",
+                (dialog, which) -> {
+                    app_pref.edit().putBoolean("show_eula", false).apply();
+                    dialog.dismiss();
+                });
+        normalDialog.setNeutralButton(R.string.btn_cancel,
+                (dialog, which) -> {
+                    System.exit(0);
+                    dialog.dismiss();
+                });
+        normalDialog.setCancelable(false);
+        normalDialog.show();
+    }
 
     private void showUpdateDialog(String ver, String url, String logs) {
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);

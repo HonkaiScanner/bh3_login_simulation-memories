@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
 
-    if ( !System.getenv("CI") ) {
-        android.applicationVariants.all { variant ->
-            variant.outputs.all {
-                outputFileName = "app-${variant.name}-${variant.versionName}.apk"
-            }
-        }
-    } else {
+//    if ( !System.getenv("CI") ) {
+//        android.applicationVariants.all { variant ->
+//            variant.outputs.all {
+//                outputFileName = "app-${variant.name}-${variant.versionName}.apk"
+//            }
+//        }
+//    } else {
         splits {
             abi {
                 enable true
@@ -17,7 +17,7 @@ android {
                 universalApk true
             }
         }
-    }
+//    }
 
     signingConfigs {
         releaseSign {
@@ -34,8 +34,8 @@ android {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 35
-        versionName '1.6.8'
+        versionCode 41
+        versionName '1.6.9'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         applicationIdSuffix System.getenv("NAME_SUFFIX")
