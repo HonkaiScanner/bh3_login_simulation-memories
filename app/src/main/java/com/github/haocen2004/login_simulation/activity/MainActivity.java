@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
             AFD_URL = app_pref.getString("afd_url", AFD_URL);
             QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
             if (CHECK_VER) {
-                AVOSCloud.initialize(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
+                AVOSCloud.initializeSecurely(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
                 if (DEBUG) {
                     AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
                 }

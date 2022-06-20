@@ -34,8 +34,8 @@ android {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 41
-        versionName '1.6.9'
+        versionCode 42
+        versionName '1.6.10'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         applicationIdSuffix System.getenv("NAME_SUFFIX")
