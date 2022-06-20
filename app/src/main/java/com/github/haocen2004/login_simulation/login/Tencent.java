@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import androidx.annotation.Keep;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
@@ -52,6 +53,7 @@ public class Tencent implements LoginImpl, UserListener {
         YSDKApi.logout();
     }
 
+    @Keep
     private boolean getHooked() {
         Logger.d(TAG, "Xposed Checking..."); // for TaiChi and VXP short method hook compatibility
         return false;
