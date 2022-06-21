@@ -664,11 +664,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         if (binding.cardViewMain.cardView2.equals(view)) {
             try {
                 if ("Official".equals(pref.getString("server_type", ""))) {
-                    activity.getSharedPreferences("official_user", Context.MODE_PRIVATE).edit().clear().apply();
+                    activity.getSharedPreferences("official_user_" + pref.getInt("official_slot", 1), Context.MODE_PRIVATE).edit().clear().apply();
                     makeToast(R.string.cache_delete);
                     onLoginFailed();
-                }
-                if (loginImpl.isLogin()) {
+                } else if (loginImpl.isLogin()) {
                     loginImpl.logout();
                     onLoginFailed();
                 } else {
