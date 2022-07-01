@@ -43,9 +43,9 @@ import org.opencv.OpenCV;
 
 import java.util.concurrent.Executors;
 
-import cn.leancloud.AVLogger;
-import cn.leancloud.AVOSCloud;
-import cn.leancloud.AVUser;
+import cn.leancloud.LCLogger;
+import cn.leancloud.LCUser;
+import cn.leancloud.LeanCloud;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -206,9 +206,9 @@ public class MainActivity extends AppCompatActivity {
             AFD_URL = app_pref.getString("afd_url", AFD_URL);
             QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
             if (CHECK_VER) {
-                AVOSCloud.initializeSecurely(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
+                LeanCloud.initializeSecurely(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
                 if (DEBUG) {
-                    AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
+                    LeanCloud.setLogLevel(LCLogger.Level.DEBUG);
                 }
 
                 Executors.newSingleThreadExecutor().execute(() -> {
@@ -217,12 +217,12 @@ public class MainActivity extends AppCompatActivity {
                         String TAG = "sponsor login check";
 
                         Logger.d(TAG, "Start.");
-                        AVUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<AVUser>() {
+                        LCUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<LCUser>() {
                             public void onSubscribe(Disposable disposable) {
                             }
 
-                            public void onNext(AVUser user) {
-                                AVUser.changeCurrentUser(user, true);
+                            public void onNext(LCUser user) {
+                                LCUser.changeCurrentUser(user, true);
                                 HAS_ACCOUNT = true;
                                 app_pref.edit().putString("custom_username", user.getString("custom_username")).apply();
                                 Logger.d(TAG, "Succeed.");
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             public void onError(Throwable throwable) {
-                                AVUser.changeCurrentUser(null, true);
+                                LCUser.changeCurrentUser(null, true);
                                 app_pref.edit().putBoolean("has_account", false)
                                         .putString("custom_username", "崩坏3扫码器用户").apply();
                                 throwable.printStackTrace();

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorData;
+import com.github.haocen2004.login_simulation.util.Logger;
 
 import java.util.List;
 
@@ -40,14 +41,23 @@ public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.SponsorV
 
     @Override
     public void onBindViewHolder(@NonNull final SponsorViewHolder holder, final int position) {
-        SponsorData sponsorData = allSponsors.get(position);
+        SponsorData sponsorData;
+        try {
+            sponsorData = allSponsors.get(position);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            Logger.getLogger(null).makeToast("Sponsor display IndexOutOfBoundsException");
+            Logger.d("IndexOutOfBoundsException", "size:" + allSponsors.size());
+            return;
+        }
         holder.textViewName.setText(sponsorData.getName());
         holder.textViewDesc.setText(sponsorData.getDesc());
         holder.imageViewAvatar.setImageURI(Uri.parse(sponsorData.getAvatarImgUrl()));
         Glide.with(activity).load(sponsorData.getAvatarImgUrl()).circleCrop().into(holder.imageViewAvatar);
+        SponsorData finalSponsorData = sponsorData;
         holder.itemView.setOnClickListener(v -> {
             try {
-                Uri uri = Uri.parse(sponsorData.getPersonalPageUrl());
+                Uri uri = Uri.parse(finalSponsorData.getPersonalPageUrl());
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(uri);
                 holder.itemView.getContext().startActivity(intent);

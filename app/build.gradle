@@ -19,9 +19,24 @@ android {
         }
 //    }
 
+
     signingConfigs {
+        debugSign {
+
+            def properties = new Properties()
+
+            def inputStream = project.rootProject.file('local.properties').newDataInputStream()
+            storeFile file(System.getenv("KEYSTORE") ?: "keystore.jks")
+            properties.load( inputStream )
+
+            storePassword properties.getProperty("sign.pwn")
+            keyAlias properties.getProperty("sign.keyAlias")
+            keyPassword properties.getProperty("sign.pwn")
+
+        }
+
         releaseSign {
-            storeFile file(System.getenv("KEYSTORE") ?:"keystore.jks")
+            storeFile file(System.getenv("KEYSTORE") ?: "keystore.jks")
             storePassword System.getenv("KEYSTORE_PASSWORD")
             keyAlias System.getenv("KEY_ALIAS")
             keyPassword System.getenv("KEY_PASSWORD")
@@ -55,10 +70,11 @@ android {
             shrinkResources true
         }
         debug {
-            versionNameSuffix "-dev"
-            applicationIdSuffix '.dev'
-            minifyEnabled false
+//            versionNameSuffix "-dev"
+//            applicationIdSuffix '.dev'
+            minifyEnabled true
             shrinkResources false
+            signingConfig signingConfigs.debugSign
         }
     }
 
@@ -94,12 +110,12 @@ dependencies {
     implementation 'com.github.jenly1314.MLKit:mlkit-camera-core:1.0.3'
     implementation project(':mi_sdk')
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.tencent.bugly:crashreport:3.4.4'
-    implementation 'cn.leancloud:storage-android:7.2.2'
+    implementation 'com.tencent.bugly:crashreport:4.0.4'
+    implementation 'cn.leancloud:storage-android:8.2.9.1'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation "androidx.room:room-runtime:2.3.0"
     implementation 'com.google.android.material:material:1.5.0-alpha01'
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
     implementation 'com.github.getActivity:ToastUtils:9.1'
     implementation 'com.github.getActivity:XToast:6.9'
     implementation 'com.geetest.sensebot:sensebot:4.3.1'
