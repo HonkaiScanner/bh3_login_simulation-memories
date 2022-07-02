@@ -168,34 +168,39 @@ public class QRScanner {
         qr_check_map = new HashMap<>();
     }
 
-    public boolean parseUrl(String paramResult) {
-        if (paramResult.contains("qr_code_in_game.html")) {
-            String[] split = paramResult.split("\\?");
-            String[] param = split[1].split("&");
-            for (String key : param) {
-                if (key.startsWith("ticket")) {
-                    ticket = key.split("=")[1];
+    public boolean parseUrl(String[] urls) {
+        for (String paramResult : urls) {
+            if (paramResult.contains("qr_code_in_game.html")) {
+                String[] split = paramResult.split("\\?");
+                String[] param = split[1].split("&");
+                for (String key : param) {
+                    if (key.startsWith("ticket")) {
+                        ticket = key.split("=")[1];
 
-                    Logger.i("Parse QRCode", "ticket: " + ticket);
-                }
-                if (key.startsWith("app_id")) {
-                    app_id = key.split("=")[1];
+                        Logger.i("Parse QRCode", "ticket: " + ticket);
+                    }
+                    if (key.startsWith("app_id")) {
+                        app_id = key.split("=")[1];
 
-                    Logger.i("Parse QRCode", "app_id: " + app_id);
-                }
-                if (key.startsWith("biz_key")) {
-                    biz_key = key.split("=")[1];
+                        Logger.i("Parse QRCode", "app_id: " + app_id);
+                    }
+                    if (key.startsWith("biz_key")) {
+                        biz_key = key.split("=")[1];
 
-                    Logger.i("Parse QRCode", "biz_key: " + biz_key);
+                        Logger.i("Parse QRCode", "biz_key: " + biz_key);
+                    }
                 }
+
+                return true;
+
+            } else {
+
+                Logger.w("Parse QRCode", "Wrong QRCode,result: " + paramResult);
+
             }
-        } else {
-
-            Logger.w("Parse QRCode", "Wrong QRCode,result: " + paramResult);
-            makeToast("请扫描正确的二维码");
-            return false;
         }
-        return true;
+        makeToast("请扫描正确的二维码");
+        return false;
     }
 
     public void start() {

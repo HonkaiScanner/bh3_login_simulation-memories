@@ -82,7 +82,8 @@
             android:configChanges="orientation|screenSize"
             android:excludeFromRecents="true"
             android:screenOrientation="behind"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="true">
             <intent-filter>
                 <data
                     android:host="open_anti_alert"

@@ -19,6 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-optimizationpasses 5          # 指定代码的压缩级别
+-dontusemixedcaseclassnames   # 是否使用大小写混合
+-verbose
 -printconfiguration ~/tmp/full-r8-config.txt
 
 -keep class com.nearme.** { *; }

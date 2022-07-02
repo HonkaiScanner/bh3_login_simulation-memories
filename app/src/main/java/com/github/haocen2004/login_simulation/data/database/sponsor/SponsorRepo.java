@@ -75,6 +75,7 @@ public class SponsorRepo {
                 }
 
                 public void onError(Throwable throwable) {
+                    Logger.getLogger(null).makeToast(throwable.getMessage());
                     throwable.printStackTrace();
                     CrashReport.postCatchedException(throwable);
                 }

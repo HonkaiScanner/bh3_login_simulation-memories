@@ -460,7 +460,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             if (requestCode == Constant.REQ_QR_CODE) {
                 Bundle bundle = data.getExtras();
                 if (bundle != null) {
-                    String result = bundle.getString(Constant.INTENT_EXTRA_KEY_QR_SCAN);
+                    String[] result = bundle.getStringArray(Constant.INTENT_EXTRA_KEY_QR_SCAN);
                     if (result != null) {
                         QRScanner qrScanner;
                         if (isOfficial) {

@@ -65,12 +65,14 @@ public class SocketHelper {
                     if (receivedJson.has("scanner_data")) {
                         //{"scanner_data":{"url":"xxx","t":time}}
                         String url = receivedJson.getJSONObject("scanner_data").getString("url");
-                        Logger.d(TAG, "接收到扫码器助手广播：" + receivedJson.getJSONObject("scanner_data").toString());
+                        String[] urls = new String[1];
+                        urls[0] = url;
+                        Logger.d(TAG, "接收到扫码器助手广播：" + receivedJson.getJSONObject("scanner_data"));
                         if (qrScanner == null) {
                             Logger.e(TAG, "扫码模块未加载！ 暂不处理消息");
                             continue;
                         }
-                        if (qrScanner.parseUrl(url)) {
+                        if (qrScanner.parseUrl(urls)) {
                             logger.makeToast("接收到扫码器助手广播\n尝试扫码中...");
                             qrScanner.start();
                         }

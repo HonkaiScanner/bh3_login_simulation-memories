@@ -27,7 +27,6 @@ import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.View;
 import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
@@ -68,8 +67,7 @@ public class FabScanner extends Service {
     private ImageReader mImageReader;
     private VirtualDisplay mVirtualDisplay;
     private Handler mHandler;
-    private Bitmap mbitmap;
-    private String url;
+    private String[] url;
     private QRScanner qrScanner;
     private Fragment fragment;
     private int mResultCode;
@@ -135,7 +133,7 @@ public class FabScanner extends Service {
                     .setYOffset(200)
                     // 设置指定的拖拽规则
                     .setDraggable(new SpringDraggable())
-                    .setOnClickListener((XToast.OnClickListener<View>) (toast, view1) -> {
+                    .setOnClickListener((toast, view1) -> {
                         if (needStop) {
                             toast.cancel();
                             stopForeground(true);
@@ -192,8 +190,8 @@ public class FabScanner extends Service {
                                                 width + rowPadding / pixelStride
                                                 , height, Bitmap.Config.ARGB_8888);
                                         bitmap.copyPixelsFromBuffer(buffer);
-                                        mbitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
-                                        url = WeChatQRCodeDetector.detectAndDecode(bitmap).get(0);
+                                        Bitmap.createBitmap(bitmap, 0, 0, width, height);
+                                        url = WeChatQRCodeDetector.detectAndDecode(bitmap).toArray(new String[0]);
 //                                        Hashtable<DecodeHintType, String> hints = new Hashtable<>();
 //                                        hints.put(DecodeHintType.CHARACTER_SET, "UTF8");
 //
