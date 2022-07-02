@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.fragment.sponsor;
 
+import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,11 +19,10 @@ import com.github.haocen2004.login_simulation.adapter.SponsorAdapter;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorData;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.FragmentSpDisplayBinding;
+import com.github.haocen2004.login_simulation.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 
 public class DisplayFragment extends Fragment {
     private RecyclerView recyclerViewSp;
@@ -52,11 +53,17 @@ public class DisplayFragment extends Fragment {
         if (CHECK_VER) {
             new Thread(() -> {
                 SponsorRepo sponsorRepo = new SponsorRepo(getContext());
-                adapter.setAllSponsors(sponsorRepo.getAllSponsors());
-                // 刷新操作
-                Looper.prepare();
-                new Handler(Looper.getMainLooper()).post(adapter::notifyDataSetChanged);
-
+                if (sponsorRepo.getAllSponsors().size() > 0) {
+                    adapter.setAllSponsors(sponsorRepo.getAllSponsors());
+                    // 刷新操作
+                    try {
+                        Looper.prepare();
+                    } catch (Exception ignore) {
+                    }
+                    new Handler(Looper.getMainLooper()).post(adapter::notifyDataSetChanged);
+                } else {
+                    Logger.d("sponsor Adapter", "Sponsors get failed.");
+                }
             }).start();
         }
     }

@@ -40,23 +40,17 @@
 -dontwarn sun.misc.**
 -keep class sun.misc.** { *;}
 
--dontwarn com.alibaba.fastjson.**
--keep class com.alibaba.fastjson.** { *;}
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *;}
 
--dontwarn org.ligboy.retrofit2.**
--keep class org.ligboy.retrofit2.** { *;}
-
--dontwarn io.reactivex.rxjava2.**
--keep class io.reactivex.rxjava2.** { *;}
+-dontwarn io.reactivex.**
+-keep class io.reactivex.** { *;}
 
 -dontwarn sun.security.**
 -keep class sun.security.** { *; }
 
 -dontwarn com.google.**
 -keep class com.google.** { *;}
-
--dontwarn com.avos.**
--keep class com.avos.** { *;}
 
 -dontwarn cn.leancloud.**
 -keep class cn.leancloud.** { *;}
@@ -73,20 +67,12 @@
 -dontwarn org.apache.**
 -keep class org.apache.** { *;}
 
--dontwarn org.jivesoftware.smack.**
--keep class org.jivesoftware.smack.** { *;}
-
--dontwarn com.loopj.**
--keep class com.loopj.** { *;}
-
--dontwarn com.squareup.okhttp.**
--keep class com.squareup.okhttp.** { *;}
--keep interface com.squareup.okhttp.** { *; }
+-dontwarn okhttp3.**
+-keep class okhttp3.** { *;}
+-keep interface okhttp3.** { *; }
 
 -dontwarn okio.**
-
--dontwarn org.xbill.**
--keep class org.xbill.** { *;}
+-keep class okio.** { *;}
 
 -keepattributes *Annotation*
 

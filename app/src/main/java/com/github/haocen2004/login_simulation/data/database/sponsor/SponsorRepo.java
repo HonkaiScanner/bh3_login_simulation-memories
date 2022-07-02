@@ -2,12 +2,13 @@ package com.github.haocen2004.login_simulation.data.database.sponsor;
 
 import android.content.Context;
 
+import com.github.haocen2004.login_simulation.util.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.List;
 
-import cn.leancloud.AVObject;
-import cn.leancloud.AVQuery;
+import cn.leancloud.LCObject;
+import cn.leancloud.LCQuery;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -33,25 +34,26 @@ public class SponsorRepo {
 
     public void refreshSponsors() {
         new Thread(() -> {
-            AVQuery<AVObject> query = new AVQuery<>("Sponsors");
-            query.findInBackground().subscribe(new Observer<List<AVObject>>() {
+            LCQuery<LCObject> query = new LCQuery<>("Sponsors");
+            query.findInBackground().subscribe(new Observer<List<LCObject>>() {
                 public void onSubscribe(Disposable disposable) {
                 }
 
-                public void onNext(List<AVObject> Sponsors) {
+                public void onNext(List<LCObject> Sponsors) {
                     // students 是包含满足条件的 Student 对象的数组
-                        new Thread(() -> {
-                            for (AVObject object : Sponsors) {
-                                boolean hasData = false;
-                                for (SponsorData sponsorData : allSponsors) {
-                                    if (sponsorData.getScannerKey().equals(object.getString("scannerKey"))) {
-                                        hasData = true;
-                                        sponsorData.setName(object.getString("name"));
-                                        sponsorData.setDesc(object.getString("desc"));
-                                        sponsorData.setAvatarImgUrl(object.getString("avatarImgUrl"));
-                                        sponsorData.setPersonalPageUrl(object.getString("personalPageUrl"));
-                                        sponsorData.setDeviceId(object.getString("deviceId"));
-                                        sponsorDao.updateSponsors(sponsorData);
+                    Logger.d("debug", Sponsors.toString());
+                    new Thread(() -> {
+                        for (LCObject object : Sponsors) {
+                            boolean hasData = false;
+                            for (SponsorData sponsorData : allSponsors) {
+                                if (sponsorData.getScannerKey().equals(object.getString("scannerKey"))) {
+                                    hasData = true;
+                                    sponsorData.setName(object.getString("name"));
+                                    sponsorData.setDesc(object.getString("desc"));
+                                    sponsorData.setAvatarImgUrl(object.getString("avatarImgUrl"));
+                                    sponsorData.setPersonalPageUrl(object.getString("personalPageUrl"));
+                                    sponsorData.setDeviceId(object.getString("deviceId"));
+                                    sponsorDao.updateSponsors(sponsorData);
                                     }
                                 }
                                 if (!hasData) {
@@ -73,6 +75,7 @@ public class SponsorRepo {
                 }
 
                 public void onError(Throwable throwable) {
+                    throwable.printStackTrace();
                     CrashReport.postCatchedException(throwable);
                 }
 

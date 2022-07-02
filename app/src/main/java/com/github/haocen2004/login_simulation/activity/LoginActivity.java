@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,9 +35,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
-import cn.leancloud.AVObject;
-import cn.leancloud.AVQuery;
-import cn.leancloud.AVUser;
+import cn.leancloud.LCObject;
+import cn.leancloud.LCQuery;
+import cn.leancloud.LCUser;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -79,8 +80,9 @@ public class LoginActivity extends AppCompatActivity {
     };
     private Logger Log;
     private int sp_level;
-    private AVUser user;
+    private LCUser user;
 
+    @Keep
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,19 +119,22 @@ public class LoginActivity extends AppCompatActivity {
                 if (Pattern.matches(emailPattern, content)) {
                     String postParam = "app_ver=" + VERSION_CODE + "&sponsor_key=" + sc_key;
 //                    String postParam = "{\"app_ver\":" + VERSION_CODE + ",\"sponsor_key\":\"" + sc_key + "\"}";
-                    AVQuery<AVObject> query = new AVQuery<>("Sponsors"); // 请求云端查重 1  LeanCloud
+                    LCQuery<LCObject> query = new LCQuery<>("Sponsors"); // 请求云端查重 1  LeanCloud
                     query.whereEqualTo("scannerKey", sc_key);
-                    query.findInBackground().subscribe(new Observer<List<AVObject>>() {
+                    query.findInBackground().subscribe(new Observer<List<LCObject>>() {
                         public void onSubscribe(Disposable disposable) {
                         }
 
                         public void onError(Throwable throwable) {
+                            CrashReport.postCatchedException(throwable);
+                            makeToast(throwable.getMessage());
+                            hideProgressBar();
                         }
 
                         public void onComplete() {
                         }
 
-                        public void onNext(List<AVObject> sp) {
+                        public void onNext(List<LCObject> sp) {
                             if (sp.size() == 0) {
                                 Executors.newSingleThreadExecutor().execute(() -> {
                                     startCodeCheck(content, postParam, sc_key);
@@ -163,14 +168,14 @@ public class LoginActivity extends AppCompatActivity {
             showProgressBar();
             String content = binding.editTextRegEmail.getText().toString();
             if (Pattern.matches(emailPattern, content)) {
-                AVUser.loginByEmail(content, binding.editTextPassword.getText().toString()).subscribe(new Observer<AVUser>() {
+                LCUser.loginByEmail(content, binding.editTextPassword.getText().toString()).subscribe(new Observer<LCUser>() {
                     public void onSubscribe(Disposable disposable) {
                     }
 
                     public void onComplete() {
                     }
 
-                    public void onNext(AVUser user) {
+                    public void onNext(LCUser user) {
                         setUser(user);
                         makeToast(getString(R.string.login_succeed));
                         hideProgressBar();
@@ -178,6 +183,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     public void onError(Throwable throwable) {
+                        for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
+                            Logger.d("crash", stackTraceElement.toString());
+                        }
                         makeToast(throwable.getMessage());
                         hideProgressBar();
                     }
@@ -202,7 +210,7 @@ public class LoginActivity extends AppCompatActivity {
             if (retCode > 0) {
                 sp_level = retCode;
 
-                AVUser user = new AVUser(); //账号创建
+                LCUser user = new LCUser(); //账号创建
 
                 user.setUsername(binding.editTextName.getText().toString());
                 user.setPassword(binding.editTextPassword.getText().toString());
@@ -214,11 +222,11 @@ public class LoginActivity extends AppCompatActivity {
                 user.put("deviceId", Tools.getDeviceID(getApplicationContext()));
 
 
-                user.signUpInBackground().subscribe(new Observer<AVUser>() {
+                user.signUpInBackground().subscribe(new Observer<LCUser>() {
                     public void onSubscribe(@NotNull Disposable disposable) {
                     }
 
-                    public void onNext(@NotNull AVUser user) {
+                    public void onNext(@NotNull LCUser user) {
                         onRegistered(sc_key);
                     }
 
@@ -261,7 +269,7 @@ public class LoginActivity extends AppCompatActivity {
         makeToast(getString(R.string.reg_succ));
         setUser(user);
         // 将身份码与用户绑定
-        AVObject sponsor = new AVObject("Sponsors");
+        LCObject sponsor = new LCObject("Sponsors");
 
         sponsor.put("scannerKey", sc_key);
         sponsor.put("user", user);
@@ -271,11 +279,11 @@ public class LoginActivity extends AppCompatActivity {
         sponsor.put("personalPageUrl", " ");
         sponsor.put("sp_level", sp_level);
 
-        sponsor.saveInBackground().subscribe(new Observer<AVObject>() {
+        sponsor.saveInBackground().subscribe(new Observer<LCObject>() {
             public void onSubscribe(Disposable disposable) {
             }
 
-            public void onNext(AVObject todo) {
+            public void onNext(LCObject todo) {
 
                 Logger.i(TAG, "注册成功");
                 hideProgressBar();
@@ -291,10 +299,10 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    public void setUser(AVUser user) {
+    public void setUser(LCUser user) {
         try {
             this.user = user;
-            AVUser.changeCurrentUser(user, true);
+            LCUser.changeCurrentUser(user, true);
             getDefaultSharedPreferences(this).edit()
                     .putBoolean("has_account", true)
                     .putString("account_token", user.getSessionToken())
