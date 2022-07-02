@@ -64,19 +64,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-//import com.google.zxing.BinaryBitmap;
-//import com.google.zxing.ChecksumException;
-//import com.google.zxing.DecodeHintType;
-//import com.google.zxing.FormatException;
-//import com.google.zxing.NotFoundException;
-//import com.google.zxing.Result;
-//import com.google.zxing.activity.CaptureActivity;
-//import com.google.zxing.common.HybridBinarizer;
-//import com.google.zxing.decoding.RGBLuminanceSource;
-//import com.google.zxing.qrcode.QRCodeReader;
-//import com.google.zxing.util.BitmapUtil;
-//import com.google.zxing.util.Constant;
-
 public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
 
     private final String TAG = "MainFragment";
@@ -186,8 +173,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
-//        setRetainInstance(true);
-//        Logger.setView(binding.getRoot());
         return binding.getRoot();
     }
 
@@ -309,9 +294,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     startActivityForResult(pickIntent, REQ_CODE_SCAN_GALLERY);
 
 
-//                    Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
-//                    innerIntent.setType("image/*");
-//                    startActivityForResult(innerIntent, REQ_CODE_SCAN_GALLERY);
                 } else {
                     makeToast(R.string.error_not_login);
                 }
@@ -479,7 +461,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
                 Bitmap bitmap;
                 try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),data.getData());
+                    bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), data.getData());
                     List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
                 if (result.size() >= 1) {
                         Intent resultIntent = new Intent();
@@ -497,29 +479,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                final Uri uri = data.getData();
-//
-//                ProgressDialog mProgress = new ProgressDialog(getContext());
-//                mProgress.setMessage("正在扫描...");
-//                mProgress.setCancelable(false);
-//                mProgress.show();
-//                activity.runOnUiThread(() -> {
-//                    List<String> result = scanningImage(uri);
-//                    mProgress.dismiss();
-//                    if (result != null) {
-//                        Intent resultIntent = new Intent();
-//                        Bundle bundle = resultIntent.getExtras();
-//                        if (bundle == null) {
-//                            bundle = new Bundle();
-//                        }
-//                        bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, result.get(0));
-//
-//                        resultIntent.putExtras(bundle);
-//                        onActivityResult(REQ_QR_CODE, RESULT_OK, resultIntent);
-//                    } else {
-//                        Log.makeToast(com.google.zxing.R.string.note_identify_failed);
-//                    }
-//                });
             }
             if (requestCode == REQ_PERM_WINDOW) {
                 fabScanner.showAlertScanner();

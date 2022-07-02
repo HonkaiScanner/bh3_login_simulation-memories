@@ -19,6 +19,8 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.util.Logger;
 
+import java.util.Objects;
+
 public class SettingsFragment extends PreferenceFragmentCompat {
     private final String TAG = "Settings";
 
@@ -34,7 +36,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         SharedPreferences app_pref = getDefaultSharedPreferences(getContext());
         findPreference("check_update").setOnPreferenceChangeListener((preference, newValue) -> {
             if (!((Boolean) newValue)) {
-                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(requireContext());
                 normalDialog.setTitle("是否关闭更新检查？");
                 normalDialog.setMessage("将无法获取扫码器最新更新\n\n以下功能将会一起关闭：\n赞助者列表更新\n公告更新");
                 normalDialog.setPositiveButton(R.string.btn_close_update,
@@ -117,7 +119,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         });
 
-        switch (app_pref.getString("server_type", "1")) {
+        switch (Objects.requireNonNull(app_pref.getString("server_type", "1"))) {
             case "Official":
                 findPreference("server_type").setSummary(getString(R.string.types_official));
                 break;
@@ -152,6 +154,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
     }
 
+    @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);

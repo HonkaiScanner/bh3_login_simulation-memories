@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.data;
 
+import org.jetbrains.annotations.NotNull;
+
 public class LogData {
     private final String level;
     private final String TAG;
@@ -23,6 +25,7 @@ public class LogData {
         return message;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "{" +

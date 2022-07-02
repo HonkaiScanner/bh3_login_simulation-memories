@@ -17,13 +17,13 @@ import static com.github.haocen2004.login_simulation.util.Constant.YYB_INIT;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.NonNull;
@@ -44,9 +44,11 @@ import com.github.haocen2004.login_simulation.util.Tools;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
 import com.tencent.ysdk.api.YSDKApi;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.opencv.OpenCV;
 
+import java.util.Objects;
 import java.util.concurrent.Executors;
 
 import cn.leancloud.LCLogger;
@@ -61,14 +63,12 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private SharedPreferences app_pref;
     private Logger Log;
-    private Activity activity;
     private long backTime = 0;
     private boolean catchBackAction = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 //        Logger.setView(binding.getRoot());
@@ -84,9 +84,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navigationView, navController);
         binding.textView2.setText(VERSION_NAME);
-        binding.textView3.setOnClickListener(v -> {
-            openUrl("https://www.pixiv.net/artworks/89418903", this);
-        });
+        binding.textView3.setOnClickListener(v -> openUrl("https://www.pixiv.net/artworks/89418903", this));
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             String toolbarTitle = "DEBUG WRONG TITLE";
             catchBackAction = false;
@@ -167,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Logger.d("ORIENTATION", "SWITCH");
         // Checks the orientation of the screen
@@ -179,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("HandlerLeak")
-    Handler update_check_hd = new Handler() {
+    Handler update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
@@ -187,25 +185,31 @@ public class MainActivity extends AppCompatActivity {
             String feedback = data.getString("value");
             try {
                 Logger.i("Update", "handleMessage: " + feedback);
-                JSONObject json = new JSONObject(feedback);
-                app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
-                        .putString("mdk_ver", json.getString("mdk_ver"))
-                        .putString("sp_url", json.getString("sp_url"))
-                        .putString("afd_url", json.getString("afd_url"))
-                        .putString("qq_group_url", json.getString("qq_group_url"))
-                        .putString("custom_username", json.getString("default_name"))
-                        .putLong("update_time", json.getLong("update_time"))
-                        .apply();
-                Logger.d("Update", "cloud ver:" + json.getInt("ver"));
-                Logger.d("Update", "local ver:" + VERSION_CODE);
-                Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
-                if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
-                    Logger.i("Update", "Start Update window");
-                    showUpdateDialog(
-                            json.getString("ver_name"),
-                            json.getString("update_url"),
-                            json.getString("logs").replaceAll("&n", "\n")
-                    );
+                JSONObject json;
+                if (feedback != null) {
+                    json = new JSONObject(feedback);
+                    app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
+                            .putString("mdk_ver", json.getString("mdk_ver"))
+                            .putString("sp_url", json.getString("sp_url"))
+                            .putString("afd_url", json.getString("afd_url"))
+                            .putString("qq_group_url", json.getString("qq_group_url"))
+                            .putString("custom_username", json.getString("default_name"))
+                            .putLong("update_time", json.getLong("update_time"))
+                            .apply();
+                    Logger.d("Update", "cloud ver:" + json.getInt("ver"));
+                    Logger.d("Update", "local ver:" + VERSION_CODE);
+                    Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
+                    if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
+                        Logger.i("Update", "Start Update window");
+                        showUpdateDialog(
+                                json.getString("ver_name"),
+                                json.getString("update_url"),
+                                json.getString("logs").replaceAll("&n", "\n")
+                        );
+                    }
+                } else {
+                    Logger.d("Update", "Check Update Failed");
+                    Log.makeToast("检查更新失败...");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -236,10 +240,10 @@ public class MainActivity extends AppCompatActivity {
 
                         Logger.d(TAG, "Start.");
                         LCUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<LCUser>() {
-                            public void onSubscribe(Disposable disposable) {
+                            public void onSubscribe(@NotNull Disposable disposable) {
                             }
 
-                            public void onNext(LCUser user) {
+                            public void onNext(@NotNull LCUser user) {
                                 LCUser.changeCurrentUser(user, true);
                                 HAS_ACCOUNT = true;
                                 app_pref.edit().putString("custom_username", user.getString("custom_username")).apply();
@@ -248,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
 
                             }
 
-                            public void onError(Throwable throwable) {
+                            public void onError(@NotNull Throwable throwable) {
                                 LCUser.changeCurrentUser(null, true);
                                 app_pref.edit().putBoolean("has_account", false)
                                         .putString("custom_username", "崩坏3扫码器用户").apply();
@@ -280,9 +284,7 @@ public class MainActivity extends AppCompatActivity {
                         "最终解释权归本软件作者所有。\n" +
                         "未尽之处，以下方链接「最终用户许可协议与隐私条款」为准。");
         normalDialog.setNegativeButton("打开隐私协议完整链接",
-                (dialog, which) -> {
-                    openUrl("https://github.com/Haocen2004/bh3_login_simulation/blob/main/EULA.md", this);
-                });
+                (dialog, which) -> openUrl("https://github.com/Haocen2004/bh3_login_simulation/blob/main/EULA.md", this));
         normalDialog.setPositiveButton("同意",
                 (dialog, which) -> {
                     app_pref.edit().putBoolean("show_eula", false).apply();
@@ -370,20 +372,6 @@ public class MainActivity extends AppCompatActivity {
         normalDialog.setPositiveButton("我已知晓",
                 (dialog, which) -> {
                     getDefaultSharedPreferences(this).edit().putBoolean("showBetaInfo", false).apply();
-                    dialog.dismiss();
-                });
-        normalDialog.setCancelable(false);
-        normalDialog.show();
-    }
-
-    private void show15NewFeatureDialog() {
-
-        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("1.5.0 新功能介绍");
-        normalDialog.setMessage("TODO");
-        normalDialog.setPositiveButton("我已知晓",
-                (dialog, which) -> {
-                    app_pref.edit().putBoolean("show150NewFeature", true).apply();
                     dialog.dismiss();
                 });
         normalDialog.setCancelable(false);

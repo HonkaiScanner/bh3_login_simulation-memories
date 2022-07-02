@@ -14,12 +14,10 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.FragmentReportBinding;
 import com.github.haocen2004.login_simulation.fragment.report.LogFragment;
 import com.github.haocen2004.login_simulation.fragment.report.MainReportFragment;
-import com.github.haocen2004.login_simulation.util.Logger;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 public class ReportFragment extends Fragment {
     private FragmentReportBinding binding;
-    private Logger Log;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -5,6 +5,8 @@ import android.content.Context;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import cn.leancloud.LCObject;
@@ -15,10 +17,8 @@ import io.reactivex.disposables.Disposable;
 public class SponsorRepo {
     private final List<SponsorData> allSponsors;
     private final SponsorDao sponsorDao;
-    private final Context context;
 
     public SponsorRepo(Context context) {
-        this.context = context;
         SponsorDatabase sponsorDatabase = SponsorDatabase.getDatabase(context.getApplicationContext());
         sponsorDao = sponsorDatabase.getSponsorDao();
         allSponsors = sponsorDao.getAllSponsors();
@@ -28,18 +28,14 @@ public class SponsorRepo {
         sponsorDao.deleteAllSponsors();
     }
 
-    public SponsorDao getSponsorDao() {
-        return sponsorDao;
-    }
-
     public void refreshSponsors() {
         new Thread(() -> {
             LCQuery<LCObject> query = new LCQuery<>("Sponsors");
             query.findInBackground().subscribe(new Observer<List<LCObject>>() {
-                public void onSubscribe(Disposable disposable) {
+                public void onSubscribe(@NotNull Disposable disposable) {
                 }
 
-                public void onNext(List<LCObject> Sponsors) {
+                public void onNext(@NotNull List<LCObject> Sponsors) {
                     // students 是包含满足条件的 Student 对象的数组
                     Logger.d("debug", Sponsors.toString());
                     new Thread(() -> {
@@ -74,7 +70,7 @@ public class SponsorRepo {
 
                 }
 
-                public void onError(Throwable throwable) {
+                public void onError(@NotNull Throwable throwable) {
                     Logger.getLogger(null).makeToast(throwable.getMessage());
                     throwable.printStackTrace();
                     CrashReport.postCatchedException(throwable);

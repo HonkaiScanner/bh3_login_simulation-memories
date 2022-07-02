@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
@@ -67,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
     @SuppressLint("HandlerLeak")
-    Handler accessProgressBar = new Handler() {
+    Handler accessProgressBar = new Handler(Objects.requireNonNull(Looper.myLooper())) {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
@@ -122,10 +123,10 @@ public class LoginActivity extends AppCompatActivity {
                     LCQuery<LCObject> query = new LCQuery<>("Sponsors"); // 请求云端查重 1  LeanCloud
                     query.whereEqualTo("scannerKey", sc_key);
                     query.findInBackground().subscribe(new Observer<List<LCObject>>() {
-                        public void onSubscribe(Disposable disposable) {
+                        public void onSubscribe(@NonNull Disposable disposable) {
                         }
 
-                        public void onError(Throwable throwable) {
+                        public void onError(@NonNull Throwable throwable) {
                             CrashReport.postCatchedException(throwable);
                             makeToast(throwable.getMessage());
                             hideProgressBar();
@@ -134,11 +135,9 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete() {
                         }
 
-                        public void onNext(List<LCObject> sp) {
+                        public void onNext(@NonNull List<LCObject> sp) {
                             if (sp.size() == 0) {
-                                Executors.newSingleThreadExecutor().execute(() -> {
-                                    startCodeCheck(content, postParam, sc_key);
-                                });
+                                Executors.newSingleThreadExecutor().execute(() -> startCodeCheck(content, postParam, sc_key));
 //                                new Thread(() -> {
                             } else {
                                 try {
@@ -169,20 +168,20 @@ public class LoginActivity extends AppCompatActivity {
             String content = binding.editTextRegEmail.getText().toString();
             if (Pattern.matches(emailPattern, content)) {
                 LCUser.loginByEmail(content, binding.editTextPassword.getText().toString()).subscribe(new Observer<LCUser>() {
-                    public void onSubscribe(Disposable disposable) {
+                    public void onSubscribe(@NonNull Disposable disposable) {
                     }
 
                     public void onComplete() {
                     }
 
-                    public void onNext(LCUser user) {
+                    public void onNext(@NonNull LCUser user) {
                         setUser(user);
                         makeToast(getString(R.string.login_succeed));
                         hideProgressBar();
                         finish();
                     }
 
-                    public void onError(Throwable throwable) {
+                    public void onError(@NonNull Throwable throwable) {
                         for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
                             Logger.d("crash", stackTraceElement.toString());
                         }
@@ -280,16 +279,16 @@ public class LoginActivity extends AppCompatActivity {
         sponsor.put("sp_level", sp_level);
 
         sponsor.saveInBackground().subscribe(new Observer<LCObject>() {
-            public void onSubscribe(Disposable disposable) {
+            public void onSubscribe(@NonNull Disposable disposable) {
             }
 
-            public void onNext(LCObject todo) {
+            public void onNext(@NonNull LCObject todo) {
 
                 Logger.i(TAG, "注册成功");
                 hideProgressBar();
             }
 
-            public void onError(Throwable throwable) {
+            public void onError(@NonNull Throwable throwable) {
                 CrashReport.postCatchedException(throwable);
             }
 

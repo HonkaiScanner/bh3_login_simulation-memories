@@ -21,9 +21,7 @@ public class CrashActivity extends AppCompatActivity {
         binding = ActivityCrashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Tools.saveBoolean(this, "has_crash", false);
-        binding.button.setOnClickListener(view -> {
-            openAssignFolder(getExternalFilesDir(null) + "/crash-report/" + Tools.getString(this, "crash-report-name"));
-        });
+        binding.button.setOnClickListener(view -> openAssignFolder(getExternalFilesDir(null) + "/crash-report/" + Tools.getString(this, "crash-report-name")));
     }
 
     private void openAssignFolder(String path) {

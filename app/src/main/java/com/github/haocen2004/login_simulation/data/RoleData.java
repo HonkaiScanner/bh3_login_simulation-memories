@@ -40,23 +40,27 @@ public class RoleData {
             Bundle data = msg.getData();
             String feedback = data.getString("value");
             try {
-                oaserver = new JSONObject(feedback);
-                Logger.i("GetOAServer", "handleMessage: " + oaserver);
-                if (!oaserver.getBoolean("is_data_ready")) {
-                    String msg1 = oaserver.getString("msg");
-                    if (msg1.contains("更新"))
-                        msg1 = "崩坏3维护中或热更新服务器离线\n请等待维护完成\n或尝试在设置里手动更改崩坏3版本并重新启动";
+                if (feedback != null) {
+                    oaserver = new JSONObject(feedback);
+                    Logger.i("GetOAServer", "handleMessage: " + oaserver);
+                    if (!oaserver.getBoolean("is_data_ready")) {
+                        String msg1 = oaserver.getString("msg");
+                        if (msg1.contains("更新"))
+                            msg1 = "崩坏3维护中或热更新服务器离线\n请等待维护完成\n或尝试在设置里手动更改崩坏3版本并重新启动";
+                        callback.onLoginFailed();
+                        Logger.getLogger(activity).makeToast("OA服务器获取错误\n" + msg1);
+                        return;
+                    } else if (oaserver.getLong("server_cur_time") < UPDATE_TIME) {
+                        String msg1 = "崩坏3停服维护中\n请等待维护完成后再尝试登陆\n";
+                        callback.onLoginFailed();
+                        Logger.getLogger(activity).makeToast("OA服务器获取错误\n" + msg1);
+                        return;
+                    }
+                    is_setup = true;
+                    callback.onLoginSucceed();
+                } else {
                     callback.onLoginFailed();
-                    Logger.getLogger(activity).makeToast("OA服务器获取错误\n" + msg1);
-                    return;
-                } else if (oaserver.getLong("server_cur_time") < UPDATE_TIME) {
-                    String msg1 = "崩坏3停服维护中\n请等待维护完成后再尝试登陆\n";
-                    callback.onLoginFailed();
-                    Logger.getLogger(activity).makeToast("OA服务器获取错误\n" + msg1);
-                    return;
                 }
-                is_setup = true;
-                callback.onLoginSucceed();
             } catch (Exception e) {
                 e.printStackTrace();
                 callback.onLoginFailed();

@@ -50,23 +50,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Log.d(TAG, "START CRASH ACTIVITY");
 
         Tools.saveBoolean(mContext, "has_crash", true);
-//        ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-//        activityManager.killBackgroundProcesses(mContext.getPackageName());
 
         android.os.Process.killProcess(android.os.Process.myPid());
-//        Intent intent = new Intent (mContext.getApplicationContext(), CrashActivity.class);
-////        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-////        mContext.startActivity(intent);
-//        PendingIntent restartIntent = PendingIntent.getActivity(
-//                mContext.getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-//        //退出程序
-//        AlarmManager mgr = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
-//        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000,
-//                restartIntent); // 1秒钟后重启应用
-//        mContext.
-//        mContext.finishActivity();
-//        Log.d(TAG, "EXIT");
-//        System.exit(2);
 
     }
 

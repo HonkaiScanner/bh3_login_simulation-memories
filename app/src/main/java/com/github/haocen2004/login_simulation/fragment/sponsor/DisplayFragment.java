@@ -21,16 +21,16 @@ import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.FragmentSpDisplayBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DisplayFragment extends Fragment {
-    private RecyclerView recyclerViewSp;
-    private SponsorAdapter sponsorAdapter;
     private FragmentSpDisplayBinding binding;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSpDisplayBinding.inflate(inflater, container, false);
         return binding.getRoot();
@@ -39,8 +39,8 @@ public class DisplayFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recyclerViewSp = binding.recyclerViewSp;
-        sponsorAdapter = new SponsorAdapter(getActivity());
+        RecyclerView recyclerViewSp = binding.recyclerViewSp;
+        SponsorAdapter sponsorAdapter = new SponsorAdapter(getActivity());
         initAdapter(sponsorAdapter);
         recyclerViewSp.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewSp.setAdapter(sponsorAdapter);
@@ -52,7 +52,7 @@ public class DisplayFragment extends Fragment {
         adapter.setAllSponsors(sponsorDataOld);
         if (CHECK_VER) {
             new Thread(() -> {
-                SponsorRepo sponsorRepo = new SponsorRepo(getContext());
+                SponsorRepo sponsorRepo = new SponsorRepo(requireContext());
                 if (sponsorRepo.getAllSponsors().size() > 0) {
                     adapter.setAllSponsors(sponsorRepo.getAllSponsors());
                     // 刷新操作

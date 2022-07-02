@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.github.haocen2004.login_simulation">
 
+    <queries>
+        <package android:name="com.tencent.mobileqq" />
+    </queries>
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络权限 -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 摄像头权限 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 悬浮窗扫码权限 -->
@@ -18,8 +21,7 @@
         android:largeScreens="true"
         android:normalScreens="true"
         android:resizeable="true"
-        android:smallScreens="true"
-        tools:targetApi="donut" />
+        android:smallScreens="true" />
 
     <application
         android:name=".MainApplication"
@@ -30,18 +32,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         android:usesCleartextTraffic="true"
-        tools:targetApi="m"
-        android:allowBackup="true">
+        tools:targetApi="s"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules">
 
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.ScannerActivity" />
         <activity android:name=".activity.CrashActivity" />
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".activity.MainActivity"
+        <activity
+            android:name=".activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true">
 
@@ -78,7 +83,8 @@
             android:exported="true" />
         <service
             android:name="com.tencent.ysdk.module.sandbox.pipe.PipeService"
-            android:exported="true" />
+            android:exported="false"
+            android:permission="TODO" />
 
         <activity
             android:name="com.tencent.tauth.AuthActivity"
@@ -180,7 +186,6 @@
         <activity
             android:name="cn.gundam.sdk.shell.activity.ProxyActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
@@ -209,8 +214,9 @@
         </activity> <!-- sdk service -->
         <service
             android:name="cn.gundam.sdk.shell.service.ProxyService"
-            android:exported="true"
-            android:process=":bgservice" /> <!-- sdk service end -->
+            android:exported="false"
+            android:process=":bgservice"
+            android:permission="TODO" /> <!-- sdk service end -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

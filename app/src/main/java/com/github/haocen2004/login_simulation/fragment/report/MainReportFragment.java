@@ -54,7 +54,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
         } else if (binding.reportBili.equals(view)) {
             openUrl("https://space.bilibili.com/269140934", requireActivity());
         } else if (binding.reportQq.equals(view)) {
-            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getActivity());
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(requireActivity());
             normalDialog.setTitle("加群暗号");
             normalDialog.setMessage("Hao_cen");
             normalDialog.setPositiveButton("打开加群界面",
@@ -67,20 +67,18 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
             normalDialog.setCancelable(false);
             normalDialog.show();
         } else if (binding.reportHand.equals(view)) {
-            final AlertDialog.Builder normalDialog2 = new AlertDialog.Builder(getActivity());
+            final AlertDialog.Builder normalDialog2 = new AlertDialog.Builder(requireActivity());
             normalDialog2.setTitle("反馈须知");
             normalDialog2.setMessage("该按钮为遇到错误时未发生崩溃使用\n请完整执行完会产生错误的操作后再点击\n请优先切换至日志窗口查看日志后再判断是否需要上报完整日志\n\n请再次确认是否上报");
             normalDialog2.setPositiveButton("确认开始上报",
                     (dialog, which) -> {
-                        int i = 1 / 0; //用来标记后台
+//                        int i = 1 / 0; //用来标记后台
                         CrashReport.testJavaCrash();
                         CrashReport.testANRCrash();
                         dialog.dismiss();
                     });
             normalDialog2.setNegativeButton(R.string.btn_cancel,
-                    (dialog, which) -> {
-                        dialog.dismiss();
-                    });
+                    (dialog, which) -> dialog.dismiss());
             normalDialog2.setCancelable(false);
             normalDialog2.show();
         } else {

@@ -14,12 +14,12 @@ import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentLogBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 
+import org.jetbrains.annotations.NotNull;
+
 
 public class LogFragment extends Fragment {
 
 
-    private FragmentLogBinding binding;
-    private RecyclerView logRecyclerView;
     private LoggerAdapter loggerAdapter;
     private boolean loadLogs = false;
 
@@ -29,17 +29,15 @@ public class LogFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentLogBinding.inflate(inflater, container, false);
-        logRecyclerView = binding.logRecycleView;
+        com.github.haocen2004.login_simulation.databinding.FragmentLogBinding binding = FragmentLogBinding.inflate(inflater, container, false);
+        RecyclerView logRecyclerView = binding.logRecycleView;
         loggerAdapter = new LoggerAdapter(getActivity());
         logRecyclerView.setFocusableInTouchMode(false);
         logRecyclerView.setHasFixedSize(true);
         logRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         logRecyclerView.setAdapter(loggerAdapter);
-//        loggerAdapter.setAllLogs(logLiveData.getValue());
-//        Logger.setView(binding.getRoot());
         LogLiveData.getINSTANCE(getContext()).observe(getViewLifecycleOwner(), logData -> {
 //
 //            loggerAdapter.ins
@@ -49,13 +47,7 @@ public class LogFragment extends Fragment {
                 loadLogs = true;
             }
             loggerAdapter.notifyItemInserted(loggerAdapter.getItemCount());
-//            Log.d("test",logData.toString());
-//            Log.d("Logger Adapter",logData.get(loggerAdapter.getItemCount()-1).toString());
-//            loggerAdapter.notifyItemChanged(logData.size() - 1);
         });
-//        adapter.setAllSponsors(sponsorRepo.getAllSponsors());
-//        // 刷新操作
-//        new Handler(Looper.getMainLooper()).post(adapter::notifyDataSetChanged);
         return binding.getRoot();
     }
 
