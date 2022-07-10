@@ -38,4 +38,9 @@ public class DialogLiveData extends LiveData<List<DialogData>> {
         postValue(logDataList);
 
     }
+
+    public void insertEulaDialog(DialogData dialogData) {
+        logDataList.add(0, dialogData);
+        postValue(logDataList);
+    }
 }

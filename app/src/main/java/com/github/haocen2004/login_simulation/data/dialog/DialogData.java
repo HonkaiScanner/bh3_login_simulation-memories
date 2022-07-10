@@ -25,12 +25,25 @@ public class DialogData {
         NegativeButtonData = negativeButtonData;
     }
 
+    public void setNegativeButtonData(String negativeButtonText) {
+        NegativeButtonData = new ButtonData(negativeButtonText);
+    }
+
     public void setNeutralButtonData(ButtonData neutralButtonData) {
         NeutralButtonData = neutralButtonData;
     }
 
+    public void setNeutralButtonData(String neutralButtonText) {
+        NeutralButtonData = new ButtonData(neutralButtonText);
+    }
+
     public void setPositiveButtonData(ButtonData positiveButtonData) {
         PositiveButtonData = positiveButtonData;
+
+    }
+
+    public void setPositiveButtonData(String positiveButtonText) {
+        PositiveButtonData = new ButtonData(positiveButtonText);
     }
 
     public String getTitle() {

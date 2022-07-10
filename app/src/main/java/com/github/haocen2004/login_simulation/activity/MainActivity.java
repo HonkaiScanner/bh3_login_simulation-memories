@@ -76,6 +76,8 @@ public class MainActivity extends BaseActivity {
 //        Logger.setView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
         Log = Logger.getLogger(this);
+        DialogHelper.getDialogHelper(this);
+        Logger.d("dialogHelper", "loaded.");
 //        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(binding.mainInclude.toolbar);
         navController = Navigation.findNavController(this, R.id.hostFragment);
@@ -137,15 +139,9 @@ public class MainActivity extends BaseActivity {
             Logger.d("CRASH", "has crash before");
             Intent intent = new Intent(this, CrashActivity.class);
             startActivity(intent);
-//            finish();
-//            return;
         }
-//        if (CHECK_VER) {
-        new Thread(update_rb).start();
 
-        DialogHelper.getDialogHelper(this);
 
-        Logger.d("dialogHelper", "loaded.");
 //        }
     }
 
@@ -303,8 +299,8 @@ public class MainActivity extends BaseActivity {
         dialogData.setNeutralButtonData(new ButtonData(getString(R.string.btn_cancel)) {
             @Override
             public void callback(DialogHelper dialogHelper) {
-                super.callback(dialogHelper);
                 DialogLiveData.getINSTANCE(null).insertNewDialog(dialogData, getCloseUpdateDialog());
+                super.callback(dialogHelper);
             }
 
             private DialogData getCloseUpdateDialog() {

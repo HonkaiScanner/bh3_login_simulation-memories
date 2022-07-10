@@ -12,23 +12,43 @@ import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 
+import java.util.List;
+
 public class DialogHelper {
     private static DialogHelper INSTANCE;
-    private static Context context;
+    private final Context context;
     private static DialogLiveData dialogLiveData;
     private int currPos = 0;
     private boolean currClose = false;
+    private boolean currShow = false;
     private DialogInterface dialogInterface;
+    private final String TAG = "dialogHelper";
 //    private static String blackListString;
 
     public DialogHelper(Context context) {
-        DialogHelper.context = context;
+        this.context = context;
 
-        Logger.d("dialogHelper", "init.");
+        Logger.i("dialogHelper", "loading...");
+
         dialogLiveData = DialogLiveData.getINSTANCE(context);
 
-        dialogLiveData.observe((LifecycleOwner) context, dialogData -> showDialog(dialogData.get(currPos)));
         eulaCheck();
+
+        dialogLiveData.observe((LifecycleOwner) context, dialogData -> {
+
+            for (DialogData dialogDatum : dialogData) {
+                Logger.d(TAG, dialogData.indexOf(dialogDatum) + "|" + dialogDatum.getTitle());
+            }
+            if (currShow) {
+                return;
+            }
+            if (currPos >= dialogData.size()) {
+                currPos = dialogData.size() - 1;
+            }
+            showDialog(dialogData.get(currPos));
+
+        });
+
     }
 
     public static DialogHelper getDialogHelper(Context context) {
@@ -46,9 +66,22 @@ public class DialogHelper {
         }
     }
 
+    public void next() {
+        List<DialogData> dialogData = dialogLiveData.getValue();
+
+        currPos++;
+        if (dialogData.size() > currPos) {
+            currShow = true;
+
+            showDialog(dialogData.get(currPos));
+        } else {
+            currShow = false;
+        }
+    }
+
     private void eulaCheck() {
-        if (!Tools.getBoolean(context, "show_eula")) {
-            Logger.d("dialogHelper", "eula checked, skip.");
+        if (!Tools.getBoolean(context, "show_eula", true)) {
+            Logger.i(TAG, "eula checked, skip.");
             return;
         }
 
@@ -79,9 +112,9 @@ public class DialogHelper {
             }
         });
 
-        dialogLiveData.addNewDialog(dialogData);
+        dialogLiveData.insertEulaDialog(dialogData);
 
-        Logger.d("dialogHelper", "show eula");
+        Logger.i(TAG, "show eula");
     }
 
     public void setCurrPos(int newPos) {
@@ -92,11 +125,16 @@ public class DialogHelper {
         return currPos;
     }
 
+    public void setCurrShow(boolean currShow) {
+        this.currShow = currShow;
+    }
+
     public DialogInterface getCurrDialog() {
         return dialogInterface;
     }
 
     private void showDialog(DialogData dialogData) {
+
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(context);
         normalDialog.setTitle(dialogData.getTitle());
         normalDialog.setMessage(dialogData.getMessage());
@@ -126,6 +164,8 @@ public class DialogHelper {
         }
         normalDialog.setCancelable(dialogData.isCancelable());
         normalDialog.show();
+        currShow = true;
+        currClose = false;
     }
 
     public void setCurrClose(boolean currClose) {

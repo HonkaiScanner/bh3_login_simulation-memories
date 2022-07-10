@@ -11,11 +11,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentReportMainBinding;
+import com.github.haocen2004.login_simulation.util.DialogHelper;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -54,33 +56,26 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
         } else if (binding.reportBili.equals(view)) {
             openUrl("https://space.bilibili.com/269140934", requireActivity());
         } else if (binding.reportQq.equals(view)) {
-            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(requireActivity());
-            normalDialog.setTitle("加群暗号");
-            normalDialog.setMessage("Hao_cen");
-            normalDialog.setPositiveButton("打开加群界面",
-                    (dialog, which) -> {
-                        openUrl(QQ_GROUP_URL, requireActivity());
-                        dialog.dismiss();
-                    });
-            normalDialog.setNegativeButton(R.string.btn_cancel,
-                    (dialog, which) -> dialog.dismiss());
-            normalDialog.setCancelable(false);
-            normalDialog.show();
+            DialogData dialogData = new DialogData("加群暗号", "Hao_cen");
+            dialogData.setPositiveButtonData(new ButtonData("打开加群界面") {
+                @Override
+                public void callback(DialogHelper dialogHelper) {
+                    openUrl(QQ_GROUP_URL, requireActivity());
+                    super.callback(dialogHelper);
+                }
+            });
+            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
         } else if (binding.reportHand.equals(view)) {
-            final AlertDialog.Builder normalDialog2 = new AlertDialog.Builder(requireActivity());
-            normalDialog2.setTitle("反馈须知");
-            normalDialog2.setMessage("该按钮为遇到错误时未发生崩溃使用\n请完整执行完会产生错误的操作后再点击\n请优先切换至日志窗口查看日志后再判断是否需要上报完整日志\n\n请再次确认是否上报");
-            normalDialog2.setPositiveButton("确认开始上报",
-                    (dialog, which) -> {
-//                        int i = 1 / 0; //用来标记后台
-                        CrashReport.testJavaCrash();
-                        CrashReport.testANRCrash();
-                        dialog.dismiss();
-                    });
-            normalDialog2.setNegativeButton(R.string.btn_cancel,
-                    (dialog, which) -> dialog.dismiss());
-            normalDialog2.setCancelable(false);
-            normalDialog2.show();
+            DialogData dialogData = new DialogData("反馈须知", "该按钮为遇到错误时未发生崩溃使用\n请完整执行完会产生错误的操作后再点击\n请优先切换至日志窗口查看日志后再判断是否需要上报完整日志\n\n请再次确认是否上报");
+            dialogData.setPositiveButtonData(new ButtonData("确认开始上报") {
+                @Override
+                public void callback(DialogHelper dialogHelper) {
+                    CrashReport.testJavaCrash();
+                    CrashReport.testANRCrash();
+                    super.callback(dialogHelper);
+                }
+            });
+            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
         } else {
             Log.makeToast("Wrong Button");
 //                Toast.makeText(requireActivity(), "Wrong Button", Toast.LENGTH_LONG).show();

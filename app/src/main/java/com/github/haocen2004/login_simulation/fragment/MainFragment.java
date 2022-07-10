@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -42,6 +43,9 @@ import androidx.fragment.app.Fragment;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.activity.AboutActivity;
 import com.github.haocen2004.login_simulation.activity.ScannerActivity;
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.Flyme;
@@ -54,6 +58,7 @@ import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
 import com.github.haocen2004.login_simulation.login.Xiaomi;
 import com.github.haocen2004.login_simulation.util.Constant;
+import com.github.haocen2004.login_simulation.util.DialogHelper;
 import com.github.haocen2004.login_simulation.util.FabScanner;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.QRScanner;
@@ -265,6 +270,34 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
+    @Keep
+    private String[] getServerList(boolean hasXposed) {
+        String[] raw_server;
+        if (hasXposed) {
+            raw_server = getResources().getStringArray(R.array.server_types_xp);
+        } else {
+
+            raw_server = getResources().getStringArray(R.array.server_types);
+        }
+        Logger.d("getServerList", "NoneXposedList");
+        return raw_server;
+    }
+
+    @Keep
+    private String[] getServerValue(boolean hasXposed) {
+        String[] raw_server;
+        if (hasXposed) {
+            raw_server = getResources().getStringArray(R.array.server_types_value_xp);
+            Logger.d("getServerValue", "HasXposedList");
+        } else {
+
+            raw_server = getResources().getStringArray(R.array.server_types_value);
+            Logger.d("getServerValue", "NoneXposedList");
+        }
+        return raw_server;
+    }
+
+
     private void setupListener() {
         //        binding.btnLogin.setOnClickListener(this);
         binding.btnScan.setOnClickListener(this);
@@ -303,8 +336,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         });
         binding.cardViewMain.btnCard1Action1.setOnClickListener(view1 -> {
-            String[] singleChoiceItems = getResources().getStringArray(R.array.server_types);
-            String[] serverList = getResources().getStringArray(R.array.server_types_value);
+            String[] singleChoiceItems = getServerList(false);
+            String[] serverList = getServerValue(false);
             String currServer = pref.getString("server_type", "");
 
             int itemSelected = 0;
@@ -589,16 +622,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void checkPermissions() {
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(context);
-            normalDialog.setTitle("权限说明");
-            normalDialog.setMessage("使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
-            normalDialog.setPositiveButton("我已知晓并授权使用",
-                    (dialog, which) -> {
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
-                        dialog.dismiss();
-                    });
-            normalDialog.setCancelable(false);
-            normalDialog.show();
+            DialogData dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+            dialogData.setPositiveButtonData(new ButtonData("我已知晓并授权使用") {
+                @Override
+                public void callback(DialogHelper dialogHelper) {
+                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
+                    super.callback(dialogHelper);
+                }
+            });
+            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
         }
     }
 
@@ -649,19 +681,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         fabScanner.setQrScanner(qrScanner);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (!Settings.canDrawOverlays(activity)) {
-                                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(activity);
-                                normalDialog.setTitle("悬浮窗扫码");
-                                normalDialog.setMessage("使用悬浮窗扫码器需要悬浮窗权限和屏幕捕获权限\n请在接下来打开的窗口中授予权限");
-                                normalDialog.setPositiveButton("我已知晓",
-                                        (dialog, which) -> {
-//                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, REQ_PERM_WINDOW);
-                                            dialog.dismiss();
-                                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                                            activity.startActivityForResult(intent, REQ_PERM_WINDOW);
-
-                                        });
-                                normalDialog.setCancelable(false);
-                                normalDialog.show();
+                                DialogData dialogData = new DialogData("悬浮窗扫码", "使用悬浮窗扫码器需要悬浮窗权限和屏幕捕获权限\n请在接下来打开的窗口中授予权限");
+                                dialogData.setPositiveButtonData(new ButtonData("我已知晓") {
+                                    @Override
+                                    public void callback(DialogHelper dialogHelper) {
+                                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                                        activity.startActivityForResult(intent, REQ_PERM_WINDOW);
+                                        super.callback(dialogHelper);
+                                    }
+                                });
+                                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
                             } else {
                                 fabScanner.showAlertScanner();
                             }
@@ -677,20 +706,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     Log.makeToast(R.string.error_not_login);
                 }
             } else {
-                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(activity);
-                normalDialog.setTitle("悬浮窗扫码");
-                normalDialog.setMessage("使用悬浮窗扫码器需要开启自动确认\n是否立即启用？");
-                normalDialog.setPositiveButton("启用",
-                        (dialog, which) -> {
-//                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, REQ_PERM_WINDOW);
-                            dialog.dismiss();
-                            pref.edit().putBoolean("auto_confirm", true).apply();
-                            onLongClick(view);
-
-                        });
-                normalDialog.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
-                normalDialog.setCancelable(false);
-                normalDialog.show();
+                DialogData dialogData = new DialogData("悬浮窗扫码", "使用悬浮窗扫码器需要开启自动确认\n是否立即启用？");
+                dialogData.setPositiveButtonData(new ButtonData("启用") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        pref.edit().putBoolean("auto_confirm", true).apply();
+                        refreshView();
+                        onLongClick(view);
+                        super.callback(dialogHelper);
+                    }
+                });
+                dialogData.setNegativeButtonData("取消");
+                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
             }
         } else {
             makeToast("你点了什么玩意？");

@@ -7,7 +7,6 @@
         <item>Vivo</item>
         <item>Flyme</item>
         <item>Oppo</item>
-        <item>YYB</item>
     </string-array>
     <string-array name="server_types_value">
         <item>Official</item>
@@ -17,7 +16,26 @@
         <item>Vivo</item>
         <item>Flyme</item>
         <item>Oppo</item>
+    </string-array>
+    <string-array name="server_types_xp">
+        <item>Official</item>
+        <item>Bilibili</item>
+        <item>Xiaomi</item>
+        <item>UC</item>
+        <item>Vivo</item>
+        <item>Flyme</item>
+        <item>Oppo</item>
         <item>YYB</item>
+    </string-array>
+    <string-array name="server_types_value_xp">
+        <item>Official</item>
+        <item>Bilibili</item>
+        <item>Xiaomi</item>
+        <item>UC</item>
+        <item>Vivo</item>
+        <item>Flyme</item>
+        <item>Oppo</item>
+        <item>Tencent-QQ</item>
     </string-array>
     <!-- Reply Preference -->
     <string-array name="dark_type">

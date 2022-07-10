@@ -65,7 +65,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         findPreference("custom_bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
             Logger.d(TAG, newValue.toString());
-            app_pref.edit().putString("custom_bh_ver", newValue.toString());
+            app_pref.edit().putString("custom_bh_ver", newValue.toString()).apply();
             if (app_pref.getBoolean("bh_ver_overwrite", false)) {
                 BH_VER = newValue.toString();
             }

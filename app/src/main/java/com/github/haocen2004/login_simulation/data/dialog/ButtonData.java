@@ -12,9 +12,9 @@ public class ButtonData {
 
     public void callback(DialogHelper dialogHelper) {
         dialogHelper.getCurrDialog().dismiss();
-        dialogHelper.setCurrPos(dialogHelper.getCurrPos() + 1);
-        dialogHelper.setCurrClose(true);
         Logger.d("dialog", "default close.");
+        dialogHelper.setCurrClose(true);
+        dialogHelper.next();
     }
 
     public String getText() {
