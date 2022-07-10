@@ -78,7 +78,10 @@ android {
 //            applicationIdSuffix '.dev'
             minifyEnabled false
             shrinkResources false
-            signingConfig signingConfigs.debugSign
+
+            try {
+                signingConfig signingConfigs.debugSign
+            } catch (Exception ignore) {}
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
