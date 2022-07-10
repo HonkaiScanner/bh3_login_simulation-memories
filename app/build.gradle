@@ -23,15 +23,17 @@ android {
     signingConfigs {
         debugSign {
 
-            def properties = new Properties()
+            try {
+                def properties = new Properties()
 
-            def inputStream = project.rootProject.file('local.properties').newDataInputStream()
-            storeFile file(System.getenv("KEYSTORE") ?: "keystore.jks")
-            properties.load( inputStream )
+                def inputStream = project.rootProject.file('local.properties').newDataInputStream()
+                storeFile file(System.getenv("KEYSTORE") ?: "keystore.jks")
+                properties.load(inputStream)
 
-            storePassword properties.getProperty("sign.pwn")
-            keyAlias properties.getProperty("sign.keyAlias")
-            keyPassword properties.getProperty("sign.pwn")
+                storePassword properties.getProperty("sign.pwn")
+                keyAlias properties.getProperty("sign.keyAlias")
+                keyPassword properties.getProperty("sign.pwn")
+            } catch (Exception ignore) {}
 
         }
 
