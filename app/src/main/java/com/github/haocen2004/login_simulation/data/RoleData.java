@@ -101,6 +101,8 @@ public class RoleData {
             accountType = "6";
         } else if (special_tag == 7) {
             accountType = "5";
+        } else if (special_tag == 8) {
+            accountType = "10";
         }
         Logger.addBlacklist(combo_token);
         Logger.addBlacklist(open_token);

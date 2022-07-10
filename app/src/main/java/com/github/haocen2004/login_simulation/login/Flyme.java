@@ -113,7 +113,7 @@ public class Flyme implements LoginImpl {
                     Logger.addBlacklist(combo_token);
                     String account_type = data_json2.getString("account_type");
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "16", account_type, "meizu", 0, callback);
+                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "16", account_type, "meizu", 8, callback);
                     isLogin = true;
 
 //                        makeToast(activity.getString(R.string.login_succeed));
