@@ -21,21 +21,19 @@ android {
 
 
     signingConfigs {
-        debugSign {
-
-            try {
-                def properties = new Properties()
-
-                def inputStream = project.rootProject.file('local.properties').newDataInputStream()
-                storeFile file(System.getenv("KEYSTORE") ?: "keystore.jks")
-                properties.load(inputStream)
-
-                storePassword properties.getProperty("sign.pwn")
-                keyAlias properties.getProperty("sign.keyAlias")
-                keyPassword properties.getProperty("sign.pwn")
-            } catch (Exception ignore) {}
-
-        }
+//        debugSign {
+//
+//            def properties = new Properties()
+//
+//            def inputStream = project.rootProject.file('local.properties').newDataInputStream()
+//            storeFile file(System.getenv("KEYSTORE") ?: "keystore.jks")
+//            properties.load(inputStream)
+//
+//            storePassword properties.getProperty("sign.pwn")
+//            keyAlias properties.getProperty("sign.keyAlias")
+//            keyPassword properties.getProperty("sign.pwn")
+//
+//        }
 
         releaseSign {
             storeFile file(System.getenv("KEYSTORE") ?: "keystore.jks")
@@ -79,9 +77,7 @@ android {
             minifyEnabled false
             shrinkResources false
 
-            try {
-                signingConfig signingConfigs.debugSign
-            } catch (Exception ignore) {}
+//            signingConfig signingConfigs.debugSign
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
