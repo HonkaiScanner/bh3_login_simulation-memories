@@ -73,10 +73,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-//            versionNameSuffix "-dev"
+            versionNameSuffix "-dev"
 //            applicationIdSuffix '.dev'
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             signingConfig signingConfigs.debugSign
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -102,8 +102,8 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.navigation:navigation-fragment:2.4.2'
-    implementation 'androidx.navigation:navigation-ui:2.4.2'
+    implementation 'androidx.navigation:navigation-fragment:2.5.0'
+    implementation 'androidx.navigation:navigation-ui:2.5.0'
     implementation 'androidx.viewpager2:viewpager2:1.1.0-beta01'
     implementation 'com.github.jenly1314.WeChatQRCode:opencv:1.1.1'
     implementation 'com.github.jenly1314.WeChatQRCode:opencv-armv7a:1.1.1'

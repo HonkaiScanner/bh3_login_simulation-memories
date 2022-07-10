@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.haocen2004.login_simulation.data.LogLiveData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.google.android.material.snackbar.Snackbar;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.BuglyLog;
@@ -28,6 +29,7 @@ public class Logger {
         useSnackBar = false;
         logBlackList = new ArrayList();
         logLiveData = LogLiveData.getINSTANCE(context);
+        DialogLiveData.getINSTANCE(context);
 //        blackListString = getString(context, "logBlackLists");
 //        if (!blackListString.equals("")) {
 //            for (String blackItem : blackListString.split(";")) {

@@ -2,6 +2,7 @@ package com.github.haocen2004.login_simulation.util;
 
 import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
 import static com.github.haocen2004.login_simulation.util.Network.sendPost;
+import static java.lang.Integer.parseInt;
 
 import android.app.Activity;
 import android.content.Context;
@@ -130,7 +131,11 @@ public static void changeToWDJ(Activity activity) {
     }
 
     public static boolean getBoolean(Context paramContext, String key) {
-        return paramContext.getSharedPreferences(name, 0).getBoolean(key, false);
+        return getBoolean(paramContext, key, false);
+    }
+
+    public static boolean getBoolean(Context paramContext, String key, boolean defaultRet) {
+        return paramContext.getSharedPreferences(name, 0).getBoolean(key, defaultRet);
     }
 
 
@@ -140,8 +145,8 @@ public static void changeToWDJ(Activity activity) {
 
         String device_id = Tools.getDeviceID(activity);
         login_map.put("device", device_id);
-        login_map.put("app_id", "1");
-        login_map.put("channel_id", channel_id);
+        login_map.put("app_id", 1);
+        login_map.put("channel_id", parseInt(channel_id));
         login_map.put("data", data_json);
         Logger.d(TAG, login_map.toString());
         String sign = Encrypt.bh3Sign(login_map);

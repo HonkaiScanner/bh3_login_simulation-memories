@@ -4,6 +4,7 @@
     package="com.github.haocen2004.login_simulation">
 
     <queries>
+        <package android:name="com.meizu.gamecenter.service" />
         <package android:name="com.tencent.mobileqq" />
     </queries>
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络权限 -->
@@ -214,7 +215,7 @@
         </activity> <!-- sdk service -->
         <service
             android:name="cn.gundam.sdk.shell.service.ProxyService"
-            android:exported="false"
+            android:exported="true"
             android:process=":bgservice"
             android:permission="TODO" /> <!-- sdk service end -->
         <provider

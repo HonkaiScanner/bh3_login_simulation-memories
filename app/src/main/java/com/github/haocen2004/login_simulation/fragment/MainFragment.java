@@ -44,6 +44,7 @@ import com.github.haocen2004.login_simulation.activity.AboutActivity;
 import com.github.haocen2004.login_simulation.activity.ScannerActivity;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.Bilibili;
+import com.github.haocen2004.login_simulation.login.Flyme;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
@@ -404,9 +405,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 case "Oppo":
                     loginImpl = new Oppo(activity, this);
                     break;
-//                    case "Flyme":
-//                        loginImpl = new Flyme(activity);
-//                        break;
+                case "Flyme":
+                    loginImpl = new Flyme(activity, this);
+                    break;
                 case "YYB":
                     loginImpl = new Tencent(activity, this);
                     break;

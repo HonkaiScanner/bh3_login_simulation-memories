@@ -77,13 +77,16 @@ public class Bilibili implements LoginImpl {
 
                 if (feedback_json == null) {
                     makeToast("Empty Return");
+                    callback.onLoginFailed();
                 } else if (feedback_json.getInt("retcode") != 0) {
                     makeToast(feedback_json.getString("message"));
+                    callback.onLoginFailed();
                 } else {
                     JSONObject data_json2 = feedback_json.getJSONObject("data");
                     String combo_id = data_json2.getString("combo_id");
                     String open_id = data_json2.getString("open_id");
                     String combo_token = data_json2.getString("combo_token");
+                    Logger.addBlacklist(combo_token);
 //                        String account_type = data_json2.getString("account_type");
 
                     roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", "2", "bilibili", 0, callback);

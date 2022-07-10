@@ -28,8 +28,6 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -37,7 +35,11 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
+import com.github.haocen2004.login_simulation.util.DialogHelper;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.Tools;
@@ -57,7 +59,7 @@ import cn.leancloud.LeanCloud;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             showWrongABIDialog();
             return;
         }
-        if (app_pref.getBoolean("showBetaInfo", getPackageName().contains("dev"))) {
+        if (VERSION_NAME.contains("dev") || DEBUG) {
             showBetaInfoDialog();
         }
 
@@ -131,9 +133,6 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
 
-        if (app_pref.getBoolean("show_eula", true)) {
-            showEulaDialog();
-        }
         if (Tools.getBoolean(this, "has_crash")) {
             Logger.d("CRASH", "has crash before");
             Intent intent = new Intent(this, CrashActivity.class);
@@ -143,6 +142,10 @@ public class MainActivity extends AppCompatActivity {
         }
 //        if (CHECK_VER) {
         new Thread(update_rb).start();
+
+        DialogHelper.getDialogHelper(this);
+
+        Logger.d("dialogHelper", "loaded.");
 //        }
     }
 
@@ -199,14 +202,14 @@ public class MainActivity extends AppCompatActivity {
                     Logger.d("Update", "cloud ver:" + json.getInt("ver"));
                     Logger.d("Update", "local ver:" + VERSION_CODE);
                     Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
-                    if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
+//                    if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
                         Logger.i("Update", "Start Update window");
                         showUpdateDialog(
                                 json.getString("ver_name"),
                                 json.getString("update_url"),
                                 json.getString("logs").replaceAll("&n", "\n")
                         );
-                    }
+//                    }
                 } else {
                     Logger.d("Update", "Check Update Failed");
                     Log.makeToast("检查更新失败...");
@@ -273,31 +276,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void showEulaDialog() {
-        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("用户隐私协议");
-        normalDialog.setMessage(
-                "概要\n" +
-                        "不得用于商业用途。\n" +
-                        "不得以此应用牟利。\n" +
-                        "自行承担一切使用此应用造成的意外和风险。\n" +
-                        "最终解释权归本软件作者所有。\n" +
-                        "未尽之处，以下方链接「最终用户许可协议与隐私条款」为准。");
-        normalDialog.setNegativeButton("打开隐私协议完整链接",
-                (dialog, which) -> openUrl("https://github.com/Haocen2004/bh3_login_simulation/blob/main/EULA.md", this));
-        normalDialog.setPositiveButton("同意",
-                (dialog, which) -> {
-                    app_pref.edit().putBoolean("show_eula", false).apply();
-                    dialog.dismiss();
-                });
-        normalDialog.setNeutralButton(R.string.btn_cancel,
-                (dialog, which) -> {
-                    System.exit(0);
-                    dialog.dismiss();
-                });
-        normalDialog.setCancelable(false);
-        normalDialog.show();
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -307,47 +285,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showUpdateDialog(String ver, String url, String logs) {
-        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("获取到新版本: " + ver);
-        normalDialog.setMessage("更新日志：\n" + logs);
-        normalDialog.setPositiveButton("打开更新链接",
-                (dialog, which) -> {
-                    openUrl("https://www.coolapk.com/apk/com.github.haocen2004.bh3_login_simulation", this);
-                    dialog.dismiss();
+        DialogData dialogData = new DialogData("获取到新版本: " + ver, "更新日志：\n" + logs);
+        dialogData.setPositiveButtonData(new ButtonData("打开更新链接") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+                openUrl("https://www.coolapk.com/apk/com.github.haocen2004.bh3_login_simulation", getApplicationContext());
+            }
+        });
+        dialogData.setNegativeButtonData(new ButtonData("蓝奏云") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+                openUrl(url, getApplicationContext());
+            }
+        });
+        dialogData.setNeutralButtonData(new ButtonData(getString(R.string.btn_cancel)) {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+                DialogLiveData.getINSTANCE(null).insertNewDialog(dialogData, getCloseUpdateDialog());
+            }
+
+            private DialogData getCloseUpdateDialog() {
+
+                DialogData dialogData = new DialogData("是否关闭更新检查？", "将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
+                dialogData.setPositiveButtonData(new ButtonData(getString(R.string.btn_close_update)) {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("check_update", false).apply();
+                    }
                 });
-        normalDialog.setNeutralButton("蓝奏云",
-                (dialog, which) -> {
-                    openUrl(url, this);
-                    dialog.dismiss();
+                dialogData.setNeutralButtonData(new ButtonData("忽略本次更新") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putInt("ignore_ver", VERSION_CODE).apply();
+                    }
                 });
-        normalDialog.setNegativeButton(R.string.btn_cancel,
-                (dialog, which) -> {
-                    showCloseUpdateDialog();
-                    dialog.dismiss();
-                });
-        normalDialog.setCancelable(false);
-        normalDialog.show();
+                dialogData.setNegativeButtonData(new ButtonData(getString(R.string.btn_cancel)));
+                return dialogData;
+            }
+        });
+
+        DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
     }
 
-    private void showCloseUpdateDialog() {
-        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("是否关闭更新检查？");
-        normalDialog.setMessage("将无法获取扫码器最新更新\n\n以下功能将会一起关闭：\n赞助者列表更新\n公告更新");
-        normalDialog.setPositiveButton(R.string.btn_close_update,
-                (dialog, which) -> {
-                    app_pref.edit().putBoolean("check_update", false).apply();
-                    dialog.dismiss();
-                });
-        normalDialog.setNeutralButton("忽略本次更新",
-                (dialog, which) -> {
-                    app_pref.edit().putInt("ignore_ver", VERSION_CODE).apply();
-                    dialog.dismiss();
-                });
-        normalDialog.setNegativeButton(R.string.btn_cancel,
-                (dialog, which) -> dialog.dismiss());
-        normalDialog.setCancelable(false);
-        normalDialog.show();
-    }
 
     Runnable update_rb = () -> {
         String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update", false);
@@ -366,36 +350,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void showBetaInfoDialog() {
 
-        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("Beta使用须知");
-        normalDialog.setMessage("你现在使用的是自动构建版本\n请及时通过左边侧滑栏反馈bug\n此消息只会出现一次");
-        normalDialog.setPositiveButton("我已知晓",
-                (dialog, which) -> {
-                    getDefaultSharedPreferences(this).edit().putBoolean("showBetaInfo", false).apply();
-                    dialog.dismiss();
-                });
-        normalDialog.setCancelable(false);
-        normalDialog.show();
+        DialogData dialogData = new DialogData("自动构建使用须知", "你现在使用的是自动构建版本\n请及时通过左边侧滑栏反馈bug\n每次启动该消息都会显示");
+        dialogData.setPositiveButtonData(new ButtonData("我已知晓"));
+        DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
     }
 
     private void showWrongABIDialog() {
-
-        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("错误");
         StringBuilder supportedABI = new StringBuilder();
         for (String abi : Build.SUPPORTED_ABIS) {
             supportedABI.append(abi);
             supportedABI.append('\n');
         }
-        normalDialog.setMessage("你所下载的版本可能不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
-        normalDialog.setPositiveButton("我已知晓",
-                (dialog, which) -> {
-                    dialog.dismiss();
-//                    finish();
-//                    System.exit(0);
-                });
-        normalDialog.setCancelable(false);
-        normalDialog.show();
+        DialogData dialogData = new DialogData("错误", "你所下载的版本可能不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
+        dialogData.setPositiveButtonData(new ButtonData("我已知晓"));
+        DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
     }
 
 
