@@ -40,7 +40,7 @@ public class QRScanner {
     private String ticket;
     private final String account_type;
     private String biz_key;
-    private Boolean is_official = false;
+    private final Boolean is_official;
     private Logger Log;
     Runnable runnable = new Runnable() {
         @Override
@@ -72,14 +72,9 @@ public class QRScanner {
                 if (feedback_json.getInt("retcode") == 0) {
                     makeToast(activity.getString(R.string.login_succeed));
                     new Thread(() -> Network.sendPost("https://api.scanner.hellocraft.xyz/scan_succ_upload", processWithBlackList(confirm_json.toString()), false)).start();
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && getDefaultSharedPreferences(activity).getBoolean("create_short_cut", false)) {
-//                        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
-//                        shortcutManager.addDynamicShortcuts(new ShortcutInfo.Builder(activity, "test_1").setIcon(R.mipmap.ic_launcher).setShortLabel().setLongLabel().setIntent(new Intent(activity, MainActivity.class)).build());
-//                    }
                 } else {
-//                    Logger.warning("扫码登录失败2");
 
-                    Logger.w(TAG, "handleMessage: 扫描登录失败2");
+                    Logger.w(TAG, "handleMessage: 扫码登录失败 2");
                     makeToast("登录失败 code: " + feedback_json.getInt("retcode") + "\n" + feedback_json.getString("msg"));
                 }
             } catch (JSONException e) {
@@ -139,8 +134,6 @@ public class QRScanner {
         }
     };
 
-    //    private String scanResult;
-//    private String ;
     public QRScanner(AppCompatActivity activity, RoleData roleData) {
 
         this.activity = activity;
@@ -214,7 +207,6 @@ public class QRScanner {
         }
 
 
-//            Map<String, Object> qr_check_map = new HashMap<>();
         qr_check_map.put("device", device_id);
         qr_check_map.put("app_id", app_id);
         qr_check_map.put("ts", System.currentTimeMillis());
@@ -229,22 +221,10 @@ public class QRScanner {
             }
             qr_check_json.put("sign", sign);
 
-//                Logger.debug(qr_check_json.toString());
 
 
             Logger.d(TAG, "getScanRequest: " + qr_check_json.toString());
             new Thread(runnable).start();
-
-//                String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/scan",qr_check_json.toString());
-//
-//                System.out.println(feedback);
-//
-//                JSONObject feedback_json = new JSONObject(feedback);
-//                if (feedback_json.getInt("retcode") == 0){
-//
-//                } else {
-//                    Logger.warning("扫码登录失败1");
-//                }
 
         } catch (Exception ignore) {
         }
@@ -261,7 +241,6 @@ public class QRScanner {
         confirm_json = new JSONObject();
         try {
             if (app_id.contains("4") || is_official) {
-//{"app_id":4,"device":"c3a0a429-3d2a-36d1-8a4b-255aeae8a9d5","payload":{"proto":"Account","raw":"{\"uid\":\"214525854\",\"token\":\"cScORPGe3TUxbiiVZ5nuIVp1qOErNnl7\"}"},"ticket":"5f84394af05bdb23e5ce451b"}
                 SharedPreferences preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
 
                 raw_json.put("uid", preferences.getString("uid", ""))
@@ -270,11 +249,9 @@ public class QRScanner {
                 payload_json.put("raw", raw_json.toString())
                         .put("proto", "Account");
 
-//                    .put("ext", ext_json.toString());
 
             confirm_json.put("device", device_id)
                     .put("app_id", app_id)
-//                    .put("ts", System.currentTimeMillis())
                     .put("ticket", ticket)
                     .put("payload", payload_json);
             return;
@@ -309,7 +286,6 @@ public class QRScanner {
                 .put("oaserver_url", oaserver.get("oaserver_url"))
                 .put("server_cur_time", oaserver.get("server_cur_time"))
                 .put("server_cur_timezone", oaserver.get("server_cur_timezone"))
-//                .put("oaserver_url","http://139.196.248.220:1080")
                 .put("region_name", oaserver.getString("region_name"))
                 .put("retcode", "0")
                 .put("is_data_ready", true)
@@ -341,8 +317,6 @@ public class QRScanner {
             return;
         }
 
-//        Logger.debug(confirm_json.toString());
-
         Logger.d(TAG, "genRequest: " + confirm_json.toString());
     }
 
@@ -367,6 +341,5 @@ public class QRScanner {
             Log = Logger.getLogger(null);
             makeToast(msg);
         }
-//        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
     }
 }

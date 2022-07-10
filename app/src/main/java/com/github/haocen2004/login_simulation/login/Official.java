@@ -255,7 +255,6 @@ public class Official implements LoginImpl {
 
                         gt3GeetestUtils.showSuccessDialog();
                         new Thread(login_runnable).start();
-//                        Logger.d(TAG,"极验完成:"+param1String);
                     }
 
                     @Override
@@ -289,7 +288,6 @@ public class Official implements LoginImpl {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
-//            Logger.debug(feedback);
             gt3GeetestUtils.dismissGeetestDialog();
             gt3GeetestUtils.destory();
             Logger.d(TAG, "handleMessage: " + feedback);
@@ -305,9 +303,6 @@ public class Official implements LoginImpl {
 
                     roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "", 0, loginCallback);
                     isLogin = true;
-//                    Log.makeToast(R.string.login_succeed);
-//                    loginCallback.onLoginSucceed();
-
                 } else {
                     Logger.w(TAG, "handleMessage: 登录失败2：" + feedback);
                     Log.makeToast("登录失败：" + feedback);
@@ -343,7 +338,6 @@ public class Official implements LoginImpl {
             customizeDialog.setView(dialogView);
             customizeDialog.setPositiveButton(R.string.btn_login,
                     (dialog, which) -> {
-                        // 获取EditView中的输入内容
                         EditText edit_text = dialogView.findViewById(R.id.username);
                         EditText password_text = dialogView.findViewById(R.id.password);
                         username = edit_text.getText().toString();

@@ -106,7 +106,6 @@ public class Oppo implements LoginImpl {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String feedback = data.getString("value");
-//            Logger.debug(feedback);
             Logger.d(TAG, "handleMessage: " + feedback);
             JSONObject feedback_json = null;
             try {

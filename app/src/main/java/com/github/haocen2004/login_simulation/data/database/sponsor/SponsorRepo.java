@@ -36,7 +36,6 @@ public class SponsorRepo {
                 }
 
                 public void onNext(@NotNull List<LCObject> Sponsors) {
-                    // students 是包含满足条件的 Student 对象的数组
                     new Thread(() -> {
                         for (LCObject object : Sponsors) {
                             boolean hasData = false;

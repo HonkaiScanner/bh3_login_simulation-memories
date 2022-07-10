@@ -50,11 +50,7 @@ public class MainApplication extends Application {
                         .putBoolean("auto_confirm", false)
                         .apply();
             }
-//            if (!app_pref.contains("enable_ad")) {
-//                app_pref.edit()
-//                        .putBoolean("enable_ad", true)
-//                        .apply();
-//            }
+
             if (!app_pref.contains("server_type")) {
                 app_pref.edit()
                         .putString("server_type", "Official")
@@ -73,7 +69,7 @@ public class MainApplication extends Application {
             }
             if (!app_pref.contains("check_update")) {
                 app_pref.edit()
-                        .putBoolean("check_update", !getPackageName().contains("dev"))
+                        .putBoolean("check_update", true)
                         .apply();
             }
             if (!app_pref.contains("official_type")) {

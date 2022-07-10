@@ -131,7 +131,6 @@ public class FabScanner extends Service {
                     .setView(R.layout.fab_scanner)
                     .setGravity(Gravity.END | Gravity.BOTTOM)
                     .setYOffset(200)
-                    // 设置指定的拖拽规则
                     .setDraggable(new SpringDraggable())
                     .setOnClickListener((toast, view1) -> {
                         if (needStop) {
@@ -192,19 +191,6 @@ public class FabScanner extends Service {
                                         bitmap.copyPixelsFromBuffer(buffer);
                                         Bitmap.createBitmap(bitmap, 0, 0, width, height);
                                         url = WeChatQRCodeDetector.detectAndDecode(bitmap).toArray(new String[0]);
-//                                        Hashtable<DecodeHintType, String> hints = new Hashtable<>();
-//                                        hints.put(DecodeHintType.CHARACTER_SET, "UTF8");
-//
-//                                        RGBLuminanceSource source = new RGBLuminanceSource(mbitmap);
-//                                        BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
-//                                        QRCodeReader reader2 = new QRCodeReader();
-//                                        try {
-//                                            url = reader2.decode(bitmap1, hints).getText();
-//                                        } catch (NotFoundException | ChecksumException | FormatException e) {
-//                                            url = "";
-//                                            e.printStackTrace();
-//                                        }
-
                                         if (qrScanner.parseUrl(url)) {
                                             Log.makeToast("扫码成功\n处理中....");
                                             qrScanner.start();

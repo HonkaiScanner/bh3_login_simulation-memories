@@ -160,8 +160,6 @@ public class UC implements LoginImpl {
                     roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "20", account_type, "uc", special_tag, callback);
 
                     isLogin = true;
-//                    makeToast(activity.getString(R.string.login_succeed));
-
                 } else {
 
                     makeToast(feedback_json.getString("message"));
@@ -196,11 +194,9 @@ public class UC implements LoginImpl {
     private void makeToast(String result) {
         try {
             Log.makeToast(result);
-//            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Looper.prepare();
             Log.makeToast(result);
-//            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
             Looper.loop();
         }
     }

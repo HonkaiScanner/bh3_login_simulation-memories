@@ -43,9 +43,6 @@ public static void changeToWDJ(Activity activity) {
 }
 
     public static String getOAServer(RoleData roleData) {
-//        http://106.14.51.73/query_gameserver?version=4.2.0_gf_pc&t=1598631898&uid=21097880
-//        https://global2.bh3.com/query_dispatch  version=4.2.0_gf_android_xiaomi
-//        https://global1.bh3.com/query_dispatch?version=4.2.0_gf_pc&t=1598673811
         try {
 
             String getOAUrl = "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
@@ -164,7 +161,6 @@ public static void changeToWDJ(Activity activity) {
             }
             login_json.put("sign", sign);
 
-//                Logger.info(login_json.toString());
             Logger.i(TAG, "run: " + login_json);
             JSONObject feedback_json = null;
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
@@ -185,21 +181,6 @@ public static void changeToWDJ(Activity activity) {
 
             Logger.d(TAG, "handleMessage: " + feedback);
             return feedback;
-//
-//                        JSONObject data_json2 = feedback_json.getJSONObject("data");
-//                        String combo_id = data_json2.getString("combo_id");
-//                        String open_id = data_json2.getString("open_id");
-//                        String combo_token = data_json2.getString("combo_token");
-//                        String account_type = data_json2.getString("account_type");
-//
-//                        return new RoleData(activity, open_id, "", combo_id, combo_token, channel_id, account_type, oa_tag, special_tag);
-//
-//                    } else {
-//                        return null ;
-//                    }
-//                } else {
-//                    return null;
-//                }
         } catch (Exception ignore) {
             return null;
         }

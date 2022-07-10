@@ -30,18 +30,6 @@ public class Logger {
         logBlackList = new ArrayList();
         logLiveData = LogLiveData.getINSTANCE(context);
         DialogLiveData.getINSTANCE(context);
-//        blackListString = getString(context, "logBlackLists");
-//        if (!blackListString.equals("")) {
-//            for (String blackItem : blackListString.split(";")) {
-//                if (blackItem.length() < 4) w("BlackList", "blackMsg is too short: " + blackItem);
-//                if (!blackItem.equals("")) {
-//                    logBlackList.add(blackItem);
-//                }
-//            }
-//            d("BlackList", "Total " + logBlackList.size());
-////            logBlackList.addAll(Arrays.asList(blackListString.split(";")));
-//        }
-//        ToastUtils.init();
     }
 
     public static Logger getLogger(Context context) {
@@ -52,21 +40,12 @@ public class Logger {
     }
 
     public static void addBlacklist(String blackMsg) {
-//        d("addBlackList",blackMsg);
-//        d("addBlackList",blackListString);
-//        d("addBlackList",logBlackList.toString());
         if (logBlackList.contains(blackMsg)) return;
         if (blackMsg.length() < 2) {
             d("BlackList", "blackMsg is too short.");
             return;
         }
         logBlackList.add(blackMsg);
-//        if (blackListString.equals("")) {
-//            blackListString = blackMsg;
-//        } else {
-//            blackListString = blackListString + ";" + blackMsg;
-//        }
-//        saveString(context, "logBlackLists", blackListString);
     }
 
     public static void setView(View view) {
@@ -90,7 +69,6 @@ public class Logger {
 
     public static void d(String TAG, String msg) {
         for (String b : logBlackList) {
-//            BuglyLog.d("logBlacklist","try to replace "+b);
             msg = msg.replace(b, "******");
         }
         BuglyLog.d(TAG, msg);

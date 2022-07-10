@@ -122,12 +122,10 @@ public class RoleData {
         return combo_token;
     }
 
-    //区分官服和渠道服
     public String getAccount_type() {
         return account_type;
     }
 
-    //渠道id
     public String getAccountType() {
         return accountType;
     }

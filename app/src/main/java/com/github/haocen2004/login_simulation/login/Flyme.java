@@ -116,9 +116,7 @@ public class Flyme implements LoginImpl {
                     roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "16", account_type, "meizu", 8, callback);
                     isLogin = true;
 
-//                        makeToast(activity.getString(R.string.login_succeed));
                 }
-//                doBHLogin();
             } catch (JSONException e) {
                 CrashReport.postCatchedException(e);
                 makeToast("parse ERROR");

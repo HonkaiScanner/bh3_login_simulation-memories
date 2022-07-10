@@ -38,7 +38,6 @@ public class CrashActivity extends BaseActivity {
 
         try {
             startActivity(intent);
-//            startActivity(Intent.createChooser(intent,"选择浏览工具"));
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         }

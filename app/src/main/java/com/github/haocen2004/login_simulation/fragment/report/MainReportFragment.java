@@ -78,7 +78,6 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
             DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
         } else {
             Log.makeToast("Wrong Button");
-//                Toast.makeText(requireActivity(), "Wrong Button", Toast.LENGTH_LONG).show();
         }
     }
 }
