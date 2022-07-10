@@ -25,7 +25,7 @@
         <item>Vivo</item>
         <item>Flyme</item>
         <item>Oppo</item>
-        <item>YYB</item>
+        <item>Tencent-QQ</item>
     </string-array>
     <string-array name="server_types_value_xp">
         <item>Official</item>
@@ -35,7 +35,7 @@
         <item>Vivo</item>
         <item>Flyme</item>
         <item>Oppo</item>
-        <item>Tencent-QQ</item>
+        <item>YYB</item>
     </string-array>
     <!-- Reply Preference -->
     <string-array name="dark_type">

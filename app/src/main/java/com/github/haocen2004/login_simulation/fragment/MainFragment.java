@@ -275,11 +275,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         String[] raw_server;
         if (hasXposed) {
             raw_server = getResources().getStringArray(R.array.server_types_xp);
+            Logger.d("getServerList", "HasXposedList");
         } else {
 
+            Logger.d("getServerList", "NoneXposedList");
             raw_server = getResources().getStringArray(R.array.server_types);
         }
-        Logger.d("getServerList", "NoneXposedList");
         return raw_server;
     }
 

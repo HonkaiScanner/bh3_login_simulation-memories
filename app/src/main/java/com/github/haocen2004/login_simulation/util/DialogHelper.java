@@ -36,9 +36,6 @@ public class DialogHelper {
 
         dialogLiveData.observe((LifecycleOwner) context, dialogData -> {
 
-            for (DialogData dialogDatum : dialogData) {
-                Logger.d(TAG, dialogData.indexOf(dialogDatum) + "|" + dialogDatum.getTitle());
-            }
             if (currShow) {
                 return;
             }

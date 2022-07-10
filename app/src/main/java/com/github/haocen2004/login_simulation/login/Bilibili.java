@@ -18,6 +18,10 @@ import com.bsgamesdk.android.callbacklistener.CallbackListener;
 import com.bsgamesdk.android.callbacklistener.InitCallbackListener;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.RoleData;
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
+import com.github.haocen2004.login_simulation.util.DialogHelper;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -127,8 +131,16 @@ public class Bilibili implements LoginImpl {
     };
 
     private void doBiliLogin() {
+        DialogData dialogData = new DialogData("B服注意事项", "使用授权登陆可能会导致 登陆失败\n\n请在 扫码器内 使用账户密码登录");
+        dialogData.setPositiveButtonData(new ButtonData("我已知晓") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+                gameSdk.login(biliLogin);
+            }
+        });
+        DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
 
-        gameSdk.login(biliLogin);
     }
 
     @Override

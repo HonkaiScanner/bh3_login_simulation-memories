@@ -198,14 +198,14 @@ public class MainActivity extends BaseActivity {
                     Logger.d("Update", "cloud ver:" + json.getInt("ver"));
                     Logger.d("Update", "local ver:" + VERSION_CODE);
                     Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
-//                    if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
+                    if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
                         Logger.i("Update", "Start Update window");
                         showUpdateDialog(
                                 json.getString("ver_name"),
                                 json.getString("update_url"),
                                 json.getString("logs").replaceAll("&n", "\n")
                         );
-//                    }
+                    }
                 } else {
                     Logger.d("Update", "Check Update Failed");
                     Log.makeToast("检查更新失败...");
