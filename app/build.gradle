@@ -56,7 +56,6 @@ android {
 //        versionCode Integer.parseInt(System.currentTimeMillis().toString()[7..12])
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        applicationIdSuffix System.getenv("NAME_SUFFIX")
         versionNameSuffix System.getenv("NAME_SUFFIX")
 //        versionNameSuffix '-CaptureScreenTestV2'
         signingConfig signingConfigs.releaseSign
