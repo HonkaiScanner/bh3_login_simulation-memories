@@ -63,6 +63,7 @@ import com.github.haocen2004.login_simulation.util.FabScanner;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.QRScanner;
 import com.github.haocen2004.login_simulation.util.SocketHelper;
+import com.github.haocen2004.login_simulation.util.Tools;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
@@ -172,6 +173,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            loginImpl = (LoginImpl) savedInstanceState.getSerializable("loginImpl");
+        }
         activity = (AppCompatActivity) getActivity();
         context = getContext();
         fabScanner = new FabScanner(this);
@@ -180,6 +184,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
         return binding.getRoot();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (loginImpl != null) {
+            outState.putSerializable("loginImpl", loginImpl);
+            Logger.d("onSaveInstanceState", "loginImpl saved.");
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -247,7 +260,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 server_type = "DEBUG -- SERVER ERROR";
         }
         binding.cardViewMain.serverText.setText(activity.getString(R.string.types_prefix) + server_type);
-        boolean isLogin = loginImpl != null && loginImpl.isLogin();
+        boolean isLogin = (loginImpl != null && loginImpl.isLogin());
         if (isLogin) {
             binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
             binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
@@ -796,7 +809,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void onLoginSucceed() {
         spCheckHandle.postDelayed(() -> {
-            pref.edit().putBoolean("last_login_succeed", true).apply();
+            Tools.saveBoolean(requireContext(), "last_login_succeed", true);
             QRScanner qrScanner;
             if (isOfficial) {
                 qrScanner = new QRScanner(activity, true);
@@ -820,7 +833,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
             binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);
             binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
-            pref.edit().putBoolean("last_login_succeed", false).apply();
+            Tools.saveBoolean(requireContext(), "last_login_succeed", false);
             loginProgress = false;
             loginImpl = null;
             refreshView();

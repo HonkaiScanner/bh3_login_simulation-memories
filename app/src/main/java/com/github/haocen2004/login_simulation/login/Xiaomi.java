@@ -42,42 +42,50 @@ public class Xiaomi extends Application implements LoginImpl {
         callback = loginCallback;
     }
 
-    private void xiaomiLogin() {
+    private void showWarningDialog() {
         DialogData dialogData = new DialogData("小米服注意事项", "由于扫码器实现原理限制\n暂只支持小米账号密码登录\n不支持第三方跳转登录");
         dialogData.setPositiveButtonData(new ButtonData("我已知晓") {
             @Override
             public void callback(DialogHelper dialogHelper) {
                 super.callback(dialogHelper);
-                MiCommplatform.getInstance().onUserAgreed(activity);
-                MiCommplatform.getInstance().miLogin(activity,
-                        (code, arg1) -> {
-                            switch (code) {
-                                case MiErrorCode.MI_XIAOMI_PAYMENT_SUCCESS:// 登陆成功
-                                    Logger.d(TAG, "Mi Login Success:" + arg1.toString());
-                                    //获取用户的登陆后的UID（即用户唯一标识）
-                                    uid = arg1.getUid();
-                                    username = arg1.getNikename();
-                                    //以下为获取session并校验流程，如果是网络游戏必须校验,(12小时过期)
-                                    //获取用户的登陆的Session（请参考5.3.3流程校验Session有效性）
-                                    session = arg1.getSessionId();
-                                    //请开发者完成将uid和session提交给开发者自己服务器进行session验证
-                                    doBHLogin();
-                                    break;
-                                // 登陆失败
-                                case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_LOGIN_FAIL:
-                                case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_CANCEL:
-                                case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_ACTION_EXECUTED:
-                                default:
-                                    Logger.d(TAG, "err:" + code);
-                                    callback.onLoginFailed();
-                                    // 登录失败
-                                    break;
-                            }
-                        });
+                xiaomiLogin();
             }
         });
         DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
 
+    }
+
+    private void xiaomiLogin() {
+        if (Tools.getBoolean(activity, "last_login_succeed")) {
+            MiCommplatform.getInstance().onUserAgreed(activity);
+            MiCommplatform.getInstance().miLogin(activity,
+                    (code, arg1) -> {
+                        switch (code) {
+                            case MiErrorCode.MI_XIAOMI_PAYMENT_SUCCESS:// 登陆成功
+                                Logger.d(TAG, "Mi Login Success:" + arg1.toString());
+                                //获取用户的登陆后的UID（即用户唯一标识）
+                                uid = arg1.getUid();
+                                username = arg1.getNikename();
+                                //以下为获取session并校验流程，如果是网络游戏必须校验,(12小时过期)
+                                //获取用户的登陆的Session（请参考5.3.3流程校验Session有效性）
+                                session = arg1.getSessionId();
+                                //请开发者完成将uid和session提交给开发者自己服务器进行session验证
+                                doBHLogin();
+                                break;
+                            // 登陆失败
+                            case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_LOGIN_FAIL:
+                            case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_CANCEL:
+                            case MiErrorCode.MI_XIAOMI_PAYMENT_ERROR_ACTION_EXECUTED:
+                            default:
+                                Logger.d(TAG, "err:" + code);
+                                callback.onLoginFailed();
+                                // 登录失败
+                                break;
+                        }
+                    });
+        } else {
+            showWarningDialog();
+        }
     }
 
     @Override
