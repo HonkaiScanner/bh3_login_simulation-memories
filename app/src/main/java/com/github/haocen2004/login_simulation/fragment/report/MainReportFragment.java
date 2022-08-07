@@ -52,7 +52,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (binding.reportGithub.equals(view)) {
-            openUrl("https://github.com/Haocen2004/bh3_login_simulation/issues", requireActivity());
+            openUrl("https://github.com/HonkaiScanner/bh3_login_simulation/issues", requireActivity());
         } else if (binding.reportBili.equals(view)) {
             openUrl("https://space.bilibili.com/269140934", requireActivity());
         } else if (binding.reportQq.equals(view)) {

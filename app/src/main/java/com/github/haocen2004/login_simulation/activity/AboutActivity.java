@@ -34,7 +34,7 @@ public class AboutActivity extends AbsAboutActivity {
         items.add(new Contributor(R.drawable.author, "Hao_cen", "Developer", "https://github.com/Haocen2004"));
 
         items.add(new Category(getString(R.string.about_repo)));
-        items.add(new Card("Github\nhttps://github.com/Haocen2004/bh3_login_simulation"));
+        items.add(new Card("Github\nhttps://github.com/HonkaiScanner/bh3_login_simulation"));
         items.add(new Card("BiliBili\nhttps://space.bilibili.com/269140934"));
         items.add(new Card("QQ Group\n" + QQ_GROUP_URL));
 
