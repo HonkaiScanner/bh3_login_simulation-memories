@@ -1,2 +1,3 @@
-include ':app', ':mi_sdk'
+include ':app', ':mi_sdk', ':360_sdk'
 rootProject.name = "bh3_login_simulation"
+include ':360_sdk'

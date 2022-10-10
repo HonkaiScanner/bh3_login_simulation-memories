@@ -278,6 +278,9 @@ public class MainActivity extends BaseActivity {
         if (YYB_INIT) {
             YSDKApi.onActivityResult(requestCode, resultCode, data);
         }
+//        if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
+//            .onActivityResult(requestCode,resultCode,data);
+//        }
     }
 
     private void showUpdateDialog(String ver, String url, String logs) {

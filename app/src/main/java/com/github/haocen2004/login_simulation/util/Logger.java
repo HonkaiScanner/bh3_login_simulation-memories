@@ -11,11 +11,12 @@ import com.google.android.material.snackbar.Snackbar;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.BuglyLog;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressLint("StaticFieldLeak")
-public class Logger {
+public class Logger implements Serializable {
     private static Logger INSTANCE;
     private static Context context;
     private static View view;

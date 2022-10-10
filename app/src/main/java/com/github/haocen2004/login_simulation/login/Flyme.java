@@ -4,6 +4,7 @@ import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -77,6 +78,11 @@ public class Flyme implements LoginImpl {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
     }
 
     Runnable login_runnable = new Runnable() {

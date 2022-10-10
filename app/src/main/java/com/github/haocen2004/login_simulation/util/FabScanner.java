@@ -28,6 +28,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -56,8 +57,8 @@ public class FabScanner extends Service {
     boolean isScreenCaptureStarted;
     private MediaProjectionManager mProjectionManager = null;
     private MediaProjection sMediaProjection;
-    private Activity activity;
-    private Logger Log;
+    private final Activity activity;
+    private final Logger Log;
     private boolean hasData;
     //    OnImageCaptureScreenListener listener;
     private int mDensity;
@@ -69,13 +70,10 @@ public class FabScanner extends Service {
     private Handler mHandler;
     private String[] url;
     private QRScanner qrScanner;
-    private Fragment fragment;
+    private final Fragment fragment;
     private int mResultCode;
     private Intent mResultData;
     private boolean needStop;
-
-    public FabScanner() {
-    }
 
     public FabScanner(Fragment fragment) {
         this.fragment = fragment;
@@ -192,7 +190,8 @@ public class FabScanner extends Service {
                                         Bitmap.createBitmap(bitmap, 0, 0, width, height);
                                         url = WeChatQRCodeDetector.detectAndDecode(bitmap).toArray(new String[0]);
                                         if (qrScanner.parseUrl(url)) {
-                                            Log.makeToast("扫码成功\n处理中....");
+                                            Toast.makeText(activity, "扫码成功\n处理中....", Toast.LENGTH_SHORT).show();
+                                            qrScanner.setFabMode(true);
                                             qrScanner.start();
                                             stopProjection();
                                             stopForeground(true);

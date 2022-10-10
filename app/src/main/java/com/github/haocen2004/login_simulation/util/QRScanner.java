@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,6 +56,7 @@ public class QRScanner {
     };
     private RoleData roleData;
     private final AppCompatActivity activity;
+    private boolean fabMode = false;
     @SuppressLint("HandlerLeak")
     Handler handler2 = new Handler() {
         @Override
@@ -333,13 +335,22 @@ public class QRScanner {
         normalDialog.show();
     }
 
+    public void setFabMode(boolean mode) {
+        fabMode = mode;
+    }
+
+
     private void makeToast(String msg) {
-        try {
-            Log.makeToast(msg);
-        } catch (Exception e) {
-            Logger.w(TAG, "Logger Class Missing... try get it.");
-            Log = Logger.getLogger(null);
-            makeToast(msg);
+        if (fabMode) {
+            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                Log.makeToast(msg);
+            } catch (Exception e) {
+                Logger.w(TAG, "Logger Class Missing... try get it.");
+                Log = Logger.getLogger(null);
+                makeToast(msg);
+            }
         }
     }
 }

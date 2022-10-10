@@ -1,0 +1,104 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/welfare_itemLayout"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="@drawable/qihoo360_a_bg"
+    tools:context="${relativePackage}.${activityClass}">
+
+    <FrameLayout
+        android:id="@+id/FrameLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="64dp">
+
+        <FrameLayout
+            android:id="@+id/welfareframelayout_root"
+            android:layout_width="64dp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/puchIconImg"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="12dp"
+                android:adjustViewBounds="false"
+                android:scaleType="fitXY" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/welfare_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="64dp"
+            android:gravity="right"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/titleLayout"
+                android:layout_width="match_parent"
+                android:layout_height="23dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/pushTitleTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="23dp"
+                    android:layout_marginRight="37dp"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:text="标题"
+                    android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent.Title"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/pushTsTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="18dp"
+                    android:layout_gravity="right|center_vertical|center_horizontal"
+                    android:layout_marginRight="7dp"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:text="时间"
+                    android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent"
+                    android:textColor="#cccccc"
+                    android:textSize="12sp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/pushContentTV"
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:layout_gravity="right|center_vertical"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="内容内容内容内容"
+                android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent"
+                android:textColor="#aaaaaa"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/headup_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="15dp"
+        android:background="#505050" />
+
+    <ImageView
+        android:id="@+id/headup2"
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:paddingBottom="6dp"
+        android:paddingTop="5dp"
+        android:src="@drawable/qihoo360_a_upglide" />
+
+</FrameLayout>

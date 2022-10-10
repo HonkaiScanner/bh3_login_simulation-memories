@@ -12,8 +12,10 @@ public class Constant {
     public static final int REQ_PERM_WINDOW = 11006;  // 悬浮窗
     public static final int REQ_PERM_RECORD = 11007;  // 屏幕捕获
     public static final int BAG_ALTER_NOTIFICATION = 12001;  // 屏幕捕获后台通知
+    public static final int REQ_TENCENT_WEB_LOGIN_CALLBACK = 13001;  // 腾讯网页登陆请求
 
     public static final String INTENT_EXTRA_KEY_QR_SCAN = "qr_scan_result";
+    public static final String INTENT_EXTRA_KEY_TENCENT_LOGIN = "tx_login_result";
     public static final String BH_APP_KEY = "0ebc517adb1b62c6b408df153331f9aa";
     public static final String BH_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDvekdPMHN3AYhm/vktJT+YJr7cI5DcsNKqdsx5DZX0gDuWFuIjzdwButrIYPNmRJ1G8ybDIF7oDW2eEpm5sMbL9zs\n9ExXCdvqrn51qELbqj0XxtMTIpaCHFSI50PfPpTFV9Xt/hmyVwokoOXFlAEgCn+Q\nCgGs52bFoYMtyi+xEQIDAQAB\n";
     public static final String BILI_APP_KEY = "dbf8f1b4496f430b8a3c0f436a35b931";
@@ -22,7 +24,7 @@ public class Constant {
     public static String SP_URL = "https://scanner.hellocraft.xyz";
     public static String AFD_URL = "https://afdian.net/@Haocen2004";
     public static String QQ_GROUP_URL = "https://jq.qq.com/?_wv=1027&k=yym6JCqT";
-    public static String BH_VER = "5.8.0";
+    public static String BH_VER = "6.1.0";
     public static String MDK_VERSION = "1.25.1";
     public static String OFFICIAL_TYPE = "android01";
     public static boolean CHECK_VER = true;
@@ -31,6 +33,7 @@ public class Constant {
     public static boolean BILI_INIT = false;
     public static boolean MI_INIT = false;
     public static boolean YYB_INIT = false;
+    public static boolean QIHOO_INIT = false;
 
     public static long UPDATE_TIME = 0;
 }

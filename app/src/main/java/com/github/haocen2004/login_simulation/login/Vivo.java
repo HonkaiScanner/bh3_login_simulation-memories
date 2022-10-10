@@ -5,6 +5,7 @@ import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -165,5 +166,10 @@ public class Vivo implements LoginImpl {
     @Override
     public String getUsername() {
         return uid;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
     }
 }

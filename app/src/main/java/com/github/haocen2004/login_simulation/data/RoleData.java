@@ -18,7 +18,9 @@ import com.github.haocen2004.login_simulation.util.Logger;
 
 import org.json.JSONObject;
 
-public class RoleData {
+import java.io.Serializable;
+
+public class RoleData implements Serializable {
     private final String open_id;
     private final String open_token;
     private final String combo_id;
@@ -103,6 +105,8 @@ public class RoleData {
             accountType = "5";
         } else if (special_tag == 8) {
             accountType = "10";
+        } else if (special_tag == 9) {
+            accountType = "4";
         }
         Logger.addBlacklist(combo_token);
         Logger.addBlacklist(open_token);

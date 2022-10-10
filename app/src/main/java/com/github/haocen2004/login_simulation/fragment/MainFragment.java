@@ -10,6 +10,7 @@ import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTE
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_WINDOW;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE;
+import static com.github.haocen2004.login_simulation.util.Constant.REQ_TENCENT_WEB_LOGIN_CALLBACK;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
 
@@ -53,6 +54,7 @@ import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.Oppo;
+import com.github.haocen2004.login_simulation.login.Qihoo;
 import com.github.haocen2004.login_simulation.login.Tencent;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
@@ -173,27 +175,29 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            loginImpl = (LoginImpl) savedInstanceState.getSerializable("loginImpl");
-        }
+//        if (savedInstanceState != null) {
+//            roleData = (RoleData) savedInstanceState.getSerializable("roleData");
+//            genLoginImpl();
+//            loginImpl.setRole(roleData);
+//        }
         activity = (AppCompatActivity) getActivity();
         context = getContext();
-        fabScanner = new FabScanner(this);
-        socketHelper = new SocketHelper();
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (loginImpl != null) {
-            outState.putSerializable("loginImpl", loginImpl);
-            Logger.d("onSaveInstanceState", "loginImpl saved.");
-        }
-    }
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        try {
+//            if (loginImpl.isLogin()) {
+//                outState.putSerializable("roleData", loginImpl.getRole());
+//                Logger.d("onSaveInstanceState", "loginImpl saved.");
+//            }
+//        } catch (NullPointerException ignore) {}
+//    }
 
     @SuppressLint("SetTextI18n")
     private void refreshView() {
@@ -255,6 +259,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 break;
             case "YYB":
                 server_type = activity.getString(R.string.types_yyb);
+                break;
+            case "Qihoo":
+                server_type = activity.getString(R.string.types_qihoo);
                 break;
             default:
                 server_type = "DEBUG -- SERVER ERROR";
@@ -427,45 +434,52 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.cardViewMain.progressBar.setVisibility(View.VISIBLE);
         pref.edit().putBoolean("last_login_succeed", false).apply();
         if (loginImpl == null) {
-            switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
-                case "Official":
-                    loginImpl = new Official(activity, this);
-                    break;
-                case "Xiaomi":
-                    loginImpl = new Xiaomi(activity, this);
-                    //11
-                    break;
-                case "Bilibili":
-                    loginImpl = new Bilibili(activity, this);
-                    //14
-                    break;
-                case "UC":
-                    if (pref.getBoolean("use_wdj", false)) {
-                        changeToWDJ(activity);
-                    }
-                    loginImpl = new UC(activity, this);
-                    //20
-                    break;
-                case "Vivo":
-                    loginImpl = new Vivo(activity, this);
-                    break;
-                case "Oppo":
-                    loginImpl = new Oppo(activity, this);
-                    break;
-                case "Flyme":
-                    loginImpl = new Flyme(activity, this);
-                    break;
-                case "YYB":
-                    loginImpl = new Tencent(activity, this);
-                    break;
-                default:
-                    makeToast(R.string.error_wrong_server);
-                    break;
-            }
+            genLoginImpl();
         }
         loginImpl.login();
         loginProgress = true;
         switchButtonState(false);
+    }
+
+    private void genLoginImpl() {
+        switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
+            case "Official":
+                loginImpl = new Official(activity, this);
+                break;
+            case "Xiaomi":
+                loginImpl = new Xiaomi(activity, this);
+                //11
+                break;
+            case "Bilibili":
+                loginImpl = new Bilibili(activity, this);
+                //14
+                break;
+            case "UC":
+                if (pref.getBoolean("use_wdj", false)) {
+                    changeToWDJ(activity);
+                }
+                loginImpl = new UC(activity, this);
+                //20
+                break;
+            case "Vivo":
+                loginImpl = new Vivo(activity, this);
+                break;
+            case "Oppo":
+                loginImpl = new Oppo(activity, this);
+                break;
+            case "Flyme":
+                loginImpl = new Flyme(activity, this);
+                break;
+            case "YYB":
+                loginImpl = new Tencent(activity, this);
+                break;
+            case "Qihoo":
+                loginImpl = new Qihoo(activity, this);
+                break;
+            default:
+                makeToast(R.string.error_wrong_server);
+                break;
+        }
     }
 
     private void switchButtonState(boolean newState) {
@@ -542,6 +556,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     fabScanner.setData(resultCode, data);
                 }
 
+            }
+            if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
+                Logger.d("tencent login", "on callback");
+                if (loginImpl == null) {
+                    genLoginImpl();
+                }
+                loginImpl.onActivityResult(requestCode, resultCode, data);
             }
         }
 
@@ -692,6 +713,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         } else {
                             qrScanner = new QRScanner(activity, loginImpl.getRole());
                         }
+                        fabScanner = new FabScanner(this);
                         fabScanner.setQrScanner(qrScanner);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (!Settings.canDrawOverlays(activity)) {
@@ -817,6 +839,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 qrScanner = new QRScanner(activity, loginImpl.getRole());
             }
             if (pref.getBoolean("socket_helper", false)) {
+                socketHelper = new SocketHelper();
                 socketHelper.setQrScanner(qrScanner);
                 socketHelper.start();
             }
@@ -840,5 +863,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             switchButtonState(true);
         });
 //        makeToast(R);
+    }
+
+    @Override
+    public Fragment getCallbackFragment() {
+        return this;
     }
 }

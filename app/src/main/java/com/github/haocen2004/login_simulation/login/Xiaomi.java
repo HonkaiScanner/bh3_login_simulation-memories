@@ -3,6 +3,7 @@ package com.github.haocen2004.login_simulation.login;
 import static com.github.haocen2004.login_simulation.util.Constant.MI_INIT;
 
 import android.app.Application;
+import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -181,5 +182,9 @@ public class Xiaomi extends Application implements LoginImpl {
         return username;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    }
 
 }

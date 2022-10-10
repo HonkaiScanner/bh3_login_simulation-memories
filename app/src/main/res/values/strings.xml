@@ -104,6 +104,7 @@
     <string name="logs">Logs</string>
     <string name="list_about">About</string>
     <string name="types_yyb">YYB Server(QQ only)</string>
+    <string name="types_qihoo">360 Server</string>
     <string name="overwrite_bh_ver">Overwrite Honkai Version</string>
 
     <string name="crash_hint">Detected a recent crash happened.\nPlease bring a crash-report to get feedback from the developer in time!</string>

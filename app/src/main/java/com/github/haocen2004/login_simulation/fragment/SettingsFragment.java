@@ -113,6 +113,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 case "YYB":
                     preference.setSummary(getString(R.string.types_yyb));
                     break;
+                case "Qihoo":
+                    preference.setSummary(getString(R.string.types_qihoo));
+                    break;
                 default:
                     preference.setSummary("DEBUG -- SERVER ERROR");
             }
@@ -143,6 +146,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 break;
             case "YYB":
                 findPreference("server_type").setSummary(getString(R.string.types_yyb));
+                break;
+            case "Qihoo":
+                findPreference("server_type").setSummary(getString(R.string.types_qihoo));
                 break;
             default:
                 findPreference("server_type").setSummary("DEBUG -- SERVER ERROR");

@@ -6,6 +6,7 @@ import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Looper;
@@ -245,6 +246,11 @@ public class Bilibili implements LoginImpl {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
     }
 
 }
