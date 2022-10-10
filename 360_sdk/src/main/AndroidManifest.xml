@@ -155,31 +155,31 @@
         “${工程目录}/src/com/a/b/c/wxapi/WXEntryActivity.java”这个路径下。
         并将此java文件中的第一行package声明修改为“package com.a.b.c.wxapi;”
         -->
-        <activity
-            android:name=".wxapi.WXEntryActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:exported="true" />
+        <!--        <activity-->
+        <!--            android:name=".wxapi.WXEntryActivity"-->
+        <!--            android:label="@string/app_name"-->
+        <!--            android:theme="@android:style/Theme.Translucent.NoTitleBar"-->
+        <!--            android:exported="true" />-->
 
         <!-- QQ登录相关的Activity 。
         注意：
         1、qq登录为选接内容，如果不接入，则不用添加此部分activity内容
         2、如果使用qq登录功能，在Manifest中配置QHOPENSDK_QQAPPID字段，同时需发送邮件至shouyou360@qq.com，邮件需提供：游戏名称、游戏在360平台申请的appkey、游戏在QQ开放平台申请的AppId。
         -->
-        <activity
-            android:name="com.tencent.tauth.AuthActivity"
-            android:launchMode="singleTask"
-            android:noHistory="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+        <!--        <activity-->
+        <!--            android:name="com.tencent.tauth.AuthActivity"-->
+        <!--            android:launchMode="singleTask"-->
+        <!--            android:noHistory="true"-->
+        <!--            android:exported="true">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+        <!--                <category android:name="android.intent.category.DEFAULT" />-->
+        <!--                <category android:name="android.intent.category.BROWSABLE" />-->
 
-                <data android:scheme="tencent101434511" />
-            </intent-filter>
-        </activity>
+        <!--                <data android:scheme="tencent101434511" />-->
+        <!--            </intent-filter>-->
+        <!--        </activity>-->
         <!-- QQ登录相关activity结束-->
 
         <!-- UpdateLib start -->
