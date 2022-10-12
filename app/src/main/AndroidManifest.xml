@@ -6,6 +6,7 @@
     <queries>
         <package android:name="com.meizu.gamecenter.service" />
         <package android:name="com.tencent.mobileqq" />
+        <package android:name="com.heytap.htms" />
     </queries>
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络权限 -->
