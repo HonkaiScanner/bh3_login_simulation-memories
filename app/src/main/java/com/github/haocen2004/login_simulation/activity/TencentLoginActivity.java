@@ -56,6 +56,10 @@ public class TencentLoginActivity extends BaseActivity {
 
                 Logger.d(TAG, "loading 2 " + url);
                 if (url.contains("auth://")) {
+                    if (!url.contains("access_token")) {
+                        return; // auth://progress/0
+//                        Logger.d(TAG,"");
+                    }
                     url = url.replace("auth://", "https://");
                     Logger.d(TAG, "login success");
                     Intent intent = new Intent();
