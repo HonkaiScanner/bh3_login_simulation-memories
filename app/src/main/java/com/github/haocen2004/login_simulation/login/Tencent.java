@@ -129,13 +129,13 @@ public class Tencent implements LoginImpl, UserListener {
 //        access_token = userLoginRet.getAccessToken();
 
         int platform = 1;
-      verify_data = "{\"platform\":" +
-              platform
-              + ",\"openid\":\"" +
-              open_id +
-              "\",\"openkey\":\"" +
-              access_token +
-              "\",\"is_teenager\":false}";
+        verify_data = "{\"platform\":" +
+                platform
+                + ",\"openid\":\"" +
+                open_id +
+                "\",\"openkey\":\"" +
+                access_token +
+                "\",\"is_teenager\":false}";
         Logger.addBlacklist(access_token);
         new Thread(login_runnable).start();
     }
