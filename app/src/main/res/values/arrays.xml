@@ -7,7 +7,6 @@
         <item>Vivo</item>
         <item>Flyme</item>
         <item>Oppo</item>
-        <item>Qihoo</item>
         <item>Tencent-QQ</item>
     </string-array>
     <string-array name="server_types_value">
@@ -18,7 +17,6 @@
         <item>Vivo</item>
         <item>Flyme</item>
         <item>Oppo</item>
-        <item>Qihoo</item>
         <item>YYB</item>
     </string-array>
     <string-array name="server_types_xp">
