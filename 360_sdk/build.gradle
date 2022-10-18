@@ -24,6 +24,7 @@ android {
     lint {
         abortOnError false
     }
+    namespace 'xyz.hellocraft.a360_sdk'
 
 
 }

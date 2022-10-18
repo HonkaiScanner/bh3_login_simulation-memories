@@ -93,6 +93,7 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+    namespace 'com.github.haocen2004.login_simulation'
 }
 
 dependencies {
