@@ -3,6 +3,7 @@ package com.github.haocen2004.login_simulation.fragment;
 import static android.app.Activity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.INTENT_EXTRA_KEY_QR_SCAN;
 import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_CODE_SCAN_GALLERY;
 import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
@@ -525,15 +526,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), data.getData());
                     List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
-                if (result.size() >= 1) {
+                    for (String s : result) {
+                        Logger.d(TAG, "album result:" + s);
+                    }
+                    if (result.size() >= 1) {
                         Intent resultIntent = new Intent();
-                        Bundle bundle = resultIntent.getExtras();
-                        if (bundle == null) {
-                            bundle = new Bundle();
-                        }
-                        bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, result.get(0));
-
-                        resultIntent.putExtras(bundle);
+                        String[] text = result.toArray(new String[0]);
+                        resultIntent.putExtra(INTENT_EXTRA_KEY_QR_SCAN, text);
                         onActivityResult(REQ_QR_CODE, RESULT_OK, resultIntent);
                     } else {
                         Log.makeToast("未找到二维码");
