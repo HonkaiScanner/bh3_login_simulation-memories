@@ -13,7 +13,6 @@ import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
 import static com.github.haocen2004.login_simulation.util.Constant.UPDATE_TIME;
-import static com.github.haocen2004.login_simulation.util.Constant.YYB_INIT;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 import android.annotation.SuppressLint;
@@ -44,7 +43,6 @@ import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Network;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
-import com.tencent.ysdk.api.YSDKApi;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -275,9 +273,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (YYB_INIT) {
-            YSDKApi.onActivityResult(requestCode, resultCode, data);
-        }
+//        if (YYB_INIT) {
+//            YSDKApi.onActivityResult(requestCode, resultCode, data);
+//        }
 //        if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
 //            .onActivityResult(requestCode,resultCode,data);
 //        }

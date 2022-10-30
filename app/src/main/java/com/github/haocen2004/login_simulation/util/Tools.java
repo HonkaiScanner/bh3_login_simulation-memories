@@ -126,23 +126,23 @@ public static void changeToWDJ(Activity activity) {
     }
 
     public static String getString(Context paramContext, String paramString) {
-        return paramContext.getSharedPreferences(name, 0).getString(paramString, "");
+        return paramContext.getApplicationContext().getSharedPreferences(name, 0).getString(paramString, "");
     }
 
     public static boolean saveInt(Context paramContext, String paramString, int paramInt) {
-        return paramContext.getSharedPreferences(name, 0).edit().putInt(paramString, paramInt).commit();
+        return paramContext.getApplicationContext().getSharedPreferences(name, 0).edit().putInt(paramString, paramInt).commit();
     }
 
     public static Integer getInt(Context paramContext, String key) {
-        return paramContext.getSharedPreferences(name, 0).getInt(key, 0);
+        return paramContext.getApplicationContext().getSharedPreferences(name, 0).getInt(key, 0);
     }
 
     public static boolean saveString(Context paramContext, String paramString1, String paramString2) {
-        return paramContext.getSharedPreferences(name, 0).edit().putString(paramString1, paramString2).commit();
+        return paramContext.getApplicationContext().getSharedPreferences(name, 0).edit().putString(paramString1, paramString2).commit();
     }
 
     public static boolean saveBoolean(Context paramContext, String key, boolean value) {
-        return paramContext.getSharedPreferences(name, 0).edit().putBoolean(key, value).commit();
+        return paramContext.getApplicationContext().getSharedPreferences(name, 0).edit().putBoolean(key, value).commit();
     }
 
     public static boolean getBoolean(Context paramContext, String key) {
@@ -150,7 +150,7 @@ public static void changeToWDJ(Activity activity) {
     }
 
     public static boolean getBoolean(Context paramContext, String key, boolean defaultRet) {
-        return paramContext.getSharedPreferences(name, 0).getBoolean(key, defaultRet);
+        return paramContext.getApplicationContext().getSharedPreferences(name, 0).getBoolean(key, defaultRet);
     }
 
 

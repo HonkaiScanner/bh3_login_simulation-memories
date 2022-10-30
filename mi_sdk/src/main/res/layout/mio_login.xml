@@ -88,6 +88,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/qq_account_layout"
                 android:layout_width="@dimen/view_dimen_220"
                 android:layout_height="wrap_content">
@@ -139,6 +140,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/wechat_account_layout"
                 android:layout_width="@dimen/view_dimen_220"
                 android:layout_height="wrap_content">
@@ -190,6 +192,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/weibo_account_layout"
                 android:layout_width="@dimen/view_dimen_220"
                 android:layout_height="wrap_content">
@@ -234,7 +237,7 @@
             android:layout_marginTop="@dimen/view_dimen_75"
             android:alpha="0.4"
             android:gravity="center"
-            android:text="使用小米账号登录，享受更多游戏福利！"
+            android:text="扫码器实现原理限制\n只支持使用小米账号登陆"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_font_size_36" />

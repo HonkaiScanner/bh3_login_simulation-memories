@@ -58,6 +58,7 @@ public class Bilibili implements LoginImpl {
         public void onSuccess(Bundle arg0) {
             // 此处为操作成功时执行，返回值通过Bundle传回
 
+            Tools.saveBoolean(activity, "last_bili_login_succeed", true);
             uid = arg0.getString("uid");
             username = arg0.getString("username");
             access_token = arg0.getString("access_token");
@@ -109,6 +110,8 @@ public class Bilibili implements LoginImpl {
 
         @Override
         public void onFailed(BSGameSdkError arg0) {
+
+            Tools.saveBoolean(activity, "last_bili_login_succeed", false);
             // 此处为操作失败时执行，返回值为BSGameSdkError类型变量，其中包含ErrorCode和ErrorMessage
             Logger.e(TAG, "onFailed\nErrorCode : "
                     + arg0.getErrorCode() + "\nErrorMessage : "
@@ -121,6 +124,8 @@ public class Bilibili implements LoginImpl {
 
         @Override
         public void onError(BSGameSdkError arg0) {
+
+            Tools.saveBoolean(activity, "last_bili_login_succeed", false);
             // 此处为操作异常时执行，返回值为BSGameSdkError类型变量，其中包含ErrorCode和ErrorMessage
             Logger.e(TAG, "onError\nErrorCode : "
                     + arg0.getErrorCode() + "\nErrorMessage : "
@@ -132,7 +137,9 @@ public class Bilibili implements LoginImpl {
     };
 
     private void doBiliLogin() {
-        if (Tools.getBoolean(activity, "last_login_succeed")) {
+        boolean checkLastLogin = Tools.getBoolean(activity, "last_bili_login_succeed");
+        Logger.d(TAG, "checkBiliLastLogin: " + checkLastLogin);
+        if (checkLastLogin) {
 
             gameSdk.login(biliLogin);
         } else {

@@ -55,7 +55,6 @@ import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.Oppo;
-import com.github.haocen2004.login_simulation.login.Qihoo;
 import com.github.haocen2004.login_simulation.login.Tencent;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
@@ -374,6 +373,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     .setSingleChoiceItems(singleChoiceItems, itemSelected, (dialogInterface, i) -> {
 
                         pref.edit().putString("server_type", serverList[i]).apply();
+                        Tools.saveBoolean(activity, "last_login_succeed", false);
                         if (loginImpl != null && loginImpl.isLogin()) {
                             Log.makeToast(R.string.logged_and_restart);
                             needRestart = true;
@@ -474,9 +474,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             case "YYB":
                 loginImpl = new Tencent(activity, this);
                 break;
-            case "Qihoo":
-                loginImpl = new Qihoo(activity, this);
-                break;
+//            case "Qihoo":
+//                loginImpl = new Qihoo(activity, this);
+//                break;
             default:
                 makeToast(R.string.error_wrong_server);
                 break;

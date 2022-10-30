@@ -19,7 +19,7 @@ import com.github.haocen2004.login_simulation.util.CrashHandler;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;
-import com.tencent.ysdk.api.YSDKApi;
+//import com.tencent.ysdk.api.YSDKApi;
 
 public class MainApplication extends Application {
     private SharedPreferences app_pref;
@@ -29,7 +29,7 @@ public class MainApplication extends Application {
         super.onCreate();
         LogLiveData.getINSTANCE(this); //init live data
         Log = Logger.getLogger(this);
-        YSDKApi.setMainActivity("com.github.haocen2004.login_simulation.activity.MainActivity");
+//        YSDKApi.setMainActivity("com.github.haocen2004.login_simulation.activity.MainActivity");
         ToastUtils.init(this);
         ToastUtils.setGravity(Gravity.BOTTOM, 0, 50);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG);

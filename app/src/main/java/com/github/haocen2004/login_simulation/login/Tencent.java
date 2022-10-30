@@ -19,12 +19,6 @@ import com.github.haocen2004.login_simulation.activity.TencentLoginActivity;
 import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
-import com.tencent.ysdk.api.YSDKApi;
-import com.tencent.ysdk.framework.common.ePlatform;
-import com.tencent.ysdk.module.user.UserListener;
-import com.tencent.ysdk.module.user.UserLoginRet;
-import com.tencent.ysdk.module.user.UserRelationRet;
-import com.tencent.ysdk.module.user.WakeupRet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +27,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
 
-public class Tencent implements LoginImpl, UserListener {
+//public class Tencent implements LoginImpl, UserListener {
+public class Tencent implements LoginImpl {
 
     private static final String TAG = "Tencent Login";
     private String access_token;
@@ -58,7 +53,7 @@ public class Tencent implements LoginImpl, UserListener {
     public void logout() {
         isLogin = false;
         //
-        YSDKApi.logout();
+//        YSDKApi.logout();
     }
 
     @Keep
@@ -96,7 +91,7 @@ public class Tencent implements LoginImpl, UserListener {
         } else {
             init();
             if (!first_auto_login) {
-                YSDKApi.login(ePlatform.QQ);
+//                YSDKApi.login(ePlatform.QQ);
             }
         }
 
@@ -104,8 +99,8 @@ public class Tencent implements LoginImpl, UserListener {
 
     private void init() {
         if (YYB_INIT) return;
-        YSDKApi.init();
-        YSDKApi.setUserListener(this);
+//        YSDKApi.init();
+//        YSDKApi.setUserListener(this);
         first_auto_login = true;
     }
 
@@ -163,36 +158,36 @@ public class Tencent implements LoginImpl, UserListener {
         new Thread(login_runnable).start();
     }
 
-    @Override
-    public void OnLoginNotify(UserLoginRet userLoginRet) {
+//    @Override
+//    public void OnLoginNotify(UserLoginRet userLoginRet) {
+////
+//        if (userLoginRet.flag != 0) {
+//            if (first_auto_login) {
+//                YSDKApi.login(ePlatform.QQ);
+//                first_auto_login = false;
+//                return;
+//            }
+//            Logger.d(TAG, userLoginRet.toString());
+//            callback.onLoginFailed();
+//            Log.makeToast("登陆失败\n" + userLoginRet.msg);
+//        } else {
+//            open_id = userLoginRet.open_id;
+//            username = userLoginRet.nick_name;
+//            access_token = userLoginRet.getAccessToken();
 //
-        if (userLoginRet.flag != 0) {
-            if (first_auto_login) {
-                YSDKApi.login(ePlatform.QQ);
-                first_auto_login = false;
-                return;
-            }
-            Logger.d(TAG, userLoginRet.toString());
-            callback.onLoginFailed();
-            Log.makeToast("登陆失败\n" + userLoginRet.msg);
-        } else {
-            open_id = userLoginRet.open_id;
-            username = userLoginRet.nick_name;
-            access_token = userLoginRet.getAccessToken();
-
-            int platform = userLoginRet.platform; // qq == 1
-            verify_data = "{\"platform\":" +
-                    platform
-                    + ",\"openid\":\"" +
-                    open_id +
-                    "\",\"openkey\":\"" +
-                    access_token +
-                    "\",\"is_teenager\":false}";
-            Logger.addBlacklist(access_token);
-            new Thread(login_runnable).start();
-        }
-//        userLoginRet.get
-    }
+//            int platform = userLoginRet.platform; // qq == 1
+//            verify_data = "{\"platform\":" +
+//                    platform
+//                    + ",\"openid\":\"" +
+//                    open_id +
+//                    "\",\"openkey\":\"" +
+//                    access_token +
+//                    "\",\"is_teenager\":false}";
+//            Logger.addBlacklist(access_token);
+//            new Thread(login_runnable).start();
+//        }
+////        userLoginRet.get
+//    }
 
     Runnable login_runnable = new Runnable() {
         @Override
@@ -239,15 +234,15 @@ public class Tencent implements LoginImpl, UserListener {
             }
         }
     };
-
-    @Override
-    public void OnWakeupNotify(WakeupRet wakeupRet) {
-        Logger.d(TAG, wakeupRet.toString());
-    }
-
-    @Override
-    public void OnRelationNotify(UserRelationRet userRelationRet) {
-        Logger.d(TAG, userRelationRet.toString());
-    }
+//
+//    @Override
+//    public void OnWakeupNotify(WakeupRet wakeupRet) {
+//        Logger.d(TAG, wakeupRet.toString());
+//    }
+//
+//    @Override
+//    public void OnRelationNotify(UserRelationRet userRelationRet) {
+//        Logger.d(TAG, userRelationRet.toString());
+//    }
 }
 
