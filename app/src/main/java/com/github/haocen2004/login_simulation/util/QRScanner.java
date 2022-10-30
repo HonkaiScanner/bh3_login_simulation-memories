@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,6 +60,13 @@ public class QRScanner {
     private final AppCompatActivity activity;
     private boolean fabMode = false;
     @SuppressLint("HandlerLeak")
+    private final Handler defaultHandle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+        }
+    };
+    @SuppressLint("HandlerLeak")
     Handler handler2 = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -73,7 +82,20 @@ public class QRScanner {
                 JSONObject feedback_json = new JSONObject(feedback);
                 if (feedback_json.getInt("retcode") == 0) {
                     makeToast(activity.getString(R.string.login_succeed));
+                    Tools.saveInt(activity, "succ_count", Tools.getInt(activity, "succ_count") + 1);
                     new Thread(() -> Network.sendPost("https://api.scanner.hellocraft.xyz/scan_succ_upload", processWithBlackList(confirm_json.toString()), false)).start();
+                    if (getDefaultSharedPreferences(activity).getBoolean("quit_on_success", false)) {
+
+                        defaultHandle.postDelayed(() -> {
+                            makeToast("自动退出已启用\n将在5s后自动退出扫码器");
+                            defaultHandle.postDelayed(() -> {
+                                if (getDefaultSharedPreferences(activity).getBoolean("quit_on_success", false)) {
+                                    System.exit(0);
+                                }
+                            }, 5000);
+
+                        }, 3000);
+                    }
                 } else {
 
                     Logger.w(TAG, "handleMessage: 扫码登录失败 2");
@@ -194,6 +216,7 @@ public class QRScanner {
 
             }
         }
+        Logger.d(TAG, Arrays.toString(urls));
         makeToast("请扫描正确的二维码");
         return false;
     }

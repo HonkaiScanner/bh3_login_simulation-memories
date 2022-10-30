@@ -102,7 +102,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
     private void delaySPCheck() {
         Logger.d("SPCheck", "检查赞助者账号及自动登陆信息中...");
-        if (pref.getBoolean("last_login_succeed", false) && pref.getBoolean("auto_login", false) && !loginProgress) {
+        if (Tools.getBoolean(activity, "last_login_succeed", false) && pref.getBoolean("auto_login", false) && !loginProgress) {
             try {
                 if (loginImpl.isLogin()) {
                     Logger.d("AutoLogin", "当前用户已登录");
@@ -132,7 +132,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 }
             }
         } else {
-            Logger.d("AutoLogin", "无自动登陆任务 上次登陆情况：" + pref.getBoolean("last_login_succeed", false) + " 当前是否已有登陆进程：" + loginProgress);
+            Logger.d("AutoLogin", "无自动登陆任务 上次登陆情况：" + Tools.getBoolean(activity, "last_login_succeed", false) + " 当前是否已有登陆进程：" + loginProgress);
             currLoginTry = false;
         }
         try {
@@ -433,7 +433,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
         binding.cardViewMain.imageViewChecked.setVisibility(View.INVISIBLE);
         binding.cardViewMain.progressBar.setVisibility(View.VISIBLE);
-        pref.edit().putBoolean("last_login_succeed", false).apply();
+        Tools.saveBoolean(activity, "last_login_succeed", false);
         if (loginImpl == null) {
             genLoginImpl();
         }
@@ -716,7 +716,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         fabScanner.setQrScanner(qrScanner);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (!Settings.canDrawOverlays(activity)) {
-                                DialogData dialogData = new DialogData("悬浮窗扫码", "使用悬浮窗扫码器需要悬浮窗权限和屏幕捕获权限\n请在接下来打开的窗口中授予权限");
+                                String alertMsg = "使用悬浮窗扫码器需要悬浮窗权限和屏幕捕获权限\n请在接下来打开的窗口中授予权限";
+                                DialogData dialogData = new DialogData("悬浮窗扫码", alertMsg);
                                 dialogData.setPositiveButtonData(new ButtonData("我已知晓") {
                                     @Override
                                     public void callback(DialogHelper dialogHelper) {
@@ -763,6 +764,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+        if (!isChecked) return;
         if (loginProgress) {
             Log.makeToast("当前正在登陆进程中，无法切换此项目");
             Logger.d(TAG, "登陆中 已阻止切换服务器或账户槽位");

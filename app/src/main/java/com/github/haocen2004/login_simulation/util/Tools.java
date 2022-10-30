@@ -43,6 +43,23 @@ public static void changeToWDJ(Activity activity) {
             .apply();
 }
 
+    public static boolean isMIUI(Context context) {
+        String KEY_MIUI_VERSION_CODE = "ro.miui.ui.version.code";
+        String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
+        String KEY_MIUI_INTERNAL_STORAGE = "ro.miui.internal.storage";
+
+        Logger.i(TAG, "checkMIUI");
+        boolean isMIUI;
+        SystemProperty systemProperty = new SystemProperty(context);
+        isMIUI = systemProperty.getProperty(KEY_MIUI_VERSION_CODE) != null
+                || systemProperty.getProperty(KEY_MIUI_VERSION_NAME) != null
+                || systemProperty.getProperty(KEY_MIUI_INTERNAL_STORAGE) != null;
+        Logger.i(TAG, "ro.miui.ui.version.code:" + systemProperty.getProperty(KEY_MIUI_VERSION_CODE));
+        Logger.i(TAG, "ro.miui.ui.version.name:" + systemProperty.getProperty(KEY_MIUI_VERSION_NAME));
+        Logger.i(TAG, "ro.miui.internal.storage:" + systemProperty.getProperty(KEY_MIUI_INTERNAL_STORAGE));
+        return isMIUI;
+    }
+
     public static String getOAServer(RoleData roleData) {
         try {
 

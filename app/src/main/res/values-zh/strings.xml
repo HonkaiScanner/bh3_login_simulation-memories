@@ -105,6 +105,8 @@
     <string name="feedback_way">反馈途径</string>
     <string name="list_about">关于</string>
     <string name="overwrite_bh_ver">使用自定义崩坏3版本号</string>
+    <string name="keep_capture">悬浮窗扫码成功不退出</string>
+    <string name="quit_on_success">扫码成功后退出扫码器</string>
 
 
     <string name="crash_hint">检测到扫码器最近发生了崩溃\n请带好崩溃报告及时找开发者反馈!</string>

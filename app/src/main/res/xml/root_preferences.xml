@@ -50,6 +50,14 @@
             android:defaultValue="false"
             android:key="socket_helper"
             android:title="@string/use_socket" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="keep_capture"
+            android:title="@string/keep_capture" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="quit_on_success"
+            android:title="@string/quit_on_success" />
     </PreferenceCategory>
 
 </PreferenceScreen>

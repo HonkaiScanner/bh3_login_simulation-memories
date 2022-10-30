@@ -14,6 +14,7 @@ import com.drakeet.about.Contributor;
 import com.drakeet.about.License;
 import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.util.Tools;
 
 import java.util.List;
 
@@ -53,6 +54,8 @@ public class AboutActivity extends AbsAboutActivity {
         items.add(new License("Gson", "Google", License.APACHE_2, "https://github.com/google/gson"));
         items.add(new License("okhttp", "square", License.APACHE_2, "https://github.com/square/okhttp"));
         items.add(new License("AndroidX", "Google", License.APACHE_2, "https://github.com/androidx-releases"));
+
+        items.add(new Category("您已使用扫码器成功登陆 " + Tools.getInt(this, "succ_count") + " 次"));
     }
 
 }
