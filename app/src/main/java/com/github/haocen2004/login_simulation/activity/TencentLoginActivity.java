@@ -11,6 +11,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.ActivityTencentLoginBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
@@ -58,6 +61,13 @@ public class TencentLoginActivity extends BaseActivity {
                 Logger.d(TAG, "loading 2 " + url);
                 if (url.contains("auth://")) {
                     if (!url.contains("access_token")) {
+                        if (url.contains("progress/0")) {
+                            DialogData dialogData = new DialogData("登录失败", "code: progress/0\n可能是账号被腾讯风控阻止登陆");
+                            dialogData.setPositiveButtonData(new ButtonData("我已知晓"));
+                            DialogLiveData.getINSTANCE(getApplicationContext()).addNewDialog(dialogData);
+                            setResult(RESULT_CANCELED);
+                            finish();
+                        }
                         return; // auth://progress/0
 //                        Logger.d(TAG,"");
                     }

@@ -27,6 +27,7 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -300,29 +301,24 @@ public class MainActivity extends BaseActivity {
         dialogData.setNeutralButtonData(new ButtonData(getString(R.string.btn_cancel)) {
             @Override
             public void callback(DialogHelper dialogHelper) {
-                DialogLiveData.getINSTANCE(null).insertNewDialog(dialogData, getCloseUpdateDialog());
-                super.callback(dialogHelper);
-            }
-
-            private DialogData getCloseUpdateDialog() {
-
-                DialogData dialogData = new DialogData("是否关闭更新检查？", "将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
-                dialogData.setPositiveButtonData(new ButtonData(getString(R.string.btn_close_update)) {
-                    @Override
-                    public void callback(DialogHelper dialogHelper) {
-                        super.callback(dialogHelper);
-                        app_pref.edit().putBoolean("check_update", false).apply();
-                    }
+                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getApplicationContext());
+                normalDialog.setTitle("是否关闭更新检查？");
+                normalDialog.setMessage("将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
+                normalDialog.setNeutralButton("忽略本次更新", (dialog, which) -> {
+                    app_pref.edit().putInt("ignore_ver", VERSION_CODE).apply();
+                    dialog.dismiss();
+                    super.callback(dialogHelper);
                 });
-                dialogData.setNeutralButtonData(new ButtonData("忽略本次更新") {
-                    @Override
-                    public void callback(DialogHelper dialogHelper) {
-                        super.callback(dialogHelper);
-                        app_pref.edit().putInt("ignore_ver", VERSION_CODE).apply();
-                    }
+                normalDialog.setPositiveButton(R.string.btn_close_update, (dialog, which) -> {
+                    app_pref.edit().putBoolean("check_update", false).apply();
+                    dialog.dismiss();
+                    super.callback(dialogHelper);
                 });
-                dialogData.setNegativeButtonData(new ButtonData(getString(R.string.btn_cancel)));
-                return dialogData;
+                normalDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
+                    dialog.dismiss();
+                });
+//                DialogLiveData.getINSTANCE(null).insertNewDialog(dialogData, getCloseUpdateDialog());
+
             }
         });
 

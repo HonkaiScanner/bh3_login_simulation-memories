@@ -42,13 +42,13 @@ android {
             keyPassword System.getenv("KEY_PASSWORD")
         }
     }
-    compileSdkVersion 32
+    compileSdkVersion 33
     buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 45
         versionName '1.7.0'
 //        versionCode Integer.parseInt(System.currentTimeMillis().toString()[7..12])

@@ -1,5 +1,6 @@
 package com.github.haocen2004.login_simulation.fragment;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
@@ -557,11 +558,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
             }
             if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
-                Logger.d("tencent login", "on callback");
+                Logger.d("tencent login", "on succ callback");
                 if (loginImpl == null) {
                     genLoginImpl();
                 }
                 loginImpl.onActivityResult(requestCode, resultCode, data);
+            }
+        } else if (resultCode == RESULT_CANCELED) {
+            if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
+                Logger.d("tencent login", "on cancel callback");
+                if (loginImpl == null) {
+                    genLoginImpl();
+                }
+                onLoginFailed();
             }
         }
 
