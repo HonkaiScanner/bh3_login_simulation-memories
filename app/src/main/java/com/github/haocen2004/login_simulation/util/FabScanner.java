@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.util;
 
+import static android.app.Activity.RESULT_OK;
 import static com.github.haocen2004.login_simulation.util.Constant.BAG_ALTER_NOTIFICATION;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -30,6 +30,9 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -81,8 +84,34 @@ public class FabScanner extends Service {
     private int mResultCode;
     private Intent mResultData;
     private boolean needStop;
+    private ActivityResultLauncher activityResultLauncher;
 
     public FabScanner() {
+    }
+
+    public void setActivityResultLauncher(ActivityResultLauncher activityResultLauncher) {
+        this.activityResultLauncher = activityResultLauncher;
+    }
+
+    public ActivityResultCallback<ActivityResult> getResultApiCallback() {
+        return callback -> {
+            if (callback.getResultCode() == RESULT_OK) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Intent service = new Intent(activity, FabScanner.class);
+                    service.putExtra("code", callback.getResultCode());
+                    service.putExtra("data", callback.getData());
+//                    service.putExtra("fragment");
+                    activity.startForegroundService(service);
+                } else {
+                    mResultCode = callback.getResultCode();
+                    mResultData = callback.getData();
+                    sMediaProjection = mProjectionManager.getMediaProjection(mResultCode, mResultData);
+                    hasData = true;
+                    showAlertScanner();
+
+                }
+            }
+        };
     }
 
     public FabScanner(Fragment fragment) {
@@ -119,14 +148,14 @@ public class FabScanner extends Service {
     }
 
 
-    public void setData(int resultCode, Intent data) {
-        mResultCode = resultCode;
-        mResultData = data;
-        sMediaProjection = mProjectionManager.getMediaProjection(mResultCode, mResultData);
-        hasData = true;
-        showAlertScanner();
-
-    }
+//    public void setData(int resultCode, Intent data) {
+//        mResultCode = resultCode;
+//        mResultData = data;
+//        sMediaProjection = mProjectionManager.getMediaProjection(mResultCode, mResultData);
+//        hasData = true;
+//        showAlertScanner();
+//
+//    }
 
     public void setsMediaProjection(MediaProjection sMediaProjection) {
         this.sMediaProjection = sMediaProjection;
@@ -152,7 +181,10 @@ public class FabScanner extends Service {
             DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
         } else {
             if (!hasData) {
-                fragment.startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQ_PERM_RECORD);
+
+                activityResultLauncher.launch(mProjectionManager.createScreenCaptureIntent());
+
+//                fragment.startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQ_PERM_RECORD);
             } else {
                 new XToast<>(activity.getApplication())
                         .setView(R.layout.fab_scanner)
@@ -310,7 +342,7 @@ public class FabScanner extends Service {
     private void createNotificationChannel() {
         Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
         Intent nfIntent = new Intent(this, MainActivity.class);
-
+        nfIntent.addFlags(Intent.FLAG_ACTIVITY_MATCH_EXTERNAL);
         builder.setContentIntent(PendingIntent.getActivity(this, 0, nfIntent, PendingIntent.FLAG_IMMUTABLE))
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher))
                 .setContentTitle("扫码器悬浮窗扫码后台进程")
@@ -321,10 +353,8 @@ public class FabScanner extends Service {
         /*以下是对Android 8.0的适配*/
         //普通notification适配
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
             builder.setChannelId("scanner_alert_channel");
-        }
-        //前台服务notification适配
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             NotificationChannel channel = new NotificationChannel("scanner_alert_channel", "扫码器悬浮窗后台进程", NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(channel);

@@ -16,23 +16,25 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.util.Logger;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-public class RoleData implements Serializable {
+public class RoleData {
     private final String open_id;
     private final String open_token;
     private final String combo_id;
     private final String combo_token;
     private final String channel_id;
-    private JSONObject oaserver;
+    private String str_oaserver;
     private final String account_type;
     private String accountType;
     private final String oa_req_key;
     private boolean is_setup;
     private boolean uc_sign;
-    private Activity activity;
+    //    private Activity activity;
     private final LoginCallback callback;
 
     Handler getOA_handler = new Handler(Looper.getMainLooper()) {
@@ -43,23 +45,24 @@ public class RoleData implements Serializable {
             String feedback = data.getString("value");
             try {
                 if (feedback != null) {
-                    oaserver = new JSONObject(feedback);
+                    JSONObject oaserver = new JSONObject(feedback);
                     Logger.i("GetOAServer", "handleMessage: " + oaserver);
                     if (!oaserver.getBoolean("is_data_ready")) {
                         String msg1 = oaserver.getString("msg");
                         if (msg1.contains("更新"))
                             msg1 = "崩坏3维护中或热更新服务器离线\n请等待维护完成\n或尝试在设置里手动更改崩坏3版本并重新启动";
                         callback.onLoginFailed();
-                        Logger.getLogger(activity).makeToast("OA服务器获取错误\n" + msg1);
+                        Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
                         return;
                     } else if (oaserver.getLong("server_cur_time") < UPDATE_TIME) {
                         String msg1 = "崩坏3停服维护中\n请等待维护完成后再尝试登陆\n";
                         callback.onLoginFailed();
-                        Logger.getLogger(activity).makeToast("OA服务器获取错误\n" + msg1);
+                        Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
                         return;
                     }
+                    str_oaserver = feedback;
                     is_setup = true;
-                    callback.onLoginSucceed();
+                    callback.onLoginSucceed(RoleData.this);
                 } else {
                     callback.onLoginFailed();
                 }
@@ -70,7 +73,7 @@ public class RoleData implements Serializable {
         }
     };
     Runnable getOA_runnable = () -> {
-        Logger.getLogger(activity).makeToast(R.string.msg_getOa);
+        Logger.getLogger(null).makeToast(R.string.msg_getOa);
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", getOAServer(RoleData.this));
@@ -80,7 +83,7 @@ public class RoleData implements Serializable {
 
     public RoleData(Activity activity, String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key, int special_tag, LoginCallback callback) {
         this.callback = callback;
-        this.activity = activity;
+//        this.activity = activity;
         this.open_id = open_id;
         this.open_token = open_token;
         this.combo_id = combo_id;
@@ -110,6 +113,8 @@ public class RoleData implements Serializable {
         }
         Logger.addBlacklist(combo_token);
         Logger.addBlacklist(open_token);
+
+
         new Thread(getOA_runnable).start();
     }
 
@@ -139,7 +144,12 @@ public class RoleData implements Serializable {
     }
 
     public JSONObject getOaserver() {
-        return oaserver;
+        try {
+            return new JSONObject(str_oaserver);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public String getOa_req_key() {
@@ -156,5 +166,37 @@ public class RoleData implements Serializable {
 
     public boolean isUc_sign() {
         return uc_sign;
+    }
+
+    public RoleData(Map<String, String> map, LoginCallback callback) {
+        open_id = map.get("open_id");
+        open_token = map.get("open_token");
+        combo_id = map.get("combo_id");
+        combo_token = map.get("combo_token");
+        channel_id = map.get("channel_id");
+        str_oaserver = map.get("str_oaserver");
+        account_type = map.get("account_type");
+        accountType = map.get("accountType");
+        oa_req_key = map.get("oa_req_key");
+        is_setup = Boolean.parseBoolean(map.get("is_setup"));
+        uc_sign = Boolean.parseBoolean(map.get("uc_sign"));
+        this.callback = callback;
+    }
+
+    public Map<String, String> getMap() {
+        Map<String, String> map = new HashMap<>();
+
+        map.put("open_id", open_id);
+        map.put("open_token", open_token);
+        map.put("combo_id", combo_id);
+        map.put("combo_token", combo_token);
+        map.put("channel_id", channel_id);
+        map.put("str_oaserver", str_oaserver);
+        map.put("account_type", account_type);
+        map.put("accountType", accountType);
+        map.put("oa_req_key", oa_req_key);
+        map.put("is_setup", Boolean.toString(is_setup));
+        map.put("uc_sign", Boolean.toString(uc_sign));
+        return map;
     }
 }

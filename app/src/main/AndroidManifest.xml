@@ -12,7 +12,12 @@
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 摄像头权限 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 悬浮窗扫码权限 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 悬浮窗扫码后台进程权限 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 相册扫码权限 -->
+    <!--    android 13 相册扫码权限修正 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
     <uses-permission
         android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" /> <!-- Ignore system app -->

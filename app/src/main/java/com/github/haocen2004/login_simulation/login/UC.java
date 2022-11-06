@@ -3,7 +3,6 @@ package com.github.haocen2004.login_simulation.login;
 import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -229,7 +228,9 @@ public class UC implements LoginImpl {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
     }
+
 }

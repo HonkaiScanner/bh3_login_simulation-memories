@@ -1,18 +1,9 @@
 package com.github.haocen2004.login_simulation.fragment;
 
-import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
-import static com.github.haocen2004.login_simulation.util.Constant.INTENT_EXTRA_KEY_QR_SCAN;
 import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_CODE_SCAN_GALLERY;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_CAMERA;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_EXTERNAL_STORAGE;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_RECORD;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_PERM_WINDOW;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_TENCENT_WEB_LOGIN_CALLBACK;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
 
@@ -35,6 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,6 +39,8 @@ import androidx.fragment.app.Fragment;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.activity.AboutActivity;
 import com.github.haocen2004.login_simulation.activity.ScannerActivity;
+import com.github.haocen2004.login_simulation.data.LaunchActivityCallback;
+import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
@@ -71,7 +66,10 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
@@ -172,15 +170,48 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         Logger.d("SPCheck", "当前线程结束");
     }
 
+    @Override
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("combo_token")) {
+                Map<String, String> map = new HashMap<>();
+                for (String s : savedInstanceState.keySet()) {
+                    try {
+                        map.put(s, savedInstanceState.getString(s));
+                    } catch (ClassCastException ignore) {
+                    }
+                }
+                RoleData roleData = new RoleData(map, this);
+                genLoginImpl();
+                loginImpl.setRole(roleData);
+                Logger.d("onCreate", "loaded RoleData");
+            }
+        }
+        activity = (AppCompatActivity) getActivity();
+        context = getContext();
+        pref = getDefaultSharedPreferences(context);
+        Log = Logger.getLogger(getContext());
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        if (savedInstanceState != null) {
-//            roleData = (RoleData) savedInstanceState.getSerializable("roleData");
-//            genLoginImpl();
-//            loginImpl.setRole(roleData);
-//        }
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("combo_token")) {
+                Map<String, String> map = new HashMap<>();
+                for (String s : savedInstanceState.keySet()) {
+                    try {
+                        map.put(s, savedInstanceState.getString(s));
+                    } catch (ClassCastException ignore) {
+                    }
+                }
+                RoleData roleData = new RoleData(map, this);
+                genLoginImpl();
+                loginImpl.setRole(roleData);
+                Logger.d("onCreateView", "loaded RoleData");
+            }
+        }
         activity = (AppCompatActivity) getActivity();
         context = getContext();
         pref = getDefaultSharedPreferences(context);
@@ -347,7 +378,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     Intent pickIntent = new Intent(Intent.ACTION_PICK,
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                    startActivityForResult(pickIntent, REQ_CODE_SCAN_GALLERY);
+                    reqGalleryScanLauncher.launch(pickIntent);
 
 
                 } else {
@@ -499,99 +530,71 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == Constant.REQ_QR_CODE) {
-                Bundle bundle = data.getExtras();
-                if (bundle != null) {
-                    String[] result = bundle.getStringArray(Constant.INTENT_EXTRA_KEY_QR_SCAN);
-                    if (result != null) {
-                        QRScanner qrScanner;
-                        if (isOfficial) {
-                            qrScanner = new QRScanner(activity, true);
-                        } else {
-                            qrScanner = new QRScanner(activity, loginImpl.getRole());
-                        }
-                        if (!qrScanner.parseUrl(result)) return;
-                        qrScanner.start();
+    //Constant.REQ_QR_CODE
+    private final ActivityResultLauncher reqQRCodeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+        if (callback.getResultCode() == RESULT_OK) {
+            Bundle bundle = callback.getData().getExtras();
+            if (bundle != null) {
+                String[] result = bundle.getStringArray(Constant.INTENT_EXTRA_KEY_QR_SCAN);
+                if (result != null) {
+                    QRScanner qrScanner;
+                    if (isOfficial) {
+                        qrScanner = new QRScanner(activity, true);
                     } else {
-                        makeToast(R.string.error_scan);
+                        qrScanner = new QRScanner(activity, loginImpl.getRole());
                     }
-                }
-            }
-            if (requestCode == REQ_CODE_SCAN_GALLERY) {
-
-                Bitmap bitmap;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), data.getData());
-                    List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
-                    for (String s : result) {
-                        Logger.d(TAG, "album result:" + s);
-                    }
-                    if (result.size() >= 1) {
-                        Intent resultIntent = new Intent();
-                        String[] text = result.toArray(new String[0]);
-                        resultIntent.putExtra(INTENT_EXTRA_KEY_QR_SCAN, text);
-                        onActivityResult(REQ_QR_CODE, RESULT_OK, resultIntent);
-                    } else {
-                        Log.makeToast("未找到二维码");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (requestCode == REQ_PERM_WINDOW) {
-                fabScanner.showAlertScanner();
-            }
-            if (requestCode == REQ_PERM_RECORD) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Intent service = new Intent(activity, FabScanner.class);
-                    service.putExtra("code", resultCode);
-                    service.putExtra("data", data);
-//                    service.putExtra("fragment");
-                    activity.startForegroundService(service);
+                    if (!qrScanner.parseUrl(result)) return;
+                    qrScanner.start();
                 } else {
-                    fabScanner.setData(resultCode, data);
+                    makeToast(R.string.error_scan);
                 }
-
-            }
-            if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
-                Logger.d("tencent login", "on succ callback");
-                if (loginImpl == null) {
-                    genLoginImpl();
-                }
-                loginImpl.onActivityResult(requestCode, resultCode, data);
-            }
-        } else if (resultCode == RESULT_CANCELED) {
-            if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
-                Logger.d("tencent login", "on cancel callback");
-                if (loginImpl == null) {
-                    genLoginImpl();
-                }
-                onLoginFailed();
             }
         }
+    });
 
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQ_PERM_CAMERA:
-            case REQ_PERM_EXTERNAL_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startQrCode();
-                } else {
-                    Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+    //Constant.REQ_CODE_SCAN_GALLERY
+    private final ActivityResultLauncher reqGalleryScanLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+        if (callback.getResultCode() == RESULT_OK) {
+            Bitmap bitmap;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), callback.getData().getData());
+                List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
+                for (String s : result) {
+                    Logger.d(TAG, "album result:" + s);
                 }
-                break;
-            default:
-                break;
+                if (result.size() >= 1) {
+                    String[] url = result.toArray(new String[0]);
+                    QRScanner qrScanner;
+                    if (isOfficial) {
+                        qrScanner = new QRScanner(activity, true);
+                    } else {
+                        qrScanner = new QRScanner(activity, loginImpl.getRole());
+                    }
+
+                    if (!qrScanner.parseUrl(url)) return;
+                    qrScanner.start();
+
+                } else {
+                    Log.makeToast("未找到二维码");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    }
+    });
+
+
+    //Constant.REQ_PERM_WINDOW
+    private final ActivityResultLauncher reqPermWindowLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+        if (callback.getResultCode() == RESULT_OK) {
+            fabScanner.showAlertScanner();
+        }
+    });
+    //Constant.REQ_PERM_RECORD
+    private final ActivityResultLauncher reqPermRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+        fabScanner.getResultApiCallback().onActivityResult(callback);
+    });
+
 
     private void startQrCode() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -600,11 +603,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     .CAMERA)) {
                 Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
             }
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQ_PERM_CAMERA);
+            requireActivity().registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+                if (isGranted.containsValue(false)) {
+                    Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+                } else {
+                    startQrCode();
+                }
+            }).launch(new String[]{Manifest.permission.CAMERA});
             return;
         }
         Intent intent = new Intent(context, ScannerActivity.class);
-        startActivityForResult(intent, com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE);
+        reqQRCodeLauncher.launch(intent);
+//        startActivityForResult(intent, com.github.haocen2004.login_simulation.util.Constant.REQ_QR_CODE);
     }
 
     @Override
@@ -669,7 +679,17 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             dialogData.setPositiveButtonData(new ButtonData("我已知晓并授权使用") {
                 @Override
                 public void callback(DialogHelper dialogHelper) {
-                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
+                    ActivityResultLauncher permissionReqLauncher = requireActivity().registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+                        if (isGranted.containsValue(false)) {
+                            Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES});
+                    } else {
+                        permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE});
+                    }
+//                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
                     super.callback(dialogHelper);
                 }
             });
@@ -722,6 +742,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                             qrScanner = new QRScanner(activity, loginImpl.getRole());
                         }
                         fabScanner = new FabScanner(this);
+                        fabScanner.setActivityResultLauncher(reqPermRecordLauncher);
                         fabScanner.setQrScanner(qrScanner);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (!Settings.canDrawOverlays(activity)) {
@@ -731,7 +752,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                                     @Override
                                     public void callback(DialogHelper dialogHelper) {
                                         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                                        activity.startActivityForResult(intent, REQ_PERM_WINDOW);
+                                        reqPermWindowLauncher.launch(intent);
+//                                        activity.startActivityForResult(intent, REQ_PERM_WINDOW);
                                         super.callback(dialogHelper);
                                     }
                                 });
@@ -839,8 +861,24 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
     @Override
-    public void onLoginSucceed() {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (loginImpl != null && loginImpl.isLogin()) {
+            Map<String, String> map = loginImpl.getRole().getMap();
+            for (String s : map.keySet()) {
+                outState.putString(s, map.get(s));
+            }
+            Logger.d("onSaveInstanceState", "saved RoleData");
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLoginSucceed(RoleData roleData) {
         spCheckHandle.postDelayed(() -> {
+            if (loginImpl == null) {
+                genLoginImpl();
+                loginImpl.setRole(roleData);
+            }
             Tools.saveBoolean(requireContext(), "last_login_succeed", true);
             QRScanner qrScanner;
             if (isOfficial) {
@@ -875,8 +913,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //        makeToast(R);
     }
 
+    private final ArrayList<LaunchActivityCallback> launchActivityCallbacks = new ArrayList<>();
+    private final ActivityResultLauncher tempLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+        for (LaunchActivityCallback launchActivityCallback : launchActivityCallbacks) {
+            launchActivityCallback.run(callback);
+            launchActivityCallbacks.remove(launchActivityCallback);
+        }
+    });
+
     @Override
-    public Fragment getCallbackFragment() {
-        return this;
+    public void launchActivityForResult(Intent intent, LaunchActivityCallback callback) {
+        launchActivityCallbacks.add(callback);
+        tempLauncher.launch(intent);
     }
+
+
 }

@@ -8,7 +8,6 @@ import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -423,7 +422,9 @@ public class Official implements LoginImpl {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
     }
+
 }

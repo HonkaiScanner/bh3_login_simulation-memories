@@ -1,11 +1,14 @@
 package com.github.haocen2004.login_simulation.login;
 
-import androidx.fragment.app.Fragment;
+import android.content.Intent;
+
+import com.github.haocen2004.login_simulation.data.LaunchActivityCallback;
+import com.github.haocen2004.login_simulation.data.RoleData;
 
 public interface LoginCallback {
-    void onLoginSucceed();
+    void onLoginSucceed(RoleData roleData);
 
     void onLoginFailed();
 
-    Fragment getCallbackFragment();
+    void launchActivityForResult(Intent intent, LaunchActivityCallback callback);
 }

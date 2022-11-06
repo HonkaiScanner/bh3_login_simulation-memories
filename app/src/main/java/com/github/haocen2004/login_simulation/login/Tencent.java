@@ -1,7 +1,8 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static com.github.haocen2004.login_simulation.util.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
-import static com.github.haocen2004.login_simulation.util.Constant.REQ_TENCENT_WEB_LOGIN_CALLBACK;
 import static com.github.haocen2004.login_simulation.util.Constant.YYB_INIT;
 import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
 
@@ -12,6 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Keep;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -41,6 +43,7 @@ public class Tencent implements LoginImpl {
     private final LoginCallback callback;
     private String verify_data;
     private boolean first_auto_login = false;
+    private ActivityResultLauncher activityResultLauncher;
 
     public Tencent(AppCompatActivity activity, LoginCallback loginCallback) {
         callback = loginCallback;
@@ -51,6 +54,8 @@ public class Tencent implements LoginImpl {
 
     @Override
     public void logout() {
+        Tools.saveString(activity, "tencent_openid", "");
+        Tools.saveString(activity, "tencent_openkey", "");
         isLogin = false;
         //
 //        YSDKApi.logout();
@@ -83,8 +88,55 @@ public class Tencent implements LoginImpl {
                 Logger.addBlacklist(access_token);
                 new Thread(login_runnable).start();
             } else {
-                Intent intent = new Intent(callback.getCallbackFragment().getActivity(), TencentLoginActivity.class);
-                callback.getCallbackFragment().startActivityForResult(intent, REQ_TENCENT_WEB_LOGIN_CALLBACK);
+                Intent intent = new Intent(activity, TencentLoginActivity.class);
+                //Constant.REQ_TENCENT_WEB_LOGIN_CALLBACK
+                callback.launchActivityForResult(intent, activityResult -> {
+                    if (activityResult.getResultCode() == RESULT_OK) {
+                        Logger.d("tencent login", "on succ callback");
+
+                        String url_text = activityResult.getData().getStringExtra(INTENT_EXTRA_KEY_TENCENT_LOGIN);
+                        URL url;
+                        try {
+                            url = new URL(url_text);
+                            String ref = url.getRef();
+                            for (String s : ref.split("&")) {
+                                if (s.contains("access_token")) {
+                                    access_token = s.split("=")[1];
+                                }
+                                if (s.contains("openid")) {
+                                    open_id = s.split("=")[1];
+                                }
+                            }
+                        } catch (MalformedURLException ignore) {
+                            callback.onLoginFailed();
+                            return;
+                        }
+                        Tools.saveString(activity, "tencent_openid", open_id);
+                        Tools.saveString(activity, "tencent_openkey", access_token);
+//                            url.getQuery();
+//                        open_id = userLoginRet.open_id;
+                        username = "网页登陆";
+//                        access_token = userLoginRet.getAccessToken();
+
+                        int platform = 1; // qq = 1
+                        verify_data = "{\"platform\":" +
+                                platform
+                                + ",\"openid\":\"" +
+                                open_id +
+                                "\",\"openkey\":\"" +
+                                access_token +
+                                "\",\"is_teenager\":false}";
+                        Logger.addBlacklist(access_token);
+                        new Thread(login_runnable).start();
+                    } else if (activityResult.getResultCode() == RESULT_CANCELED) {
+                        Logger.d("tencent login", "on cancel callback");
+
+                        Tools.saveString(activity, "tencent_openid", "");
+                        Tools.saveString(activity, "tencent_openkey", "");
+                        callback.onLoginFailed();
+                    }
+                });
+//                callback.getCallbackFragment().startActivityForResult(intent, REQ_TENCENT_WEB_LOGIN_CALLBACK);
                 callback.onLoginFailed();
             }
 //            return;
@@ -121,42 +173,49 @@ public class Tencent implements LoginImpl {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String url_text = data.getStringExtra(INTENT_EXTRA_KEY_TENCENT_LOGIN);
-        URL url;
-        try {
-            url = new URL(url_text);
-            String ref = url.getRef();
-            for (String s : ref.split("&")) {
-                if (s.contains("access_token")) {
-                    access_token = s.split("=")[1];
-                }
-                if (s.contains("openid")) {
-                    open_id = s.split("=")[1];
-                }
-            }
-        } catch (MalformedURLException ignore) {
-            callback.onLoginFailed();
-            return;
-        }
-        Tools.saveString(activity, "tencent_openid", open_id);
-        Tools.saveString(activity, "tencent_openkey", access_token);
-//        url.getQuery()
-//        open_id = userLoginRet.open_id;
-        username = "网页登陆";
-//        access_token = userLoginRet.getAccessToken();
-
-        int platform = 1; // qq = 1
-        verify_data = "{\"platform\":" +
-                platform
-                + ",\"openid\":\"" +
-                open_id +
-                "\",\"openkey\":\"" +
-                access_token +
-                "\",\"is_teenager\":false}";
-        Logger.addBlacklist(access_token);
-        new Thread(login_runnable).start();
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
     }
+
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        String url_text = data.getStringExtra(INTENT_EXTRA_KEY_TENCENT_LOGIN);
+//        URL url;
+//        try {
+//            url = new URL(url_text);
+//            String ref = url.getRef();
+//            for (String s : ref.split("&")) {
+//                if (s.contains("access_token")) {
+//                    access_token = s.split("=")[1];
+//                }
+//                if (s.contains("openid")) {
+//                    open_id = s.split("=")[1];
+//                }
+//            }
+//        } catch (MalformedURLException ignore) {
+//            callback.onLoginFailed();
+//            return;
+//        }
+//        Tools.saveString(activity, "tencent_openid", open_id);
+//        Tools.saveString(activity, "tencent_openkey", access_token);
+////        url.getQuery()
+////        open_id = userLoginRet.open_id;
+//        username = "网页登陆";
+////        access_token = userLoginRet.getAccessToken();
+//
+//        int platform = 1; // qq = 1
+//        verify_data = "{\"platform\":" +
+//                platform
+//                + ",\"openid\":\"" +
+//                open_id +
+//                "\",\"openkey\":\"" +
+//                access_token +
+//                "\",\"is_teenager\":false}";
+//        Logger.addBlacklist(access_token);
+//        new Thread(login_runnable).start();
+//    }
 
 //    @Override
 //    public void OnLoginNotify(UserLoginRet userLoginRet) {
@@ -234,15 +293,5 @@ public class Tencent implements LoginImpl {
             }
         }
     };
-//
-//    @Override
-//    public void OnWakeupNotify(WakeupRet wakeupRet) {
-//        Logger.d(TAG, wakeupRet.toString());
-//    }
-//
-//    @Override
-//    public void OnRelationNotify(UserRelationRet userRelationRet) {
-//        Logger.d(TAG, userRelationRet.toString());
-//    }
 }
 
