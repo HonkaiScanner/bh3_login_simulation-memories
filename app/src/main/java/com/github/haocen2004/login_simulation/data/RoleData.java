@@ -1,7 +1,6 @@
 package com.github.haocen2004.login_simulation.data;
 
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
-import static com.github.haocen2004.login_simulation.util.Constant.UPDATE_TIME;
 import static com.github.haocen2004.login_simulation.util.Tools.getOAServer;
 
 import android.app.Activity;
@@ -54,7 +53,7 @@ public class RoleData {
                         callback.onLoginFailed();
                         Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
                         return;
-                    } else if (oaserver.getLong("server_cur_time") < UPDATE_TIME) {
+                    } else if (oaserver.getLong("server_cur_time") < oaserver.getLong("stop_end_time")) {
                         String msg1 = "崩坏3停服维护中\n请等待维护完成后再尝试登陆\n";
                         callback.onLoginFailed();
                         Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
