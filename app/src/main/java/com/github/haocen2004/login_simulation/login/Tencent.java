@@ -70,7 +70,7 @@ public class Tencent implements LoginImpl {
     @Override
     public void login() {
         if (!getHooked()) {
-            Log.makeToast("未启用Xposed模块！\n尝试使用网页登陆中\n网页加载不出请返回重试登陆");
+            Log.makeToast("尝试使用网页登陆中\nTX网页登陆限制较大\n不一样能成功登陆\n\n网页卡白屏请返回重试");
             if (!Objects.equals(Tools.getString(activity, "tencent_openkey"), "")) {
 
                 username = "本地缓存登陆";
