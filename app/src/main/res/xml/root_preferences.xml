@@ -58,6 +58,11 @@
             android:defaultValue="false"
             android:key="quit_on_success"
             android:title="@string/quit_on_success" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="debug_mode"
+            android:title="@string/debug_mode" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

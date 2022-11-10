@@ -108,6 +108,8 @@
     <string name="overwrite_bh_ver">Overwrite Honkai Version</string>
     <string name="keep_capture">Keep FabScanner</string>
     <string name="quit_on_success">Exit after successful scanning</string>
+    <string name="debug_mode">Debug Mode</string>
+
 
     <string name="crash_hint">Detected a recent crash happened.\nPlease bring a crash-report to get feedback from the developer in time!</string>
     <string name="crash_btn">Open CrashReport</string>

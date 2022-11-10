@@ -7,6 +7,7 @@ import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static com.github.haocen2004.login_simulation.util.Constant.AFD_URL;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
 import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
 import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
@@ -197,7 +198,7 @@ public class MainActivity extends BaseActivity {
                     Logger.d("Update", "local ver:" + VERSION_CODE);
 //                    Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
                     if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
-                        Logger.i("Update", "Start Update window");
+                        Logger.i("Update", "Open Update Window");
                         showUpdateDialog(
                                 json.getString("ver_name"),
                                 json.getString("update_url"),
@@ -223,6 +224,7 @@ public class MainActivity extends BaseActivity {
             SP_URL = app_pref.getString("sp_url", SP_URL);
             AFD_URL = app_pref.getString("afd_url", AFD_URL);
             QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
+            DEBUG_MODE = app_pref.getBoolean("debug_mode", false) || DEBUG;
 //            UPDATE_TIME = app_pref.getLong("update_time", 0);
             if (CHECK_VER) {
                 LeanCloud.initializeSecurely(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);

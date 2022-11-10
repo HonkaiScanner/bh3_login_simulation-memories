@@ -48,15 +48,15 @@ public static void changeToWDJ(Activity activity) {
         String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
         String KEY_MIUI_INTERNAL_STORAGE = "ro.miui.internal.storage";
 
-        Logger.i(TAG, "checkMIUI");
+        Logger.d(TAG, "checkMIUI");
         boolean isMIUI;
         SystemProperty systemProperty = new SystemProperty(context);
         isMIUI = systemProperty.getProperty(KEY_MIUI_VERSION_CODE) != null
                 || systemProperty.getProperty(KEY_MIUI_VERSION_NAME) != null
                 || systemProperty.getProperty(KEY_MIUI_INTERNAL_STORAGE) != null;
-        Logger.i(TAG, "ro.miui.ui.version.code:" + systemProperty.getProperty(KEY_MIUI_VERSION_CODE));
-        Logger.i(TAG, "ro.miui.ui.version.name:" + systemProperty.getProperty(KEY_MIUI_VERSION_NAME));
-        Logger.i(TAG, "ro.miui.internal.storage:" + systemProperty.getProperty(KEY_MIUI_INTERNAL_STORAGE));
+        Logger.d(TAG, "ro.miui.ui.version.code:" + systemProperty.getProperty(KEY_MIUI_VERSION_CODE));
+        Logger.d(TAG, "ro.miui.ui.version.name:" + systemProperty.getProperty(KEY_MIUI_VERSION_NAME));
+        Logger.d(TAG, "ro.miui.internal.storage:" + systemProperty.getProperty(KEY_MIUI_INTERNAL_STORAGE));
         return isMIUI;
     }
 
@@ -64,9 +64,9 @@ public static void changeToWDJ(Activity activity) {
         try {
 
             String getOAUrl = "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
-            Logger.i(TAG, "getOAServer-Param: " + getOAUrl);
+            Logger.d(TAG, "getOAServer-Param: " + getOAUrl);
             String feedback = sendPost(getOAUrl, "");
-            Logger.i(TAG, "getOAServer: " + feedback);
+            Logger.d(TAG, "getOAServer: " + feedback);
             JSONObject json1 = new JSONObject(feedback);
             if (json1.getInt("retcode") != 0) {
                 Logger.getLogger(null).makeToast(json1.getString("msg"));
@@ -86,7 +86,7 @@ public static void changeToWDJ(Activity activity) {
             String url = json2.getString("dispatch_url");
             feedback = sendPost(url + "?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis(), "");
 
-            Logger.i(TAG, "getOAServer: " + feedback);
+            Logger.d(TAG, "getOAServer: " + feedback);
 
             return feedback;
         } catch (JSONException e) {
@@ -179,7 +179,7 @@ public static void changeToWDJ(Activity activity) {
             }
             login_json.put("sign", sign);
 
-            Logger.i(TAG, "run: " + login_json);
+            Logger.d(TAG, "run: " + login_json);
             JSONObject feedback_json = null;
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", login_json.toString());
 

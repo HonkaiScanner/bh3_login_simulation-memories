@@ -102,7 +102,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     private void dumpLogs(PrintWriter pw) {
         try {
-            for (LogData logData : LogLiveData.getINSTANCE(mContext).getValue()) {
+            for (LogData logData : LogLiveData.getINSTANCE(mContext).getDebugLogList()) {
                 if (logData.getTAG().equals("复制日志")) continue;
                 pw.print(logData.getLevel());
                 pw.print("/");

@@ -35,5 +35,5 @@ public class Constant {
     public static boolean YYB_INIT = false;
     public static boolean QIHOO_INIT = false;
 
-    public static long UPDATE_TIME = 0;
+    public static boolean DEBUG_MODE = false;
 }
