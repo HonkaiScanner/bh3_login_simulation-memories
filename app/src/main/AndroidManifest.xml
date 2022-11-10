@@ -88,29 +88,29 @@
             android:name="cn.gundam.sdk.shell.activity.ThemeProxyActivity"
             android:exported="true" />
 
-        <service
-            android:name="com.tencent.ysdk.module.sandbox.pipe.PipeService"
-            android:exported="false"
-            android:permission="TODO" />
+        <!--        <service-->
+        <!--            android:name="com.tencent.ysdk.module.sandbox.pipe.PipeService"-->
+        <!--            android:exported="false"-->
+        <!--            android:permission="TODO" />-->
 
-        <activity
-            android:name="com.tencent.tauth.AuthActivity"
-            android:exported="true"
-            android:launchMode="singleTask"
-            android:noHistory="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+        <!--        <activity-->
+        <!--            android:name="com.tencent.tauth.AuthActivity"-->
+        <!--            android:exported="true"-->
+        <!--            android:launchMode="singleTask"-->
+        <!--            android:noHistory="true">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+        <!--                <category android:name="android.intent.category.DEFAULT" />-->
+        <!--                <category android:name="android.intent.category.BROWSABLE" />-->
 
-                <data android:scheme="tencent1105553399" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.tencent.connect.common.AssistActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <!--                <data android:scheme="tencent1105553399" />-->
+        <!--            </intent-filter>-->
+        <!--        </activity>-->
+        <!--        <activity-->
+        <!--            android:name="com.tencent.connect.common.AssistActivity"-->
+        <!--            android:configChanges="orientation|screenSize|keyboardHidden"-->
+        <!--            android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
         <activity
             android:name="com.bsgamesdk.android.activity.CaptchaWebActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
