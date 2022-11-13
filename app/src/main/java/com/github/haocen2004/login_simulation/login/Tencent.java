@@ -70,7 +70,6 @@ public class Tencent implements LoginImpl {
     @Override
     public void login() {
         if (!getHooked()) {
-            Log.makeToast("尝试使用网页登陆中\nTX网页登陆限制较大\n不一样能成功登陆\n\n网页卡白屏请返回重试");
             if (!Objects.equals(Tools.getString(activity, "tencent_openkey"), "")) {
 
                 username = "本地缓存登陆";
@@ -88,6 +87,8 @@ public class Tencent implements LoginImpl {
                 Logger.addBlacklist(access_token);
                 new Thread(login_runnable).start();
             } else {
+
+                Log.makeToast("尝试使用网页登陆中\nTX网页登陆限制较大\n不一定能成功登陆\n\n网页卡白屏请返回重试");
                 Intent intent = new Intent(activity, TencentLoginActivity.class);
                 //Constant.REQ_TENCENT_WEB_LOGIN_CALLBACK
                 callback.launchActivityForResult(intent, activityResult -> {
