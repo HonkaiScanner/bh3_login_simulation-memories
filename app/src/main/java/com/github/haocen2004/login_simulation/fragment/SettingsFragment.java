@@ -116,6 +116,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 case "Qihoo":
                     preference.setSummary(getString(R.string.types_qihoo));
                     break;
+                case "Huawei":
+                    preference.setSummary(R.string.types_huawei);
+                    break;
                 default:
                     preference.setSummary("DEBUG -- SERVER ERROR");
             }
@@ -149,6 +152,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 break;
             case "Qihoo":
                 findPreference("server_type").setSummary(getString(R.string.types_qihoo));
+                break;
+            case "Huawei":
+                findPreference("server_type").setSummary(R.string.types_huawei);
                 break;
             default:
                 findPreference("server_type").setSummary("DEBUG -- SERVER ERROR");
