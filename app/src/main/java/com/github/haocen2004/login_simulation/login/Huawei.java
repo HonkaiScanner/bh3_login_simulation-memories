@@ -36,8 +36,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Objects;
 
 public class Huawei implements LoginImpl {
@@ -125,29 +125,33 @@ public class Huawei implements LoginImpl {
             String accessToken = player.getAccessToken();
             Logger.addBlacklist(accessToken);
             username = player.getDisplayName();
-            Map<String, String> headerMap = new HashMap<>();
-            headerMap.put("Content-Type", "application/x-www-form-urlencoded");
-            String body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&cpId=890086000102026777&gamePackage=com.miHoYo.bh3.huawei&appId=10624714&accessToken=" + accessToken;
+            String body = null;
+            try {
+                body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            String finalBody = body;
             new Thread() {
                 @Override
                 public void run() {
                     super.run();
-                    JSONObject huaweiJson;
-                    while (true) {
-                        String huaweiFeedback = Network.sendPost("https://jgw-drcn.jos.dbankcloud.cn/gameservice/api/gbClientApi", body, headerMap);
-                        Logger.d(TAG, huaweiFeedback);
-                        try {
-                            huaweiJson = new JSONObject(huaweiFeedback);
-                            if (huaweiJson.has("ts")) {
-                                break;
-                            } else {
-                                Logger.d(TAG, "hw login failed, retry...");
-                                Thread.sleep(3000);
-                            }
-                        } catch (JSONException | InterruptedException e) {
-                            e.printStackTrace();
+                    JSONObject huaweiJson = null;
+//                    while (true) {
+                    Logger.d(TAG, finalBody);
+                    String huaweiFeedback = Network.sendPost("https://jgw-drcn.jos.dbankcloud.cn/gameservice/api/gbClientApi", finalBody);
+                    Logger.d(TAG, huaweiFeedback);
+                    try {
+                        huaweiJson = new JSONObject(huaweiFeedback);
+                        if (!huaweiJson.has("ts")) {
+                            Logger.d(TAG, "hw login failed, retry...");
+
+                            return;
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+//                    }
                     try {
 
                         verifyJson = new JSONObject();

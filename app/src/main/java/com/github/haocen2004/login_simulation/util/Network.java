@@ -2,12 +2,14 @@ package com.github.haocen2004.login_simulation.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class Network {
 
@@ -33,8 +35,13 @@ public class Network {
             out = new PrintWriter(conn.getOutputStream());
             out.print(param);
             out.flush();
+            String encoding = conn.getContentEncoding();
+            InputStream ism = conn.getInputStream();
+            if (encoding != null && encoding.contains("gzip")) {
+                ism = new GZIPInputStream(ism);
+            }
             in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+                    new InputStreamReader(ism));
             String line;
             while ((line = in.readLine()) != null) {
                 result.append(line);
