@@ -536,6 +536,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     }
 
+    private final ActivityResultLauncher permissionReqLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+        if (isGranted.containsValue(false)) {
+            Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+        }
+    });
     //Constant.REQ_QR_CODE
     private final ActivityResultLauncher reqQRCodeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
         if (callback.getResultCode() == RESULT_OK) {
@@ -685,11 +690,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             dialogData.setPositiveButtonData(new ButtonData("我已知晓并授权使用") {
                 @Override
                 public void callback(DialogHelper dialogHelper) {
-                    ActivityResultLauncher permissionReqLauncher = requireActivity().registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
-                        if (isGranted.containsValue(false)) {
-                            Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES});
                     } else {
