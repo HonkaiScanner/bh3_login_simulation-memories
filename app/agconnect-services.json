@@ -1,27 +1,57 @@
 {
-  "agcgw":{
-    "backurl":"connect-drcn.dbankcloud.cn",
-    "url":"connect-drcn.hispace.hicloud.com"
+  "agcgw_all": {
+    "CN": "connect-drcn.dbankcloud.cn",
+    "CN_back": "connect-drcn.hispace.hicloud.com",
+    "DE": "connect-dre.dbankcloud.cn",
+    "DE_back": "connect-dre.hispace.hicloud.com",
+    "RU": "connect-drru.hispace.dbankcloud.ru",
+    "RU_back": "connect-drru.hispace.dbankcloud.cn",
+    "SG": "connect-dra.dbankcloud.cn",
+    "SG_back": "connect-dra.hispace.hicloud.com"
   },
-  "client":{
-    "cp_id":"260086000252350999",
-    "product_id":"9105385871708612325",
-    "client_id":"329687640267818048",
-    "client_secret":"877F49A805B764180F657BD7B578497012466A969173E5EECE496C1CA168048D",
-    "app_id":"101957395",
-    "package_name":"com.mlkit.sample.text",
-    "api_key":"CV6pfM9nq2zAfELDI3ymLUbFBYLNBi4CoB1wBwBJqTrWorx3ZllUlKg2BU8xPcpaXhSrmHvYvwQwkB74+7SFPtJzMUu4"
+  "websocketgw_all": {
+    "CN": "connect-ws-drcn.hispace.dbankcloud.cn",
+    "CN_back": "connect-ws-drcn.hispace.dbankcloud.com",
+    "DE": "connect-ws-dre.hispace.dbankcloud.cn",
+    "DE_back": "connect-ws-dre.hispace.dbankcloud.com",
+    "RU": "connect-ws-drru.hispace.dbankcloud.ru",
+    "RU_back": "connect-ws-drru.hispace.dbankcloud.cn",
+    "SG": "connect-ws-dra.hispace.dbankcloud.cn",
+    "SG_back": "connect-ws-dra.hispace.dbankcloud.com"
   },
-  "service":{
-    "analytics":{
-      "collector_url":"datacollector-drcn.dt.hicloud.com,datacollector-drcn.dt.dbankcloud.cn",
-      "resource_id":"p1",
-      "channel_id":""
-    },
-    "ml":{
-      "mlservice_url":"ml-api-drcn.ai.dbankcloud.com,ml-api-drcn.ai.dbankcloud.cn"
+  "client": {
+    "cp_id": "300086000124491564",
+    "product_id": "99536292102738908",
+    "client_id": "1022593267734171008",
+    "client_secret": "CF2F810D2E9C84ABAE056983881294F66E7298C3600965DEE9EFE3B958A15710",
+    "project_id": "99536292102738908",
+    "app_id": "106722799",
+    "api_key": "DAEDAKm1uDoHHJysxd2UQEZXCxDxVJNP7umA+hNyiTSKLhJY9rZs6Mwq3jXf+jnx4CTFrLd8Natn3oALkuwiq4Yf1mqLjCKDySWwxw==",
+    "package_name": "com.github.haocen2004.bh3_login_simulation"
+  },
+  "oauth_client": {
+    "client_id": "106722799",
+    "client_type": 1
+  },
+  "app_info": {
+    "app_id": "106722799",
+    "package_name": "com.github.haocen2004.bh3_login_simulation"
+  },
+  "configuration_version": "3.0",
+  "appInfos": [
+    {
+      "package_name": "com.github.haocen2004.bh3_login_simulation",
+      "client": {
+        "app_id": "106722799"
+      },
+      "app_info": {
+        "package_name": "com.github.haocen2004.bh3_login_simulation",
+        "app_id": "106722799"
+      },
+      "oauth_client": {
+        "client_type": 1,
+        "client_id": "106722799"
+      }
     }
-  },
-  "region":"CN",
-  "configuration_version":"1.0"
+  ]
 }

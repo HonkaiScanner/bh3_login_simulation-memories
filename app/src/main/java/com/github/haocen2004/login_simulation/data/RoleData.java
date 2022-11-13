@@ -53,11 +53,13 @@ public class RoleData {
                         callback.onLoginFailed();
                         Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
                         return;
-                    } else if (oaserver.getLong("server_cur_time") < oaserver.getLong("stop_end_time")) {
-                        String msg1 = "崩坏3停服维护中\n请等待维护完成后再尝试登陆\n";
-                        callback.onLoginFailed();
-                        Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
-                        return;
+                    } else if (oaserver.has("stop_end_time")) {
+                        if (oaserver.getLong("server_cur_time") < oaserver.getLong("stop_end_time")) {
+                            String msg1 = "崩坏3停服维护中\n请等待维护完成后再尝试登陆\n";
+                            callback.onLoginFailed();
+                            Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
+                            return;
+                        }
                     }
                     str_oaserver = feedback;
                     is_setup = true;
@@ -109,6 +111,8 @@ public class RoleData {
             accountType = "10";
         } else if (special_tag == 9) {
             accountType = "4";
+        } else if (special_tag == 10) {
+            accountType = "7";
         }
         Logger.addBlacklist(combo_token);
         Logger.addBlacklist(open_token);

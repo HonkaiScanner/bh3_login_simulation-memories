@@ -47,6 +47,7 @@ import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.Flyme;
+import com.github.haocen2004.login_simulation.login.Huawei;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
@@ -292,6 +293,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             case "YYB":
                 server_type = activity.getString(R.string.types_yyb);
                 break;
+            case "Huawei":
+                server_type = activity.getString(R.string.types_huawei);
+                break;
             case "Qihoo":
                 server_type = activity.getString(R.string.types_qihoo);
                 break;
@@ -505,6 +509,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 break;
             case "YYB":
                 loginImpl = new Tencent(activity, this);
+                break;
+            case "Huawei":
+                loginImpl = new Huawei(activity, this);
                 break;
 //            case "Qihoo":
 //                loginImpl = new Qihoo(activity, this);
@@ -909,12 +916,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             loginImpl = null;
             refreshView();
             switchButtonState(true);
+            Log.makeToast("登陆失败");
         });
 //        makeToast(R);
     }
 
     private final ArrayList<LaunchActivityCallback> launchActivityCallbacks = new ArrayList<>();
-    private final ActivityResultLauncher tempLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+    private final ActivityResultLauncher<Intent> tempLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
         for (LaunchActivityCallback launchActivityCallback : launchActivityCallbacks) {
             launchActivityCallback.run(callback);
             launchActivityCallbacks.remove(launchActivityCallback);

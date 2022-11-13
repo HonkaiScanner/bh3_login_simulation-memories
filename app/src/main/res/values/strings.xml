@@ -22,6 +22,7 @@
     <string name="types_official">Official Server</string>
     <string name="types_prefix">"Selected : "</string>
     <string name="types_bilibili">BiliBili Server</string>
+    <string name="types_huawei">Huawei Server</string>
     <string name="list_report">Bug Report</string>
     <string name="list_pay">Supporting author</string>
     <string name="username">Username</string>

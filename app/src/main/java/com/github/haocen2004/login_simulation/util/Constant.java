@@ -34,6 +34,7 @@ public class Constant {
     public static boolean MI_INIT = false;
     public static boolean YYB_INIT = false;
     public static boolean QIHOO_INIT = false;
+    public static boolean HUAWEI_INIT = false;
 
     public static boolean DEBUG_MODE = false;
 }
