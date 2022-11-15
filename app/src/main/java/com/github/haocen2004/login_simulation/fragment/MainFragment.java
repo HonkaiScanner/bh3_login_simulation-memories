@@ -392,6 +392,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         });
         binding.cardViewMain.btnCard1Action1.setOnClickListener(view1 -> {
+
+            Logger.d(TAG, "切换服务器中 尝试打断自动登录");
+            boolean autoLogin = pref.getBoolean("auto_login", false);
+            pref.edit().putBoolean("auto_login", false).apply();
+
             String[] singleChoiceItems = getServerList(false);
             String[] serverList = getServerValue(false);
             String currServer = pref.getString("server_type", "");
@@ -407,7 +412,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     .setTitle(activity.getString(R.string.sel_server))
                     .setSingleChoiceItems(singleChoiceItems, itemSelected, (dialogInterface, i) -> {
 
-                        pref.edit().putString("server_type", serverList[i]).apply();
+                        pref.edit().putString("server_type", serverList[i])
+                                .putBoolean("auto_login", autoLogin)
+                                .apply();
                         Tools.saveBoolean(activity, "last_login_succeed", false);
                         if (loginImpl != null && loginImpl.isLogin()) {
                             Log.makeToast(R.string.logged_and_restart);
@@ -466,6 +473,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         } catch (Exception ignore) {
         }
+        switchButtonState(false);
         binding.cardViewMain.imageViewChecked.setVisibility(View.INVISIBLE);
         binding.cardViewMain.progressBar.setVisibility(View.VISIBLE);
         Tools.saveBoolean(activity, "last_login_succeed", false);
@@ -474,7 +482,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
         loginImpl.login();
         loginProgress = true;
-        switchButtonState(false);
     }
 
     private void genLoginImpl() {

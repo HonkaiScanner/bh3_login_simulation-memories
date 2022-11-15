@@ -46,7 +46,18 @@ public class Logger implements Serializable {
             d("BlackList", "blackMsg is too short.");
             return;
         }
-        logBlackList.add(blackMsg);
+        if (blackMsg.contains("/")) {
+            for (String s : blackMsg.split("/")) {
+                if (logBlackList.contains(s)) continue;
+                if (s.length() < 2) {
+                    d("BlackList", "blackMsg is too short.");
+                    continue;
+                }
+                logBlackList.add(s);
+            }
+        } else {
+            logBlackList.add(blackMsg);
+        }
     }
 
     public static void setView(View view) {

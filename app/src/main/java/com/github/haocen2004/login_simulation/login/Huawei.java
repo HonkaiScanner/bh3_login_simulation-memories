@@ -127,6 +127,7 @@ public class Huawei implements LoginImpl {
             username = player.getDisplayName();
             String body = null;
             try {
+                Logger.addBlacklist(URLEncoder.encode(accessToken, "utf-8"));
                 body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, "utf-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -140,7 +141,7 @@ public class Huawei implements LoginImpl {
 //                    while (true) {
                     Logger.d(TAG, finalBody);
                     String huaweiFeedback = Network.sendPost("https://jgw-drcn.jos.dbankcloud.cn/gameservice/api/gbClientApi", finalBody);
-                    Logger.d(TAG, huaweiFeedback);
+//                    Logger.d(TAG, huaweiFeedback);
                     try {
                         huaweiJson = new JSONObject(huaweiFeedback);
                         if (!huaweiJson.has("ts")) {
@@ -148,12 +149,12 @@ public class Huawei implements LoginImpl {
 
                             return;
                         }
+                        Logger.addBlacklist(huaweiJson.getString("gameAuthSign"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 //                    }
                     try {
-
                         verifyJson = new JSONObject();
 
                         verifyJson.put("ts", huaweiJson.get("ts"));
