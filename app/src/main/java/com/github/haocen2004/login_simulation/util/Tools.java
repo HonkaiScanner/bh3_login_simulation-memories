@@ -51,12 +51,20 @@ public static void changeToWDJ(Activity activity) {
         Logger.d(TAG, "checkMIUI");
         boolean isMIUI;
         SystemProperty systemProperty = new SystemProperty(context);
-        isMIUI = systemProperty.getProperty(KEY_MIUI_VERSION_CODE) != null
-                || systemProperty.getProperty(KEY_MIUI_VERSION_NAME) != null
-                || systemProperty.getProperty(KEY_MIUI_INTERNAL_STORAGE) != null;
+        String miuiVersionCode = systemProperty.getProperty(KEY_MIUI_VERSION_CODE);
+        String miuiVersionName = systemProperty.getProperty(KEY_MIUI_VERSION_NAME);
+        String miuiInternalStorage = systemProperty.getProperty(KEY_MIUI_INTERNAL_STORAGE);
+        isMIUI = (miuiVersionCode != null
+                && !miuiVersionCode.equals(""))
+                || (miuiVersionName != null
+                && !miuiVersionName.equals(""))
+                || (miuiInternalStorage != null &&
+                !miuiInternalStorage.equals(""));
         Logger.d(TAG, "ro.miui.ui.version.code:" + systemProperty.getProperty(KEY_MIUI_VERSION_CODE));
         Logger.d(TAG, "ro.miui.ui.version.name:" + systemProperty.getProperty(KEY_MIUI_VERSION_NAME));
         Logger.d(TAG, "ro.miui.internal.storage:" + systemProperty.getProperty(KEY_MIUI_INTERNAL_STORAGE));
+
+        Logger.d(TAG, "checkMIUI: " + isMIUI);
         return isMIUI;
     }
 
