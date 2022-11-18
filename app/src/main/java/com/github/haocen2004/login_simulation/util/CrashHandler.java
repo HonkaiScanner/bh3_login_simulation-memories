@@ -1,5 +1,6 @@
 package com.github.haocen2004.login_simulation.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -22,12 +23,12 @@ import java.util.Locale;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static final String TAG = "CrashHandler";
+    @SuppressLint("StaticFieldLeak")
     private static final CrashHandler instance = new CrashHandler();
-    private Thread.UncaughtExceptionHandler mDefaultCrashHandler;
     private String PATH = "";
     private static final String FILE_NAME = "crash";
     private static final String FILE_NAME_SUFFIX = ".txt";
-    private static Context mContext;
+    private Context mContext;
 
 
     @Override
@@ -64,7 +65,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     public void init(Context context) {
-        mDefaultCrashHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.UncaughtExceptionHandler mDefaultCrashHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
         mContext = context;
         PATH = mContext.getExternalFilesDir(null) + "/crash-report/";
@@ -102,7 +103,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     private void dumpLogs(PrintWriter pw) {
         try {
-            for (LogData logData : LogLiveData.getINSTANCE(mContext).getDebugLogList()) {
+            for (LogData logData : LogLiveData.getINSTANCE().getDebugLogList()) {
                 if (logData.getTAG().equals("复制日志")) continue;
                 pw.print(logData.getLevel());
                 pw.print("/");

@@ -27,7 +27,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogLiveData.getINSTANCE(this); //init live data
+        LogLiveData.getINSTANCE(); //init live data
         Log = Logger.getLogger(this);
 //        YSDKApi.setMainActivity("com.github.haocen2004.login_simulation.activity.MainActivity");
         ToastUtils.init(this);

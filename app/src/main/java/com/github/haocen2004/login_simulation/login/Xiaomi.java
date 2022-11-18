@@ -123,7 +123,7 @@ public class Xiaomi extends Application implements LoginImpl {
                 String combo_token = data_json2.getString("combo_token");
                 String account_type = data_json2.getString("account_type");
 
-                roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "11", account_type, "xiaomi", 5, callback);
+                roleData = new RoleData(open_id, "", combo_id, combo_token, "11", account_type, "xiaomi", 5, callback);
                 isLogin = true;
                 makeToast(activity.getString(R.string.login_succeed));
             }

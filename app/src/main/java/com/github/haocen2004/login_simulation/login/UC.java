@@ -157,7 +157,7 @@ public class UC implements LoginImpl {
                         special_tag = 3;
                     }
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "20", account_type, "uc", special_tag, callback);
+                    roleData = new RoleData(open_id, "", combo_id, combo_token, "20", account_type, "uc", special_tag, callback);
 
                     isLogin = true;
                 } else {

@@ -113,7 +113,7 @@ public class Vivo implements LoginImpl {
                     String account_type = data_json2.getString("account_type");
                     Logger.addBlacklist(combo_token);
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "19", account_type, "vivo", 2, loginCallback);
+                    roleData = new RoleData(open_id, "", combo_id, combo_token, "19", account_type, "vivo", 2, loginCallback);
 
                     isLogin = true;
 //                    makeToast(activity.getString(R.string.login_succeed));

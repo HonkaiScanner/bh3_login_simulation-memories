@@ -3,7 +3,6 @@ package com.github.haocen2004.login_simulation.data;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Tools.getOAServer;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -82,7 +81,7 @@ public class RoleData {
         getOA_handler.sendMessage(msg);
     };
 
-    public RoleData(Activity activity, String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key, int special_tag, LoginCallback callback) {
+    public RoleData(String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key, int special_tag, LoginCallback callback) {
         this.callback = callback;
 //        this.activity = activity;
         this.open_id = open_id;

@@ -29,7 +29,7 @@ public class Logger implements Serializable {
         Logger.context = context;
         useSnackBar = false;
         logBlackList = new ArrayList();
-        logLiveData = LogLiveData.getINSTANCE(context);
+        logLiveData = LogLiveData.getINSTANCE();
         DialogLiveData.getINSTANCE(context);
     }
 

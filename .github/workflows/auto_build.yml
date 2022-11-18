@@ -69,11 +69,11 @@ jobs:
       #     cd app/build/outputs/apk/release/
       #     ls
 
-      - name: Upload Released APK armv7
-        uses: actions/upload-artifact@v3
-        with:
-          name: scanner-armv7
-          path: app/build/outputs/apk/release/app-armeabi-v7a-release.apk
+#      - name: Upload Released APK armv7
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: scanner-armv7
+#          path: app/build/outputs/apk/release/app-armeabi-v7a-release.apk
 
       - name: Upload Released APK armv8
         uses: actions/upload-artifact@v3

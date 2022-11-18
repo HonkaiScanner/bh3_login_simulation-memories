@@ -21,7 +21,7 @@ public class SponsorData {
     @ColumnInfo
     private String deviceId;
     @ColumnInfo
-    private String scannerKey;
+    private final String scannerKey;
 
     public SponsorData(String name, String desc, String avatarImgUrl, String personalPageUrl, String deviceId, String scannerKey) {
         this.name = name;
@@ -92,7 +92,4 @@ public class SponsorData {
         return scannerKey;
     }
 
-    public void setScannerKey(String scannerKey) {
-        this.scannerKey = scannerKey;
-    }
 }

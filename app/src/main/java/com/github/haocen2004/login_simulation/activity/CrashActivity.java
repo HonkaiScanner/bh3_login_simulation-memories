@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.github.haocen2004.login_simulation.databinding.ActivityCrashBinding;
@@ -11,7 +12,7 @@ import com.github.haocen2004.login_simulation.util.Tools;
 
 import java.io.File;
 
-public class CrashActivity extends BaseActivity {
+public class CrashActivity extends AppCompatActivity {
     ActivityCrashBinding binding;
 
     @Override

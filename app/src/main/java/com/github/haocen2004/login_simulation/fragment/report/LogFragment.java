@@ -38,7 +38,7 @@ public class LogFragment extends Fragment {
         logRecyclerView.setHasFixedSize(true);
         logRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         logRecyclerView.setAdapter(loggerAdapter);
-        LogLiveData.getINSTANCE(getContext()).observe(getViewLifecycleOwner(), logData -> {
+        LogLiveData.getINSTANCE().observe(getViewLifecycleOwner(), logData -> {
 //
 //            loggerAdapter.ins
             if (!loadLogs) {

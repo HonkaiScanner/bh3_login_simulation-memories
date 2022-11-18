@@ -32,13 +32,6 @@ public class DialogLiveData extends LiveData<List<DialogData>> {
         postValue(logDataList);
     }
 
-    public void insertNewDialog(DialogData oldDialog, DialogData newDialog) {
-        int currPos = logDataList.indexOf(oldDialog);
-        logDataList.add(currPos + 1, newDialog);
-        postValue(logDataList);
-
-    }
-
     public void insertEulaDialog(DialogData dialogData) {
         logDataList.add(0, dialogData);
         postValue(logDataList);

@@ -278,7 +278,7 @@ public class Tencent implements LoginImpl {
                     String open_id = data_json2.getString("open_id");
                     String combo_token = data_json2.getString("combo_token");
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "13", "13", "tencent", 7, callback);
+                    roleData = new RoleData(open_id, "", combo_id, combo_token, "13", "13", "tencent", 7, callback);
                     isLogin = true;
 
                 } else {

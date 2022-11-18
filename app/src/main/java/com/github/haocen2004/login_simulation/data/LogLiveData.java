@@ -2,21 +2,17 @@ package com.github.haocen2004.login_simulation.data;
 
 import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
 
-import android.content.Context;
-
 import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LogLiveData extends LiveData<List<LogData>> {
-    private final Context context;
     private final List<LogData> logDataList;
     private final List<LogData> fullLogDataList;
     private static LogLiveData INSTANCE;
 
-    public LogLiveData(Context context) {
-        this.context = context.getApplicationContext();
+    public LogLiveData() {
         logDataList = new ArrayList<>();
         fullLogDataList = new ArrayList<>();
         logDataList.add(new LogData("长按", "复制日志", "长按该条复制所有"));
@@ -24,9 +20,9 @@ public class LogLiveData extends LiveData<List<LogData>> {
         postValue(logDataList);
     }
 
-    public static LogLiveData getINSTANCE(Context context) {
+    public static LogLiveData getINSTANCE() {
         if (INSTANCE == null) {
-            INSTANCE = new LogLiveData(context);
+            INSTANCE = new LogLiveData();
         }
         return INSTANCE;
     }

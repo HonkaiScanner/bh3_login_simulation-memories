@@ -94,7 +94,7 @@ public class Bilibili implements LoginImpl {
                     Logger.addBlacklist(combo_token);
 //                        String account_type = data_json2.getString("account_type");
 
-                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "14", "2", "bilibili", 0, callback);
+                    roleData = new RoleData(open_id, "", combo_id, combo_token, "14", "2", "bilibili", 0, callback);
                     isLogin = true;
 //                        makeToast(activity.getString(R.string.login_succeed));
                 }

@@ -189,7 +189,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         }
         activity = (AppCompatActivity) getActivity();
-        context = getContext();
+        context = requireContext();
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
     }
@@ -213,23 +213,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         }
         activity = (AppCompatActivity) getActivity();
-        context = getContext();
+        context = requireContext();
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
         binding = FragmentMainBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        try {
-//            if (loginImpl.isLogin()) {
-//                outState.putSerializable("roleData", loginImpl.getRole());
-//                Logger.d("onSaveInstanceState", "loginImpl saved.");
-//            }
-//        } catch (NullPointerException ignore) {}
-//    }
 
     @SuppressLint("SetTextI18n")
     private void refreshView() {
@@ -485,46 +475,51 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void genLoginImpl() {
-        switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
-            case "Official":
-                loginImpl = new Official(activity, this);
-                break;
-            case "Xiaomi":
-                loginImpl = new Xiaomi(activity, this);
-                //11
-                break;
-            case "Bilibili":
-                loginImpl = new Bilibili(activity, this);
-                //14
-                break;
-            case "UC":
-                if (pref.getBoolean("use_wdj", false)) {
-                    changeToWDJ(activity);
-                }
-                loginImpl = new UC(activity, this);
-                //20
-                break;
-            case "Vivo":
-                loginImpl = new Vivo(activity, this);
-                break;
-            case "Oppo":
-                loginImpl = new Oppo(activity, this);
-                break;
+        try {
+            switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
+                case "Official":
+                    loginImpl = new Official(activity, this);
+                    break;
+                case "Xiaomi":
+                    loginImpl = new Xiaomi(activity, this);
+                    //11
+                    break;
+                case "Bilibili":
+                    loginImpl = new Bilibili(activity, this);
+                    //14
+                    break;
+                case "UC":
+                    if (pref.getBoolean("use_wdj", false)) {
+                        changeToWDJ(activity);
+                    }
+                    loginImpl = new UC(activity, this);
+                    //20
+                    break;
+                case "Vivo":
+                    loginImpl = new Vivo(activity, this);
+                    break;
+                case "Oppo":
+                    loginImpl = new Oppo(activity, this);
+                    break;
 //            case "Flyme":
 //                loginImpl = new Flyme(activity, this);
 //                break;
-            case "YYB":
-                loginImpl = new Tencent(activity, this);
-                break;
-            case "Huawei":
-                loginImpl = new Huawei(activity, this);
-                break;
+                case "YYB":
+                    loginImpl = new Tencent(activity, this);
+                    break;
+                case "Huawei":
+                    loginImpl = new Huawei(activity, this);
+                    break;
 //            case "Qihoo":
 //                loginImpl = new Qihoo(activity, this);
 //                break;
-            default:
-                makeToast(R.string.error_wrong_server);
-                break;
+                default:
+                    makeToast(R.string.error_wrong_server);
+                    break;
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Logger.d(TAG,"init loginImpl on wrong time");
         }
     }
 
@@ -543,15 +538,24 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     }
 
-    private final ActivityResultLauncher permissionReqLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+    private final ActivityResultLauncher<String[]> permissionReqLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
         if (isGranted.containsValue(false)) {
+            for (String s : isGranted.keySet()) {
+                if (Objects.equals(isGranted.get(s), false)){
+                    Logger.d(TAG,"request permission "+isGranted.get(s)+" was denied.");
+                }
+            }
             Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
         }
     });
     //Constant.REQ_QR_CODE
-    private final ActivityResultLauncher reqQRCodeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+    private final ActivityResultLauncher<Intent> reqQRCodeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
         if (callback.getResultCode() == RESULT_OK) {
-            Bundle bundle = callback.getData().getExtras();
+
+            Bundle bundle = null;
+            if (callback.getData() != null) {
+                bundle = callback.getData().getExtras();
+            }
             if (bundle != null) {
                 String[] result = bundle.getStringArray(Constant.INTENT_EXTRA_KEY_QR_SCAN);
                 if (result != null) {
@@ -571,11 +575,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     });
 
     //Constant.REQ_CODE_SCAN_GALLERY
-    private final ActivityResultLauncher reqGalleryScanLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+    private final ActivityResultLauncher<Intent> reqGalleryScanLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
         if (callback.getResultCode() == RESULT_OK) {
             Bitmap bitmap;
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), callback.getData().getData());
+                if (callback.getData() != null) {
+                    bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), callback.getData().getData());
+                } else {
+                    Logger.d(TAG, "wrong album result");
+                    return;
+                }
                 List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
                 for (String s : result) {
                     Logger.d(TAG, "album result:" + s);
@@ -603,15 +612,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
 
     //Constant.REQ_PERM_WINDOW
-    private final ActivityResultLauncher reqPermWindowLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+    private final ActivityResultLauncher<Intent> reqPermWindowLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
         if (callback.getResultCode() == RESULT_OK) {
             fabScanner.showAlertScanner();
         }
     });
     //Constant.REQ_PERM_RECORD
-    private final ActivityResultLauncher reqPermRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
-        fabScanner.getResultApiCallback().onActivityResult(callback);
-    });
+    private final ActivityResultLauncher<Intent> reqPermRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> fabScanner.getResultApiCallback().onActivityResult(callback));
 
 
     private void startQrCode() {

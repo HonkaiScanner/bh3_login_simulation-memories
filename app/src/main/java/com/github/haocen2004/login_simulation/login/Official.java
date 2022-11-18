@@ -301,7 +301,7 @@ public class Official implements LoginImpl {
                     Logger.addBlacklist(combo_token);
                     Logger.addBlacklist(token);
 
-                    roleData = new RoleData(activity, uid, token, combo_id, combo_token, "1", "1", "", 0, loginCallback);
+                    roleData = new RoleData(uid, token, combo_id, combo_token, "1", "1", "", 0, loginCallback);
                     isLogin = true;
                 } else {
                     Logger.w(TAG, "handleMessage: 登录失败2：" + feedback);
