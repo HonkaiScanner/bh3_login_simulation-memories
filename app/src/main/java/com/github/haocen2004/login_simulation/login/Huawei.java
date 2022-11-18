@@ -160,7 +160,7 @@ public class Huawei implements LoginImpl {
                         verifyJson.put("ts", huaweiJson.get("ts"));
                         verifyJson.put("cpid", "890086000102026777");
                         verifyJson.put("playerId", huaweiJson.get("playerId"));
-                        verifyJson.put("playerLevel", "1");
+                        verifyJson.put("playerLevel", huaweiJson.getString("playerLevel"));
                         verifyJson.put("playerSSign", huaweiJson.get("gameAuthSign"));
                         verifyJson.put("time", 0);
                         verifyJson.put("is_teenager", false);
