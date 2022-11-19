@@ -53,7 +53,7 @@ android {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 46
+        versionCode 48
         versionName '1.7.0'
 //        versionCode Integer.parseInt(System.currentTimeMillis().toString()[7..12])
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
