@@ -368,9 +368,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             try {
                 if (loginImpl.isLogin()) {
 
-                    Intent pickIntent = new Intent(Intent.ACTION_PICK,
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                    Intent pickIntent = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        pickIntent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                        pickIntent.setType("image/*");
+                    } else {
+                        pickIntent = new Intent(Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                    }
                     reqGalleryScanLauncher.launch(pickIntent);
 
 
@@ -382,6 +388,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         });
         binding.cardViewMain.btnCard1Action1.setOnClickListener(view1 -> {
+
+            if (loginProgress) {
+                Log.makeToast("正在登陆中，无法切换服务器");
+                return;
+            }
 
             Logger.d(TAG, "切换服务器中 尝试打断自动登录");
             boolean autoLogin = pref.getBoolean("auto_login", false);
@@ -413,7 +424,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         refreshView();
                         dialogInterface.dismiss();
                     })
-                    .setNegativeButton(activity.getString(R.string.btn_cancel), null)
+                    .setNegativeButton(activity.getString(R.string.btn_cancel), (dialog, which) -> pref.edit().putBoolean("auto_login", autoLogin).apply())
                     .show();
         });
         binding.cardViewMain.btnCard1Action2.setOnClickListener(view1 -> {
@@ -620,6 +631,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     //Constant.REQ_PERM_RECORD
     private final ActivityResultLauncher<Intent> reqPermRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> fabScanner.getResultApiCallback().onActivityResult(callback));
 
+    private final ActivityResultLauncher qrCodeNoPermLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+        if (isGranted.containsValue(false)) {
+            Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            startQrCode();
+        }
+    });
 
     private void startQrCode() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -628,13 +646,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     .CAMERA)) {
                 Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
             }
-            requireActivity().registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
-                if (isGranted.containsValue(false)) {
-                    Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
-                } else {
-                    startQrCode();
-                }
-            }).launch(new String[]{Manifest.permission.CAMERA});
+            qrCodeNoPermLauncher.launch(new String[]{Manifest.permission.CAMERA});
             return;
         }
         Intent intent = new Intent(context, ScannerActivity.class);
@@ -888,7 +900,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             for (String s : map.keySet()) {
                 outState.putString(s, map.get(s));
             }
-            Logger.d("onSaveInstanceState", "saved RoleData");
+            Logger.d("onSaveInstanceState", "RoleData saved ");
         }
         super.onSaveInstanceState(outState);
     }

@@ -204,96 +204,7 @@ public class Huawei implements LoginImpl {
             }.start();
         });
     }
-//            Task<PlayerExtraInfo> task2 = client.getPlayerExtraInfo(player.getOpenId());
-//            Logger.addBlacklist(player.getPlayerSign());
-//            task2.addOnSuccessListener(playerExtraInfo -> {
-//                try {
-//
-//                    Logger.d(TAG,playerExtraInfo.getPlayerId());
-//                    Logger.d(TAG,playerExtraInfo.getOpenId());
-//                    Logger.d(TAG,playerExtraInfo.getPlayerDuration()+"");
-//                    Logger.d(TAG,playerExtraInfo.getIsAdult()+"");
-//                    Logger.d(TAG,playerExtraInfo.getIsRealName()+"");
-//
-//
-//                    verifyJson.put("time",playerExtraInfo.getPlayerDuration());
-//                    verifyJson.put("is_teenager",!playerExtraInfo.getIsAdult());
-//
-//                    new Thread(){
-//                        @Override
-//                        public void run() {
-//                            super.run();
-//                            JSONObject feedback_json = new JSONObject();
-//                            try {
-//                                feedback_json = new JSONObject(Objects.requireNonNull(Tools.verifyAccount(activity, "15", verifyJson.toString())));
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                            try {
-//                                if (feedback_json == null) {
-//                                    makeToast("Empty Return");
-//                                    callback.onLoginFailed();
-//                                } else if (feedback_json.getInt("retcode") != 0) {
-//                                    makeToast(feedback_json.getString("message"));
-//                                    callback.onLoginFailed();
-//                                } else {
-//                                    JSONObject data_json2 = feedback_json.getJSONObject("data");
-//                                    String combo_id = data_json2.getString("combo_id");
-//                                    String open_id = data_json2.getString("open_id");
-//                                    String combo_token = data_json2.getString("combo_token");
-//                                    Logger.addBlacklist(combo_token);
-////                        String account_type = data_json2.getString("account_type");
-//
-//                                    roleData = new RoleData(activity, open_id, "", combo_id, combo_token, "15", "2", "huawei", 0, callback);
-//                                    isLogin = true;
-////                        makeToast(activity.getString(R.string.login_succeed));
-//                                }
-////                doBHLogin();
-//                            } catch (JSONException e) {
-//                                CrashReport.postCatchedException(e);
-//                                makeToast("parse ERROR");
-//                                callback.onLoginFailed();
-//                            }
-//
-//
-//                        }
-//                    }.start();
-//
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }).addOnFailureListener(e -> {
-//                if (e instanceof ApiException) {
-//                    String result = "rtnCode:" + ((ApiException) e).getStatusCode();
-//                    Logger.d(TAG,result);
-//                    callback.onLoginFailed();
-//                } else {
-//                    Logger.d(TAG, e.toString());
-//                    e.printStackTrace();
-//                    callback.onLoginFailed();
-//                }
-//            });
-//
-//        }).addOnFailureListener(e -> {
-//            if (e instanceof ApiException) {
-//                String result = "rtnCode:" + ((ApiException) e).getStatusCode();
-//                // 获取玩家信息失败，不允许进入游戏，并根据错误码处理
-//                if (7400 == ((ApiException) e).getStatusCode()||7018 == ((ApiException) e).getStatusCode()) {
-//                    // 7400表示用户未签署联运协议，需要继续调用init接口
-//                    // 7018表示初始化失败，需要继续调用init接口
-//                    login();
-//                } else {
-//                    Logger.d(TAG,result);
-//                    callback.onLoginFailed();
-//                }
-//            } else {
-//                Logger.d(TAG,e.toString());
-//                e.printStackTrace();
-//                callback.onLoginFailed();
-//            }
-//         });
-//    }
+
 
     @Override
     public void logout() {
@@ -305,8 +216,6 @@ public class Huawei implements LoginImpl {
     @Override
     public void login() {
         if (HUAWEI_INIT) {
-//            gameSdk = BSGameSdk.getInstance();
-//            preferences = activity.getSharedPreferences("bili_user", Context.MODE_PRIVATE);
             doHuaweiLogin();
         } else {
             HuaweiMobileServicesUtil.setApplication(activity.getApplication());
