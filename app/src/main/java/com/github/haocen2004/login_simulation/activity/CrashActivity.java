@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityCrashBinding;
 import com.github.haocen2004.login_simulation.util.Tools;
 
@@ -21,6 +22,9 @@ public class CrashActivity extends AppCompatActivity {
         binding = ActivityCrashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Tools.saveBoolean(this, "has_crash", false);
+        binding.textView5.setText(getString(R.string.crash_hint2).replace("{packageName}", getPackageName()));
+        binding.textView6.setText(Tools.getString(this, "crash-report-name"));
+        binding.textView7.setText(Tools.getString(this, "UUID"));
         binding.button.setOnClickListener(view -> openAssignFolder(getExternalFilesDir(null) + "/crash-report/" + Tools.getString(this, "crash-report-name")));
     }
 

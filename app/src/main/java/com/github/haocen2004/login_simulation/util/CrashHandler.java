@@ -141,7 +141,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         pw.println(Build.MODEL);
 
         //cpu架构
-        pw.print("SUPPORTED ABI: ");
+        pw.print("Support ABI: ");
         StringBuilder supportedABI = new StringBuilder();
         for (String abi : Build.SUPPORTED_ABIS) {
             supportedABI.append(abi);
