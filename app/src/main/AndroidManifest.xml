@@ -23,6 +23,9 @@
         android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" /> <!-- Ignore system app -->
     <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
+    <!--  vivo sdk require  -->
+    <uses-permission android:name="vivo.game.permission.OPEN_JUMP_INTENTS" />
+
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
