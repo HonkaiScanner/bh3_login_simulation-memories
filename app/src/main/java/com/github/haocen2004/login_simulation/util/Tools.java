@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 public class Tools {
     private static final String TAG = "Tools";
@@ -138,6 +139,15 @@ public static void changeToWDJ(Activity activity) {
 
     public static String getSystemVersion() {
         return Build.VERSION.RELEASE;
+    }
+
+    public static String getUUID(Context context) {
+        String uuid = Tools.getString(context, "uuid");
+        if (uuid.equals("")) {
+            uuid = UUID.randomUUID().toString();
+            Tools.saveString(context, "uuid", uuid);
+        }
+        return uuid;
     }
 
     public static String getString(Context paramContext, String paramString) {

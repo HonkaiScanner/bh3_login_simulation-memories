@@ -20,8 +20,6 @@ import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;
-
-import java.util.UUID;
 //import com.tencent.ysdk.api.YSDKApi;
 
 public class MainApplication extends Application {
@@ -36,12 +34,7 @@ public class MainApplication extends Application {
         ToastUtils.init(this);
         ToastUtils.setGravity(Gravity.BOTTOM, 0, 50);
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
-        String uuid = Tools.getString(this, "uuid");
-        if (uuid.equals("")) {
-            uuid = UUID.randomUUID().toString();
-            Tools.saveString(this, "uuid", uuid);
-        }
-        strategy.setDeviceID(uuid);
+        strategy.setDeviceID(Tools.getUUID(this));
         strategy.setDeviceModel(Tools.getDeviceModel());
         CrashReport.setIsDevelopmentDevice(getApplicationContext(), BuildConfig.DEBUG);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG, strategy);
