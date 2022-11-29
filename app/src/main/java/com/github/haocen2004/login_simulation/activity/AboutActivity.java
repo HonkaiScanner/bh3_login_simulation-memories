@@ -56,7 +56,7 @@ public class AboutActivity extends AbsAboutActivity {
         items.add(new License("AndroidX", "Google", License.APACHE_2, "https://github.com/androidx-releases"));
 
         items.add(new Category("您已使用扫码器成功登陆 " + Tools.getInt(this, "succ_count") + " 次"));
-        items.add(new Category(Tools.getString(this, "uuid")));
+        items.add(new Category(Tools.getUUID(this)));
     }
 
 }

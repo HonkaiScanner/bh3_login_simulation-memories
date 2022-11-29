@@ -24,7 +24,7 @@ public class CrashActivity extends AppCompatActivity {
         Tools.saveBoolean(this, "has_crash", false);
         binding.textView5.setText(getString(R.string.crash_hint2).replace("{packageName}", getPackageName()));
         binding.textView6.setText(Tools.getString(this, "crash-report-name"));
-        binding.textView7.setText(Tools.getString(this, "UUID"));
+        binding.textView7.setText(Tools.getUUID(this));
         binding.button.setOnClickListener(view -> openAssignFolder(getExternalFilesDir(null) + "/crash-report/" + Tools.getString(this, "crash-report-name")));
     }
 
