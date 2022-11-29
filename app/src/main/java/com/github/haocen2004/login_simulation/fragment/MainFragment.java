@@ -170,23 +170,33 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         Logger.d("SPCheck", "当前线程结束");
     }
 
+    private void loadSavedData(Bundle savedInstanceState, String loadTag) {
+        if (savedInstanceState.containsKey("combo_token")) {
+            Logger.d(loadTag, "detect saved RoleData,loading");
+            Map<String, String> map = new HashMap<>();
+            for (String s : savedInstanceState.keySet()) {
+                try {
+                    map.put(s, savedInstanceState.getString(s));
+                    savedInstanceState.remove(s);
+                } catch (ClassCastException ignore) {
+                }
+            }
+            try {
+                RoleData roleData = new RoleData(map, this);
+                genLoginImpl();
+                loginImpl.setRole(roleData);
+                Logger.d(loadTag, "loaded RoleData");
+            } catch (NullPointerException e) {
+                Logger.d(loadTag, "load RoleData failed");
+            }
+        }
+    }
+
     @Override
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("combo_token")) {
-                Map<String, String> map = new HashMap<>();
-                for (String s : savedInstanceState.keySet()) {
-                    try {
-                        map.put(s, savedInstanceState.getString(s));
-                    } catch (ClassCastException ignore) {
-                    }
-                }
-                RoleData roleData = new RoleData(map, this);
-                genLoginImpl();
-                loginImpl.setRole(roleData);
-                Logger.d("onCreate", "loaded RoleData");
-            }
+            loadSavedData(savedInstanceState, "onCreate");
         }
         activity = (AppCompatActivity) getActivity();
         context = requireContext();
@@ -198,19 +208,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("combo_token")) {
-                Map<String, String> map = new HashMap<>();
-                for (String s : savedInstanceState.keySet()) {
-                    try {
-                        map.put(s, savedInstanceState.getString(s));
-                    } catch (ClassCastException ignore) {
-                    }
-                }
-                RoleData roleData = new RoleData(map, this);
-                genLoginImpl();
-                loginImpl.setRole(roleData);
-                Logger.d("onCreateView", "loaded RoleData");
-            }
+            loadSavedData(savedInstanceState, "onCreateView");
         }
         activity = (AppCompatActivity) getActivity();
         context = requireContext();
