@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.AndroidRuntimeException;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
 
@@ -108,7 +109,13 @@ public static void changeToWDJ(Activity activity) {
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
         intent.setData(uri);
-        context.startActivity(intent);
+        try {
+            context.startActivity(intent);
+        } catch (AndroidRuntimeException e) {
+            Logger.d(TAG, "context requires the FLAG_ACTIVITY_NEW_TASK flag.");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
     }
 
     public static String getDeviceID(Context paramContext) {
