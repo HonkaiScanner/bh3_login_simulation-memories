@@ -95,7 +95,13 @@ public class Tencent implements LoginImpl {
                     if (activityResult.getResultCode() == RESULT_OK) {
                         Logger.d("tencent login", "on succ callback");
 
-                        String url_text = activityResult.getData().getStringExtra(INTENT_EXTRA_KEY_TENCENT_LOGIN);
+                        String url_text = null;
+                        if (activityResult.getData() != null) {
+                            url_text = activityResult.getData().getStringExtra(INTENT_EXTRA_KEY_TENCENT_LOGIN);
+                        } else {
+                            callback.onLoginFailed();
+                            return;
+                        }
                         URL url;
                         try {
                             url = new URL(url_text);
@@ -138,7 +144,7 @@ public class Tencent implements LoginImpl {
                     }
                 });
 //                callback.getCallbackFragment().startActivityForResult(intent, REQ_TENCENT_WEB_LOGIN_CALLBACK);
-                callback.onLoginFailed();
+//                callback.onLoginFailed();
             }
 //            return;
         } else {
