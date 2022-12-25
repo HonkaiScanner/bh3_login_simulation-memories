@@ -294,10 +294,10 @@ public class QRScanner {
         if (roleData.isUc_sign()) {
             raw_json.put("is_wdj", getDefaultSharedPreferences(activity).getBoolean("use_wdj", false));
         }
-        if (!open_token.isEmpty()) {
-            raw_json.put("open_token", open_token)
-                    .put("guest", false);
-        }
+            if (open_token != null && !open_token.isEmpty()) {
+                raw_json.put("open_token", open_token)
+                        .put("guest", false);
+            }
 
 
         dispatch_json.put("account_url", oaserver.getString("account_url"))
@@ -336,8 +336,8 @@ public class QRScanner {
             String sign2 = Encrypt.bh3Sign(qr_check_map);
             confirm_json.put("sign", sign2);
         } catch (Exception e) {
-            makeToast("扫码参数构建错误！\n开始上传错误数据...");
-            CrashReport.postCatchedException(e);
+            makeToast("扫码参数构建错误!");
+//            CrashReport.postCatchedException(e);
             e.printStackTrace();
             return;
         }

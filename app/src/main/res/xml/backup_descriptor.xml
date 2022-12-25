@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<full-backup-content>
-    <exclude
-        domain="sharedpref"
-        path="bili_user.xml" />
-    <exclude
-        domain="sharedpref"
-        path="official_user.xml" />
-</full-backup-content>

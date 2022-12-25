@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onNext(@NotNull LCUser user) {
                                 LCUser.changeCurrentUser(user, true);
                                 HAS_ACCOUNT = true;
-                                app_pref.edit().putString("custom_username", user.getString("custom_username")).apply();
+                                app_pref.edit().putBoolean("has_account", true).putString("custom_username", user.getString("custom_username")).apply();
                                 Logger.d(TAG, "Succeed.");
                                 SP_CHECKED = true;
 

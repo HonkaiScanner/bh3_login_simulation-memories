@@ -2,6 +2,7 @@ package com.github.haocen2004.login_simulation.util;
 
 import static android.app.Activity.RESULT_OK;
 import static com.github.haocen2004.login_simulation.util.Constant.BAG_ALTER_NOTIFICATION;
+import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -84,12 +85,14 @@ public class FabScanner extends Service {
     private int mResultCode;
     private Intent mResultData;
     private boolean needStop;
-    private ActivityResultLauncher activityResultLauncher;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+    private XToast<?> toastInst;
+    private int counter = 0;
 
     public FabScanner() {
     }
 
-    public void setActivityResultLauncher(ActivityResultLauncher activityResultLauncher) {
+    public void setActivityResultLauncher(ActivityResultLauncher<Intent> activityResultLauncher) {
         this.activityResultLauncher = activityResultLauncher;
     }
 
@@ -148,15 +151,6 @@ public class FabScanner extends Service {
     }
 
 
-//    public void setData(int resultCode, Intent data) {
-//        mResultCode = resultCode;
-//        mResultData = data;
-//        sMediaProjection = mProjectionManager.getMediaProjection(mResultCode, mResultData);
-//        hasData = true;
-//        showAlertScanner();
-//
-//    }
-
     public void setsMediaProjection(MediaProjection sMediaProjection) {
         this.sMediaProjection = sMediaProjection;
         hasData = true;
@@ -185,8 +179,9 @@ public class FabScanner extends Service {
                 activityResultLauncher.launch(mProjectionManager.createScreenCaptureIntent());
 
 //                fragment.startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQ_PERM_RECORD);
-            } else {
-                new XToast<>(activity.getApplication())
+            } else if (toastInst == null) {
+                counter++;
+                toastInst = new XToast<>(activity.getApplication())
                         .setView(R.layout.fab_scanner)
                         .setGravity(Gravity.END | Gravity.BOTTOM)
                         .setYOffset(200)
@@ -249,22 +244,24 @@ public class FabScanner extends Service {
                                                     , height, Bitmap.Config.ARGB_8888);
                                             bitmap.copyPixelsFromBuffer(buffer);
                                             Bitmap.createBitmap(bitmap, 0, 0, width, height);
-                                            try {
-                                                String path = activity.getExternalFilesDir(null) + "/screenshot/";
-                                                File dir = new File(path);
-                                                if (!dir.exists()) {
-                                                    dir.mkdirs();
-                                                }
-                                                File file = new File(path + System.currentTimeMillis() + ".jpg");
-                                                FileOutputStream out = new FileOutputStream(file);
-                                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                                                out.flush();
-                                                out.close();
-                                                //保存图片后发送广播通知更新数据库
+                                            if (DEBUG_MODE) {
+                                                try {
+                                                    String path = activity.getExternalFilesDir(null) + "/screenshot/";
+                                                    File dir = new File(path);
+                                                    if (!dir.exists()) {
+                                                        dir.mkdirs();
+                                                    }
+                                                    File file = new File(path + System.currentTimeMillis() + ".jpg");
+                                                    FileOutputStream out = new FileOutputStream(file);
+                                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                                                    out.flush();
+                                                    out.close();
+                                                    //保存图片后发送广播通知更新数据库
 //                                            Uri uri = Uri.fromFile(file);
 //                                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
                                             List<String> urls = WeChatQRCodeDetector.detectAndDecode(bitmap);
                                             url = urls.toArray(new String[0]);
@@ -278,8 +275,9 @@ public class FabScanner extends Service {
                                                     stopForeground(true);
                                                     needStop = true;
                                                     toast.cancel();
+                                                    toast.recycle();
                                                 } else {
-                                                    Logger.d(TAG, "keep capture = true,continue.");
+                                                    Logger.d(TAG, "keep capture is true,continue.");
                                                     isScreenCaptureStarted = false;
                                                 }
                                             } else {
@@ -301,9 +299,12 @@ public class FabScanner extends Service {
                                 }
                             }, mHandler);
                             sMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
-                        })
-                        .show();
+                        });
+                toastInst.show();
 //            Logger.setUseSnackbar(false);
+            } else {
+                counter++;
+                Log.makeToast("你只可以打开一个悬浮窗！");
             }
         }
     }
@@ -314,6 +315,7 @@ public class FabScanner extends Service {
         mHandler.post(() -> {
             if (sMediaProjection != null) {
                 sMediaProjection.stop();
+                sMediaProjection = null;
             }
         });
     }

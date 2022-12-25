@@ -10,6 +10,7 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="8dp"
+    style="@style/Widget.Material3.CardView.Elevated"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
@@ -44,7 +45,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/loginText"
+                android:id="@+id/loginStateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -54,14 +55,15 @@
 
 
             <TextView
-                android:id="@+id/loginText2"
+                android:id="@+id/sponsorStateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="赞助者状态：检查中..."
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/loginText" />
+                app:layout_constraintTop_toBottomOf="@+id/loginStateText"
+                tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline6"
@@ -88,7 +90,8 @@
                 app:layout_constraintBottom_toBottomOf="@id/progressBar"
                 app:layout_constraintEnd_toEndOf="@+id/progressBar"
                 app:layout_constraintStart_toStartOf="@+id/progressBar"
-                app:layout_constraintTop_toTopOf="@+id/progressBar" />
+                app:layout_constraintTop_toTopOf="@+id/progressBar"
+                android:contentDescription="loading" />
 
             <ImageView
                 android:id="@+id/imageViewArrow"
@@ -102,7 +105,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_card_1_action1"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -114,11 +117,11 @@
                 app:layout_constraintEnd_toStartOf="@+id/btn_card_1_action2"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/loginText2" />
+                app:layout_constraintTop_toBottomOf="@+id/sponsorStateText" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_card_1_action2"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/btn_card_1_action1"
@@ -132,7 +135,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_card_1_action3"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/btn_card_1_action1"

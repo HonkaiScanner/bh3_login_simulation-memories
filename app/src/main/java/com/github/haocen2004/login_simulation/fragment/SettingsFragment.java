@@ -34,6 +34,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         SharedPreferences app_pref = getDefaultSharedPreferences(getContext());
+        findPreference("debug_mode").setOnPreferenceChangeListener(((preference, newValue) -> {
+            Logger.getLogger(null).makeToast("切换调试模式将在重启扫码器后生效");
+            return true;
+        }));
+
         findPreference("check_update").setOnPreferenceChangeListener((preference, newValue) -> {
             if (!((Boolean) newValue)) {
                 final AlertDialog.Builder normalDialog = new AlertDialog.Builder(requireContext());

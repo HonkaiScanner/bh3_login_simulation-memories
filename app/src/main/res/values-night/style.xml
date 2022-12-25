@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="ScannerAppTheme" parent="Theme.Material3.Light.Rikka">
+    <style name="ScannerAppTheme" parent="Theme.Material3.Dark.Rikka">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>

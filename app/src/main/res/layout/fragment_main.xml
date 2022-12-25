@@ -47,7 +47,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/slot1"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:clickable="true"
@@ -58,7 +58,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/slot2"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:clickable="true"
@@ -69,7 +69,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/slot3"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:clickable="true"
@@ -94,7 +94,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/radioPc"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -103,7 +103,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/radioAndroid"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -112,7 +112,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/radioIOS"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -142,7 +142,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_scan"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -157,7 +157,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_selpic"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

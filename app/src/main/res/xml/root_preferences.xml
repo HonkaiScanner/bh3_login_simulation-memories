@@ -3,37 +3,33 @@
 
     <PreferenceCategory app:title="@string/basic_header">
 
-        <ListPreference
+        <rikka.preference.SimpleMenuPreference
             android:id="@+id/listPrefServer"
             android:entries="@array/server_types"
             android:entryValues="@array/server_types_value"
             android:key="server_type"
             android:title="@string/settings_servers" />
-        <SwitchPreferenceCompat
+        <!--        <ListPreference-->
+        <!--            android:id="@+id/listPrefServer"-->
+        <!--            android:entries="@array/server_types"-->
+        <!--            android:entryValues="@array/server_types_value"-->
+        <!--            android:key="server_type"-->
+        <!--            android:summary="%s"-->
+        <!--            android:title="@string/settings_servers" />-->
+        <SwitchPreference
             app:key="auto_confirm"
             app:title="@string/settings_fast_login" />
-        <!--        <SwitchPreference-->
-        <!--            android:defaultValue="false"-->
-        <!--            android:key="create_short_cut"-->
-        <!--            android:title="@string/create_short_cut"-->
-        <!--            android:visibility="gone" />-->
-        <!--        <EditTextPreference-->
-        <!--            android:key="custom_username"-->
-        <!--            android:selectAllOnFocus="true"-->
-        <!--            android:singleLine="true"-->
-        <!--            android:title="@string/custom_username"-->
-        <!--            android:visibility="gone" />-->
         <SwitchPreference
             android:defaultValue="true"
             android:key="check_update"
             android:title="@string/settings_update" />
-        <ListPreference
-            android:id="@+id/dark_switch"
+        <rikka.preference.SimpleMenuPreference
             android:defaultValue="-1"
             android:entries="@array/dark_type"
             android:entryValues="@array/dark_type_values"
             android:key="dark_type"
-            android:title="@string/dark_mode" />
+            android:summary="%s"
+            android:title="@string/dark_theme" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/adv_header">
 

@@ -3,6 +3,7 @@ package com.github.haocen2004.login_simulation.fragment;
 import static android.app.Activity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
 import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
@@ -135,8 +136,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
         try {
             if (!CHECK_VER) {
-                binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
-//            binding.cardViewMain.loginText2.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
+                binding.cardViewMain.sponsorStateText.setVisibility(View.INVISIBLE);
+//            binding.cardViewMain.sponsorStateText.setText(getString(R.string.sp_login_pref) + getString(R.string.update_check_off));
                 if (currLoginTry) {
                     Logger.d("AutoLogin", "无自动更新 - 等待自动登陆尝试中...");
                     spCheckHandle.postDelayed(this::delaySPCheck, 1500);
@@ -145,19 +146,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 return;
             }
             if (!SP_CHECKED) {
-                if (pref.getBoolean("has_account", false)) {
-                    binding.cardViewMain.loginText2.setVisibility(View.VISIBLE);
+                if (HAS_ACCOUNT) {
+                    binding.cardViewMain.sponsorStateText.setVisibility(View.VISIBLE);
                     Logger.d("SPCheck", "等待赞助者账号登陆中...");
                     spCheckHandle.postDelayed(this::delaySPCheck, 1500);
                     return;
                 } else {
                     Logger.d("SPCheck", "未登录赞助者账号");
-                    binding.cardViewMain.loginText2.setText(activity.getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
+                    binding.cardViewMain.sponsorStateText.setText(activity.getString(R.string.sp_login_pref) + (HAS_ACCOUNT ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
                     SP_CHECKED = true;
                 }
             } else {
                 Logger.d("SPCheck", "结束赞助者信息检查");
-                binding.cardViewMain.loginText2.setText(activity.getString(R.string.sp_login_pref) + (pref.getBoolean("has_account", false) ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
+                binding.cardViewMain.sponsorStateText.setText(activity.getString(R.string.sp_login_pref) + (HAS_ACCOUNT ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
             }
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -226,7 +227,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.tokenCheckBox.setVisibility(View.GONE);
         binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
-//        binding.cardViewMain.loginText2.setVisibility(View.INVISIBLE);
+//        binding.cardViewMain.sponsorStateText.setVisibility(View.INVISIBLE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = activity.getString(R.string.types_official);
@@ -300,10 +301,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
 
         }
-        binding.cardViewMain.loginText.setText(activity.getString(R.string.bh_login_pref) + (isLogin ? loginImpl.getUsername() : activity.getString(R.string.login_false)));
+        binding.cardViewMain.loginStateText.setText(activity.getString(R.string.bh_login_pref) + (isLogin ? loginImpl.getUsername() : activity.getString(R.string.login_false)));
         binding.cardViewMain.btnCard1Action2.setIconResource(pref.getBoolean("auto_login", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
         binding.cardViewMain.btnCard1Action3.setIconResource(pref.getBoolean("auto_confirm", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
-//        binding.cardViewMain.loginText2.setText("赞助者状态：" + (HAS_ACCOUNT ? "已登录" : "未登录"));
+        binding.cardViewMain.sponsorStateText.setText("赞助者状态：" + (HAS_ACCOUNT ? "已登录" : "未登录"));
         binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
 
 
@@ -429,14 +430,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             boolean newStatus = !pref.getBoolean("auto_login", false);
             pref.edit().putBoolean("auto_login", newStatus).apply();
             makeToast(activity.getString(R.string.auto_login_pref) + (newStatus ? activity.getString(R.string.boolean_true) : activity.getString(R.string.boolean_false)));
-//            binding.cardViewMain.loginText2.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
+//            binding.cardViewMain.sponsorStateText.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
             binding.cardViewMain.btnCard1Action2.setIconResource(newStatus ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
         });
         binding.cardViewMain.btnCard1Action3.setOnClickListener(view1 -> {
             boolean newStatus = !pref.getBoolean("auto_confirm", false);
             pref.edit().putBoolean("auto_confirm", newStatus).apply();
             makeToast(activity.getString(R.string.confirm_prefix) + (newStatus ? activity.getString(R.string.boolean_true) : activity.getString(R.string.boolean_false)));
-//            binding.cardViewMain.loginText2.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
+//            binding.cardViewMain.sponsorStateText.setText("自动登录：" + (pref.getBoolean("auto_login", false) ? getString(R.string.boolean_true) : getString(R.string.boolean_false)));
             binding.cardViewMain.btnCard1Action3.setIconResource(newStatus ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
         });
         binding.aboutTextView.setOnClickListener(v -> {
