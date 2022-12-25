@@ -52,6 +52,7 @@ public class Vivo implements LoginImpl {
 
         @Override
         public void onVivoAccountLoginCancel() {
+            makeToast(activity.getString(R.string.login_cancel));
             isLogin = false;
         }
     };
