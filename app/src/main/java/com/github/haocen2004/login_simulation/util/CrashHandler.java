@@ -53,7 +53,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Tools.saveBoolean(mContext, "has_crash", true);
         Tools.saveBoolean(mContext, "last_login_succeed", false);
 
-        android.os.Process.killProcess(android.os.Process.myPid());
+//        android.os.Process.killProcess(android.os.Process.myPid());
 
     }
 
