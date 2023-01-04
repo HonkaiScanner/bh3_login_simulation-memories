@@ -140,7 +140,7 @@ public class Huawei implements LoginImpl {
                     JSONObject huaweiJson = null;
 //                    while (true) {
                     Logger.d(TAG, finalBody);
-                    String huaweiFeedback = Network.sendPost("https://jgw-drcn.jos.dbankcloud.cn/gameservice/api/gbClientApi", finalBody);
+                    String huaweiFeedback = Network.sendPost("https://jos-open-api.cloud.huawei.com/gameservice/api/gbClientApi", finalBody);
 //                    Logger.d(TAG, huaweiFeedback);
                     try {
                         huaweiJson = new JSONObject(huaweiFeedback);
@@ -168,7 +168,7 @@ public class Huawei implements LoginImpl {
                         e.printStackTrace();
                     }
 
-                    JSONObject feedback_json = new JSONObject();
+                    JSONObject feedback_json = null;
                     try {
                         feedback_json = new JSONObject(Objects.requireNonNull(Tools.verifyAccount(activity, "15", verifyJson.toString())));
                     } catch (JSONException e) {
