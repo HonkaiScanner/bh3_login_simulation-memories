@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.LogData;
+import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.util.Logger;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class LoggerAdapter extends RecyclerView.Adapter<LoggerAdapter.LoggerView
         holder.itemView.setOnLongClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
             if (LoggerData.getLevel().equals("长按")) {
-                ClipData clip = ClipData.newPlainText("ScannerLog", allLogs.toString());
+                ClipData clip = ClipData.newPlainText("ScannerLog", LogLiveData.getINSTANCE().getDebugLogList().toString());
                 clipboard.setPrimaryClip(clip);
                 Logger.getLogger(null).makeToast("已复制全部日志到剪贴板");
             } else {
