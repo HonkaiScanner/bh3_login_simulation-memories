@@ -7,8 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
+import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.data.LogData;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -20,8 +19,9 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
-public class CrashHandler implements Thread.UncaughtExceptionHandler {
+public class CrashHandler extends CrashReport.CrashHandleCallback {
     private static final String TAG = "CrashHandler";
     @SuppressLint("StaticFieldLeak")
     private static final CrashHandler instance = new CrashHandler();
@@ -30,31 +30,48 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static final String FILE_NAME_SUFFIX = ".txt";
     private Context mContext;
 
-
     @Override
-    public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
+    public synchronized Map<String, String> onCrashHandleStart(int i, String s, String s1, String s2) {
+
         Log.e(TAG, "DETECT CRASH");
+        String crashInfo = convert2StackDump(s, s1, s2);
         try {
             Log.d(TAG, "DUMP TO SDCARD");
 //            Log.d(TAG,"PATH:" + PATH);
-            dumpExceptionToSDCard(e);
+            dumpExceptionToSDCard(crashInfo);
             Log.d(TAG, "DUMP TO SDCARD SUCCEED");
-            CrashReport.postCatchedException(e, t);
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         Log.d(TAG, "CRASH DETAIL");
-        e.printStackTrace();
+        Log.d(TAG, crashInfo);
 
-        Log.d(TAG, "START CRASH ACTIVITY");
+        Log.d(TAG, "MARK CRASH ACTIVITY");
 
         Tools.saveBoolean(mContext, "has_crash", true);
         Tools.saveBoolean(mContext, "last_login_succeed", false);
 
-//        android.os.Process.killProcess(android.os.Process.myPid());
+        ActivityManager.getInstance().clearActivity();
 
+        return super.onCrashHandleStart(i, s, s1, s2);
+    }
+
+    private String convert2StackDump(String errorType,
+                                     String errorMessage, String errorStack) {
+        StringBuilder output = new StringBuilder();
+        output.append(errorType)
+                .append(": ")
+                .append(errorMessage);
+        for (String s : errorStack.split("\n")) {
+            if (s.length() > 1) {
+                output.append("\n\tat ")
+                        .append(s);
+            }
+
+        }
+        return output.toString();
     }
 
     private CrashHandler() {
@@ -65,13 +82,13 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     public void init(Context context) {
-        Thread.UncaughtExceptionHandler mDefaultCrashHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(this);
+//        Thread.UncaughtExceptionHandler mDefaultCrashHandler = Thread.getDefaultUncaughtExceptionHandler();
+//        Thread.setDefaultUncaughtExceptionHandler(this);
         mContext = context;
         PATH = mContext.getExternalFilesDir(null) + "/crash-report/";
     }
 
-    private void dumpExceptionToSDCard(Throwable ex) {
+    private void dumpExceptionToSDCard(String errorStack) {
 
         File dir = new File(PATH);
         if (!dir.exists()) {
@@ -90,7 +107,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             pw.println(time);
             dumpPhoneInfo(pw);
             pw.println();
-            ex.printStackTrace(pw);
+            pw.println(errorStack);
+//            ex.printStackTrace(pw);
             pw.println();
             pw.println("Logs: ");
             dumpLogs(pw);

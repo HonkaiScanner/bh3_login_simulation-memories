@@ -113,7 +113,7 @@
 
     <string name="crash_hint">检测到扫码器最近发生了崩溃\n请带好崩溃报告及时找开发者反馈!</string>
     <string name="crash_btn">发送崩溃日志</string>
-    <string name="crash_hint2">按返回键/全面屏返回手势\n即可返回扫码器主页\n\n\n更多崩溃日志请前往\n/Android/data/{packageName}/files/crash-report/\n查看</string>
+    <string name="crash_hint2">按返回键/全面屏返回手势\n即可返回扫码器主页\n请不要只发送本页面截图！\n请不要只发送本页面截图！\n请不要只发送本页面截图！\n\n更多崩溃日志请前往\n/Android/data/{packageName}/files/crash-report/\n查看</string>
 
 
 </resources>
