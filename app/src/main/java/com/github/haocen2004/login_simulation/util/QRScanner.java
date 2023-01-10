@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.data.RoleData;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -90,7 +91,7 @@ public class QRScanner {
                             makeToast("自动退出已启用\n将在5s后自动退出扫码器");
                             defaultHandle.postDelayed(() -> {
                                 if (getDefaultSharedPreferences(activity).getBoolean("quit_on_success", false)) {
-                                    System.exit(0);
+                                    ActivityManager.getInstance().clearActivity();
                                 }
                             }, 5000);
 

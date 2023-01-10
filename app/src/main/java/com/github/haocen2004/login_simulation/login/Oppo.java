@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
 import com.nearme.game.sdk.GameCenterSDK;
 import com.nearme.game.sdk.callback.ApiCallback;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -28,7 +27,6 @@ public class Oppo implements LoginImpl {
     private String uid;
     private String token;
     private RoleData roleData;
-    private final String device_id;
     private static final String TAG = "Oppo Login";
     private final String appSecret = "f303388D89043bfEB1A667cfE42ea47E";
     private final GameCenterSDK sdk;
@@ -39,7 +37,6 @@ public class Oppo implements LoginImpl {
     public Oppo(Activity activity, LoginCallback callback) {
         this.callback = callback;
         this.activity = activity;
-        device_id = Tools.getDeviceID(activity);
         GameCenterSDK.init(appSecret, activity);
         sdk = GameCenterSDK.getInstance();
         Log = Logger.getLogger(activity);

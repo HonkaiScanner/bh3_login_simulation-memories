@@ -16,7 +16,6 @@ import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
 import com.vivo.unionsdk.open.VivoAccountCallback;
 import com.vivo.unionsdk.open.VivoUnionSDK;
 
@@ -29,7 +28,6 @@ public class Vivo implements LoginImpl {
     private String uid;
     private String token;
     private RoleData roleData;
-    private final String device_id;
     private static final String TAG = "Vivo Login";
     private final Logger Log;
     private final LoginCallback loginCallback;
@@ -60,7 +58,6 @@ public class Vivo implements LoginImpl {
     public Vivo(Activity activity, LoginCallback callback) {
         loginCallback = callback;
         this.activity = activity;
-        device_id = Tools.getDeviceID(activity);
         VivoUnionSDK.initSdk(activity, VIVO_APP_KEY, BuildConfig.DEBUG);
         VivoUnionSDK.registerAccountCallback(activity, this.callback);
         Log = Logger.getLogger(activity);
@@ -73,7 +70,7 @@ public class Vivo implements LoginImpl {
 
     @Override
     public void logout() {
-
+        Log.makeToast("Vivo渠道未提供主动切换账号功能！");
     }
 
     @Override

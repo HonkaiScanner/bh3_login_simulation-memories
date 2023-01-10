@@ -2,6 +2,7 @@ package com.github.haocen2004.login_simulation.activity;
 
 import static com.github.haocen2004.login_simulation.util.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -11,8 +12,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
@@ -20,7 +19,7 @@ import com.github.haocen2004.login_simulation.databinding.ActivityTencentLoginBi
 import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
 
-public class TencentLoginActivity extends AppCompatActivity {
+public class TencentLoginActivity extends BaseActivity {
 
     private ActivityTencentLoginBinding binding;
 
@@ -28,6 +27,7 @@ public class TencentLoginActivity extends AppCompatActivity {
 
     private final String TAG = "Tencent Web login";
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Keep;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -43,7 +42,6 @@ public class Tencent implements LoginImpl {
     private final LoginCallback callback;
     private String verify_data;
     private boolean first_auto_login = false;
-    private ActivityResultLauncher activityResultLauncher;
 
     public Tencent(AppCompatActivity activity, LoginCallback loginCallback) {
         callback = loginCallback;

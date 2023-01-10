@@ -263,10 +263,9 @@ public class Official implements LoginImpl {
                     }
 
                     public void onFailed(GT3ErrorBean param1GT3ErrorBean) {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("onError :");
-                        stringBuilder.append(param1GT3ErrorBean.toString());
-                        Logger.d(TAG, stringBuilder.toString());
+                        String stringBuilder = "onError :" +
+                                param1GT3ErrorBean.toString();
+                        Logger.d(TAG, stringBuilder);
                         loginCallback.onLoginFailed();
                     }
                 });

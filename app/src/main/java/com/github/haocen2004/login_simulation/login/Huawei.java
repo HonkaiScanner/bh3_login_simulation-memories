@@ -5,6 +5,7 @@ import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Looper;
 import android.text.TextUtils;
 
@@ -36,8 +37,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class Huawei implements LoginImpl {
@@ -126,12 +127,12 @@ public class Huawei implements LoginImpl {
             Logger.addBlacklist(accessToken);
             username = player.getDisplayName();
             String body = null;
-            try {
-                Logger.addBlacklist(URLEncoder.encode(accessToken, "utf-8"));
-                body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Logger.addBlacklist(URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
+            } else {
+                Logger.addBlacklist(URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
             }
+            body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
             String finalBody = body;
             new Thread() {
                 @Override
@@ -210,6 +211,9 @@ public class Huawei implements LoginImpl {
     public void logout() {
         isLogin = false;
 
+        AccountAuthManager.getService(activity, getHuaweiIdParams()).logout().addOnSuccessListener(unused -> {
+            Log.makeToast("登出成功");
+        });
 
     }
 

@@ -941,7 +941,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             loginImpl = null;
             refreshView();
             switchButtonState(true);
-            Log.makeToast("登陆失败");
+            Logger.d("onLoginFailed", "登陆失败");
+//            Log.makeToast("登陆失败");
         });
 //        makeToast(R);
     }

@@ -38,6 +38,7 @@ public class MainApplication extends Application {
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
         strategy.setDeviceID(Tools.getUUID(this));
         strategy.setDeviceModel(Tools.getDeviceModel());
+        strategy.setCrashHandleCallback(crashHandler);
         CrashReport.setIsDevelopmentDevice(getApplicationContext(), BuildConfig.DEBUG);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG, strategy);
         app_pref = getDefaultSharedPreferences(this);
