@@ -7,11 +7,16 @@ import static java.lang.Integer.parseInt;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AndroidRuntimeException;
+
+import androidx.annotation.Keep;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
 
@@ -22,6 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -238,6 +244,27 @@ public static void changeToWDJ(Activity activity) {
             sb.append(str.charAt(number));
         }
         return sb.toString();
+    }
+
+    @Keep
+    public static boolean verifyOfficialPack(Context context, String packageName) {
+        try {
+            List<ApplicationInfo> allApps = context.getPackageManager().getInstalledApplications(0);
+            for (ApplicationInfo ai : allApps) {
+                if (ai.packageName.equals(packageName)) {
+                    PackageInfo info = context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+                    if (info.versionCode > 500) {
+                        return true;
+                    } else {
+                        Logger.d("verifyOfficialPack", info.toString());
+                    }
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Logger.d("verifyOfficialPack", "Didn't find " + packageName);
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

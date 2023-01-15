@@ -49,6 +49,7 @@ import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.Bilibili;
+import com.github.haocen2004.login_simulation.login.Flyme;
 import com.github.haocen2004.login_simulation.login.Huawei;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
@@ -516,9 +517,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 case "Oppo":
                     loginImpl = new Oppo(activity, this);
                     break;
-//            case "Flyme":
-//                loginImpl = new Flyme(activity, this);
-//                break;
+                case "Flyme":
+                    loginImpl = new Flyme(activity, this);
+                    break;
                 case "YYB":
                     loginImpl = new Tencent(activity, this);
                     break;
@@ -728,9 +729,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void showPermissionDialog() {
         DialogData dialogData;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.通知权限\n用于通知用户版本更新及其他公告\n同时也用于悬浮窗后台进程\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅魅族服\n用于检测官方包安装情况\n详细说明见魅族服登陆\n\n4.通知权限\n用于通知用户版本更新及其他公告\n同时也用于悬浮窗后台进程\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
         } else {
-            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅魅族服\n用于检测官方包安装情况\n详细说明见魅族服登陆\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
         }
         dialogData.setPositiveButtonData(new ButtonData("我已知晓并授权使用") {
             @Override
@@ -741,7 +742,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 } else {
                     permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE});
                 }
-//                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
                 super.callback(dialogHelper);
             }
         });

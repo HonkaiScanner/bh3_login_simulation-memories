@@ -6,6 +6,7 @@
         <package android:name="com.meizu.gamecenter.service" />
         <package android:name="com.heytap.htms" />
         <package android:name="com.huawei.hwid" />
+        <package android:name="com.miHoYo.bh3.mz" />
     </queries>
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络权限 -->

@@ -2,9 +2,7 @@ package com.github.haocen2004.login_simulation.login;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
 
-import java.io.Serializable;
-
-public interface LoginImpl extends Serializable {
+public interface LoginImpl {
     void login();
 
     boolean logout();
