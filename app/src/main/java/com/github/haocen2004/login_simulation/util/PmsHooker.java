@@ -67,6 +67,7 @@ public class PmsHooker implements InvocationHandler {
         StackTraceElement[] arr = Thread.currentThread().getStackTrace();
         boolean oppoChange = false;
         boolean flymeChange = false;
+        boolean qihooChange = false;
         boolean forceKeep = false;
         for (StackTraceElement el : arr) {
             String className = el.getClassName().toLowerCase(Locale.ROOT);
@@ -77,9 +78,12 @@ public class PmsHooker implements InvocationHandler {
             if (className.contains("meizu")) {
                 flymeChange = true;
             }
-            if (className.contains("intent") || className.contains("component") || methodName.contains("verifyofficialpack")) {
+            if (className.contains("qihoo")) {
+                qihooChange = true;
+            }
+            if (className.contains("intent") || className.contains("component") || methodName.contains("verifyofficialpack") || className.contains("storagemanager") || className.contains("sharepreferenceutils")) {
                 forceKeep = true;
-                printStackTrace();
+//                printStackTrace();
             }
         }
         if (!forceKeep) {
@@ -88,6 +92,10 @@ public class PmsHooker implements InvocationHandler {
             }
             if (flymeChange) {
                 return "com.miHoYo.bh3.mz";
+            }
+            if (qihooChange) {
+//                printStackTrace();
+                return "com.miHoYo.bh3.qihoo";
             }
         }
 
@@ -110,6 +118,7 @@ public class PmsHooker implements InvocationHandler {
         StackTraceElement[] arr = Thread.currentThread().getStackTrace();
         boolean oppoChange = false;
         boolean flymeChange = false;
+        boolean qihooChange = false;
         boolean forceKeep = false;
         for (StackTraceElement el : arr) {
             String className = el.getClassName().toLowerCase(Locale.ROOT);
@@ -120,7 +129,10 @@ public class PmsHooker implements InvocationHandler {
             if (className.contains("meizu")) {
                 flymeChange = true;
             }
-            if (className.contains("intent") || className.contains("component") || methodName.contains("verifyofficialpack")) {
+            if (className.contains("qihoo")) {
+                qihooChange = true;
+            }
+            if (className.contains("intent") || className.contains("component") || methodName.contains("verifyofficialpack") || className.contains("storagemanager") || className.contains("sharepreferenceutils")) {
                 forceKeep = true;
                 printStackTrace();
             }
@@ -149,12 +161,31 @@ public class PmsHooker implements InvocationHandler {
                     return replace(method, args, "com.miHoYo.bh3.mz");
                 }
                 if ("getPackageInfo".equals(method.getName())) {
-                    Log.d(TAG, (String) args[0]);
                     if (args[0].equals("com.miHoYo.bh3.mz")) {
                         args[0] = "com.github.haocen2004.bh3_login_simulation";
                         return meizuReplace(method, args, true);
                     }
                 }
+            }
+            if (qihooChange) {
+                if ("getApplicationInfo".equals(method.getName())) {
+                    if (args != null && args[0].equals("com.miHoYo.bh3.qihoo")) {
+                        args[0] = "com.github.haocen2004.bh3_login_simulation";
+                    }
+                    return replace(method, args, "com.miHoYo.bh3.qihoo");
+                }
+                if ("getPackageInfo".equals(method.getName())) {
+                    if (args[0].equals("com.miHoYo.bh3.qihoo")) {
+                        args[0] = "com.github.haocen2004.bh3_login_simulation";
+                        return qihooReplace(method, args, true);
+                    }
+                }
+//                if ("getApplicationLabel".equals(method.getName())) {
+//                    if (args[0].equals("com.miHoYo.bh3.qihoo")) {
+//                        args[0] = "com.github.haocen2004.bh3_login_simulation";
+//                        return ((CharSequence)"崩坏3");
+//                    }
+//                }
             }
         }
 
@@ -197,9 +228,14 @@ public class PmsHooker implements InvocationHandler {
     }
 
     private PackageInfo oppoReplace(Method method, Object[] args, boolean includeSign) throws InvocationTargetException, IllegalAccessException {
-
         String sign = "3082023F308201A8A00302010202044ECDE032300D06092A864886F70D01010505003063310B300906035504061302383631123010060355040813096775616E67646F6E673111300F060355040713087368656E7A68656E310D300B060355040A13046F70706F310D300B060355040B13046F70706F310F300D060355040313066E6561726D653020170D3131313132343036313230325A180F32303636303832373036313230325A3063310B300906035504061302383631123010060355040813096775616E67646F6E673111300F060355040713087368656E7A68656E310D300B060355040A13046F70706F310D300B060355040B13046F70706F310F300D060355040313066E6561726D6530819F300D06092A864886F70D010101050003818D00308189028181009947806D3E8FA3AC8F2B03C80BAF940C845432573E5460DC222CD524AADD5DFBDF3BAFF80BEAD60CCC373120D014FBCBABF48F8F325F848E64B618772BA33C01E30BF70082D079A843F2F95B85C0F62BC23DF3939594B378ADDA0F1229427B421B45084795618DE7E4453C6239306B5AA76DFD8CED0064FB2DE09DA6ECACE75B0203010001300D06092A864886F70D0101050500038181000F6DFD0B8DDBD000EB7CF494179A1D67CF44B8D5568CC8D7F972DF3481C9C4BD8B8D5B6CC847F34C9DCF720B847B8B401691EC5B6468A645A5A30C05DFDEAFAE063B8F5B4861F0F2CCE1DA54003DF0EC89B73F45265EC62C27B43D4DFF24F5F548C26D7A7FCFBC93F78E086F3762D9D765CE73B5F61F4D18D0925EE76C18FFA9";
         String newPackageName = "com.miHoYo.bh3.nearme.gamecenter";
+        return replace(method, args, newPackageName, sign, includeSign);
+    }
+
+    private PackageInfo qihooReplace(Method method, Object[] args, boolean includeSign) throws InvocationTargetException, IllegalAccessException {
+        String sign = "308203773082025FA00302010202040F07D894300D06092A864886F70D01010B0500306C3110300E06035504061307556E6B6E6F776E3110300E06035504081307556E6B6E6F776E3110300E06035504071307556E6B6E6F776E3110300E060355040A1307556E6B6E6F776E3110300E060355040B1307556E6B6E6F776E3110300E06035504031307556E6B6E6F776E301E170D3136303631343035343130395A170D3433313033313035343130395A306C3110300E06035504061307556E6B6E6F776E3110300E06035504081307556E6B6E6F776E3110300E06035504071307556E6B6E6F776E3110300E060355040A1307556E6B6E6F776E3110300E060355040B1307556E6B6E6F776E3110300E06035504031307556E6B6E6F776E30820122300D06092A864886F70D01010105000382010F003082010A028201010090D1B428A00AD335B03F91CD10C1274FCEE9C51A4B110EFA359B6534CCA29AFDBB01FFB6DCD0E775E6E1B5C259B48790A305B6DA4E84B25157057567A9203BF56D304196C72E7E08C6CA8C86EE8AEFFCBD755C77ABDBE70C9F3C2D89CD8C6D88CD41DEBD7CAAEA0697545BE2E1F1E140C8FBDE78D54500E4ED6F3CF399A0093AD45FD45C64B4A8783D10CD3D3B1EA7FFD83D93909E2515BFD74735EE0F84C00B28288FE731D3B416EFF73928224FBB46714B0F9B1CDEB4A39C743EB3F22CA6FBC5F6D6D61F4F16E42CF2C20CB3ED63338E628F6E34A593E6CDC619FE431099D3B6F9A0E9E4E2EA66F7108FEF9E482616CBF9A23CA33781677872F952AB9FAC470203010001A321301F301D0603551D0E041604149AD8B52D06EAB8638235860126F9E59AAD2CF25B300D06092A864886F70D01010B050003820101007DE3FDC7E4BED981F807D8E0E7739230D6F1E6F358CD75C1E6495B916CC328CE44402D547E8DB8B7DF38AC675D83C6C5972232E0B8EE1103208BA9208617C736104823A0B16DE1EB781FBE0B5D4541CEACC62A00B2D2E687A49DD0D233ABD64838D22D2B6C2D86B37CEC0771848EBFFC618676B1E57BCF6EA7F49E6946355367EB451DDA1C416D96787A5B218B68A8CFFD94CB9BB5CEA9B5B9BD48B8EECCCB798471F302CD04AC9018DFADEAAD7BC0BA8E6D7AB951B5E8576B02D7C931C369306720264AC498509A2EEDCAD7C56AD9D9F2EC97BDD8CC9B6D90955659E9519185A0AE7F6D66B21CDA94C492ABAC61934B94418486144D237D2A103434CA95045C";
+        String newPackageName = "com.miHoYo.bh3.qihoo";
         return replace(method, args, newPackageName, sign, includeSign);
     }
 }

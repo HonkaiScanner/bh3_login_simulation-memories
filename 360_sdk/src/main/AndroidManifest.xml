@@ -46,7 +46,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- android host的值必须为游戏的包名 -->
-                <data android:host="游戏包名" />
+                <data android:host="com.github.haocen2004.bh3_login_simulation" />
                 <!-- android scheme的值必须不能变-->
                 <data android:scheme="qihooonlinepay" />
             </intent-filter>
@@ -87,7 +87,7 @@
         <service
             android:name="com.qihoo.pushsdk.cx.PushService"
             android:exported="false"
-            android:process=":PushClient"></service>
+            android:process=":PushClient" />
         <service
             android:name="com.qihoo.pushsdk.cx.PushService$InnerService"
             android:exported="false"
@@ -215,21 +215,24 @@
     <!-- 添加360SDK必需的meta-data：QHOPENSDK_APPID。此处value为APPID。请在360应用开放平台注册申请-->
     <meta-data
         android:name="QHOPENSDK_APPID"
-        android:value="203186051"></meta-data>
+        android:value="203186051" />
 
     <!--添加360SDK必需的meta-data：QHOPENSDK_APPKEY。此处value为APPKEY。请在360应用开放平台注册申请-->
     <meta-data
         android:name="QHOPENSDK_APPKEY"
-        android:value="08623c9d94abaabf60a19ef468e20c7c"></meta-data>
+        android:value="08623c9d94abaabf60a19ef468e20c7c" />
 
     <!--必需的meta-data：QHOPENSDK_PRIVATEKEY。此处value为PRIVATEKEY不是APPSECRET，而是md5(app_secret +”#”+ app_key)，全小写，APPSECRET不允许保存在客户端！详见1.4 PrivateKey计算方法-->
     <meta-data
         android:name="QHOPENSDK_PRIVATEKEY"
-        android:value="d34a1f0004b494c6e4b89fab99fc3987"></meta-data>
+        android:value="d34a1f0004b494c6e4b89fab99fc3987" />
 
     <meta-data
         android:name="QHOPENSDK_WEIXIN_APPID"
-        android:value="wx38c06d349170365c"></meta-data>
+        android:value="wx38c06d349170365c" />
+    <meta-data
+        android:name="QHOPENSDK_QQAPPID"
+        android:value="101434511" />
 
     <!-- 默认参数，不需要修改，直接复制就行 -->
     <meta-data

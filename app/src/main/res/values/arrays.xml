@@ -5,10 +5,11 @@
         <item>Xiaomi</item>
         <item>UC</item>
         <item>Vivo</item>
-<!--        <item>Flyme</item>-->
+        <item>Flyme</item>
         <item>Oppo</item>
         <item>Huawei</item>
         <item>Tencent-QQ</item>
+        <item>Qihoo</item>
     </string-array>
     <string-array name="server_types_value">
         <item>Official</item>
@@ -16,10 +17,11 @@
         <item>Xiaomi</item>
         <item>UC</item>
         <item>Vivo</item>
-        <!--        <item>Flyme</item>-->
+        <item>Flyme</item>
         <item>Oppo</item>
         <item>Huawei</item>
         <item>YYB</item>
+        <item>Qihoo</item>
     </string-array>
     <string-array name="server_types_xp">
         <item>Official</item>

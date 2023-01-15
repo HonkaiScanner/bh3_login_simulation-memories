@@ -55,6 +55,7 @@ import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
 import com.github.haocen2004.login_simulation.login.Oppo;
+import com.github.haocen2004.login_simulation.login.Qihoo;
 import com.github.haocen2004.login_simulation.login.Tencent;
 import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
@@ -526,9 +527,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 case "Huawei":
                     loginImpl = new Huawei(activity, this);
                     break;
-//            case "Qihoo":
-//                loginImpl = new Qihoo(activity, this);
-//                break;
+                case "Qihoo":
+                    loginImpl = new Qihoo(activity, this);
+                    break;
                 default:
                     makeToast(R.string.error_wrong_server);
                     break;

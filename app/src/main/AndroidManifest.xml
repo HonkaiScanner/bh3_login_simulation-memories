@@ -90,6 +90,38 @@
         </receiver>
 
         <meta-data
+            android:name="QHOPENSDK_APPID"
+            android:value="203186051" />
+
+        <!--添加360SDK必需的meta-data：QHOPENSDK_APPKEY。此处value为APPKEY。请在360应用开放平台注册申请-->
+        <meta-data
+            android:name="QHOPENSDK_APPKEY"
+            android:value="08623c9d94abaabf60a19ef468e20c7c" />
+
+        <!--必需的meta-data：QHOPENSDK_PRIVATEKEY。此处value为PRIVATEKEY不是APPSECRET，而是md5(app_secret +”#”+ app_key)，全小写，APPSECRET不允许保存在客户端！详见1.4 PrivateKey计算方法-->
+        <meta-data
+            android:name="QHOPENSDK_PRIVATEKEY"
+            android:value="d34a1f0004b494c6e4b89fab99fc3987" />
+
+        <meta-data
+            android:name="QHOPENSDK_WEIXIN_APPID"
+            android:value="wx38c06d349170365c" />
+        <meta-data
+            android:name="QHOPENSDK_QQAPPID"
+            android:value="101434511" />
+
+        <!-- 默认参数，不需要修改，直接复制就行 -->
+        <meta-data
+            android:name="DC_APPKEY"
+            android:value="02522a2b2726fb0a03bb19f2d8d9524d" />
+        <meta-data
+            android:name="APP_KEY"
+            android:value="n7a5gpvhzkny" />
+        <meta-data
+            android:name="APP_SECRET"
+            android:value="ggm5oqotrjs8spkgwk5qjw5447bj7zl5" />
+
+        <meta-data
             android:name="BSGameSdk_PaidGame"
             android:value="false" /> <!-- oppo options -->
         <meta-data
