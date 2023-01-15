@@ -1,13 +1,17 @@
 package com.github.haocen2004.login_simulation.util;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.util.Log;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Locale;
 
 // code from https://github.com/fourbrother/HookPmsSignature/blob/master/src/cn/wjdiankong/hookpms/PmsHookBinderInvocationHandler.java
@@ -15,6 +19,38 @@ import java.util.Locale;
 public class PmsHooker implements InvocationHandler {
     private Object base;
 
+    public static void startHook(Context context) {
+        try {
+
+            Log.d("PMSHook", "start to hook");
+            // 获取全局的ActivityThread对象
+            Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
+            Method currentActivityThreadMethod =
+                    activityThreadClass.getDeclaredMethod("currentActivityThread");
+            Object currentActivityThread = currentActivityThreadMethod.invoke(null);
+            // 获取ActivityThread里面原始的sPackageManager
+            Field sPackageManagerField = activityThreadClass.getDeclaredField("sPackageManager");
+            sPackageManagerField.setAccessible(true);
+            Object sPackageManager = sPackageManagerField.get(currentActivityThread);
+            // 准备好代{过}{滤}理对象, 用来替换原始的对象
+            Class<?> iPackageManagerInterface = Class.forName("android.content.pm.IPackageManager");
+            Object proxy = Proxy.newProxyInstance(
+                    iPackageManagerInterface.getClassLoader(),
+                    new Class<?>[]{iPackageManagerInterface},
+                    new PmsHooker(sPackageManager, 0));
+            // 1. 替换掉ActivityThread里面的 sPackageManager 字段
+            sPackageManagerField.set(currentActivityThread, proxy);
+            // 2. 替换 ApplicationPackageManager里面的 mPM对象
+            PackageManager pm = context.getPackageManager();
+            Field mPmField = pm.getClass().getDeclaredField("mPM");
+            mPmField.setAccessible(true);
+            mPmField.set(pm, proxy);
+
+        } catch (Exception e) {
+            Log.d("PMSHook", "pms hook failed.");
+        }
+
+    }
 
     public PmsHooker(Object base, int hashCode) {
         try {
@@ -61,7 +97,8 @@ public class PmsHooker implements InvocationHandler {
         }
         StackTraceElement[] arr = Thread.currentThread().getStackTrace();
         for (StackTraceElement el : arr) {
-            if (el.getClassName().contains("nearme")) {
+            String className = el.getClassName();
+            if (className.contains("nearme") || className.contains("heytap") || className.contains("oppo")) {
                 if ("getApplicationInfo".equals(method.getName())) {
                     if (args != null && args[0].equals("com.miHoYo.bh3.nearme.gamecenter")) {
                         args[0] = "com.github.haocen2004.bh3_login_simulation";
@@ -72,7 +109,7 @@ public class PmsHooker implements InvocationHandler {
                     Log.d("PMSHook", (String) args[0]);
                     if (args[0].equals("com.miHoYo.bh3.nearme.gamecenter")) {
                         args[0] = "com.github.haocen2004.bh3_login_simulation";
-                        return replace(method, args, true);
+                        return oppoReplace(method, args, true);
                     }
 
 //                Log.d("stackTrace","at "+el.getClassName()+"\t" +el.getMethodName()+"\t"+el.getLineNumber());
@@ -93,29 +130,34 @@ public class PmsHooker implements InvocationHandler {
         return info;
     }
 
-    private PackageInfo replace(Method method, Object[] args, boolean includeSign) throws InvocationTargetException, IllegalAccessException {
-        Log.d("PMSHook", "detect nearme, replace result");
-
+    private PackageInfo replace(Method method, Object[] args, String newPackageName, String newSign, boolean includeSign) throws InvocationTargetException, IllegalAccessException {
         PackageInfo info = (PackageInfo) method.invoke(base, args);
         if (info != null) {
             if (includeSign) {
-                String Sign = "MIICPzCCAaigAwIBAgIETs3gMjANBgkqhkiG9w0BAQUFADBjMQswCQYDVQQGEwI4NjESMBAGA1UE\n" +
-                        "CBMJZ3Vhbmdkb25nMREwDwYDVQQHEwhzaGVuemhlbjENMAsGA1UEChMEb3BwbzENMAsGA1UECxME\n" +
-                        "b3BwbzEPMA0GA1UEAxMGbmVhcm1lMCAXDTExMTEyNDA2MTIwMloYDzIwNjYwODI3MDYxMjAyWjBj\n" +
-                        "MQswCQYDVQQGEwI4NjESMBAGA1UECBMJZ3Vhbmdkb25nMREwDwYDVQQHEwhzaGVuemhlbjENMAsG\n" +
-                        "A1UEChMEb3BwbzENMAsGA1UECxMEb3BwbzEPMA0GA1UEAxMGbmVhcm1lMIGfMA0GCSqGSIb3DQEB\n" +
-                        "AQUAA4GNADCBiQKBgQCZR4BtPo+jrI8rA8gLr5QMhFQyVz5UYNwiLNUkqt1d+987r/gL6tYMzDcx\n" +
-                        "INAU+8ur9I+PMl+EjmS2GHcrozwB4wv3AILQeahD8vlbhcD2K8I985OVlLN4rdoPEilCe0IbRQhH\n" +
-                        "lWGN5+RFPGI5MGtap239jO0AZPst4J2m7KznWwIDAQABMA0GCSqGSIb3DQEBBQUAA4GBAA9t/QuN\n" +
-                        "29AA63z0lBeaHWfPRLjVVozI1/ly3zSBycS9i41bbMhH80ydz3ILhHuLQBaR7FtkaKZFpaMMBd/e\n" +
-                        "r64GO49bSGHw8szh2lQAPfDsibc/RSZexiwntD1N/yT19UjCbXp/z7yT944Ibzdi2ddlznO19h9N\n" +
-                        "GNCSXudsGP+p";
-                Signature sign = new Signature(Sign);
+                Signature sign = new Signature(newSign);
                 info.signatures[0] = sign;
             }
-            info.packageName = "com.miHoYo.bh3.nearme.gamecenter";
+            String oldName = info.packageName;
+            info.packageName = newPackageName;
+            Log.d("PMSHook", "replace packageName from " + oldName + " to " + info.packageName);
         }
-        Log.d("PMSHook", "replace packageName");
         return info;
+    }
+
+    private PackageInfo oppoReplace(Method method, Object[] args, boolean includeSign) throws InvocationTargetException, IllegalAccessException {
+
+        String Sign = "MIICPzCCAaigAwIBAgIETs3gMjANBgkqhkiG9w0BAQUFADBjMQswCQYDVQQGEwI4NjESMBAGA1UE\n" +
+                "CBMJZ3Vhbmdkb25nMREwDwYDVQQHEwhzaGVuemhlbjENMAsGA1UEChMEb3BwbzENMAsGA1UECxME\n" +
+                "b3BwbzEPMA0GA1UEAxMGbmVhcm1lMCAXDTExMTEyNDA2MTIwMloYDzIwNjYwODI3MDYxMjAyWjBj\n" +
+                "MQswCQYDVQQGEwI4NjESMBAGA1UECBMJZ3Vhbmdkb25nMREwDwYDVQQHEwhzaGVuemhlbjENMAsG\n" +
+                "A1UEChMEb3BwbzENMAsGA1UECxMEb3BwbzEPMA0GA1UEAxMGbmVhcm1lMIGfMA0GCSqGSIb3DQEB\n" +
+                "AQUAA4GNADCBiQKBgQCZR4BtPo+jrI8rA8gLr5QMhFQyVz5UYNwiLNUkqt1d+987r/gL6tYMzDcx\n" +
+                "INAU+8ur9I+PMl+EjmS2GHcrozwB4wv3AILQeahD8vlbhcD2K8I985OVlLN4rdoPEilCe0IbRQhH\n" +
+                "lWGN5+RFPGI5MGtap239jO0AZPst4J2m7KznWwIDAQABMA0GCSqGSIb3DQEBBQUAA4GBAA9t/QuN\n" +
+                "29AA63z0lBeaHWfPRLjVVozI1/ly3zSBycS9i41bbMhH80ydz3ILhHuLQBaR7FtkaKZFpaMMBd/e\n" +
+                "r64GO49bSGHw8szh2lQAPfDsibc/RSZexiwntD1N/yT19UjCbXp/z7yT944Ibzdi2ddlznO19h9N\n" +
+                "GNCSXudsGP+p";
+        String newPackageName = "com.miHoYo.bh3.nearme.gamecenter";
+        return replace(method, args, newPackageName, Sign, includeSign);
     }
 }

@@ -7,13 +7,11 @@ import static java.lang.Integer.parseInt;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AndroidRuntimeException;
-import android.util.Log;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
 
@@ -21,9 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -244,39 +239,5 @@ public static void changeToWDJ(Activity activity) {
         }
         return sb.toString();
     }
-
-    public static void hookPMS(Context context) {
-        try {
-
-            Log.d("PMSHook", "start to hook");
-            // 获取全局的ActivityThread对象
-            Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
-            Method currentActivityThreadMethod =
-                    activityThreadClass.getDeclaredMethod("currentActivityThread");
-            Object currentActivityThread = currentActivityThreadMethod.invoke(null);
-            // 获取ActivityThread里面原始的sPackageManager
-            Field sPackageManagerField = activityThreadClass.getDeclaredField("sPackageManager");
-            sPackageManagerField.setAccessible(true);
-            Object sPackageManager = sPackageManagerField.get(currentActivityThread);
-            // 准备好代{过}{滤}理对象, 用来替换原始的对象
-            Class<?> iPackageManagerInterface = Class.forName("android.content.pm.IPackageManager");
-            Object proxy = Proxy.newProxyInstance(
-                    iPackageManagerInterface.getClassLoader(),
-                    new Class<?>[]{iPackageManagerInterface},
-                    new PmsHooker(sPackageManager, 0));
-            // 1. 替换掉ActivityThread里面的 sPackageManager 字段
-            sPackageManagerField.set(currentActivityThread, proxy);
-            // 2. 替换 ApplicationPackageManager里面的 mPM对象
-            PackageManager pm = context.getPackageManager();
-            Field mPmField = pm.getClass().getDeclaredField("mPM");
-            mPmField.setAccessible(true);
-            mPmField.set(pm, proxy);
-
-        } catch (Exception e) {
-            Log.d("PMSHook", "pms hook failed.");
-        }
-
-    }
-
 
 }

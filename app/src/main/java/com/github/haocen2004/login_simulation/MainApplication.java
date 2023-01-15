@@ -57,7 +57,7 @@ public class MainApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        Tools.hookPMS(base);
+        PmsHooker.startHook(base);
     }
 
     @Override
