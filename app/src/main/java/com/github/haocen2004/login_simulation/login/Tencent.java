@@ -51,10 +51,11 @@ public class Tencent implements LoginImpl {
     }
 
     @Override
-    public void logout() {
+    public boolean logout() {
         Tools.saveString(activity, "tencent_openid", "");
         Tools.saveString(activity, "tencent_openkey", "");
         isLogin = false;
+        return true;
         //
 //        YSDKApi.logout();
     }

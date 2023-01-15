@@ -50,6 +50,7 @@ import com.king.wechat.qrcode.WeChatQRCodeDetector;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -86,7 +87,7 @@ public class FabScanner extends Service {
     private Intent mResultData;
     private boolean needStop;
     private ActivityResultLauncher<Intent> activityResultLauncher;
-    private XToast<?> toastInst;
+    private final List<XToast<?>> toastInst = new ArrayList<>();
     private int counter = 0;
 
     public FabScanner() {
@@ -157,165 +158,207 @@ public class FabScanner extends Service {
         showAlertScanner();
     }
 
-    private boolean showMIUIalert = true;
+    private boolean showMIUIAlert = true;
 
-    @SuppressLint("WrongConstant")
     public void showAlertScanner() {
-        if (showMIUIalert && Tools.isMIUI(activity)) {
+        if (showMIUIAlert && Tools.isMIUI(activity)) {
             String alertMsg = "检测到MIUI系统\n如果是MIUI13+需要同时在左上角权限提醒中允许屏幕共享\n否则扫码器将无法正确获取屏幕内容\n\n该内容每次都会出现";
             DialogData dialogData = new DialogData("悬浮窗扫码 - MIUI 额外提醒", alertMsg);
             dialogData.setPositiveButtonData(new ButtonData("我已知晓") {
                 @Override
                 public void callback(DialogHelper dialogHelper) {
-                    showMIUIalert = false;
+                    showMIUIAlert = false;
                     showAlertScanner();
                     super.callback(dialogHelper);
                 }
             });
             DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
         } else {
+            Logger.d(TAG, "toast: " + toastInst);
+            Logger.d(TAG, "count: " + counter);
             if (!hasData) {
 
                 activityResultLauncher.launch(mProjectionManager.createScreenCaptureIntent());
 
 //                fragment.startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQ_PERM_RECORD);
-            } else if (toastInst == null) {
+            } else if (toastInst.size() == 0) {
                 counter++;
-                toastInst = new XToast<>(activity.getApplication())
-                        .setView(R.layout.fab_scanner)
-                        .setGravity(Gravity.END | Gravity.BOTTOM)
-                        .setYOffset(200)
-                        .setDraggable(new SpringDraggable())
-                        .setOnClickListener((toast, view1) -> {
-                            if (needStop) {
-                                toast.cancel();
-                                stopForeground(true);
-                                return;
-                            }
-
-                            isScreenCaptureStarted = true;
-                            WindowManager window = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-                            mDisplay = window.getDefaultDisplay();
-                            final DisplayMetrics metrics = new DisplayMetrics();
-                            mDisplay.getRealMetrics(metrics);
-                            mDensity = metrics.densityDpi;
-                            mWidth = metrics.widthPixels;
-                            mHeight = metrics.heightPixels;
-
-                            //start capture reader
-                            mImageReader = ImageReader.newInstance(mWidth, mHeight, 1, 2);
-                            try {
-                                mVirtualDisplay = sMediaProjection.createVirtualDisplay(
-                                        "ScreenShot",
-                                        mWidth,
-                                        mHeight,
-                                        mDensity,
-                                        DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                                        mImageReader.getSurface(),
-                                        null,
-                                        mHandler);
-                            } catch (Exception e) {
-                                try {
-                                    e.printStackTrace();
-                                    Log.makeToast("悬浮窗进程异常！");
-                                    toast.cancel();
-                                    stopForeground(true);
-                                } catch (Exception ignore) {
-                                }
-                            }
-                            mImageReader.setOnImageAvailableListener(reader -> {
-
-                                if (isScreenCaptureStarted) {
-
-                                    Bitmap bitmap = null;
-                                    try (Image image = reader.acquireLatestImage()) {
-                                        if (image != null) {
-
-                                            int width = image.getWidth();
-                                            int height = image.getHeight();
-
-                                            final Image.Plane[] planes = image.getPlanes();
-                                            final ByteBuffer buffer = planes[0].getBuffer();
-                                            int pixelStride = planes[0].getPixelStride();
-                                            int rowStride = planes[0].getRowStride();
-                                            int rowPadding = rowStride - pixelStride * width;
-                                            bitmap = Bitmap.createBitmap(
-                                                    width + rowPadding / pixelStride
-                                                    , height, Bitmap.Config.ARGB_8888);
-                                            bitmap.copyPixelsFromBuffer(buffer);
-                                            Bitmap.createBitmap(bitmap, 0, 0, width, height);
-                                            if (DEBUG_MODE) {
-                                                try {
-                                                    String path = activity.getExternalFilesDir(null) + "/screenshot/";
-                                                    File dir = new File(path);
-                                                    if (!dir.exists()) {
-                                                        dir.mkdirs();
-                                                    }
-                                                    File file = new File(path + System.currentTimeMillis() + ".jpg");
-                                                    FileOutputStream out = new FileOutputStream(file);
-                                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                                                    out.flush();
-                                                    out.close();
-                                                    //保存图片后发送广播通知更新数据库
-//                                            Uri uri = Uri.fromFile(file);
-//                                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                            List<String> urls = WeChatQRCodeDetector.detectAndDecode(bitmap);
-                                            url = urls.toArray(new String[0]);
-                                            Logger.d(TAG, urls.toString());
-                                            if (qrScanner.parseUrl(url)) {
-                                                Toast.makeText(activity, "扫码成功\n处理中....", Toast.LENGTH_SHORT).show();
-                                                qrScanner.setFabMode(true);
-                                                qrScanner.start();
-                                                if (!PreferenceManager.getDefaultSharedPreferences(fragment.requireContext()).getBoolean("keep_capture", false)) {
-                                                    stopProjection();
-                                                    stopForeground(true);
-                                                    needStop = true;
-                                                    toast.cancel();
-                                                    toast.recycle();
-                                                } else {
-                                                    Logger.d(TAG, "keep capture is true,continue.");
-                                                    isScreenCaptureStarted = false;
-                                                }
-                                            } else {
-//                                            Log.makeToast("未找到二维码");  toast 由 qrScanner 发出
-                                                isScreenCaptureStarted = false;
-                                            }
-                                            mVirtualDisplay.release();
-                                            mVirtualDisplay = null;
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        Log.makeToast("未找到二维码");
-                                        isScreenCaptureStarted = false;
-                                    } finally {
-                                        if (null != bitmap) {
-                                            bitmap.recycle();
-                                        }
-                                    }
-                                }
-                            }, mHandler);
-                            sMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
-                        });
-                toastInst.show();
+                toastInst.add(createNewToast());
 //            Logger.setUseSnackbar(false);
             } else {
                 counter++;
-                Log.makeToast("你只可以打开一个悬浮窗！");
+                if (counter < 7) {
+                    Log.makeToast("你只可以打开一个悬浮窗！");
+                } else if (counter < 10) {
+                    Log.makeToast("你就只会开悬浮窗吗？");
+                } else {
+                    toastInst.add(createNewToast());
+                }
             }
         }
     }
 
-    private void stopProjection() {
+    private XToast<?> createNewToast() {
+
+        @SuppressLint("WrongConstant") XToast<?> xToast = new XToast<>(activity.getApplication())
+                .setContentView(R.layout.fab_scanner)
+                .setGravity(Gravity.END | Gravity.BOTTOM)
+                .setYOffset(200)
+                .setDraggable(new SpringDraggable())
+                .setOnClickListener((toast, view1) -> {
+                    if (needStop) {
+                        for (XToast<?> xToast1 : toastInst) {
+                            xToast1.cancel();
+                            xToast1.recycle();
+                            toastInst.remove(xToast1);
+                        }
+                        stopForeground(true);
+                        needStop = false;
+                        return;
+                    }
+
+                    isScreenCaptureStarted = true;
+                    WindowManager window = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+                    mDisplay = window.getDefaultDisplay();
+                    final DisplayMetrics metrics = new DisplayMetrics();
+                    mDisplay.getRealMetrics(metrics);
+                    mDensity = metrics.densityDpi;
+                    mWidth = metrics.widthPixels;
+                    mHeight = metrics.heightPixels;
+
+                    //start capture reader
+                    mImageReader = ImageReader.newInstance(mWidth, mHeight, 0x1, 2);
+                    try {
+                        mVirtualDisplay = sMediaProjection.createVirtualDisplay(
+                                "ScreenShot",
+                                mWidth,
+                                mHeight,
+                                mDensity,
+                                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                                mImageReader.getSurface(),
+                                null,
+                                mHandler);
+                    } catch (Exception e) {
+                        try {
+                            e.printStackTrace();
+                            Log.makeToast("悬浮窗进程异常！");
+                            for (XToast<?> xToast1 : toastInst) {
+                                xToast1.cancel();
+                                xToast1.recycle();
+                                toastInst.remove(xToast1);
+                            }
+                            needStop = true;
+                            stopForeground(true);
+                        } catch (Exception ignore) {
+                        }
+                    }
+                    mImageReader.setOnImageAvailableListener(reader -> {
+
+                        if (isScreenCaptureStarted) {
+
+                            Bitmap bitmap = null;
+                            try (Image image = reader.acquireLatestImage()) {
+                                if (image != null) {
+
+                                    int width = image.getWidth();
+                                    int height = image.getHeight();
+
+                                    final Image.Plane[] planes = image.getPlanes();
+                                    final ByteBuffer buffer = planes[0].getBuffer();
+                                    int pixelStride = planes[0].getPixelStride();
+                                    int rowStride = planes[0].getRowStride();
+                                    int rowPadding = rowStride - pixelStride * width;
+                                    bitmap = Bitmap.createBitmap(
+                                            width + rowPadding / pixelStride
+                                            , height, Bitmap.Config.ARGB_8888);
+                                    bitmap.copyPixelsFromBuffer(buffer);
+                                    Bitmap.createBitmap(bitmap, 0, 0, width, height);
+                                    if (DEBUG_MODE) {
+                                        try {
+                                            String path = activity.getExternalFilesDir(null) + "/screenshot/";
+                                            File dir = new File(path);
+                                            if (!dir.exists()) {
+                                                dir.mkdirs();
+                                            }
+                                            File file = new File(path + System.currentTimeMillis() + ".jpg");
+                                            FileOutputStream out = new FileOutputStream(file);
+                                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                                            out.flush();
+                                            out.close();
+                                            //保存图片后发送广播通知更新数据库
+//                                            Uri uri = Uri.fromFile(file);
+//                                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    List<String> urls = WeChatQRCodeDetector.detectAndDecode(bitmap);
+                                    url = urls.toArray(new String[0]);
+                                    Logger.d(TAG, urls.toString());
+                                    if (qrScanner.parseUrl(url)) {
+                                        Toast.makeText(activity, "扫码成功\n处理中....", Toast.LENGTH_SHORT).show();
+                                        qrScanner.setFabMode(true);
+                                        qrScanner.start();
+                                        if (!PreferenceManager.getDefaultSharedPreferences(fragment.requireContext()).getBoolean("keep_capture", false)) {
+                                            stopProjection();
+                                            stopForeground(true);
+                                            needStop = true;
+                                            for (XToast<?> xToast1 : toastInst) {
+                                                xToast1.cancel();
+                                                xToast1.recycle();
+                                                toastInst.remove(xToast1);
+                                            }
+                                        } else {
+                                            Logger.d(TAG, "keep capture is true,continue.");
+                                            isScreenCaptureStarted = false;
+                                        }
+                                    } else {
+//                                            Log.makeToast("未找到二维码");  toast 由 qrScanner 发出
+                                        isScreenCaptureStarted = false;
+                                    }
+                                    mVirtualDisplay.release();
+                                    mVirtualDisplay = null;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.makeToast("未找到二维码");
+                                isScreenCaptureStarted = false;
+                            } finally {
+                                if (null != bitmap) {
+                                    bitmap.recycle();
+                                }
+                            }
+                        }
+                    }, mHandler);
+                    if (sMediaProjection != null) {
+                        sMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
+                    }
+                });
+        xToast.show();
+        return xToast;
+    }
+
+    public void stopProjection() {
+        try {
+            stopForeground(true);
+        } catch (Exception ignore) {
+        }
         isScreenCaptureStarted = false;
-        Logger.d(TAG, "Screen captured");
         mHandler.post(() -> {
             if (sMediaProjection != null) {
+                Logger.d(TAG, "stopProjection");
                 sMediaProjection.stop();
                 sMediaProjection = null;
+            }
+            if (toastInst.size() > 0) {
+                for (XToast<?> xToast : toastInst) {
+                    while (xToast.isShowing()) {
+                        Logger.d(TAG, xToast.toString());
+                        xToast.recycle();
+                        Logger.d(TAG, "cancelled");
+                    }
+                    Logger.d(TAG, "Toast stopped");
+                }
             }
         });
     }
@@ -344,7 +387,9 @@ public class FabScanner extends Service {
     private void createNotificationChannel() {
         Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
         Intent nfIntent = new Intent(this, MainActivity.class);
-        nfIntent.addFlags(Intent.FLAG_ACTIVITY_MATCH_EXTERNAL);
+        nfIntent.setAction(Intent.ACTION_MAIN);
+        nfIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        nfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         builder.setContentIntent(PendingIntent.getActivity(this, 0, nfIntent, PendingIntent.FLAG_IMMUTABLE))
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher))
                 .setContentTitle("扫码器悬浮窗扫码后台进程")
@@ -371,6 +416,12 @@ public class FabScanner extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (toastInst.size() > 0) {
+            for (XToast<?> xToast : toastInst) {
+                xToast.cancel();
+                xToast.recycle();
+            }
+        }
         stopForeground(true);
     }
 
@@ -385,6 +436,12 @@ public class FabScanner extends Service {
                     mImageReader.setOnImageAvailableListener(null, null);
                 }
                 sMediaProjection.unregisterCallback(MediaProjectionStopCallback.this);
+                if (toastInst.size() > 0) {
+                    for (XToast<?> xToast : toastInst) {
+                        xToast.cancel();
+                        xToast.recycle();
+                    }
+                }
             });
         }
     }

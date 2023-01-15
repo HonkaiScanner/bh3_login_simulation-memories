@@ -67,6 +67,102 @@ public class MainActivity extends BaseActivity {
     private long backTime = 0;
     private boolean catchBackAction = false;
 
+    @SuppressLint("HandlerLeak")
+    Handler update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+            try {
+                Logger.i("Update", "handleMessage: " + feedback);
+                JSONObject json;
+                if (feedback != null) {
+                    json = new JSONObject(feedback);
+                    app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
+                            .putString("mdk_ver", json.getString("mdk_ver"))
+                            .putString("sp_url", json.getString("sp_url"))
+                            .putString("afd_url", json.getString("afd_url"))
+                            .putString("qq_group_url", json.getString("qq_group_url"))
+                            .putString("custom_username", json.getString("default_name"))
+//                            .putLong("update_time", json.getLong("update_time"))
+                            .apply();
+                    Logger.d("Update", "cloud ver:" + json.getInt("ver"));
+                    Logger.d("Update", "local ver:" + VERSION_CODE);
+//                    Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
+                    if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
+                        Logger.i("Update", "Open Update Window");
+                        showUpdateDialog(
+                                json.getString("ver_name"),
+                                json.getString("update_url"),
+                                json.getString("logs").replaceAll("&n", "\n")
+                        );
+                    }
+                } else {
+                    Logger.d("Update", "Check Update Failed");
+                    Log.makeToast("检查更新失败...");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Logger.d("Update", "Check Update Failed");
+                Log.makeToast("检查更新失败...");
+                //app_pref.edit().putString("bh_ver", BH_VER).apply();
+            }
+            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
+                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
+            } else {
+                BH_VER = app_pref.getString("bh_ver", BH_VER);
+            }
+            MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
+            SP_URL = app_pref.getString("sp_url", SP_URL);
+            AFD_URL = app_pref.getString("afd_url", AFD_URL);
+            QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
+//            UPDATE_TIME = app_pref.getLong("update_time", 0);
+            if (CHECK_VER) {
+                if (DEBUG_MODE) {
+                    LeanCloud.setLogLevel(LCLogger.Level.DEBUG);
+                }
+
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    new SponsorRepo(getApplicationContext()).refreshSponsors();
+                    if (app_pref.getBoolean("has_account", false)) {
+                        String TAG = "sponsor login check";
+
+                        Logger.d(TAG, "Start.");
+                        LCUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<LCUser>() {
+                            public void onSubscribe(@NotNull Disposable disposable) {
+                            }
+
+                            public void onNext(@NotNull LCUser user) {
+                                LCUser.changeCurrentUser(user, true);
+                                HAS_ACCOUNT = true;
+                                app_pref.edit().putBoolean("has_account", true).putString("custom_username", user.getString("custom_username")).apply();
+                                Logger.d(TAG, "Succeed.");
+                                SP_CHECKED = true;
+
+                            }
+
+                            public void onError(@NotNull Throwable throwable) {
+                                LCUser.changeCurrentUser(null, true);
+                                app_pref.edit().putBoolean("has_account", false)
+                                        .putString("custom_username", "崩坏3扫码器用户").apply();
+                                throwable.printStackTrace();
+                                Logger.d(TAG, "Failed. Reset custom username");
+                                Log.makeToast("赞助者身份验证已过期...");
+                                SP_CHECKED = true;
+                            }
+
+                            public void onComplete() {
+                            }
+                        });
+
+                    }
+                });
+
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +230,7 @@ public class MainActivity extends BaseActivity {
 //        }
 
 
-        if (Tools.getBoolean(this, "has_crash")) {
+        if (Tools.getBoolean(this, "has_crash") && !app_pref.getBoolean("no_crash_page", false)) {
             Logger.d("CRASH", "has crash before");
             Intent intent = new Intent(this, CrashActivity.class);
             startActivity(intent);
@@ -142,24 +238,6 @@ public class MainActivity extends BaseActivity {
 
 
 //        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (catchBackAction) {
-            long currTime = System.currentTimeMillis();
-            if (System.currentTimeMillis() - backTime < 2000) {
-                System.exit(0);
-                finish();
-                super.onBackPressed();
-            } else {
-                Log.makeToast("再次返回来退出扫码器");
-                backTime = currTime;
-            }
-        } else {
-            super.onBackPressed();
-        }
-        //super.onBackPressed();
     }
 
     @Override
@@ -174,103 +252,22 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    Handler update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String feedback = data.getString("value");
-            try {
-                Logger.i("Update", "handleMessage: " + feedback);
-                JSONObject json;
-                if (feedback != null) {
-                    json = new JSONObject(feedback);
-                    app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
-                            .putString("mdk_ver", json.getString("mdk_ver"))
-                            .putString("sp_url", json.getString("sp_url"))
-                            .putString("afd_url", json.getString("afd_url"))
-                            .putString("qq_group_url", json.getString("qq_group_url"))
-                            .putString("custom_username", json.getString("default_name"))
-//                            .putLong("update_time", json.getLong("update_time"))
-                            .apply();
-                    Logger.d("Update", "cloud ver:" + json.getInt("ver"));
-                    Logger.d("Update", "local ver:" + VERSION_CODE);
-//                    Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
-                    if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
-                        Logger.i("Update", "Open Update Window");
-                        showUpdateDialog(
-                                json.getString("ver_name"),
-                                json.getString("update_url"),
-                                json.getString("logs").replaceAll("&n", "\n")
-                        );
-                    }
-                } else {
-                    Logger.d("Update", "Check Update Failed");
-                    Log.makeToast("检查更新失败...");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Logger.d("Update", "Check Update Failed");
-                Log.makeToast("检查更新失败...");
-                //app_pref.edit().putString("bh_ver", BH_VER).apply();
-            }
-            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
-                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
+    @Override
+    public void onBackPressed() {
+        if (catchBackAction) {
+            long currTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - backTime < 2000) {
+                activityManager.clearActivity();
+                super.onBackPressed();
             } else {
-                BH_VER = app_pref.getString("bh_ver", BH_VER);
+                Log.makeToast("再次返回来退出扫码器");
+                backTime = currTime;
             }
-            MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
-            SP_URL = app_pref.getString("sp_url", SP_URL);
-            AFD_URL = app_pref.getString("afd_url", AFD_URL);
-            QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
-            DEBUG_MODE = app_pref.getBoolean("debug_mode", false) || DEBUG;
-//            UPDATE_TIME = app_pref.getLong("update_time", 0);
-            if (CHECK_VER) {
-                LeanCloud.initializeSecurely(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
-                if (DEBUG) {
-                    LeanCloud.setLogLevel(LCLogger.Level.DEBUG);
-                }
-
-                Executors.newSingleThreadExecutor().execute(() -> {
-                    new SponsorRepo(getApplicationContext()).refreshSponsors();
-                    if (app_pref.getBoolean("has_account", false)) {
-                        String TAG = "sponsor login check";
-
-                        Logger.d(TAG, "Start.");
-                        LCUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<LCUser>() {
-                            public void onSubscribe(@NotNull Disposable disposable) {
-                            }
-
-                            public void onNext(@NotNull LCUser user) {
-                                LCUser.changeCurrentUser(user, true);
-                                HAS_ACCOUNT = true;
-                                app_pref.edit().putBoolean("has_account", true).putString("custom_username", user.getString("custom_username")).apply();
-                                Logger.d(TAG, "Succeed.");
-                                SP_CHECKED = true;
-
-                            }
-
-                            public void onError(@NotNull Throwable throwable) {
-                                LCUser.changeCurrentUser(null, true);
-                                app_pref.edit().putBoolean("has_account", false)
-                                        .putString("custom_username", "崩坏3扫码器用户").apply();
-                                throwable.printStackTrace();
-                                Logger.d(TAG, "Failed. Reset custom username");
-                                Log.makeToast("赞助者身份验证已过期...");
-                                SP_CHECKED = true;
-                            }
-
-                            public void onComplete() {
-                            }
-                        });
-
-                    }
-                });
-
-            }
+        } else {
+            super.onBackPressed();
         }
-    };
+        //super.onBackPressed();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {

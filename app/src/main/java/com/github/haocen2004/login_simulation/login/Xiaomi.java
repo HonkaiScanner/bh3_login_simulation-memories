@@ -136,12 +136,13 @@ public class Xiaomi extends Application implements LoginImpl {
     }
 
     @Override
-    public void logout() {
+    public boolean logout() {
         MiCommplatform.getInstance().miAppExit(activity, code -> {
             if (code == MiErrorCode.MI_XIAOMI_EXIT) {
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
+        return true;
     }
 
     @Override

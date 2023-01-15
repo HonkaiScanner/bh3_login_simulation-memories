@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.fragment;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
@@ -10,6 +11,7 @@ import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -227,6 +229,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.tokenCheckBox.setVisibility(View.GONE);
         binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
+        if (!HAS_ACCOUNT && !SP_CHECKED) {
+            binding.cardViewMain.sponsorStateText.setVisibility(View.INVISIBLE);
+        }
 //        binding.cardViewMain.sponsorStateText.setVisibility(View.INVISIBLE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
@@ -630,7 +635,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     //Constant.REQ_PERM_RECORD
     private final ActivityResultLauncher<Intent> reqPermRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> fabScanner.getResultApiCallback().onActivityResult(callback));
 
-    private final ActivityResultLauncher qrCodeNoPermLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+    private void checkPermissions() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            NotificationManager notificationManager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED && !notificationManager.areNotificationsEnabled()) {
+                showPermissionDialog();
+            }
+        } else if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            showPermissionDialog();
+        }
+    }
+
+    private final ActivityResultLauncher<String[]> qrCodeNoPermLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
         if (isGranted.containsValue(false)) {
             Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
         } else {
@@ -708,42 +725,27 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
-    private void checkPermissions() {
+    private void showPermissionDialog() {
+        DialogData dialogData;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.通知权限\n用于通知用户版本更新及其他公告\n同时也用于悬浮窗后台进程\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+        } else {
+            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+        }
+        dialogData.setPositiveButtonData(new ButtonData("我已知晓并授权使用") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
 
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            DialogData dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
-            dialogData.setPositiveButtonData(new ButtonData("我已知晓并授权使用") {
-                @Override
-                public void callback(DialogHelper dialogHelper) {
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES});
-                    } else {
-                        permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE});
-                    }
-//                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
-                    super.callback(dialogHelper);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.POST_NOTIFICATIONS});
+                } else {
+                    permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE});
                 }
-            });
-            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
-        }
-    }
-
-    private void resetOfficialServerType() {
-        int i = getDefaultSharedPreferences(activity).getInt("official_type", 0);
-        Logger.d(TAG, "resetOfficialServerType: " + i);
-        switch (i) {
-            case 1:
-                OFFICIAL_TYPE = "pc01";
-                break;
-            case 2:
-                OFFICIAL_TYPE = "ios01";
-                break;
-            default:
-                OFFICIAL_TYPE = "android01";
-                break;
-        }
-        Logger.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
+//                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQ_PERM_CAMERA);
+                super.callback(dialogHelper);
+            }
+        });
+        DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
     }
 
     @Override
@@ -755,8 +757,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     makeToast(R.string.cache_delete);
                     onLoginFailed();
                 } else if (loginImpl.isLogin()) {
-                    loginImpl.logout();
-                    onLoginFailed();
+                    if (loginImpl.logout()) {
+                        onLoginFailed();
+                    }
                 } else {
                     makeToast(R.string.error_not_login);
                 }
@@ -773,26 +776,24 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         } else {
                             qrScanner = new QRScanner(activity, loginImpl.getRole());
                         }
-                        fabScanner = new FabScanner(this);
+                        if (fabScanner == null) {
+                            fabScanner = new FabScanner(this);
+                        }
                         fabScanner.setActivityResultLauncher(reqPermRecordLauncher);
                         fabScanner.setQrScanner(qrScanner);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (!Settings.canDrawOverlays(activity)) {
-                                String alertMsg = "使用悬浮窗扫码器需要悬浮窗权限和屏幕捕获权限\n请在接下来打开的窗口中授予权限";
-                                DialogData dialogData = new DialogData("悬浮窗扫码", alertMsg);
-                                dialogData.setPositiveButtonData(new ButtonData("我已知晓") {
-                                    @Override
-                                    public void callback(DialogHelper dialogHelper) {
-                                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                                        reqPermWindowLauncher.launch(intent);
+                        if (!Settings.canDrawOverlays(activity)) {
+                            String alertMsg = "使用悬浮窗扫码器需要悬浮窗权限和屏幕捕获权限\n请在接下来打开的窗口中授予权限";
+                            DialogData dialogData = new DialogData("悬浮窗扫码", alertMsg);
+                            dialogData.setPositiveButtonData(new ButtonData("我已知晓") {
+                                @Override
+                                public void callback(DialogHelper dialogHelper) {
+                                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                                    reqPermWindowLauncher.launch(intent);
 //                                        activity.startActivityForResult(intent, REQ_PERM_WINDOW);
-                                        super.callback(dialogHelper);
-                                    }
-                                });
-                                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
-                            } else {
-                                fabScanner.showAlertScanner();
-                            }
+                                    super.callback(dialogHelper);
+                                }
+                            });
+                            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
                         } else {
                             fabScanner.showAlertScanner();
                         }
@@ -824,6 +825,24 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
         return true;
     }
+
+    private void resetOfficialServerType() {
+        int i = getDefaultSharedPreferences(activity).getInt("official_type", 0);
+        Logger.d(TAG, "resetOfficialServerType: " + i);
+        switch (i) {
+            case 1:
+                OFFICIAL_TYPE = "pc01";
+                break;
+            case 2:
+                OFFICIAL_TYPE = "ios01";
+                break;
+            default:
+                OFFICIAL_TYPE = "android01";
+                break;
+        }
+        Logger.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
+    }
+
 
     @Override
     public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {

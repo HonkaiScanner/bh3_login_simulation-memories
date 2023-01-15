@@ -57,6 +57,7 @@ public class AboutActivity extends AbsAboutActivity {
 
         items.add(new Category("您已使用扫码器成功登陆 " + Tools.getInt(this, "succ_count") + " 次"));
         items.add(new Category(Tools.getUUID(this)));
+        items.add(new Category(Tools.getString(this, "installationId")));
     }
 
 }

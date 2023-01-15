@@ -202,7 +202,7 @@ public class UC implements LoginImpl {
     }
 
     @Override
-    public void logout() {
+    public boolean logout() {
         try {
             sdk.logout(activity, null);
             isLogin = false;
@@ -210,6 +210,7 @@ public class UC implements LoginImpl {
             e.printStackTrace();
             isLogin = false;
         }
+        return true;
     }
 
     @Override

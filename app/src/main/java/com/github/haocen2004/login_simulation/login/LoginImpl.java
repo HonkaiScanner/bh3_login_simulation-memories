@@ -7,7 +7,7 @@ import java.io.Serializable;
 public interface LoginImpl extends Serializable {
     void login();
 
-    void logout();
+    boolean logout();
 
     RoleData getRole();
 

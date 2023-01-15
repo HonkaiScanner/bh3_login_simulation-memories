@@ -400,9 +400,10 @@ public class Official implements LoginImpl {
     }
 
     @Override
-    public void logout() {
+    public boolean logout() {
         preferences.edit().clear().apply();
         isLogin = false;
+        return true;
     }
 
     @Override

@@ -1,8 +1,6 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/basic_header">
-
+    <PreferenceCategory android:title="@string/basic_header">
         <rikka.preference.SimpleMenuPreference
             android:id="@+id/listPrefServer"
             android:entries="@array/server_types"
@@ -17,8 +15,8 @@
         <!--            android:summary="%s"-->
         <!--            android:title="@string/settings_servers" />-->
         <SwitchPreference
-            app:key="auto_confirm"
-            app:title="@string/settings_fast_login" />
+            android:key="auto_confirm"
+            android:title="@string/settings_fast_login" />
         <SwitchPreference
             android:defaultValue="true"
             android:key="check_update"

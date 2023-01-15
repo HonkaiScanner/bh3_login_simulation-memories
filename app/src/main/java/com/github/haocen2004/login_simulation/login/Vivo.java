@@ -69,8 +69,9 @@ public class Vivo implements LoginImpl {
     }
 
     @Override
-    public void logout() {
+    public boolean logout() {
         Log.makeToast("Vivo渠道未提供主动切换账号功能！");
+        return false;
     }
 
     @Override

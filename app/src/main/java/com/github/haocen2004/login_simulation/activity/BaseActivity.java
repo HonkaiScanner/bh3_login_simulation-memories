@@ -2,8 +2,11 @@ package com.github.haocen2004.login_simulation.activity;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.github.haocen2004.login_simulation.util.PmsHooker;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -44,4 +47,16 @@ public class BaseActivity extends AppCompatActivity {
         activityManager.removeActivity(this);
         super.onDestroy();
     }
+
+    @NonNull
+    @Override
+    public String getOpPackageName() {
+        return PmsHooker.getPackageNameFilter(super.getOpPackageName());
+    }
+
+    @Override
+    public String getPackageName() {
+        return PmsHooker.getPackageNameFilter(super.getPackageName());
+    }
+
 }

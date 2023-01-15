@@ -25,6 +25,7 @@ public class CrashActivity extends BaseActivity {
         binding.textView5.setText(getString(R.string.crash_hint2).replace("{packageName}", getPackageName()));
         binding.textView6.setText(Tools.getString(this, "crash-report-name"));
         binding.textView7.setText(Tools.getUUID(this));
+        binding.textView8.setText(Tools.getString(this, "installationId"));
         binding.button.setOnClickListener(view -> openAssignFolder(getExternalFilesDir(null) + "/crash-report/" + Tools.getString(this, "crash-report-name")));
     }
 

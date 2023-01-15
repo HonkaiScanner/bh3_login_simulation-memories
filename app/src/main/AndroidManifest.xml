@@ -9,6 +9,7 @@
     </queries>
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 摄像头权限 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 悬浮窗扫码权限 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 悬浮窗扫码后台进程权限 -->
@@ -24,6 +25,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
     <!--  vivo sdk require  -->
     <uses-permission android:name="vivo.game.permission.OPEN_JUMP_INTENTS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <supports-screens
         android:anyDensity="true"
@@ -47,6 +49,7 @@
         <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.ScannerActivity" />
         <activity android:name=".activity.CrashActivity" />
+        <activity android:name=".wxapi.WXPayEntryActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -64,10 +67,26 @@
         </activity>
 
         <service
+            android:name="cn.leancloud.push.PushService"
+            android:exported="true"
+            tools:ignore="ExportedService" />
+        <service
             android:name=".util.FabScanner"
             android:enabled="true"
             android:foregroundServiceType="mediaProjection"
             tools:ignore="Instantiatable" />
+
+        <receiver
+            android:name="cn.leancloud.push.LCBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action
+                    android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="BSGameSdk_PaidGame"

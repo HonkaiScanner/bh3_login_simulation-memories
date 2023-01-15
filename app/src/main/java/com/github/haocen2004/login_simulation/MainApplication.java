@@ -5,26 +5,61 @@ import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
 import static com.github.haocen2004.login_simulation.util.Constant.MDK_VERSION;
+import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.view.Gravity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.github.haocen2004.login_simulation.activity.MainActivity;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.util.CrashHandler;
 import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.util.PmsHooker;
 import com.github.haocen2004.login_simulation.util.Tools;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;
+
+import cn.leancloud.LCInstallation;
+import cn.leancloud.LCObject;
+import cn.leancloud.LeanCloud;
+import cn.leancloud.push.PushService;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 //import com.tencent.ysdk.api.YSDKApi;
 
 public class MainApplication extends Application {
     private SharedPreferences app_pref;
     private Logger Log;
+
+
+    @Override
+    public String getPackageName() {
+        return PmsHooker.getPackageNameFilter(super.getPackageName());
+    }
+
+    @NonNull
+    @Override
+    public String getOpPackageName() {
+        return PmsHooker.getPackageNameFilter(super.getOpPackageName());
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        Tools.hookPMS(base);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -39,9 +74,48 @@ public class MainApplication extends Application {
         strategy.setDeviceID(Tools.getUUID(this));
         strategy.setDeviceModel(Tools.getDeviceModel());
         strategy.setCrashHandleCallback(crashHandler);
-        CrashReport.setIsDevelopmentDevice(getApplicationContext(), BuildConfig.DEBUG);
+        CrashReport.setIsDevelopmentDevice(getApplicationContext(), DEBUG);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG, strategy);
+        LeanCloud.initializeSecurely(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            NotificationChannel channel = new NotificationChannel("scanner_post_channel", "扫码器消息推送服务", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+            PushService.setDefaultChannelId(this, channel.getId());
+        }
         app_pref = getDefaultSharedPreferences(this);
+        DEBUG_MODE = app_pref.getBoolean("debug_mode", false) || DEBUG;
+        if (DEBUG_MODE) {
+            PushService.subscribe(this, "debug", MainActivity.class);
+            PushService.unsubscribe(this, "release");
+        } else {
+            PushService.subscribe(this, "release", MainActivity.class);
+            PushService.unsubscribe(this, "debug");
+        }
+
+        LCInstallation.getCurrentInstallation().saveInBackground().subscribe(new Observer<LCObject>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull LCObject lcObject) {
+                String installationId = LCInstallation.getCurrentInstallation().getInstallationId();
+                Tools.saveString(getApplicationContext(), "installationId", installationId);
+                Logger.d("LCPush", "init success, installationId: " + installationId);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Logger.d("LCPush", "init Failed, " + e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             app_pref.edit()
                     .putBoolean("is_first_run", false)
@@ -103,6 +177,11 @@ public class MainApplication extends Application {
                         .putBoolean("use_socket", false)
                         .apply();
             }
+            if (!DEBUG_MODE) {
+                app_pref.edit()
+                        .putBoolean("no_crash_page", false)
+                        .apply();
+            }
 
         }
         CHECK_VER = app_pref.getBoolean("check_update", true);
@@ -122,4 +201,8 @@ public class MainApplication extends Application {
 
     }
 
+    @Override
+    public Context getApplicationContext() {
+        return super.getApplicationContext();
+    }
 }

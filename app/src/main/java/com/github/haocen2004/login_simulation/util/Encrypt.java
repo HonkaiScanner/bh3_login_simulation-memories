@@ -42,6 +42,16 @@ public class Encrypt {
             'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9', '+', '/'};
 
+    public static String paySign(Map<String, Object> map, String key) {
+        ArrayList<String> arrayList = new ArrayList(map.keySet());
+        Collections.sort(arrayList);
+        StringBuilder sb = new StringBuilder();
+        for (String str2 : arrayList) {
+            sb.append(map.get(str2));
+        }
+        return sha256HMAC(sb.toString(), key);
+    }
+
     public static String bh3Sign(Map<String, Object> paramMap) {
         ArrayList<Comparable> arrayList = new ArrayList(paramMap.keySet());
         Collections.sort(arrayList);

@@ -37,7 +37,11 @@ public class Oppo implements LoginImpl {
     public Oppo(Activity activity, LoginCallback callback) {
         this.callback = callback;
         this.activity = activity;
+
+
         GameCenterSDK.init(appSecret, activity);
+
+        Logger.d(TAG, "test: " + activity.getApplicationContext().getPackageName());
         sdk = GameCenterSDK.getInstance();
         Log = Logger.getLogger(activity);
     }
@@ -82,8 +86,9 @@ public class Oppo implements LoginImpl {
     }
 
     @Override
-    public void logout() {
+    public boolean logout() {
         makeToast("OppoSdk未提供退出登录接口");
+        return false;
     }
 
     @Override

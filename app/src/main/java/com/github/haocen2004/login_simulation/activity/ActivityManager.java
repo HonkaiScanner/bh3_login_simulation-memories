@@ -2,6 +2,8 @@ package com.github.haocen2004.login_simulation.activity;
 
 import android.app.Activity;
 
+import com.github.haocen2004.login_simulation.util.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,5 +38,6 @@ public class ActivityManager {
         for (Activity activity : arrayStack) {
             activity.finish();
         }
+        Logger.d("activityManager", "all exit.");
     }
 }

@@ -129,10 +129,11 @@ public class Huawei implements LoginImpl {
             String body = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 Logger.addBlacklist(URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
+                body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
             } else {
                 Logger.addBlacklist(URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
+                body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
             }
-            body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
             String finalBody = body;
             new Thread() {
                 @Override
@@ -208,12 +209,13 @@ public class Huawei implements LoginImpl {
 
 
     @Override
-    public void logout() {
+    public boolean logout() {
         isLogin = false;
 
         AccountAuthManager.getService(activity, getHuaweiIdParams()).logout().addOnSuccessListener(unused -> {
             Log.makeToast("登出成功");
         });
+        return true;
 
     }
 
