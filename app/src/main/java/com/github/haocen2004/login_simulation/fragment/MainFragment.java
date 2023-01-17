@@ -157,12 +157,17 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     return;
                 } else {
                     Logger.d("SPCheck", "未登录赞助者账号");
+                    binding.cardViewMain.sponsorStateText.setVisibility(View.GONE);
                     binding.cardViewMain.sponsorStateText.setText(activity.getString(R.string.sp_login_pref) + (HAS_ACCOUNT ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
                     SP_CHECKED = true;
                 }
             } else {
                 Logger.d("SPCheck", "结束赞助者信息检查");
+
                 binding.cardViewMain.sponsorStateText.setText(activity.getString(R.string.sp_login_pref) + (HAS_ACCOUNT ? activity.getString(R.string.login_true) : activity.getString(R.string.login_false)));
+            }
+            if (HAS_ACCOUNT) {
+                binding.cardViewMain.sponsorStateText.setVisibility(View.VISIBLE);
             }
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -311,7 +316,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.cardViewMain.loginStateText.setText(activity.getString(R.string.bh_login_pref) + (isLogin ? loginImpl.getUsername() : activity.getString(R.string.login_false)));
         binding.cardViewMain.btnCard1Action2.setIconResource(pref.getBoolean("auto_login", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
         binding.cardViewMain.btnCard1Action3.setIconResource(pref.getBoolean("auto_confirm", false) ? R.drawable.ic_baseline_done_24 : R.drawable.ic_baseline_close_24);
-        binding.cardViewMain.sponsorStateText.setText("赞助者状态：" + (HAS_ACCOUNT ? "已登录" : "未登录"));
+        binding.cardViewMain.sponsorStateText.setText(activity.getString(R.string.sp_login_pref) + (HAS_ACCOUNT ? "已登录" : "未登录"));
         binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
 
 
