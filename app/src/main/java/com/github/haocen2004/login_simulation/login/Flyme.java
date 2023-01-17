@@ -104,10 +104,7 @@ public class Flyme implements LoginImpl {
     public void login() {
         OFFICIAL_PACK_INSTALLED = Tools.verifyOfficialPack(activity, "com.miHoYo.bh3.mz");
         if (!OFFICIAL_PACK_INSTALLED) {
-            DialogData dialogData = new DialogData("魅族特殊操作提示", "魅族服需要同时安装官方客户端\n\n在您的手机上未检测到官方客户端存在或没有获取手机安装应用列表权限\n\n请授予扫码器获取手机安装应用列表权限\n并正确安装官方客户端\n\n无需下载任何资源\n无需下载任何资源\n无需下载任何资源");
-            dialogData.setCancelable(false);
-            dialogData.setPositiveButtonData("确认");
-            dialogData.setNegativeButtonData("取消");
+            DialogData dialogData = new DialogData("魅族特殊操作提示", "魅族服需要同时安装官方客户端\n\n在您的手机上未检测到官方客户端存在或没有获取手机安装应用列表权限\n\n请授予扫码器获取手机应用列表权限\n并正确安装任意版本官方客户端\n\n无需下载任何资源\n无需下载任何资源\n无需下载任何资源", "我已知晓");
             DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
             callback.onLoginFailed();
         } else if (!FLYME_INIT) {

@@ -3,6 +3,7 @@ package com.github.haocen2004.login_simulation;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
+import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
@@ -97,6 +98,11 @@ public class MainApplication extends Application implements LifecycleOwner {
         } else {
             PushService.subscribe(this, "release", MainActivity.class);
             PushService.unsubscribe(this, "debug");
+        }
+        if (VERSION_NAME.contains("snapshot")) {
+            PushService.subscribe(this, "snapshot", MainActivity.class);
+        } else {
+            PushService.unsubscribe(this, "snapshot");
         }
 
         LCInstallation.getCurrentInstallation().saveInBackground().subscribe(new Observer<LCObject>() {
