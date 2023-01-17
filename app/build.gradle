@@ -58,8 +58,8 @@ android {
 //        versionCode Integer.parseInt(System.currentTimeMillis().toString()[7..12])
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-//        versionNameSuffix System.getenv("NAME_SUFFIX")
-        versionNameSuffix '-snapshot-23w04a.dev'
+        versionNameSuffix System.getenv("NAME_SUFFIX")
+//        versionNameSuffix '-snapshot-23w04a.dev'
         signingConfig signingConfigs.releaseSign
 
     }

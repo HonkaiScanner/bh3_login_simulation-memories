@@ -18,11 +18,11 @@ public class BaseActivity extends AppCompatActivity {
         activityManager.addActivity(this);
     }
 
-    @Override
-    protected void onPause() {
-        activityManager.removeActivity(this);
-        super.onPause();
-    }
+//    @Override
+//    protected void onPause() {
+//        activityManager.removeActivity(this);
+//        super.onPause();
+//    }
 
     @Override
     protected void onResume() {
@@ -30,11 +30,11 @@ public class BaseActivity extends AppCompatActivity {
         activityManager.addActivity(this);
     }
 
-    @Override
-    protected void onStop() {
-        activityManager.removeActivity(this);
-        super.onStop();
-    }
+//    @Override
+//    protected void onStop() {
+//        activityManager.removeActivity(this);
+//        super.onStop();
+//    }
 
     @Override
     protected void onStart() {

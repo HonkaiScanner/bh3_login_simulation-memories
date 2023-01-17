@@ -14,6 +14,8 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.view.Gravity;
@@ -24,6 +26,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 
+import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.activity.MainActivity;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
@@ -210,6 +213,11 @@ public class MainApplication extends Application implements LifecycleOwner {
                 break;
         }
 
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
+        registerReceiver(ActivityManager.getInstance(), filter);
 
         mLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START);
         mLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
