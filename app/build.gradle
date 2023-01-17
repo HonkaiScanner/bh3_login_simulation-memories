@@ -53,13 +53,13 @@ android {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 56
+        versionCode 57
         versionName '1.8.0'
 //        versionCode Integer.parseInt(System.currentTimeMillis().toString()[7..12])
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         versionNameSuffix System.getenv("NAME_SUFFIX")
-//        versionNameSuffix '-snapshot-23w04a.dev'
+//        versionNameSuffix '-snapshot-23w04c.dev'
         signingConfig signingConfigs.releaseSign
 
     }

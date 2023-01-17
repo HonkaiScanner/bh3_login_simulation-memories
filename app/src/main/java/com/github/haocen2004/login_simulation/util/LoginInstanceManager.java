@@ -21,8 +21,6 @@ import com.github.haocen2004.login_simulation.login.UC;
 import com.github.haocen2004.login_simulation.login.Vivo;
 import com.github.haocen2004.login_simulation.login.Xiaomi;
 
-import java.util.Objects;
-
 public class LoginInstanceManager {
 
     private static LoginInstanceManager INSTANCE;
@@ -66,7 +64,7 @@ public class LoginInstanceManager {
         }
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
         try {
-            switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
+            switch (pref.getString("server_type", "")) {
                 case "Official":
                     mLoginImpl = new Official(mContext, mCallback);
                     break;
@@ -104,6 +102,7 @@ public class LoginInstanceManager {
                     mLoginImpl = new Qihoo(mContext, mCallback);
                     break;
                 default:
+                    Logger.d(TAG, "wrong server: " + pref.getString("server_type", ""));
                     Logger.getLogger(mContext).makeToast(R.string.error_wrong_server);
                     break;
             }

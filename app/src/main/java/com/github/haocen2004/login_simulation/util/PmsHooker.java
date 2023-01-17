@@ -71,7 +71,6 @@ public class PmsHooker implements InvocationHandler {
         boolean forceKeep = false;
         for (StackTraceElement el : arr) {
             String className = el.getClassName().toLowerCase(Locale.ROOT);
-            String methodName = el.getMethodName().toLowerCase(Locale.ROOT);
             if (className.contains("nearme") || className.contains("heytap") || className.contains("oppo")) {
                 oppoChange = true;
             }
@@ -81,7 +80,7 @@ public class PmsHooker implements InvocationHandler {
             if (className.contains("qihoo")) {
                 qihooChange = true;
             }
-            if (className.contains("intent") || className.contains("component") || methodName.contains("verifyofficialpack") || className.contains("storagemanager") || className.contains("sharepreferenceutils")) {
+            if (forceKeepCheck(el)) {
                 forceKeep = true;
 //                printStackTrace();
             }
@@ -113,6 +112,16 @@ public class PmsHooker implements InvocationHandler {
         }
     }
 
+    private static boolean forceKeepCheck(StackTraceElement el) {
+
+        String className = el.getClassName().toLowerCase(Locale.ROOT);
+        String methodName = el.getMethodName().toLowerCase(Locale.ROOT);
+        return className.contains("intent") || className.contains("component") || methodName.contains("verifyofficialpack") ||
+                className.contains("storagemanager") || className.contains("sharepreferenceutils") || className.contains("android.widget.toast") ||
+                className.contains("wifimanager") || className.contains("android.app.contextimpl");
+    }
+
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         StackTraceElement[] arr = Thread.currentThread().getStackTrace();
@@ -122,7 +131,6 @@ public class PmsHooker implements InvocationHandler {
         boolean forceKeep = false;
         for (StackTraceElement el : arr) {
             String className = el.getClassName().toLowerCase(Locale.ROOT);
-            String methodName = el.getMethodName().toLowerCase(Locale.ROOT);
             if (className.contains("nearme") || className.contains("heytap") || className.contains("oppo")) {
                 oppoChange = true;
             }
@@ -132,7 +140,7 @@ public class PmsHooker implements InvocationHandler {
             if (className.contains("qihoo")) {
                 qihooChange = true;
             }
-            if (className.contains("intent") || className.contains("component") || methodName.contains("verifyofficialpack") || className.contains("storagemanager") || className.contains("sharepreferenceutils")) {
+            if (forceKeepCheck(el)) {
                 forceKeep = true;
 //                printStackTrace();
             }
@@ -146,7 +154,7 @@ public class PmsHooker implements InvocationHandler {
                     return replace(method, args, "com.miHoYo.bh3.nearme.gamecenter");
                 }
                 if ("getPackageInfo".equals(method.getName())) {
-                    Log.d(TAG, (String) args[0]);
+//                    Log.d(TAG, (String) args[0]);
                     if (args[0].equals("com.miHoYo.bh3.nearme.gamecenter")) {
                         args[0] = "com.github.haocen2004.bh3_login_simulation";
                         return oppoReplace(method, args, true);
@@ -209,6 +217,8 @@ public class PmsHooker implements InvocationHandler {
                 try {
                     Signature sign = new Signature(newSign);
                     info.signatures[0] = sign;
+                } catch (NullPointerException e) {
+                    Log.d(TAG, "sign Replace failed");
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d(TAG, "sign Replace failed");
