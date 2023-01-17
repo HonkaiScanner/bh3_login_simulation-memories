@@ -48,22 +48,14 @@ import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
-import com.github.haocen2004.login_simulation.login.Bilibili;
-import com.github.haocen2004.login_simulation.login.Flyme;
-import com.github.haocen2004.login_simulation.login.Huawei;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
-import com.github.haocen2004.login_simulation.login.Oppo;
-import com.github.haocen2004.login_simulation.login.Qihoo;
-import com.github.haocen2004.login_simulation.login.Tencent;
-import com.github.haocen2004.login_simulation.login.UC;
-import com.github.haocen2004.login_simulation.login.Vivo;
-import com.github.haocen2004.login_simulation.login.Xiaomi;
 import com.github.haocen2004.login_simulation.util.Constant;
 import com.github.haocen2004.login_simulation.util.DialogHelper;
 import com.github.haocen2004.login_simulation.util.FabScanner;
 import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.util.LoginInstanceManager;
 import com.github.haocen2004.login_simulation.util.QRScanner;
 import com.github.haocen2004.login_simulation.util.SocketHelper;
 import com.github.haocen2004.login_simulation.util.Tools;
@@ -101,6 +93,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     };
     private boolean needRestart = false;
     private boolean accSwitch = false;
+    private LoginInstanceManager loginInstanceManager;
 
     @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
     private void delaySPCheck() {
@@ -183,6 +176,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void loadSavedData(Bundle savedInstanceState, String loadTag) {
         if (savedInstanceState.containsKey("combo_token")) {
             Logger.d(loadTag, "detect saved RoleData,loading");
+            genLoginImpl();
+            if (loginImpl.isLogin()) {
+                Logger.d(loadTag, "loginImpl already has data,skip.");
+                return;
+            }
             Map<String, String> map = new HashMap<>();
             for (String s : savedInstanceState.keySet()) {
                 try {
@@ -193,7 +191,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
             try {
                 RoleData roleData = new RoleData(map, this);
-                genLoginImpl();
                 loginImpl.setRole(roleData);
                 Logger.d(loadTag, "loaded RoleData");
             } catch (NullPointerException e) {
@@ -205,26 +202,28 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            loadSavedData(savedInstanceState, "onCreate");
-        }
         activity = (AppCompatActivity) getActivity();
         context = requireContext();
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
+        loginInstanceManager = LoginInstanceManager.getINSTANCE(activity);
+        if (savedInstanceState != null) {
+            loadSavedData(savedInstanceState, "onCreate");
+        }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            loadSavedData(savedInstanceState, "onCreateView");
-        }
         activity = (AppCompatActivity) getActivity();
         context = requireContext();
         pref = getDefaultSharedPreferences(context);
         Log = Logger.getLogger(getContext());
+        loginInstanceManager = LoginInstanceManager.getINSTANCE(activity);
         binding = FragmentMainBinding.inflate(inflater, container, false);
+        if (savedInstanceState != null) {
+            loadSavedData(savedInstanceState, "onCreateView");
+        }
         return binding.getRoot();
     }
 
@@ -497,52 +496,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void genLoginImpl() {
-        try {
-            switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
-                case "Official":
-                    loginImpl = new Official(activity, this);
-                    break;
-                case "Xiaomi":
-                    loginImpl = new Xiaomi(activity, this);
-                    //11
-                    break;
-                case "Bilibili":
-                    loginImpl = new Bilibili(activity, this);
-                    //14
-                    break;
-                case "UC":
-                    if (pref.getBoolean("use_wdj", false)) {
-                        changeToWDJ(activity);
-                    }
-                    loginImpl = new UC(activity, this);
-                    //20
-                    break;
-                case "Vivo":
-                    loginImpl = new Vivo(activity, this);
-                    break;
-                case "Oppo":
-                    loginImpl = new Oppo(activity, this);
-                    break;
-                case "Flyme":
-                    loginImpl = new Flyme(activity, this);
-                    break;
-                case "YYB":
-                    loginImpl = new Tencent(activity, this);
-                    break;
-                case "Huawei":
-                    loginImpl = new Huawei(activity, this);
-                    break;
-                case "Qihoo":
-                    loginImpl = new Qihoo(activity, this);
-                    break;
-                default:
-                    makeToast(R.string.error_wrong_server);
-                    break;
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            Logger.d(TAG,"init loginImpl on wrong time");
-        }
+        loginInstanceManager.setCallback(this);
+        loginImpl = loginInstanceManager.getLoginImpl();
     }
 
     private void switchButtonState(boolean newState) {
@@ -783,7 +738,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                             qrScanner = new QRScanner(activity, loginImpl.getRole());
                         }
                         if (fabScanner == null) {
-                            fabScanner = new FabScanner(this);
+                            fabScanner = FabScanner.getINSTANCE(activity);
                         }
                         fabScanner.setActivityResultLauncher(reqPermRecordLauncher);
                         fabScanner.setQrScanner(qrScanner);

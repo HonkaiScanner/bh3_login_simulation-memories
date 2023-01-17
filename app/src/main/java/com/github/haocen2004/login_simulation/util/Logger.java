@@ -17,7 +17,7 @@ import java.util.List;
 
 @SuppressLint("StaticFieldLeak")
 public class Logger implements Serializable {
-    private static Logger INSTANCE;
+    private volatile static Logger INSTANCE;
     private static Context context;
     private static View view;
     private static boolean useSnackBar;
@@ -35,7 +35,11 @@ public class Logger implements Serializable {
 
     public static Logger getLogger(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new Logger(context);
+            synchronized (Logger.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new Logger(context);
+                }
+            }
         }
         return INSTANCE;
     }

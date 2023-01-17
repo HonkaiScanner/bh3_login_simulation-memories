@@ -41,7 +41,7 @@ public class Oppo implements LoginImpl {
 
         GameCenterSDK.init(appSecret, activity);
 
-        Logger.d(TAG, "test: " + activity.getApplicationContext().getPackageName());
+//        Logger.d(TAG, "test: " + activity.getApplicationContext().getPackageName());
         sdk = GameCenterSDK.getInstance();
         Log = Logger.getLogger(activity);
     }
@@ -59,7 +59,7 @@ public class Oppo implements LoginImpl {
                     }
 
                     public void onSuccess(String param2String) {
-                        Logger.d(TAG, param2String);
+//                        Logger.d(TAG, param2String);
                         try {
                             JSONObject json = new JSONObject(param2String);
                             token = json.getString("token");

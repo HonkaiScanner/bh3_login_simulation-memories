@@ -13,7 +13,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 public class SocketHelper {
-    QRScanner qrScanner;
+    private QRScanner qrScanner;
     private final String TAG = "SocketHelper";
     private MulticastSocket ms;
     private final String multicastHost = "239.0.1.255";

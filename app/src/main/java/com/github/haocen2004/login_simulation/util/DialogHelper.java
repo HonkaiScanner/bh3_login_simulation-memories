@@ -16,7 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.List;
 
 public class DialogHelper {
-    private static DialogHelper INSTANCE;
+    private static volatile DialogHelper INSTANCE;
     private final Context context;
     private static DialogLiveData dialogLiveData;
     private int currPos = 0;
@@ -53,7 +53,11 @@ public class DialogHelper {
 
     public static DialogHelper getDialogHelper(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new DialogHelper(context);
+            synchronized (DialogHelper.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new DialogHelper(context);
+                }
+            }
         }
         return INSTANCE;
     }

@@ -35,7 +35,6 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.github.haocen2004.login_simulation.R;
@@ -54,17 +53,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-//import com.google.zxing.BinaryBitmap;
-//import com.google.zxing.ChecksumException;
-//import com.google.zxing.DecodeHintType;
-//import com.google.zxing.FormatException;
-//import com.google.zxing.NotFoundException;
-//import com.google.zxing.common.HybridBinarizer;
-//import com.google.zxing.decoding.RGBLuminanceSource;
-//import com.google.zxing.qrcode.QRCodeReader;
-
 public class FabScanner extends Service {
-    private static FabScanner INSTANCE;
+    private volatile static FabScanner INSTANCE;
     private final String TAG = "FabScanner";
     boolean isScreenCaptureStarted;
     private MediaProjectionManager mProjectionManager = null;
@@ -82,7 +72,6 @@ public class FabScanner extends Service {
     private Handler mHandler;
     private String[] url;
     private QRScanner qrScanner;
-    private Fragment fragment;
     private int mResultCode;
     private Intent mResultData;
     private boolean needStop;
@@ -118,9 +107,8 @@ public class FabScanner extends Service {
         };
     }
 
-    public FabScanner(Fragment fragment) {
-        this.fragment = fragment;
-        this.activity = fragment.getActivity();
+    public FabScanner(Activity activity) {
+        this.activity = activity;
         Log = Logger.getLogger(activity);
         mProjectionManager = (MediaProjectionManager) activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         hasData = false;
@@ -139,11 +127,16 @@ public class FabScanner extends Service {
                 }
             }
         }.start();
-
-        INSTANCE = this;
     }
 
-    public static FabScanner getINSTANCE() {
+    public static FabScanner getINSTANCE(Activity activity) {
+        if (INSTANCE == null) {
+            synchronized (FabScanner.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new FabScanner(activity);
+                }
+            }
+        }
         return INSTANCE;
     }
 
@@ -299,7 +292,7 @@ public class FabScanner extends Service {
                                         Toast.makeText(activity, "扫码成功\n处理中....", Toast.LENGTH_SHORT).show();
                                         qrScanner.setFabMode(true);
                                         qrScanner.start();
-                                        if (!PreferenceManager.getDefaultSharedPreferences(fragment.requireContext()).getBoolean("keep_capture", false)) {
+                                        if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("keep_capture", false)) {
                                             stopProjection();
                                             stopForeground(true);
                                             needStop = true;
@@ -379,7 +372,7 @@ public class FabScanner extends Service {
         }
         sMediaProjection = mProjectionManager.getMediaProjection(mResultCode, Objects.requireNonNull(mResultData));
 
-        FabScanner.getINSTANCE().setsMediaProjection(sMediaProjection);
+        FabScanner.getINSTANCE(null).setsMediaProjection(sMediaProjection);
         return super.onStartCommand(intent, flags, startId);
     }
 

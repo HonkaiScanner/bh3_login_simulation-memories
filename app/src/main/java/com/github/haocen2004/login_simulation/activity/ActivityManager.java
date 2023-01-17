@@ -9,11 +9,13 @@ import java.util.List;
 
 public class ActivityManager {
 
-    private static ActivityManager INSTANCE;
+    private volatile static ActivityManager INSTANCE;
 
     private final List<Activity> arrayStack;
 
     private int topPos = -1;
+
+    private boolean stopState;
 
     public ActivityManager() {
         arrayStack = new ArrayList<>();
@@ -21,12 +23,20 @@ public class ActivityManager {
 
     public static ActivityManager getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ActivityManager();
+            synchronized (ActivityManager.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new ActivityManager();
+                }
+            }
         }
         return INSTANCE;
     }
 
     public void addActivity(Activity activity) {
+        if (stopState) {
+            activity.finish();
+            return;
+        }
         if (!arrayStack.contains(activity)) {
             arrayStack.add(activity);
             topPos = arrayStack.size() - 1;
@@ -50,6 +60,7 @@ public class ActivityManager {
     }
 
     public void clearActivity() {
+        stopState = true;
         for (Activity activity : arrayStack) {
             activity.finish();
         }
