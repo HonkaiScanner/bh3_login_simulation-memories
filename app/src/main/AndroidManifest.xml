@@ -14,17 +14,16 @@
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 摄像头权限 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 悬浮窗扫码权限 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 悬浮窗扫码后台进程权限 -->
-    <!--    android 13 相册扫码权限修正 -->
+    <!-- android 13 相册扫码权限修正 -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-
     <uses-permission
         android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" /> <!-- Ignore system app -->
     <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
-    <!--  vivo sdk require  -->
+    <!-- vivo sdk require -->
     <uses-permission android:name="vivo.game.permission.OPEN_JUMP_INTENTS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -45,6 +44,13 @@
         android:theme="@style/ScannerAppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="s">
+        <activity
+            android:name=".activity.SponsorInfoActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity android:name=".activity.TencentLoginActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.AboutActivity" />
@@ -91,26 +97,19 @@
 
         <meta-data
             android:name="QHOPENSDK_APPID"
-            android:value="203186051" />
-
-        <!--添加360SDK必需的meta-data：QHOPENSDK_APPKEY。此处value为APPKEY。请在360应用开放平台注册申请-->
+            android:value="203186051" /> <!-- 添加360SDK必需的meta-data：QHOPENSDK_APPKEY。此处value为APPKEY。请在360应用开放平台注册申请 -->
         <meta-data
             android:name="QHOPENSDK_APPKEY"
-            android:value="08623c9d94abaabf60a19ef468e20c7c" />
-
-        <!--必需的meta-data：QHOPENSDK_PRIVATEKEY。此处value为PRIVATEKEY不是APPSECRET，而是md5(app_secret +”#”+ app_key)，全小写，APPSECRET不允许保存在客户端！详见1.4 PrivateKey计算方法-->
+            android:value="08623c9d94abaabf60a19ef468e20c7c" /> <!-- 必需的meta-data：QHOPENSDK_PRIVATEKEY。此处value为PRIVATEKEY不是APPSECRET，而是md5(app_secret +”#”+ app_key)，全小写，APPSECRET不允许保存在客户端！详见1.4 PrivateKey计算方法 -->
         <meta-data
             android:name="QHOPENSDK_PRIVATEKEY"
             android:value="d34a1f0004b494c6e4b89fab99fc3987" />
-
         <meta-data
             android:name="QHOPENSDK_WEIXIN_APPID"
             android:value="wx38c06d349170365c" />
         <meta-data
             android:name="QHOPENSDK_QQAPPID"
-            android:value="101434511" />
-
-        <!-- 默认参数，不需要修改，直接复制就行 -->
+            android:value="101434511" /> <!-- 默认参数，不需要修改，直接复制就行 -->
         <meta-data
             android:name="DC_APPKEY"
             android:value="02522a2b2726fb0a03bb19f2d8d9524d" />
@@ -120,7 +119,6 @@
         <meta-data
             android:name="APP_SECRET"
             android:value="ggm5oqotrjs8spkgwk5qjw5447bj7zl5" />
-
         <meta-data
             android:name="BSGameSdk_PaidGame"
             android:value="false" /> <!-- oppo options -->
@@ -139,31 +137,26 @@
 
         <activity
             android:name="cn.gundam.sdk.shell.activity.ThemeProxyActivity"
-            android:exported="true" />
-
-        <!--        <service-->
-        <!--            android:name="com.tencent.ysdk.module.sandbox.pipe.PipeService"-->
-        <!--            android:exported="false"-->
-        <!--            android:permission="TODO" />-->
-
-        <!--        <activity-->
-        <!--            android:name="com.tencent.tauth.AuthActivity"-->
-        <!--            android:exported="true"-->
-        <!--            android:launchMode="singleTask"-->
-        <!--            android:noHistory="true">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.VIEW" />-->
-
-        <!--                <category android:name="android.intent.category.DEFAULT" />-->
-        <!--                <category android:name="android.intent.category.BROWSABLE" />-->
-
-        <!--                <data android:scheme="tencent1105553399" />-->
-        <!--            </intent-filter>-->
-        <!--        </activity>-->
-        <!--        <activity-->
-        <!--            android:name="com.tencent.connect.common.AssistActivity"-->
-        <!--            android:configChanges="orientation|screenSize|keyboardHidden"-->
-        <!--            android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
+            android:exported="true" /> <!-- <service -->
+        <!-- android:name="com.tencent.ysdk.module.sandbox.pipe.PipeService" -->
+        <!-- android:exported="false" -->
+        <!-- android:permission="TODO" /> -->
+        <!-- <activity -->
+        <!-- android:name="com.tencent.tauth.AuthActivity" -->
+        <!-- android:exported="true" -->
+        <!-- android:launchMode="singleTask" -->
+        <!-- android:noHistory="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.VIEW" /> -->
+        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+        <!-- <category android:name="android.intent.category.BROWSABLE" /> -->
+        <!-- <data android:scheme="tencent1105553399" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
+        <!-- <activity -->
+        <!-- android:name="com.tencent.connect.common.AssistActivity" -->
+        <!-- android:configChanges="orientation|screenSize|keyboardHidden" -->
+        <!-- android:theme="@android:style/Theme.Translucent.NoTitleBar" /> -->
         <activity
             android:name="com.bsgamesdk.android.activity.CaptchaWebActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"

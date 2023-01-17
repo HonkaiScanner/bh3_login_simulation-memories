@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.drakeet.about.AbsAboutActivity;
 import com.drakeet.about.Card;
 import com.drakeet.about.Category;
 import com.drakeet.about.Contributor;
@@ -18,7 +17,7 @@ import com.github.haocen2004.login_simulation.util.Tools;
 
 import java.util.List;
 
-public class AboutActivity extends AbsAboutActivity {
+public class AboutActivity extends BaseAbsActivity {
     @Override
     protected void onCreateHeader(@NonNull ImageView icon, @NonNull TextView slogan, @NonNull TextView version) {
         icon.setImageResource(R.mipmap.ic_launcher);
@@ -51,6 +50,7 @@ public class AboutActivity extends AbsAboutActivity {
         items.add(new License("XToast", "getActivity", License.APACHE_2, "https://github.com/getActivity/XToast"));
         items.add(new License("sensebot", "Geetest", License.APACHE_2, "https://github.com/GeeTeam/gt3-android-sdk"));
         items.add(new License("glide", "Google", License.APACHE_2, "https://github.com/bumptech/glide"));
+        items.add(new License("RikkaX", "Rikka", License.MIT, "https://github.com/RikkaApps/RikkaX"));
         items.add(new License("Gson", "Google", License.APACHE_2, "https://github.com/google/gson"));
         items.add(new License("okhttp", "square", License.APACHE_2, "https://github.com/square/okhttp"));
         items.add(new License("AndroidX", "Google", License.APACHE_2, "https://github.com/androidx-releases"));
@@ -59,5 +59,4 @@ public class AboutActivity extends AbsAboutActivity {
         items.add(new Category(Tools.getUUID(this)));
         items.add(new Category(Tools.getString(this, "installationId")));
     }
-
 }

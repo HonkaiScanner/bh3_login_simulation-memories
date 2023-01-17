@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.activity.LoginActivity;
+import com.github.haocen2004.login_simulation.activity.SponsorInfoActivity;
 import com.github.haocen2004.login_simulation.databinding.FragmentSpUserBinding;
 import com.github.haocen2004.login_simulation.util.Logger;
 
@@ -47,7 +48,7 @@ public class UserFragment extends Fragment {
             binding.userCard.textViewName.setText(user.getUsername());
             binding.userCard.textViewDesc.setText(user.getString("desc"));
             Glide.with(this).load(user.getString("avatarImgUrl")).circleCrop().into(binding.userCard.imageViewAvatar);
-            binding.userCard.cardView.setOnClickListener(v -> Log.makeToast("用户设置功能还在制作中...\n修改信息请私聊作者"));
+            binding.userCard.cardView.setOnClickListener(v -> startActivity(new Intent(getContext(), SponsorInfoActivity.class)));
             binding.userCard.cardView.setOnLongClickListener(v -> {
                 LCUser.changeCurrentUser(null, true);
                 Log.makeToast("赞助者账号已登出");
@@ -67,7 +68,7 @@ public class UserFragment extends Fragment {
             binding.userCard.textViewName.setText(user.getUsername());
             binding.userCard.textViewDesc.setText(user.getString("desc"));
             Glide.with(this).load(user.getString("avatarImgUrl")).circleCrop().into(binding.userCard.imageViewAvatar);
-            binding.userCard.cardView.setOnClickListener(v -> Log.makeToast("用户设置功能还在制作中...\n修改信息请私聊作者"));
+            binding.userCard.cardView.setOnClickListener(v -> startActivity(new Intent(getContext(), SponsorInfoActivity.class)));
             binding.userCard.cardView.setOnLongClickListener(v -> {
                 LCUser.changeCurrentUser(null, true);
                 Log.makeToast("赞助者账号已登出");

@@ -18,7 +18,11 @@ import android.util.AndroidRuntimeException;
 
 import androidx.annotation.Keep;
 
+import com.github.haocen2004.login_simulation.data.ICallback;
 import com.github.haocen2004.login_simulation.data.RoleData;
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,6 +78,20 @@ public static void changeToWDJ(Activity activity) {
 
         Logger.d(TAG, "checkMIUI: " + isMIUI);
         return isMIUI;
+    }
+
+    public static void showSecondConfirmDialog(String target, String value, ICallback action) {
+        DialogData dialogData = new DialogData("二次确认", "确认将 " + target + " 修改为\n" + value + " 吗？");
+        dialogData.setPositiveButtonData(new ButtonData("确认") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+                action.run(null);
+            }
+        });
+        dialogData.setNegativeButtonData("取消");
+        DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+
     }
 
     public static String getOAServer(RoleData roleData) {

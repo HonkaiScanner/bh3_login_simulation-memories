@@ -19,6 +19,9 @@ import android.view.Gravity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
 
 import com.github.haocen2004.login_simulation.activity.MainActivity;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
@@ -38,7 +41,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 //import com.tencent.ysdk.api.YSDKApi;
 
-public class MainApplication extends Application {
+public class MainApplication extends Application implements LifecycleOwner {
     private SharedPreferences app_pref;
     private Logger Log;
 
@@ -60,9 +63,12 @@ public class MainApplication extends Application {
         PmsHooker.startHook(base);
     }
 
+    private final LifecycleRegistry mLifecycle = new LifecycleRegistry(this);
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mLifecycle.setCurrentState(Lifecycle.State.CREATED);
         LogLiveData.getINSTANCE(); //init live data
         Log = Logger.getLogger(this);
 //        YSDKApi.setMainActivity("com.github.haocen2004.login_simulation.activity.MainActivity");
@@ -199,10 +205,13 @@ public class MainApplication extends Application {
         }
 
 
+        mLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START);
+        mLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
     }
 
+    @NonNull
     @Override
-    public Context getApplicationContext() {
-        return super.getApplicationContext();
+    public Lifecycle getLifecycle() {
+        return mLifecycle;
     }
 }

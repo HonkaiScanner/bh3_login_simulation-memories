@@ -5,12 +5,13 @@ import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 import android.content.Context;
 import android.content.DialogInterface;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 
@@ -34,7 +35,9 @@ public class DialogHelper {
 
         eulaCheck();
 
-        dialogLiveData.observe((LifecycleOwner) context, dialogData -> {
+        dialogLiveData.observe((LifecycleOwner) context.getApplicationContext(), dialogData -> {
+
+            Logger.d(TAG, "dialogLiveData change");
 
             if (currShow) {
                 return;
@@ -82,7 +85,7 @@ public class DialogHelper {
             return;
         }
 
-        DialogData dialogData = new DialogData("用户隐私协议",
+        DialogData dialogData = new DialogData("用户协议",
                 "概要\n" +
                         "不得用于商业用途。\n" +
                         "不得以此应用牟利。\n" +
@@ -105,7 +108,7 @@ public class DialogHelper {
         dialogData.setNeutralButtonData(new ButtonData("不同意") {
             @Override
             public void callback(DialogHelper dialog) {
-                System.exit(0);
+                ActivityManager.getInstance().clearActivity();
             }
         });
 
@@ -132,7 +135,12 @@ public class DialogHelper {
 
     private void showDialog(DialogData dialogData) {
 
-        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(context);
+        Logger.d(TAG, "try to display new dialog");
+
+        Context mContext = ActivityManager.getInstance().getTopActivity();
+        if (mContext == null) mContext = context;
+
+        final MaterialAlertDialogBuilder normalDialog = new MaterialAlertDialogBuilder(mContext);
         normalDialog.setTitle(dialogData.getTitle());
         normalDialog.setMessage(dialogData.getMessage());
         ButtonData buttonData = dialogData.getNegativeButtonData();

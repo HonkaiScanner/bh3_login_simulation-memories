@@ -13,6 +13,8 @@ public class ActivityManager {
 
     private final List<Activity> arrayStack;
 
+    private int topPos = -1;
+
     public ActivityManager() {
         arrayStack = new ArrayList<>();
     }
@@ -27,11 +29,24 @@ public class ActivityManager {
     public void addActivity(Activity activity) {
         if (!arrayStack.contains(activity)) {
             arrayStack.add(activity);
+            topPos = arrayStack.size() - 1;
         }
+    }
+
+    public Activity getTopActivity() {
+        if (topPos == -1) {
+            if (arrayStack.size() > 0) {
+                topPos = arrayStack.size() - 1;
+            } else {
+                return null;
+            }
+        }
+        return arrayStack.get(topPos);
     }
 
     public void removeActivity(Activity activity) {
         arrayStack.remove(activity);
+        topPos = arrayStack.size() - 1;
     }
 
     public void clearActivity() {

@@ -28,6 +28,7 @@ public class DialogLiveData extends LiveData<List<DialogData>> {
     }
 
     public void addNewDialog(DialogData dialog) {
+        Logger.d("DialogLiveData", "addNewDialog:" + dialog.getTitle());
         logDataList.add(dialog);
         postValue(logDataList);
     }

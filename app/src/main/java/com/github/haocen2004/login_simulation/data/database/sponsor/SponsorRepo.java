@@ -7,6 +7,7 @@ import com.tencent.bugly.crashreport.CrashReport;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.leancloud.LCObject;
@@ -31,16 +32,19 @@ public class SponsorRepo {
     public void refreshSponsors() {
         new Thread(() -> {
             LCQuery<LCObject> query = new LCQuery<>("Sponsors");
-            query.findInBackground().subscribe(new Observer<List<LCObject>>() {
+            query.findInBackground().subscribe(new Observer<>() {
                 public void onSubscribe(@NotNull Disposable disposable) {
                 }
 
                 public void onNext(@NotNull List<LCObject> Sponsors) {
                     new Thread(() -> {
+                        List<String> scanner_keys = new ArrayList<>();
                         for (LCObject object : Sponsors) {
+                            scanner_keys.add(object.getString("scannerKey"));
                             boolean hasData = false;
                             for (SponsorData sponsorData : allSponsors) {
                                 if (sponsorData.getScannerKey().equals(object.getString("scannerKey"))) {
+//                                    Log.d("sponsorUpdater","updating "+object.getString("name"));
                                     hasData = true;
                                     sponsorData.setName(object.getString("name"));
                                     sponsorData.setDesc(object.getString("desc"));
@@ -48,23 +52,29 @@ public class SponsorRepo {
                                     sponsorData.setPersonalPageUrl(object.getString("personalPageUrl"));
                                     sponsorData.setDeviceId(object.getString("deviceId"));
                                     sponsorDao.updateSponsors(sponsorData);
-                                    }
-                                }
-                                if (!hasData) {
-                                    sponsorDao.insertSponsors(
-                                            new SponsorData(
-                                                    object.getString("name"),
-                                                    object.getString("desc"),
-                                                    object.getString("avatarImgUrl"),
-                                                    object.getString("personalPageUrl"),
-                                                    object.getString("deviceId"),
-                                                    object.getString("scannerKey")
-                                            )
-                                    );
                                 }
                             }
+                            if (!hasData) {
+                                sponsorDao.insertSponsors(
+                                        new SponsorData(
+                                                object.getString("name"),
+                                                object.getString("desc"),
+                                                object.getString("avatarImgUrl"),
+                                                object.getString("personalPageUrl"),
+                                                object.getString("deviceId"),
+                                                object.getString("scannerKey")
+                                        )
+                                );
+                            }
+                        }
 
-                        }).start();
+                        for (SponsorData sponsorData : allSponsors) {
+                            if (!scanner_keys.contains(sponsorData.getScannerKey())) {
+                                sponsorDao.deleteSponsors(sponsorData);
+                            }
+                        }
+
+                    }).start();
 
                 }
 

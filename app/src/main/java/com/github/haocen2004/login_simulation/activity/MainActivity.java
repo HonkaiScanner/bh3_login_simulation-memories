@@ -16,6 +16,7 @@ import static com.github.haocen2004.login_simulation.util.Constant.SP_URL;
 import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -52,9 +53,12 @@ import org.opencv.OpenCV;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
+import cn.leancloud.LCInstallation;
 import cn.leancloud.LCLogger;
+import cn.leancloud.LCObject;
 import cn.leancloud.LCUser;
 import cn.leancloud.LeanCloud;
+import cn.leancloud.push.PushService;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -66,6 +70,7 @@ public class MainActivity extends BaseActivity {
     private Logger Log;
     private long backTime = 0;
     private boolean catchBackAction = false;
+    private Activity activity;
 
     @SuppressLint("HandlerLeak")
     Handler update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
@@ -136,6 +141,33 @@ public class MainActivity extends BaseActivity {
                             public void onNext(@NotNull LCUser user) {
                                 LCUser.changeCurrentUser(user, true);
                                 HAS_ACCOUNT = true;
+                                if (user.getUsername().equals("Hao_cen")) {
+                                    Logger.d("PUSH", "admin registering");
+                                    PushService.subscribe(activity, "admin", MainActivity.class);
+                                } else {
+                                    PushService.unsubscribe(activity, "admin");
+                                }
+
+                                LCInstallation.getCurrentInstallation().saveInBackground().subscribe(new Observer<LCObject>() {
+                                    @Override
+                                    public void onSubscribe(@NonNull Disposable d) {
+                                    }
+
+                                    @Override
+                                    public void onNext(@NonNull LCObject lcObject) {
+                                        String installationId = LCInstallation.getCurrentInstallation().getInstallationId();
+                                        Tools.saveString(getApplicationContext(), "installationId", installationId);
+                                        Logger.d("PUSH", "admin registered");
+                                    }
+
+                                    @Override
+                                    public void onError(@NonNull Throwable e) {
+                                    }
+
+                                    @Override
+                                    public void onComplete() {
+                                    }
+                                });
                                 app_pref.edit().putBoolean("has_account", true).putString("custom_username", user.getString("custom_username")).apply();
                                 Logger.d(TAG, "Succeed.");
                                 SP_CHECKED = true;
@@ -166,12 +198,13 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 //        Logger.setView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
         Log = Logger.getLogger(this);
-        DialogHelper.getDialogHelper(this);
+        DialogHelper.getDialogHelper(getApplicationContext());
         Logger.d("dialogHelper", "loaded.");
 //        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(binding.mainInclude.toolbar);

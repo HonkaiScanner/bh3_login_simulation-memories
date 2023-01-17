@@ -134,7 +134,7 @@ public class PmsHooker implements InvocationHandler {
             }
             if (className.contains("intent") || className.contains("component") || methodName.contains("verifyofficialpack") || className.contains("storagemanager") || className.contains("sharepreferenceutils")) {
                 forceKeep = true;
-                printStackTrace();
+//                printStackTrace();
             }
         }
         if (!forceKeep) {

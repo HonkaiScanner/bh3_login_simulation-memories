@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.data.database.sponsor;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -14,6 +15,9 @@ public interface SponsorDao {
 
     @Update
     void updateSponsors(SponsorData... sponsorData);
+
+    @Delete
+    void deleteSponsors(SponsorData... sponsorData);
 
     @Query("DELETE FROM SPONSORS")
     void deleteAllSponsors();

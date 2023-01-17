@@ -21,6 +21,21 @@ public class DialogData {
         this.message = message;
     }
 
+    public DialogData(String title, String message, String PositiveButtonText) {
+        this.title = title;
+        this.message = message;
+        this.PositiveButtonData = new ButtonData(PositiveButtonText);
+    }
+
+    public void setPositiveButtonData(ButtonData positiveButtonData) {
+        PositiveButtonData = positiveButtonData;
+
+    }
+
+    public void setPositiveButtonData(String positiveButtonText) {
+        PositiveButtonData = new ButtonData(positiveButtonText);
+    }
+
     public void setNegativeButtonData(ButtonData negativeButtonData) {
         NegativeButtonData = negativeButtonData;
     }
@@ -37,14 +52,6 @@ public class DialogData {
         NeutralButtonData = new ButtonData(neutralButtonText);
     }
 
-    public void setPositiveButtonData(ButtonData positiveButtonData) {
-        PositiveButtonData = positiveButtonData;
-
-    }
-
-    public void setPositiveButtonData(String positiveButtonText) {
-        PositiveButtonData = new ButtonData(positiveButtonText);
-    }
 
     public String getTitle() {
         return title;
