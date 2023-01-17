@@ -204,7 +204,7 @@ public class MainActivity extends BaseActivity {
 //        Logger.setView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
         Log = Logger.getLogger(this);
-        DialogHelper.getDialogHelper(getApplicationContext());
+        DialogHelper.getDialogHelper(this);
         Logger.d("dialogHelper", "loaded.");
 //        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(binding.mainInclude.toolbar);
