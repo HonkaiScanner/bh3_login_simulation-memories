@@ -82,6 +82,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private FabScanner fabScanner;
     private SocketHelper socketHelper;
     private boolean loginProgress = false;
+    private boolean SDKInit = false;
     private int currSlot = 999;
     private int currType = 999;
     private boolean currLoginTry = false;
@@ -177,18 +178,24 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         if (savedInstanceState.containsKey("combo_token")) {
             Logger.d(loadTag, "detect saved RoleData,loading");
             genLoginImpl();
-            if (loginImpl.isLogin()) {
+            if (loginImpl.isLogin() && loginImpl.getRole() != null) {
                 Logger.d(loadTag, "loginImpl already has data,skip.");
                 return;
             }
             Map<String, String> map = new HashMap<>();
             for (String s : savedInstanceState.keySet()) {
                 try {
-                    map.put(s, savedInstanceState.getString(s));
+                    String value = savedInstanceState.getString(s);
+                    if (s.contains("combo_token")) {
+                        Logger.addBlacklist(value);
+                    }
+                    Logger.d(s, value);
+                    map.put(s, value);
                     savedInstanceState.remove(s);
                 } catch (ClassCastException ignore) {
                 }
             }
+            savedInstanceState.clear();
             try {
                 RoleData roleData = new RoleData(map, this);
                 loginImpl.setRole(roleData);
@@ -423,11 +430,17 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     .setTitle(activity.getString(R.string.sel_server))
                     .setSingleChoiceItems(singleChoiceItems, itemSelected, (dialogInterface, i) -> {
 
+                        String originServerType = pref.getString("server_type", "");
+                        if (originServerType.equals(serverList[i])) {
+                            dialogInterface.dismiss();
+                            return;
+                        }
+                        Logger.d("selectServer ", serverList[i]);
                         pref.edit().putString("server_type", serverList[i])
                                 .putBoolean("auto_login", autoLogin)
                                 .apply();
                         Tools.saveBoolean(activity, "last_login_succeed", false);
-                        if (loginImpl != null && loginImpl.isLogin()) {
+                        if ((loginImpl != null && loginImpl.isLogin()) || SDKInit) {
                             Log.makeToast(R.string.logged_and_restart);
                             needRestart = true;
                         }
@@ -492,6 +505,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             genLoginImpl();
         }
         loginImpl.login();
+        SDKInit = true;
         loginProgress = true;
     }
 

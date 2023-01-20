@@ -29,11 +29,13 @@ public class LoginInstanceManager {
     private final String TAG = "LoginInstanceManager";
     private LoginCallback mCallback;
     private LoginImpl mLoginImpl;
+    private String tempServerType = "none";
 
     public LoginInstanceManager(AppCompatActivity context) {
         this.mContext = context;
         this.Log = Logger.getLogger(context);
-        Logger.d(TAG, "init");
+        String server_type = PreferenceManager.getDefaultSharedPreferences(mContext).getString("server_type", "");
+        Logger.d(TAG, "init, default Server:" + server_type);
     }
 
     public static LoginInstanceManager getINSTANCE(AppCompatActivity context) {
@@ -46,7 +48,10 @@ public class LoginInstanceManager {
     }
 
     public LoginImpl getLoginImpl() {
-        if (mLoginImpl == null) {
+        if (mLoginImpl == null || tempServerType.equals("none")) {
+            genLoginImpl();
+        }
+        if (!tempServerType.equals("none") && tempServerType.equals(PreferenceManager.getDefaultSharedPreferences(mContext).getString("server_type", ""))) {
             genLoginImpl();
         }
         return mLoginImpl;
@@ -106,6 +111,8 @@ public class LoginInstanceManager {
                     Logger.getLogger(mContext).makeToast(R.string.error_wrong_server);
                     break;
             }
+            tempServerType = pref.getString("server_type", "");
+
         } catch (NullPointerException e) {
             e.printStackTrace();
             Logger.d(TAG, "init loginImpl on wrong time");

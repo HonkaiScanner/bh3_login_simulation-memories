@@ -59,7 +59,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         versionNameSuffix System.getenv("NAME_SUFFIX")
-//        versionNameSuffix '-snapshot-23w04c.dev'
+//        versionNameSuffix '-snapshot-23w04e.dev'
         signingConfig signingConfigs.releaseSign
 
     }

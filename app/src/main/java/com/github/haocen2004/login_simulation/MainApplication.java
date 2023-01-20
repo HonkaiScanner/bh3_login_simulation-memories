@@ -37,6 +37,8 @@ import com.github.haocen2004.login_simulation.util.Tools;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;
 
+import java.util.Locale;
+
 import cn.leancloud.LCInstallation;
 import cn.leancloud.LCObject;
 import cn.leancloud.LeanCloud;
@@ -82,55 +84,60 @@ public class MainApplication extends Application implements LifecycleOwner {
         crashHandler.init(this);
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
         strategy.setDeviceID(Tools.getUUID(this));
+        CrashReport.setDeviceId(this, Tools.getUUID(this));
         strategy.setDeviceModel(Tools.getDeviceModel());
         strategy.setCrashHandleCallback(crashHandler);
         CrashReport.setIsDevelopmentDevice(getApplicationContext(), DEBUG);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG, strategy);
         LeanCloud.initializeSecurely(getApplicationContext(), "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz", SP_URL);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            NotificationChannel channel = new NotificationChannel("scanner_post_channel", "扫码器消息推送服务", NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-            PushService.setDefaultChannelId(this, channel.getId());
-        }
         app_pref = getDefaultSharedPreferences(this);
         DEBUG_MODE = app_pref.getBoolean("debug_mode", false) || DEBUG;
-        if (DEBUG_MODE) {
-            PushService.subscribe(this, "debug", MainActivity.class);
-            PushService.unsubscribe(this, "release");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !Tools.getDeviceModel().toLowerCase(Locale.ROOT).contains("mumu")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                NotificationChannel channel = new NotificationChannel("scanner_post_channel", "扫码器消息推送服务", NotificationManager.IMPORTANCE_DEFAULT);
+                notificationManager.createNotificationChannel(channel);
+                PushService.setDefaultChannelId(this, channel.getId());
+            }
+            if (DEBUG_MODE) {
+                PushService.subscribe(this, "debug", MainActivity.class);
+                PushService.unsubscribe(this, "release");
+            } else {
+                PushService.subscribe(this, "release", MainActivity.class);
+                PushService.unsubscribe(this, "debug");
+            }
+            if (VERSION_NAME.contains("snapshot")) {
+                PushService.subscribe(this, "snapshot", MainActivity.class);
+            } else {
+                PushService.unsubscribe(this, "snapshot");
+            }
+
+            LCInstallation.getCurrentInstallation().saveInBackground().subscribe(new Observer<LCObject>() {
+                @Override
+                public void onSubscribe(@NonNull Disposable d) {
+
+                }
+
+                @Override
+                public void onNext(@NonNull LCObject lcObject) {
+                    String installationId = LCInstallation.getCurrentInstallation().getInstallationId();
+                    Tools.saveString(getApplicationContext(), "installationId", installationId);
+                    Logger.d("LCPush", "init success, installationId: " + installationId);
+                }
+
+                @Override
+                public void onError(@NonNull Throwable e) {
+                    Logger.d("LCPush", "init Failed, " + e.getMessage());
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            });
         } else {
-            PushService.subscribe(this, "release", MainActivity.class);
-            PushService.unsubscribe(this, "debug");
+            Logger.d("PUSH Service", "temp disable push service." + Build.VERSION.SDK_INT + ":" + Tools.getDeviceModel());
         }
-        if (VERSION_NAME.contains("snapshot")) {
-            PushService.subscribe(this, "snapshot", MainActivity.class);
-        } else {
-            PushService.unsubscribe(this, "snapshot");
-        }
-
-        LCInstallation.getCurrentInstallation().saveInBackground().subscribe(new Observer<LCObject>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(@NonNull LCObject lcObject) {
-                String installationId = LCInstallation.getCurrentInstallation().getInstallationId();
-                Tools.saveString(getApplicationContext(), "installationId", installationId);
-                Logger.d("LCPush", "init success, installationId: " + installationId);
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                Logger.d("LCPush", "init Failed, " + e.getMessage());
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             app_pref.edit()
                     .putBoolean("is_first_run", false)

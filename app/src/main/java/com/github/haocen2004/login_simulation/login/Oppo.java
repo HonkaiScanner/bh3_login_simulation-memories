@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static com.github.haocen2004.login_simulation.util.Constant.FLYME_INIT;
+import static com.github.haocen2004.login_simulation.util.Constant.OPPO_OFFICIAL_PACK_INSTALLED;
 import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
 import android.annotation.SuppressLint;
@@ -13,7 +15,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.util.Tools;
 import com.nearme.game.sdk.GameCenterSDK;
 import com.nearme.game.sdk.callback.ApiCallback;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -29,78 +34,6 @@ public class Oppo implements LoginImpl {
     private RoleData roleData;
     private static final String TAG = "Oppo Login";
     private final String appSecret = "f303388D89043bfEB1A667cfE42ea47E";
-    private final GameCenterSDK sdk;
-    private final Logger Log;
-    private final LoginCallback callback;
-
-
-    public Oppo(Activity activity, LoginCallback callback) {
-        this.callback = callback;
-        this.activity = activity;
-
-
-        GameCenterSDK.init(appSecret, activity);
-
-//        Logger.d(TAG, "test: " + activity.getApplicationContext().getPackageName());
-        sdk = GameCenterSDK.getInstance();
-        Log = Logger.getLogger(activity);
-    }
-
-    @Override
-    public void login() {
-        sdk.doLogin(activity, new ApiCallback() {
-            @Override
-            public void onSuccess(String s) {
-                sdk.doGetTokenAndSsoid(new ApiCallback() {
-                    public void onFailure(String param2String, int param2Int) {
-                        makeToast("登录失败");
-                        Logger.w(TAG, "Login Failed. " + param2String + "," + param2Int);
-                        callback.onLoginFailed();
-                    }
-
-                    public void onSuccess(String param2String) {
-//                        Logger.d(TAG, param2String);
-                        try {
-                            JSONObject json = new JSONObject(param2String);
-                            token = json.getString("token");
-                            uid = json.getString("ssoid");
-                            Logger.addBlacklist(token);
-                            doBHLogin();
-                        } catch (JSONException e) {
-                            CrashReport.postCatchedException(e);
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-            }
-
-            @Override
-            public void onFailure(String s, int i) {
-                makeToast("error:" + s + "\ncode:" + i);
-                Logger.d(TAG, "onFailure: s:" + s);
-                Logger.d(TAG, "onFailure: i:" + i);
-                callback.onLoginFailed();
-            }
-        });
-    }
-
-    @Override
-    public boolean logout() {
-        makeToast("OppoSdk未提供退出登录接口");
-        return false;
-    }
-
-    @Override
-    public RoleData getRole() {
-        return roleData;
-    }
-
-    @Override
-    public boolean isLogin() {
-        return isLogin;
-    }
-
     @SuppressLint("HandlerLeak")
     Handler login_handler = new Handler() {
         @Override
@@ -120,7 +53,7 @@ public class Oppo implements LoginImpl {
                 return;
             }
 //            Logger.info(feedback);
-            Logger.i(TAG, "handleMessage: " + feedback);
+//            Logger.i(TAG, "handleMessage: " + feedback);
             try {
                 if (feedback_json.getInt("retcode") == 0) {
 
@@ -149,6 +82,92 @@ public class Oppo implements LoginImpl {
             }
         }
     };
+    private final Logger Log;
+    private final LoginCallback callback;
+    private GameCenterSDK sdk;
+
+    public Oppo(Activity activity, LoginCallback callback) {
+        this.callback = callback;
+        this.activity = activity;
+        OPPO_OFFICIAL_PACK_INSTALLED = Tools.verifyOfficialPack(activity, "com.miHoYo.bh3.nearme.gamecenter");
+        if (OPPO_OFFICIAL_PACK_INSTALLED) {
+            SdkInit(false);
+        }
+        Log = Logger.getLogger(activity);
+    }
+
+    private void SdkInit(boolean autoLogin) {
+        GameCenterSDK.init(appSecret, activity);
+        sdk = GameCenterSDK.getInstance();
+        FLYME_INIT = true;
+        if (autoLogin) login();
+    }
+
+    @Override
+    public boolean logout() {
+        makeToast("OppoSdk未提供退出登录接口");
+        return false;
+    }
+
+    @Override
+    public RoleData getRole() {
+        return roleData;
+    }
+
+    @Override
+    public boolean isLogin() {
+        return isLogin;
+    }
+
+    @Override
+    public void login() {
+
+
+        OPPO_OFFICIAL_PACK_INSTALLED = Tools.verifyOfficialPack(activity, "com.miHoYo.bh3.nearme.gamecenter");
+        if (!OPPO_OFFICIAL_PACK_INSTALLED) {
+            DialogData dialogData = new DialogData("Oppo特殊操作提示", "Oppo服需要同时安装官方客户端\n\n在您的手机上未检测到官方客户端存在或没有获取手机安装应用列表权限\n\n请授予扫码器获取手机应用列表权限\n并正确安装任意版本官方客户端\n\n无需下载任何资源\n无需下载任何资源\n无需下载任何资源", "我已知晓");
+            DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
+            callback.onLoginFailed();
+        } else if (!FLYME_INIT) {
+            SdkInit(true);
+        } else {
+            sdk.doLogin(activity, new ApiCallback() {
+                @Override
+                public void onSuccess(String s) {
+                    sdk.doGetTokenAndSsoid(new ApiCallback() {
+                        public void onFailure(String param2String, int param2Int) {
+                            makeToast("登录失败");
+                            Logger.w(TAG, "Login Failed. " + param2String + "," + param2Int);
+                            callback.onLoginFailed();
+                        }
+
+                        public void onSuccess(String param2String) {
+//                        Logger.d(TAG, param2String);
+                            try {
+                                JSONObject json = new JSONObject(param2String);
+                                token = json.getString("token");
+                                uid = json.getString("ssoid");
+                                Logger.addBlacklist(token);
+                                doBHLogin();
+                            } catch (JSONException e) {
+                                CrashReport.postCatchedException(e);
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onFailure(String s, int i) {
+                    makeToast("error:" + s + "\ncode:" + i);
+                    Logger.d(TAG, "onFailure: s:" + s);
+                    Logger.d(TAG, "onFailure: i:" + i);
+                    callback.onLoginFailed();
+                }
+            });
+        }
+    }
 
     Runnable login_runnable = new Runnable() {
         @Override

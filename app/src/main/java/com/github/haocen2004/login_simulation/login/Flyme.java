@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
 import static com.github.haocen2004.login_simulation.util.Constant.FLYME_INIT;
-import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_PACK_INSTALLED;
+import static com.github.haocen2004.login_simulation.util.Constant.FLYME_OFFICIAL_PACK_INSTALLED;
 import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
 
 import android.annotation.SuppressLint;
@@ -87,8 +87,8 @@ public class Flyme implements LoginImpl {
         this.activity = activity;
         Log = getLogger(activity);
         //isLogin = false;
-        OFFICIAL_PACK_INSTALLED = Tools.verifyOfficialPack(activity, "com.miHoYo.bh3.mz");
-        if (OFFICIAL_PACK_INSTALLED) {
+        FLYME_OFFICIAL_PACK_INSTALLED = Tools.verifyOfficialPack(activity, "com.miHoYo.bh3.mz");
+        if (FLYME_OFFICIAL_PACK_INSTALLED) {
             SdkInit(false);
         }
 
@@ -102,8 +102,8 @@ public class Flyme implements LoginImpl {
 
     @Override
     public void login() {
-        OFFICIAL_PACK_INSTALLED = Tools.verifyOfficialPack(activity, "com.miHoYo.bh3.mz");
-        if (!OFFICIAL_PACK_INSTALLED) {
+        FLYME_OFFICIAL_PACK_INSTALLED = Tools.verifyOfficialPack(activity, "com.miHoYo.bh3.mz");
+        if (!FLYME_OFFICIAL_PACK_INSTALLED) {
             DialogData dialogData = new DialogData("魅族特殊操作提示", "魅族服需要同时安装官方客户端\n\n在您的手机上未检测到官方客户端存在或没有获取手机安装应用列表权限\n\n请授予扫码器获取手机应用列表权限\n并正确安装任意版本官方客户端\n\n无需下载任何资源\n无需下载任何资源\n无需下载任何资源", "我已知晓");
             DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
             callback.onLoginFailed();

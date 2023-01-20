@@ -37,6 +37,7 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -114,6 +115,7 @@ public class Huawei implements LoginImpl {
                         });
     }
 
+    @SuppressLint("NewApi")
     public void getGamePlayer() {
         // 调用getPlayersClient方法初始化
         PlayersClient client = Games.getPlayersClient(activity);
@@ -131,8 +133,13 @@ public class Huawei implements LoginImpl {
                 Logger.addBlacklist(URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
                 body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
             } else {
-                Logger.addBlacklist(URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
-                body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
+                try {
+                    String encoder = "utf-8";
+                    Logger.addBlacklist(URLEncoder.encode(accessToken, encoder));
+                    body = "extraBody=json%3D%7B%22appId%22%3A%2210624714%22%7D&method=client.hms.gs.getGameAuthSign&hmsApkVersionCode=60700322&accessToken=" + URLEncoder.encode(accessToken, encoder);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
             String finalBody = body;
             new Thread() {

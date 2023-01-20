@@ -180,7 +180,7 @@ public class Qihoo implements LoginImpl {
                     // 当收到此回调后才可调用SDK提供的实名状态查询接口、打开实名认证界面接口。具体的返回内容是functionParams，数据格式如下。
                 }
 
-            }, true);
+            }, false);
 
         }
     }
