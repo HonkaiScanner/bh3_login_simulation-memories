@@ -239,7 +239,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void refreshView() {
         String server_type;
         binding.officialSlotSelect.setVisibility(View.GONE);
-        binding.tokenCheckBox.setVisibility(View.GONE);
+//        binding.tokenCheckBox.setVisibility(View.GONE);
         binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
         if (!HAS_ACCOUNT && !SP_CHECKED) {
@@ -250,7 +250,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             case "Official":
                 server_type = activity.getString(R.string.types_official);
                 binding.officialSlotSelect.setVisibility(View.VISIBLE);
-                binding.tokenCheckBox.setVisibility(View.VISIBLE);
+//                binding.tokenCheckBox.setVisibility(View.VISIBLE);
                 binding.officialTypeSel.setVisibility(View.VISIBLE);
                 switch (pref.getInt("official_slot", 1)) {
                     case 1:
@@ -274,7 +274,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         binding.officialTypeSel.check(binding.radioAndroid.getId());
                         break;
                 }
-                binding.tokenCheckBox.setChecked(pref.getBoolean("use_token", false));
+//                binding.tokenCheckBox.setChecked(pref.getBoolean("use_token", false));
                 break;
             case "Bilibili":
                 server_type = activity.getString(R.string.types_bilibili);
@@ -370,7 +370,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.cardViewMain.cardView2.setOnLongClickListener(this);
         binding.officialSlotSelect.addOnButtonCheckedListener(this);
         binding.officialTypeSel.addOnButtonCheckedListener(this);
-        binding.tokenCheckBox.setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
+//        binding.tokenCheckBox.setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
         binding.checkBoxWDJ.setOnCheckedChangeListener((compoundButton, b) -> {
             SharedPreferences ucSharedPref = activity.getSharedPreferences("cn.uc.gamesdk.pref", 0);
 //            activity.getSharedPreferences("cn.uc.gamesdk.pref.usr_simple_cache",0).edit().clear().apply();
@@ -523,7 +523,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.radioAndroid.setEnabled(newState);
         binding.radioPc.setEnabled(newState);
         binding.checkBoxWDJ.setEnabled(newState);
-        binding.tokenCheckBox.setEnabled(newState);
+//        binding.tokenCheckBox.setEnabled(newState);
         binding.btnScan.setEnabled(newState);
         binding.btnSelpic.setEnabled(newState);
 
