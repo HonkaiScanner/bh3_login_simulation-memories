@@ -110,7 +110,7 @@ configurations {
 dependencies {
 
     implementation fileTree(dir: "libs", include: ["*.jar", "*.so", '*.aar'])
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -132,7 +132,7 @@ dependencies {
     implementation 'cn.leancloud:storage-android:8.2.15'
     implementation 'cn.leancloud:realtime-android:8.2.15'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation "androidx.room:room-runtime:2.4.3"
+    implementation "androidx.room:room-runtime:2.5.0"
 //    implementation 'com.google.android.material:material:1.7.0'
     implementation 'dev.rikka.rikkax.material:material:2.5.1'
     implementation 'dev.rikka.rikkax.material:material-preference:2.0.0'
@@ -147,7 +147,7 @@ dependencies {
     implementation 'com.huawei.hms:game:6.8.0.300'
     implementation 'org.json:json:20220924'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
-    annotationProcessor 'androidx.room:room-compiler:2.4.3'
+    annotationProcessor 'androidx.room:room-compiler:2.5.0'
 //    testImplementation 'junit:junit:4.13.2'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
