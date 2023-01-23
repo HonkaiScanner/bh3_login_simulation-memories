@@ -1,8 +1,8 @@
 package com.github.haocen2004.login_simulation.util;
 
 import static android.app.Activity.RESULT_OK;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.util.Constant.BAG_ALTER_NOTIFICATION;
-import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -13,8 +13,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.Image;
@@ -78,6 +80,7 @@ public class FabScanner extends Service {
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private final List<XToast<?>> toastInst = new ArrayList<>();
     private int counter = 0;
+    private SharedPreferences pref;
 
     public FabScanner() {
     }
@@ -114,6 +117,7 @@ public class FabScanner extends Service {
         hasData = false;
         isScreenCaptureStarted = false;
         needStop = false;
+        pref = getDefaultSharedPreferences(activity);
 
         new Thread() {
             @Override
@@ -220,7 +224,7 @@ public class FabScanner extends Service {
                     mHeight = metrics.heightPixels;
 
                     //start capture reader
-                    mImageReader = ImageReader.newInstance(mWidth, mHeight, 0x1, 2);
+                    mImageReader = ImageReader.newInstance(mWidth, mHeight, PixelFormat.RGBA_8888, 5);
                     try {
                         mVirtualDisplay = sMediaProjection.createVirtualDisplay(
                                 "ScreenShot",
@@ -250,8 +254,10 @@ public class FabScanner extends Service {
                         if (isScreenCaptureStarted) {
 
                             Bitmap bitmap = null;
-                            try (Image image = reader.acquireLatestImage()) {
-                                if (image != null) {
+                            Image image;
+                            int failedCount = 0;
+                            while ((image = mImageReader.acquireLatestImage()) != null) {
+                                try {
 
                                     int width = image.getWidth();
                                     int height = image.getHeight();
@@ -266,7 +272,7 @@ public class FabScanner extends Service {
                                             , height, Bitmap.Config.ARGB_8888);
                                     bitmap.copyPixelsFromBuffer(buffer);
                                     Bitmap.createBitmap(bitmap, 0, 0, width, height);
-                                    if (DEBUG_MODE) {
+                                    if (pref.getBoolean("fab_save_img", false)) {
                                         try {
                                             String path = activity.getExternalFilesDir(null) + "/screenshot/";
                                             File dir = new File(path);
@@ -278,6 +284,9 @@ public class FabScanner extends Service {
                                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                                             out.flush();
                                             out.close();
+                                            if (file.length() < 100000) {
+                                                file.delete();
+                                            }
                                             //保存图片后发送广播通知更新数据库
 //                                            Uri uri = Uri.fromFile(file);
 //                                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
@@ -287,7 +296,18 @@ public class FabScanner extends Service {
                                     }
                                     List<String> urls = WeChatQRCodeDetector.detectAndDecode(bitmap);
                                     url = urls.toArray(new String[0]);
-                                    Logger.d(TAG, urls.toString());
+                                    if (urls.size() < 1) {
+                                        failedCount++;
+                                        if (pref.getBoolean("capture_continue_before_result", false)) {
+                                            try {
+                                                Thread.sleep(200);
+                                            } catch (Exception ignore) {
+                                            }
+                                            continue;
+                                        }
+//                                        continue;
+                                    }
+                                    Logger.d(TAG + failedCount, urls.toString());
                                     if (qrScanner.parseUrl(url)) {
                                         Toast.makeText(activity, "扫码成功\n处理中....", Toast.LENGTH_SHORT).show();
                                         qrScanner.setFabMode(true);
@@ -309,16 +329,22 @@ public class FabScanner extends Service {
 //                                            Log.makeToast("未找到二维码");  toast 由 qrScanner 发出
                                         isScreenCaptureStarted = false;
                                     }
-                                    mVirtualDisplay.release();
-                                    mVirtualDisplay = null;
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Log.makeToast("未找到二维码");
-                                isScreenCaptureStarted = false;
-                            } finally {
-                                if (null != bitmap) {
-                                    bitmap.recycle();
+                                    try {
+                                        mVirtualDisplay.release();
+                                        mVirtualDisplay = null;
+                                    } catch (Exception ignore) {
+                                        mVirtualDisplay = null;
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Log.makeToast("未找到二维码");
+                                    isScreenCaptureStarted = false;
+                                } finally {
+
+                                    if (null != bitmap) {
+                                        bitmap.recycle();
+                                    }
+                                    image.close();
                                 }
                             }
                         }

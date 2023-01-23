@@ -29,6 +29,23 @@
             android:summary="%s"
             android:title="@string/dark_theme" />
     </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="@string/fab_header">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="capture_continue_before_result"
+            android:title="@string/capture_continue_before_result" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="keep_capture"
+            android:title="@string/keep_capture" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="fab_save_img"
+            android:title="@string/fab_save_img" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/adv_header">
 
         <EditTextPreference
@@ -48,10 +65,6 @@
             android:defaultValue="false"
             android:key="use_token"
             android:title="@string/use_token_true" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="keep_capture"
-            android:title="@string/keep_capture" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="quit_on_success"

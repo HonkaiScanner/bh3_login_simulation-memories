@@ -58,7 +58,7 @@
     <string name="report_github">Github</string>
     <string name="report_bili">B站主页</string>
     <string name="report_qq">QQ群</string>
-    <string name="settings_update">检查更新</string>
+    <string name="settings_update">更新提示</string>
     <string name="adv_header">高级设置</string>
     <string name="report_hand">强制发送错误数据</string>
     <string name="btn_register">注册</string>
@@ -106,9 +106,12 @@
     <string name="feedback_way">反馈途径</string>
     <string name="list_about">关于</string>
     <string name="overwrite_bh_ver">使用自定义崩坏3版本号</string>
-    <string name="keep_capture">悬浮窗扫码成功不退出</string>
+    <string name="keep_capture">识别成功不退出悬浮窗</string>
     <string name="quit_on_success">扫码成功后退出扫码器</string>
     <string name="debug_mode">调试模式</string>
+    <string name="capture_continue_before_result">未找到二维码时自动重试</string>
+    <string name="fab_header">悬浮窗设置</string>
+    <string name="fab_save_img">保存截图</string>
 
 
     <string name="crash_hint">检测到扫码器最近发生了崩溃\n请带好崩溃报告及时找开发者反馈!</string>

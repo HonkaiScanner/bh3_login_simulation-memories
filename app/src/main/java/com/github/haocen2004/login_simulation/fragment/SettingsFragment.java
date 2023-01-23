@@ -12,11 +12,14 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
+import com.github.haocen2004.login_simulation.util.DialogHelper;
 import com.github.haocen2004.login_simulation.util.Logger;
 
 import java.util.Objects;
@@ -34,26 +37,62 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         SharedPreferences app_pref = getDefaultSharedPreferences(getContext());
-        findPreference("debug_mode").setOnPreferenceChangeListener(((preference, newValue) -> {
-            Logger.getLogger(null).makeToast("切换调试模式将在重启扫码器后生效");
+
+        findPreference("fab_save_img").setOnPreferenceChangeListener(((preference, newValue) -> {
+            if (((Boolean) newValue)) {
+                if (app_pref.getBoolean("capture_continue_before_result", false)) {
+                    DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量结果图片占用内存\n是否继续开启本功能？");
+                    dialogData.setPositiveButtonData("确认");
+                    dialogData.setNegativeButtonData(new ButtonData("取消") {
+                        @Override
+                        public void callback(DialogHelper dialogHelper) {
+                            super.callback(dialogHelper);
+                            app_pref.edit().putBoolean("fab_save_img", false).apply();
+                            preference.performClick();
+                        }
+                    });
+                    DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                }
+            }
+            return true;
+        }));
+        findPreference("capture_continue_before_result").setOnPreferenceChangeListener(((preference, newValue) -> {
+            if (((Boolean) newValue)) {
+                if (app_pref.getBoolean("fab_save_img", false)) {
+                    DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量结果图片占用内存\n是否继续开启本功能？");
+                    dialogData.setPositiveButtonData("确认");
+                    dialogData.setNegativeButtonData(new ButtonData("取消") {
+                        @Override
+                        public void callback(DialogHelper dialogHelper) {
+                            super.callback(dialogHelper);
+                            app_pref.edit().putBoolean("capture_continue_before_result", false).apply();
+                            preference.performClick();
+                        }
+                    });
+                    DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                }
+            }
             return true;
         }));
 
+        findPreference("debug_mode").setOnPreferenceChangeListener((preference, newValue) -> {
+            Logger.getLogger(null).makeToast("切换调试模式将在重启扫码器后生效");
+            return true;
+        });
+
         findPreference("check_update").setOnPreferenceChangeListener((preference, newValue) -> {
             if (!((Boolean) newValue)) {
-                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(requireContext());
-                normalDialog.setTitle("是否关闭更新检查？");
-                normalDialog.setMessage("将无法获取扫码器最新更新\n\n以下功能将会一起关闭：\n赞助者列表更新\n公告更新");
-                normalDialog.setPositiveButton(R.string.btn_close_update,
-                        (dialog, which) -> dialog.dismiss());
-                normalDialog.setNegativeButton(R.string.btn_cancel,
-                        (dialog, which) -> {
-                            app_pref.edit().putBoolean("check_update", true).apply();
-                            preference.performClick();
-                            dialog.dismiss();
-                        });
-                normalDialog.setCancelable(false);
-                normalDialog.show();
+                DialogData dialogData = new DialogData("是否关闭更新提示？", "将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
+                dialogData.setPositiveButtonData("关闭更新提示");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("check_update", true).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
             }
             return true;
         });

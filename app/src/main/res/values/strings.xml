@@ -110,6 +110,9 @@
     <string name="keep_capture">Keep FabScanner</string>
     <string name="quit_on_success">Exit after successful scanning</string>
     <string name="debug_mode">Debug Mode</string>
+    <string name="capture_continue_before_result">None QRCode auto retry</string>
+    <string name="fab_header">Fab Setting</string>
+    <string name="fab_save_img">Save Screenshot</string>
 
 
     <string name="crash_hint">Detected a recent crash happened.\nPlease bring a crash-report to get feedback from the developer in time!</string>

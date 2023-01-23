@@ -333,13 +333,13 @@ public class MainActivity extends BaseActivity {
             @Override
             public void callback(DialogHelper dialogHelper) {
                 final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getApplicationContext());
-                normalDialog.setTitle("是否关闭更新检查？");
+                normalDialog.setTitle("是否关闭更新提示？");
                 normalDialog.setMessage("将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
-                normalDialog.setNeutralButton("忽略本次更新", (dialog, which) -> {
-                    app_pref.edit().putInt("ignore_ver", VERSION_CODE).apply();
-                    dialog.dismiss();
-                    super.callback(dialogHelper);
-                });
+//                normalDialog.setNeutralButton("忽略本次更新", (dialog, which) -> {
+//                    app_pref.edit().putInt("ignore_ver", VERSION_CODE).apply();
+//                    dialog.dismiss();
+//                    super.callback(dialogHelper);
+//                });
                 normalDialog.setPositiveButton(R.string.btn_close_update, (dialog, which) -> {
                     app_pref.edit().putBoolean("check_update", false).apply();
                     dialog.dismiss();
