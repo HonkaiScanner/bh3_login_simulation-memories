@@ -363,25 +363,25 @@ public class QRScanner {
                     .put("ext", oaserver.getJSONObject("ext"))
                     .put("gameserver", oaserver.getJSONObject("gameserver"))
                     .put("gateway", oaserver.getJSONObject("gateway"))
-                .put("oaserver_url", oaserver.get("oaserver_url"))
-                .put("server_cur_time", oaserver.get("server_cur_time"))
-                .put("server_cur_timezone", oaserver.get("server_cur_timezone"))
-                .put("region_name", oaserver.getString("region_name"))
-                .put("retcode", "0")
-                .put("is_data_ready", true)
-                .put("server_ext", oaserver.getJSONObject("server_ext"));
+                    .put("oaserver_url", oaserver.get("oaserver_url"))
+                    .put("server_cur_time", oaserver.get("server_cur_time"))
+                    .put("server_cur_timezone", oaserver.get("server_cur_timezone"))
+                    .put("region_name", oaserver.getString("region_name"))
+                    .put("retcode", "0")
+                    .put("is_data_ready", true)
+                    .put("server_ext", oaserver.getJSONObject("server_ext"));
 
 
-        data_json.put("accountType", roleData.getAccountType())
-                .put("accountID", open_id)
-                .put("accountToken", combo_token)
-                .put("dispatch", dispatch_json);
+            data_json.put("accountType", roleData.getAccountType())
+                    .put("accountID", open_id)
+                    .put("accountToken", combo_token)
+                    .put("dispatch", dispatch_json);
 
-        ext_json.put("data", data_json);
+            ext_json.put("data", data_json);
 
-        payload_json.put("raw", raw_json.toString())
-                .put("proto", "Combo")
-                .put("ext", ext_json.toString().replace("\\",""));
+            payload_json.put("raw", raw_json.toString())
+                    .put("proto", "Combo")
+                    .put("ext", ext_json.toString().replace("\\", ""));
             confirm_json.put("device", device_id)
                     .put("app_id", parseInt(app_id))
                     .put("ts", System.currentTimeMillis())

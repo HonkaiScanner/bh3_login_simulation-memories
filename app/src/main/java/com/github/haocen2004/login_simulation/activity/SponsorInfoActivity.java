@@ -160,7 +160,7 @@ public class SponsorInfoActivity extends BaseAbsActivity {
 
         items.add(new Category("自定义扫码名称"));
         items.add(new CardSetting(user.getString("custom_username"), (object) -> {
-            DialogData dialogData = new DialogData("特殊修改提示", "该项目涉及扫码信息显示\n修改需要等待作者审核！");
+            DialogData dialogData = new DialogData("特殊修改提示", "该项目涉及扫码信息显示\n修改需要等待作者审核！\n\n自定义扫码名称将在第二行保留扫码器相关信息\n默认为 [扫码器赞助者] ");
             dialogData.setPositiveButtonData(new ButtonData("我已知晓") {
                 @Override
                 public void callback(DialogHelper dialogHelper) {
