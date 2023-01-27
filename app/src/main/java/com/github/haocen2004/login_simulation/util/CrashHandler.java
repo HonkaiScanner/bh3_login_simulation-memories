@@ -2,10 +2,13 @@ package com.github.haocen2004.login_simulation.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.data.LogData;
@@ -82,8 +85,6 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
     }
 
     public void init(Context context) {
-//        Thread.UncaughtExceptionHandler mDefaultCrashHandler = Thread.getDefaultUncaughtExceptionHandler();
-//        Thread.setDefaultUncaughtExceptionHandler(this);
         mContext = context;
         PATH = mContext.getExternalFilesDir(null) + "/crash-report/";
     }
@@ -112,6 +113,9 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
             pw.println();
             pw.println("Logs: ");
             dumpLogs(pw);
+            pw.println();
+            pw.println("SharedPref: ");
+            dumpSharedPref(pw);
             pw.close();
         } catch (Exception e) {
             Log.e(TAG, "dump crash info failed");
@@ -131,6 +135,16 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
             }
         } catch (NullPointerException e) {
             pw.println("NO LOGS.");
+        }
+    }
+
+    private void dumpSharedPref(PrintWriter pw) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        Map<String, ?> map = sharedPreferences.getAll();
+        for (String s : map.keySet()) {
+            pw.print(s);
+            pw.print(":");
+            pw.println(map.get(s));
         }
     }
 
