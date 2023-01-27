@@ -175,7 +175,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void loadSavedData(Bundle savedInstanceState, String loadTag) {
-        if (savedInstanceState.containsKey("combo_token")) {
+        if (savedInstanceState.containsKey("scanner_data:combo_token")) {
             Logger.d(loadTag, "detect saved RoleData,loading");
             genLoginImpl();
             if (loginImpl.isLogin() && loginImpl.getRole() != null) {
@@ -184,18 +184,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
             Map<String, String> map = new HashMap<>();
             for (String s : savedInstanceState.keySet()) {
-                try {
-                    String value = savedInstanceState.getString(s);
-                    if (s.contains("combo_token")) {
-                        Logger.addBlacklist(value);
+                if (s.startsWith("scanner_data:")) {
+                    try {
+                        String real_key = s.split(":")[1];
+                        String value = savedInstanceState.getString(s);
+                        if (s.contains("combo_token")) {
+                            Logger.addBlacklist(value);
+                        }
+                        Logger.d(real_key, value);
+                        map.put(real_key, value);
+                        savedInstanceState.remove(s);
+                    } catch (ClassCastException ignore) {
                     }
-                    Logger.d(s, value);
-                    map.put(s, value);
-                    savedInstanceState.remove(s);
-                } catch (ClassCastException ignore) {
                 }
             }
-            savedInstanceState.clear();
             try {
                 RoleData roleData = new RoleData(map, this);
                 loginImpl.setRole(roleData);
@@ -231,6 +233,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         if (savedInstanceState != null) {
             loadSavedData(savedInstanceState, "onCreateView");
         }
+//        new ChipsHelper(context,this.getLayoutInflater(),binding);
         return binding.getRoot();
     }
 
@@ -891,7 +894,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         if (loginImpl != null && loginImpl.isLogin()) {
             Map<String, String> map = loginImpl.getRole().getMap();
             for (String s : map.keySet()) {
-                outState.putString(s, map.get(s));
+                outState.putString("scanner_data:" + s, map.get(s));
             }
             Logger.d("onSaveInstanceState", "RoleData saved ");
         }
