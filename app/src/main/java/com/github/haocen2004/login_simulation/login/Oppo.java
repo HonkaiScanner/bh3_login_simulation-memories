@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Constant.FLYME_INIT;
+import static com.github.haocen2004.login_simulation.util.Constant.OPPO_INIT;
 import static com.github.haocen2004.login_simulation.util.Constant.OPPO_OFFICIAL_PACK_INSTALLED;
 import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
 
@@ -99,7 +99,7 @@ public class Oppo implements LoginImpl {
     private void SdkInit(boolean autoLogin) {
         GameCenterSDK.init(appSecret, activity);
         sdk = GameCenterSDK.getInstance();
-        FLYME_INIT = true;
+        OPPO_INIT = true;
         if (autoLogin) login();
     }
 
@@ -128,7 +128,7 @@ public class Oppo implements LoginImpl {
             DialogData dialogData = new DialogData("Oppo特殊操作提示", "Oppo服需要同时安装官方客户端\n\n在您的手机上未检测到官方客户端存在或没有获取手机安装应用列表权限\n\n请授予扫码器获取手机应用列表权限\n并正确安装任意版本官方客户端\n\n无需下载任何资源\n无需下载任何资源\n无需下载任何资源", "我已知晓");
             DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
             callback.onLoginFailed();
-        } else if (!FLYME_INIT) {
+        } else if (!OPPO_INIT) {
             SdkInit(true);
         } else {
             sdk.doLogin(activity, new ApiCallback() {
