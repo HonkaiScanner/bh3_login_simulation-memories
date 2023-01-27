@@ -1,5 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static com.github.haocen2004.login_simulation.util.Constant.OPPO_APP_KEY;
 import static com.github.haocen2004.login_simulation.util.Constant.OPPO_INIT;
 import static com.github.haocen2004.login_simulation.util.Constant.OPPO_OFFICIAL_PACK_INSTALLED;
 import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
@@ -33,7 +34,6 @@ public class Oppo implements LoginImpl {
     private String token;
     private RoleData roleData;
     private static final String TAG = "Oppo Login";
-    private final String appSecret = "f303388D89043bfEB1A667cfE42ea47E";
     @SuppressLint("HandlerLeak")
     Handler login_handler = new Handler() {
         @Override
@@ -97,7 +97,7 @@ public class Oppo implements LoginImpl {
     }
 
     private void SdkInit(boolean autoLogin) {
-        GameCenterSDK.init(appSecret, activity);
+        GameCenterSDK.init(OPPO_APP_KEY, activity);
         sdk = GameCenterSDK.getInstance();
         OPPO_INIT = true;
         if (autoLogin) login();

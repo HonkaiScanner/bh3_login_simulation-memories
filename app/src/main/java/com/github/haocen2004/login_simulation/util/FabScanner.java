@@ -299,9 +299,11 @@ public class FabScanner extends Service {
                                     if (urls.size() < 1) {
                                         failedCount++;
                                         if (pref.getBoolean("capture_continue_before_result", false)) {
-                                            try {
-                                                Thread.sleep(200);
-                                            } catch (Exception ignore) {
+                                            if (!pref.getBoolean("keep_capture_no_cooling_down", false)) {
+                                                try {
+                                                    Thread.sleep(500);
+                                                } catch (Exception ignore) {
+                                                }
                                             }
                                             continue;
                                         }

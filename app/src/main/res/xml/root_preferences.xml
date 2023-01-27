@@ -71,6 +71,10 @@
             android:title="@string/quit_on_success" />
         <SwitchPreference
             android:defaultValue="false"
+            android:key="keep_capture_no_cooling_down"
+            android:title="@string/keep_capture_no_cooling_down" />
+        <SwitchPreference
+            android:defaultValue="false"
             android:key="debug_mode"
             android:title="@string/debug_mode" />
 

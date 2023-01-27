@@ -51,6 +51,7 @@ import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
+import com.github.haocen2004.login_simulation.util.ChipsHelper;
 import com.github.haocen2004.login_simulation.util.Constant;
 import com.github.haocen2004.login_simulation.util.DialogHelper;
 import com.github.haocen2004.login_simulation.util.FabScanner;
@@ -95,6 +96,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private boolean needRestart = false;
     private boolean accSwitch = false;
     private LoginInstanceManager loginInstanceManager;
+    private ChipsHelper chipsHelper;
 
     @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
     private void delaySPCheck() {
@@ -233,7 +235,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         if (savedInstanceState != null) {
             loadSavedData(savedInstanceState, "onCreateView");
         }
-//        new ChipsHelper(context,this.getLayoutInflater(),binding);
+        chipsHelper = new ChipsHelper(context, this.getLayoutInflater());
         return binding.getRoot();
     }
 
@@ -471,6 +473,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             Intent intent = new Intent(context, AboutActivity.class);
             startActivity(intent);
         });
+        binding.btnSeltip.setOnClickListener(chipsHelper);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.github.haocen2004.login_simulation.util;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.HAS_TIPS;
+import static com.github.haocen2004.login_simulation.util.Constant.TIPS;
 import static com.github.haocen2004.login_simulation.util.Logger.processWithBlackList;
 import static java.lang.Integer.parseInt;
 
@@ -30,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class QRScanner {
@@ -247,8 +250,6 @@ public class QRScanner {
             }
             qr_check_json.put("sign", sign);
 
-
-
             Logger.d(TAG, "getScanRequest: " + qr_check_json.toString());
             new Thread(runnable).start();
 
@@ -258,7 +259,7 @@ public class QRScanner {
 
     public void genRequest() {
 
-
+        SharedPreferences app_pref = getDefaultSharedPreferences(activity);
         JSONObject raw_json = new JSONObject();
         JSONObject payload_json = new JSONObject();
         JSONObject ext_json = new JSONObject();
@@ -267,7 +268,7 @@ public class QRScanner {
         confirm_json = new JSONObject();
         try {
             if (app_id.contains("4") || is_official) {
-                SharedPreferences preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
+                SharedPreferences preferences = activity.getSharedPreferences("official_user_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
 
                 raw_json.put("uid", preferences.getString("uid", ""))
                         .put("token", preferences.getString("token", ""));
@@ -276,39 +277,92 @@ public class QRScanner {
                         .put("proto", "Account");
 
 
-            confirm_json.put("device", device_id)
-                    .put("app_id", app_id)
-                    .put("ticket", ticket)
-                    .put("payload", payload_json);
-            return;
-        }
-        raw_json.put("heartbeat", false)
-                .put("open_id", open_id)
-                .put("device_id", device_id)
-                .put("app_id", app_id)
-                .put("channel_id", channel_id)
-                .put("combo_token", combo_token)
-                .put("asterisk_name", getDefaultSharedPreferences(activity).getString("custom_username", "崩坏3外置扫码器用户"))
-                .put("combo_id", combo_id)
-                .put("account_type", account_type);
+                confirm_json.put("device", device_id)
+                        .put("app_id", app_id)
+                        .put("ticket", ticket)
+                        .put("payload", payload_json);
+                return;
+            }
+            StringBuilder custom_name = new StringBuilder();
+            custom_name.append(app_pref.getString("custom_username", "崩坏3外置扫码器用户"));
 
-        if (roleData.isUc_sign()) {
-            raw_json.put("is_wdj", getDefaultSharedPreferences(activity).getBoolean("use_wdj", false));
-        }
+            if (HAS_TIPS) custom_name.append("\n").append(TIPS);
+            String server_type;
+            switch (Objects.requireNonNull(app_pref.getString("server_type", ""))) {
+                case "Official":
+                    switch (app_pref.getInt("official_type", 0)) {
+                        case 1:
+                            server_type = "全平台(桌面)服";
+                            break;
+                        case 2:
+                            server_type = "IOS国服";
+                            break;
+                        default:
+                            server_type = "安卓国服";
+                            break;
+                    }
+                    break;
+                case "Bilibili":
+                    server_type = activity.getString(R.string.types_bilibili);
+                    break;
+                case "Xiaomi":
+                    server_type = activity.getString(R.string.types_xiaomi);
+                    break;
+                case "UC":
+                    server_type = activity.getString(R.string.types_uc);
+                    break;
+                case "Vivo":
+                    server_type = activity.getString(R.string.types_vivo);
+                    break;
+                case "Oppo":
+                    server_type = activity.getString(R.string.types_oppo);
+                    break;
+                case "Flyme":
+                    server_type = activity.getString(R.string.types_flyme);
+                    break;
+                case "YYB":
+                    server_type = activity.getString(R.string.types_yyb);
+                    break;
+                case "Huawei":
+                    server_type = activity.getString(R.string.types_huawei);
+                    break;
+                case "Qihoo":
+                    server_type = activity.getString(R.string.types_qihoo);
+                    break;
+                default:
+                    server_type = "获取服务器错误";
+            }
+
+            custom_name.append("\n").append(server_type).append("\n");
+
+            raw_json.put("heartbeat", false)
+                    .put("open_id", open_id)
+                    .put("device_id", device_id)
+                    .put("app_id", app_id)
+                    .put("channel_id", channel_id)
+                    .put("combo_token", combo_token)
+                    .put("asterisk_name", custom_name)
+                    .put("combo_id", combo_id)
+                    .put("account_type", account_type);
+
+            if (roleData.isUc_sign()) {
+                raw_json.put("is_wdj", app_pref.getBoolean("use_wdj", false));
+            }
+
             if (open_token != null && !open_token.isEmpty()) {
                 raw_json.put("open_token", open_token)
                         .put("guest", false);
             }
 
 
-        dispatch_json.put("account_url", oaserver.getString("account_url"))
-                .put("account_url_backup", oaserver.getString("account_url_backup"))
-                .put("asset_bundle_url_list", oaserver.getJSONArray("asset_bundle_url_list"))
-                .put("ex_resource_url_list", oaserver.getJSONArray("ex_resource_url_list"))
-                .put("ex_audio_and_video_url_list", oaserver.getJSONArray("ex_audio_and_video_url_list"))
-                .put("ext", oaserver.getJSONObject("ext"))
-                .put("gameserver", oaserver.getJSONObject("gameserver"))
-                .put("gateway", oaserver.getJSONObject("gateway"))
+            dispatch_json.put("account_url", oaserver.getString("account_url"))
+                    .put("account_url_backup", oaserver.getString("account_url_backup"))
+                    .put("asset_bundle_url_list", oaserver.getJSONArray("asset_bundle_url_list"))
+                    .put("ex_resource_url_list", oaserver.getJSONArray("ex_resource_url_list"))
+                    .put("ex_audio_and_video_url_list", oaserver.getJSONArray("ex_audio_and_video_url_list"))
+                    .put("ext", oaserver.getJSONObject("ext"))
+                    .put("gameserver", oaserver.getJSONObject("gameserver"))
+                    .put("gateway", oaserver.getJSONObject("gateway"))
                 .put("oaserver_url", oaserver.get("oaserver_url"))
                 .put("server_cur_time", oaserver.get("server_cur_time"))
                 .put("server_cur_timezone", oaserver.get("server_cur_timezone"))

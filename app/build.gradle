@@ -3,13 +3,15 @@ apply plugin: 'com.huawei.agconnect'
 
 android {
 
-//    if ( !System.getenv("CI") ) {
-//        android.applicationVariants.all { variant ->
-//            variant.outputs.all {
-//                outputFileName = "app-${variant.name}-${variant.versionName}.apk"
-//            }
-//        }
-//    } else {
+    if (!System.getenv("CI")) {
+        android.applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                def abi = output.getFilter(com.android.build.OutputFile.ABI)
+                if (abi == null) abi = "universal"
+                outputFileName = "Scanner-${variant.versionName}-${abi}.apk"
+            }
+        }
+    }
     splits {
         abi {
             enable true
@@ -18,7 +20,6 @@ android {
             universalApk true
         }
     }
-//    }
 
 
     signingConfigs {
@@ -53,13 +54,13 @@ android {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 57
+        versionCode 59
         versionName '1.8.0'
 //        versionCode Integer.parseInt(System.currentTimeMillis().toString()[7..12])
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         versionNameSuffix System.getenv("NAME_SUFFIX")
-//        versionNameSuffix '-snapshot-23w04e.dev'
+//        versionNameSuffix '-snapshot-23w05b.dev'
         signingConfig signingConfigs.releaseSign
 
     }

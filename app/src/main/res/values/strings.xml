@@ -81,6 +81,7 @@
     <string name="reg_new">Register</string>
     <string name="btn_get_key">Get Sponsor Key</string>
     <string name="btn_pic">Select from album</string>
+    <string name="btn_tip">Custom Scanner Tips</string>
     <string name="btn_cancel">Cancel</string>
     <string name="login_cancel">Login Cancelled</string>
     <string name="btn_close_update">Close Update</string>
@@ -113,8 +114,10 @@
     <string name="capture_continue_before_result">None QRCode auto retry</string>
     <string name="fab_header">Fab Setting</string>
     <string name="fab_save_img">Save Screenshot</string>
+    <string name="keep_capture_no_cooling_down">Keep Capture No Cooling Down</string>
 
 
+    <string name="tips_tips">Only used as an auxiliary prompt when scanning the QR code</string>
     <string name="crash_hint">Detected a recent crash happened.\nPlease bring a crash-report to get feedback from the developer in time!</string>
     <string name="crash_btn">Open CrashReport</string>
     <string name="crash_hint2">Press the back button / full screen return gesture \n to return to the home page\n\nDO NOT JUST POST SCREENSHOT FOR REPORT!\nDO NOT JUST POST SCREENSHOT FOR REPORT!\nDO NOT JUST POST SCREENSHOT FOR REPORT!\n\nFor more crash logs, please go to \n/Android/data/{packageName}/files/crash-report/</string>
