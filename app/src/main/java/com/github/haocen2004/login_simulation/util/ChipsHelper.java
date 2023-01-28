@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View.OnClickListener, DialogInterface.OnDismissListener, CompoundButton.OnCheckedChangeListener {
 
@@ -30,7 +31,7 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
     private final LayoutInflater mLayoutInflater;
     private final List<String> chipTypes = List.of(new String[]{"深渊", "战场", "乐土"});
     private final List<String> chipLevelA = List.of(new String[]{"苦痛", "红莲", "寂灭", "无限", "原罪", "打死就行"});
-    private final List<String> chipLevelB = List.of(new String[]{"3挡", "2挡", "1挡", "4挡"});
+    private final List<String> chipLevelB = List.of(new String[]{"3档", "2档", "1档", "4档"});
     private final List<String> chipLevelC = List.of(new String[]{"1.75x", "2x", "2.25x", "2.5x"});
     private final List<List<String>> chipLevels = List.of(chipLevelA, chipLevelB, chipLevelC);
     private final List<ChipGroup> chipGroups;
@@ -39,6 +40,7 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
     private final List<Chip> chipList = new ArrayList<>();
     private final String TAG = "ChipsHelper";
     private MaterialAlertDialogBuilder dialog;
+    private final ReentrantLock lock = new ReentrantLock();
 
 
     public ChipsHelper(Context context, LayoutInflater layoutInflater) {
@@ -77,9 +79,15 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
         }
 
         for (Integer checkedId : checkedIds) {
+            lock.lock();
 
-            String key = prefix + chipList.get(checkedId - 1).getText().toString();
-
+            String key;
+            try {
+                key = prefix + chipList.get(checkedId - 1).getText().toString();
+            } catch (IndexOutOfBoundsException e) {
+                Logger.d(TAG, "IOB error, please retry");
+                return;
+            }
             Logger.d(TAG, key);
 
             if (chipMap.containsKey(key)) {
@@ -92,6 +100,7 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
                 chipMap.put(key, tempChip);
             }
 
+            lock.unlock();
 
         }
     }
@@ -138,6 +147,7 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
         ChipGroup tempGroup = chipGroups.get(i);
         tempGroup.removeAllViews();
         if (isChecked) {
+            lock.lock();
             for (String s : chipLevels.get(i)) {
                 if (chipMap.containsKey(s)) {
                     tempGroup.addView(chipMap.get(s));
@@ -149,6 +159,7 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
                     chipMap.put(s, tempChip);
                 }
             }
+            lock.unlock();
             onCheckedChanged(tempGroup, tempGroup.getCheckedChipIds());
         } else {
             clearUnSelectChips(i);
