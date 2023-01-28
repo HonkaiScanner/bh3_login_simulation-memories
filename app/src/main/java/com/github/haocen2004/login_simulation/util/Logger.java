@@ -69,40 +69,36 @@ public class Logger implements Serializable {
     }
 
     public static String processWithBlackList(String msg) {
+
         for (String b : logBlackList) {
-            msg = msg.replace(b, "******");
+            try {
+                msg = msg.replace(b, "******");
+            } catch (Exception ignore) {
+            }
         }
         return msg;
     }
 
     public static void e(String TAG, String msg) {
-        for (String b : logBlackList) {
-            msg = msg.replace(b, "******");
-        }
+        processWithBlackList(msg);
         BuglyLog.e(TAG, msg);
         logLiveData.addNewLog("ERROR", TAG, msg);
     }
 
     public static void d(String TAG, String msg) {
-        for (String b : logBlackList) {
-            msg = msg.replace(b, "******");
-        }
+        processWithBlackList(msg);
         BuglyLog.d(TAG, msg);
         logLiveData.addNewLog("DEBUG", TAG, msg);
     }
 
     public static void i(String TAG, String msg) {
-        for (String b : logBlackList) {
-            msg = msg.replace(b, "******");
-        }
+        processWithBlackList(msg);
         BuglyLog.i(TAG, msg);
         logLiveData.addNewLog("INFO", TAG, msg);
     }
 
     public static void w(String TAG, String msg) {
-        for (String b : logBlackList) {
-            msg = msg.replace(b, "******");
-        }
+        processWithBlackList(msg);
         BuglyLog.w(TAG, msg);
         logLiveData.addNewLog("WARNING", TAG, msg);
     }
