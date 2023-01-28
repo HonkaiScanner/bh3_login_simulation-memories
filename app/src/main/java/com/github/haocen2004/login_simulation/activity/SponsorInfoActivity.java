@@ -76,6 +76,7 @@ public class SponsorInfoActivity extends BaseAbsActivity {
                     .setCancelable(false)
                     .setPositiveButton("确定", (dialog1, which) -> {
                         String newUserName = edit_text.getText().toString();
+                        if (newUserName.strip().length() < 1) return;
                         showSecondConfirmDialog("用户昵称", newUserName, (context) -> {
                             if (newUserName.equals(user.getUsername()) || newUserName.equals(""))
                                 return;
@@ -125,6 +126,7 @@ public class SponsorInfoActivity extends BaseAbsActivity {
                     .setCancelable(false)
                     .setPositiveButton("确定", (dialog1, which) -> {
                         String newValue = edit_text.getText().toString();
+                        if (newValue.strip().length() < 1) return;
                         showSecondConfirmDialog("个人简介", newValue, (context) -> {
                             if (newValue.equals(user.getString("desc")) || newValue.equals(""))
                                 return;
@@ -185,6 +187,7 @@ public class SponsorInfoActivity extends BaseAbsActivity {
                             .setCancelable(false)
                             .setPositiveButton("确定", (dialog1, which) -> {
                                 String newValue = edit_text.getText().toString();
+                                if (newValue.strip().length() < 1) return;
                                 showSecondConfirmDialog("自定义扫码名称", newValue, (context) -> {
                                     if (newValue.equals(user.getString("custom_username")) || newValue.equals(""))
                                         return;

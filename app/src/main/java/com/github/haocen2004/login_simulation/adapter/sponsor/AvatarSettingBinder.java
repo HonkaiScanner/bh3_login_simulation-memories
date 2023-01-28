@@ -92,6 +92,7 @@ public class AvatarSettingBinder extends ItemViewBinder<AvatarSetting, AvatarSet
                     .setCancelable(false)
                     .setPositiveButton("确定", (dialog1, which) -> {
                         String newValue = edit_text.getText().toString();
+                        if (newValue.strip().length() < 1) return;
                         showSecondConfirmDialog("头像URL", newValue, (o) -> {
                             if (newValue.equals(user.getString("avatarImgUrl")) || newValue.equals(""))
                                 return;

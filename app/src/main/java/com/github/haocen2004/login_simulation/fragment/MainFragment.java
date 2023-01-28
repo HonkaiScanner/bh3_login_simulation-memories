@@ -186,18 +186,21 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
             Map<String, String> map = new HashMap<>();
             for (String s : savedInstanceState.keySet()) {
-                if (s.startsWith("scanner_data:")) {
-                    try {
-                        String real_key = s.split(":")[1];
-                        String value = savedInstanceState.getString(s);
-                        if (s.contains("combo_token")) {
-                            Logger.addBlacklist(value);
+                try {
+                    if (s.startsWith("scanner_data:")) {
+                        try {
+                            String real_key = s.split(":")[1];
+                            String value = savedInstanceState.getString(s);
+                            if (s.contains("combo_token")) {
+                                Logger.addBlacklist(value);
+                            }
+                            Logger.d(real_key, value);
+                            map.put(real_key, value);
+                            savedInstanceState.remove(s);
+                        } catch (ClassCastException ignore) {
                         }
-                        Logger.d(real_key, value);
-                        map.put(real_key, value);
-                        savedInstanceState.remove(s);
-                    } catch (ClassCastException ignore) {
                     }
+                } catch (NullPointerException ignore) {
                 }
             }
             try {

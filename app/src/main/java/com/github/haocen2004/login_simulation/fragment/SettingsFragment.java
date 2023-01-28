@@ -39,7 +39,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         SharedPreferences app_pref = getDefaultSharedPreferences(getContext());
 
         findPreference("fab_save_img").setOnPreferenceChangeListener(((preference, newValue) -> {
-            if (((Boolean) newValue)) {
+            if ((Boolean) newValue) {
                 if (app_pref.getBoolean("capture_continue_before_result", false)) {
                     DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量结果图片占用内存\n是否继续开启本功能？");
                     dialogData.setPositiveButtonData("确认");
@@ -57,7 +57,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         }));
         findPreference("capture_continue_before_result").setOnPreferenceChangeListener(((preference, newValue) -> {
-            if (((Boolean) newValue)) {
+            if ((Boolean) newValue) {
                 if (app_pref.getBoolean("fab_save_img", false)) {
                     DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量结果图片占用内存\n是否继续开启本功能？");
                     dialogData.setPositiveButtonData("确认");
@@ -77,6 +77,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         findPreference("debug_mode").setOnPreferenceChangeListener((preference, newValue) -> {
             Logger.getLogger(null).makeToast("切换调试模式将在重启扫码器后生效");
+            return true;
+        });
+
+        findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("确认启用自定义版本号？", "通常只在热更新服务器下线时启用\n一般无需开启此选项");
+                dialogData.setPositiveButtonData("启用自定义版本号");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("bh_ver_overwrite", false).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+            }
             return true;
         });
 

@@ -29,8 +29,8 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
     private final TipsCardBinding mBinding;
     private final LayoutInflater mLayoutInflater;
     private final List<String> chipTypes = List.of(new String[]{"深渊", "战场", "乐土"});
-    private final List<String> chipLevelA = List.of(new String[]{"苦痛", "红莲", "寂灭", "无限", "原罪"});
-    private final List<String> chipLevelB = List.of(new String[]{"3挡", "2挡", "1挡"});
+    private final List<String> chipLevelA = List.of(new String[]{"苦痛", "红莲", "寂灭", "无限", "原罪", "打死就行"});
+    private final List<String> chipLevelB = List.of(new String[]{"3挡", "2挡", "1挡", "4挡"});
     private final List<String> chipLevelC = List.of(new String[]{"1.75x", "2x", "2.25x", "2.5x"});
     private final List<List<String>> chipLevels = List.of(chipLevelA, chipLevelB, chipLevelC);
     private final List<ChipGroup> chipGroups;
