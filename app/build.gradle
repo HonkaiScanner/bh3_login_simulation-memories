@@ -59,8 +59,6 @@ android {
 //        versionCode Integer.parseInt(System.currentTimeMillis().toString()[7..12])
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        versionNameSuffix System.getenv("NAME_SUFFIX")
-//        versionNameSuffix '-snapshot-23w05b.dev'
         signingConfig signingConfigs.releaseSign
 
     }
@@ -73,7 +71,11 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-
+            if (System.getenv("CI")) {
+                versionNameSuffix System.getenv("NAME_SUFFIX")
+            } else {
+                versionNameSuffix '-snapshot-23w05b.dev'
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
