@@ -84,7 +84,7 @@ public class MainActivity extends BaseActivity {
                 JSONObject json;
                 if (feedback != null) {
                     json = new JSONObject(feedback);
-                    app_pref.edit().putString("bh_ver", json.getString("bh_ver"))
+                    app_pref.edit().putString("cloud_bh_ver", json.getString("bh_ver"))
                             .putString("mdk_ver", json.getString("mdk_ver"))
                             .putString("sp_url", json.getString("sp_url"))
                             .putString("afd_url", json.getString("afd_url"))
@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity {
             if (app_pref.getBoolean("bh_ver_overwrite", false)) {
                 BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
             } else {
-                BH_VER = app_pref.getString("bh_ver", BH_VER);
+                BH_VER = app_pref.getString("cloud_bh_ver", BH_VER);
             }
             MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
             SP_URL = app_pref.getString("sp_url", SP_URL);
@@ -194,6 +194,125 @@ public class MainActivity extends BaseActivity {
             }
         }
     };
+    Handler bh_update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+            if (feedback != null) {
+                try {
+                    JSONObject feedback_json = new JSONObject(feedback);
+                    if (feedback_json.getInt("retcode") == 0) {
+                        String new_bh_ver = feedback_json.getJSONObject("data").getJSONObject("game").getJSONObject("latest").getString("version");
+                        Logger.d("VersionCheck", "cloud bh ver: " + new_bh_ver);
+                        app_pref.edit().putString("bh_ver", new_bh_ver).apply();
+                        BH_VER = new_bh_ver;
+                        return;
+                    } else {
+                        Log.makeToast("崩坏3版本更新失败\n" + feedback_json.getString("message"));
+                    }
+                } catch (Exception ignore) {
+                }
+            }
+            BH_VER = app_pref.getString("cloud_bh_ver", BH_VER);
+        }
+    };
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Logger.d("ORIENTATION", "SWITCH");
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Logger.d("ORIENTATION", "LANDSCAPE");
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Logger.d("ORIENTATION", "PORTRAIT");
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (catchBackAction) {
+            long currTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - backTime < 2000) {
+                activityManager.clearActivity();
+                super.onBackPressed();
+            } else {
+                Log.makeToast("再次返回来退出扫码器");
+                backTime = currTime;
+            }
+        } else {
+            super.onBackPressed();
+        }
+        //super.onBackPressed();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        if (YYB_INIT) {
+//            YSDKApi.onActivityResult(requestCode, resultCode, data);
+//        }
+//        if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
+//            .onActivityResult(requestCode,resultCode,data);
+//        }
+    }
+
+    private void showUpdateDialog(String ver, String url, String logs) {
+        DialogData dialogData = new DialogData("获取到新版本: " + ver, "更新日志：\n" + logs);
+        dialogData.setPositiveButtonData(new ButtonData("打开更新链接") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+                openUrl("https://www.coolapk.com/apk/com.github.haocen2004.bh3_login_simulation", getApplicationContext());
+            }
+        });
+        dialogData.setNegativeButtonData(new ButtonData("蓝奏云") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+                openUrl(url, getApplicationContext());
+            }
+        });
+        dialogData.setNeutralButtonData(new ButtonData(getString(R.string.btn_cancel)) {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getApplicationContext());
+                normalDialog.setTitle("是否关闭更新提示？");
+                normalDialog.setMessage("将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
+                normalDialog.setPositiveButton(R.string.btn_close_update, (dialog, which) -> {
+                    app_pref.edit().putBoolean("check_update", false).apply();
+                    dialog.dismiss();
+                    super.callback(dialogHelper);
+                });
+                normalDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
+                    dialog.dismiss();
+                });
+
+            }
+        });
+
+        DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
+    }
+
+
+    Runnable update_rb = () -> {
+        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update", false);
+        Message msg = new Message();
+        Bundle data = new Bundle();
+        data.putString("value", feedback);
+        msg.setData(data);
+        update_check_hd.sendMessage(msg);
+    };
+    Runnable bh_update_rb = () -> {
+        String feedback = Network.sendGet("https://sdk-static.mihoyo.com/bh3_cn/mdk/launcher/api/resource?launcher_id=4", false);
+        Message msg = new Message();
+        Bundle data = new Bundle();
+        data.putString("value", feedback);
+        msg.setData(data);
+        bh_update_check_hd.sendMessage(msg);
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,6 +382,10 @@ public class MainActivity extends BaseActivity {
 //        }
 
 
+        if (!app_pref.getBoolean("bh_ver_overwrite", false)) {
+            new Thread(bh_update_rb).start();
+        }
+
         if (Tools.getBoolean(this, "has_crash") && !app_pref.getBoolean("no_crash_page", false)) {
             Logger.d("CRASH", "has crash before");
             Intent intent = new Intent(this, CrashActivity.class);
@@ -272,99 +395,6 @@ public class MainActivity extends BaseActivity {
 
 //        }
     }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Logger.d("ORIENTATION", "SWITCH");
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Logger.d("ORIENTATION", "LANDSCAPE");
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Logger.d("ORIENTATION", "PORTRAIT");
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (catchBackAction) {
-            long currTime = System.currentTimeMillis();
-            if (System.currentTimeMillis() - backTime < 2000) {
-                activityManager.clearActivity();
-                super.onBackPressed();
-            } else {
-                Log.makeToast("再次返回来退出扫码器");
-                backTime = currTime;
-            }
-        } else {
-            super.onBackPressed();
-        }
-        //super.onBackPressed();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-//        if (YYB_INIT) {
-//            YSDKApi.onActivityResult(requestCode, resultCode, data);
-//        }
-//        if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
-//            .onActivityResult(requestCode,resultCode,data);
-//        }
-    }
-
-    private void showUpdateDialog(String ver, String url, String logs) {
-        DialogData dialogData = new DialogData("获取到新版本: " + ver, "更新日志：\n" + logs);
-        dialogData.setPositiveButtonData(new ButtonData("打开更新链接") {
-            @Override
-            public void callback(DialogHelper dialogHelper) {
-                super.callback(dialogHelper);
-                openUrl("https://www.coolapk.com/apk/com.github.haocen2004.bh3_login_simulation", getApplicationContext());
-            }
-        });
-        dialogData.setNegativeButtonData(new ButtonData("蓝奏云") {
-            @Override
-            public void callback(DialogHelper dialogHelper) {
-                super.callback(dialogHelper);
-                openUrl(url, getApplicationContext());
-            }
-        });
-        dialogData.setNeutralButtonData(new ButtonData(getString(R.string.btn_cancel)) {
-            @Override
-            public void callback(DialogHelper dialogHelper) {
-                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getApplicationContext());
-                normalDialog.setTitle("是否关闭更新提示？");
-                normalDialog.setMessage("将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
-//                normalDialog.setNeutralButton("忽略本次更新", (dialog, which) -> {
-//                    app_pref.edit().putInt("ignore_ver", VERSION_CODE).apply();
-//                    dialog.dismiss();
-//                    super.callback(dialogHelper);
-//                });
-                normalDialog.setPositiveButton(R.string.btn_close_update, (dialog, which) -> {
-                    app_pref.edit().putBoolean("check_update", false).apply();
-                    dialog.dismiss();
-                    super.callback(dialogHelper);
-                });
-                normalDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
-                    dialog.dismiss();
-                });
-//                DialogLiveData.getINSTANCE(null).insertNewDialog(dialogData, getCloseUpdateDialog());
-
-            }
-        });
-
-        DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
-    }
-
-
-    Runnable update_rb = () -> {
-        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update", false);
-        Message msg = new Message();
-        Bundle data = new Bundle();
-        data.putString("value", feedback);
-        msg.setData(data);
-        update_check_hd.sendMessage(msg);
-    };
 
     @Override
     public boolean onSupportNavigateUp() {

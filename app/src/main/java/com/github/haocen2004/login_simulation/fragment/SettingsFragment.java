@@ -82,7 +82,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
             if ((Boolean) newValue) {
-                DialogData dialogData = new DialogData("确认启用自定义版本号？", "通常只在热更新服务器下线时启用\n一般无需开启此选项");
+                DialogData dialogData = new DialogData("确认启用自定义版本号？", "通常只在官方接口下线时启用\n一般无需开启此选项\n\n开启后将不自动获取崩坏3版本号\n必须每次手动设置");
                 dialogData.setPositiveButtonData("启用自定义版本号");
                 dialogData.setNegativeButtonData(new ButtonData("取消") {
                     @Override
