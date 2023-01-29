@@ -51,6 +51,12 @@
         <SwitchPreference
             android:defaultValue="false"
             android:dependency="adv_setting"
+            android:key="beta_update"
+            android:summary="@string/beta_update_sum"
+            android:title="@string/beta_update" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:dependency="adv_setting"
             android:key="bh_ver_overwrite"
             android:summary="@string/overwrite_bh_ver_sum"
             android:title="@string/overwrite_bh_ver" />

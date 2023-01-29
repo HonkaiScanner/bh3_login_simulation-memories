@@ -120,6 +120,8 @@
     <string name="enable_adv_setting">Enable Advance Setting</string>
     <string name="no_server_tip">Disable Server Tips</string>
     <string name="no_server_tip_sum">below scanner username</string>
+    <string name="beta_update">Allow Snapshot update</string>
+    <string name="beta_update_sum">Cannot disable when already in BETA</string>
 
 
     <string name="tips_tips">Only used as an auxiliary prompt when scanning the QR code</string>

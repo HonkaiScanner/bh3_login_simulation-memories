@@ -27,6 +27,23 @@ public class AboutActivity extends BaseAbsActivity {
     @Override
     protected void onCreateHeader(@NonNull ImageView icon, @NonNull TextView slogan, @NonNull TextView version) {
         icon.setImageResource(R.mipmap.ic_launcher);
+        icon.setOnClickListener(v -> {
+            SharedPreferences app_pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+            if (!app_pref.getBoolean("no_crash_page", false)) {
+                if (counter < 20) {
+                    if (counter >= 10) {
+                        Logger.getLogger(this).makeToast("还需点击 " + (20 - counter) + " 下");
+                    }
+                    counter++;
+                } else {
+                    app_pref.edit().putBoolean("no_crash_page", true).apply();
+                    Logger.getLogger(this).makeToast("已关闭崩溃界面显示");
+                }
+            } else {
+                Logger.getLogger(this).makeToast("您已关闭崩溃界面显示！");
+            }
+        });
         slogan.setText(getApplicationInfo().loadLabel(getPackageManager()));
         version.setOnClickListener(v -> {
             SharedPreferences app_pref = PreferenceManager.getDefaultSharedPreferences(this);

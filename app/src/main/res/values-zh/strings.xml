@@ -119,6 +119,8 @@
     <string name="enable_adv_setting">启用高级设置</string>
     <string name="no_server_tip">关闭服务器显示</string>
     <string name="no_server_tip_sum">扫码时不添加服务器来源</string>
+    <string name="beta_update">启用测试版更新检测</string>
+    <string name="beta_update_sum">已在测试版时无法关闭</string>
 
     <string name="tips_tips">仅扫码时辅助提示使用\n实际邦邦项目需要详细沟通</string>
     <string name="crash_hint">检测到扫码器最近发生了崩溃\n请带好崩溃报告及时找开发者反馈!</string>

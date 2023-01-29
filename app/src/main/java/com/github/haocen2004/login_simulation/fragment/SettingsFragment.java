@@ -77,6 +77,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         }));
 
+        findPreference("fab_save_img").setSummary(getContext().getExternalFilesDir(null) + "/screenshot/");
+
         findPreference("check_update").setOnPreferenceChangeListener((preference, newValue) -> {
             if (!((Boolean) newValue)) {
                 DialogData dialogData = new DialogData("是否关闭更新提示？", "将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
@@ -203,6 +205,27 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
                 return true;
             });
+
+            findPreference("beta_update").setOnPreferenceChangeListener((preference, newValue) -> {
+                if ((Boolean) newValue) {
+                    DialogData dialogData = new DialogData("确认启用测试版更新检测？", "测试版使用须知：\n" +
+                            "测试版可能会存在一些影响使用的问题 请及时反馈\n" +
+                            "反馈问题请详细描述 或使用扫码器内置的bug反馈 日志查看功能\n" +
+                            "测试版更新通常为强制更新 即无法关闭更新提示窗口");
+                    dialogData.setPositiveButtonData("启用自定义版本号");
+                    dialogData.setNegativeButtonData(new ButtonData("取消") {
+                        @Override
+                        public void callback(DialogHelper dialogHelper) {
+                            super.callback(dialogHelper);
+                            app_pref.edit().putBoolean("beta_update", false).apply();
+                            preference.performClick();
+                        }
+                    });
+                    DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                }
+                return true;
+            });
+
 
             findPreference("keep_capture_no_cooling_down").setOnPreferenceChangeListener((preference, newValue) -> {
                 if ((Boolean) newValue) {

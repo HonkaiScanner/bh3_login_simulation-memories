@@ -23,6 +23,7 @@ public class Constant {
     public static String OFFICIAL_TYPE = "android01";
     public static String TIPS = "";
     public static boolean CHECK_VER = true;
+    public static boolean BETA_VER = false;
     public static boolean HAS_TIPS = false;
     public static boolean HAS_ACCOUNT = false;
     public static boolean SP_CHECKED = false;

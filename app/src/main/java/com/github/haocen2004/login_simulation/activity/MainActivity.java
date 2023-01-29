@@ -5,6 +5,7 @@ import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static com.github.haocen2004.login_simulation.util.Constant.AFD_URL;
+import static com.github.haocen2004.login_simulation.util.Constant.BETA_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
@@ -95,7 +96,23 @@ public class MainActivity extends BaseActivity {
                     Logger.d("Update", "cloud ver:" + json.getInt("ver"));
                     Logger.d("Update", "local ver:" + VERSION_CODE);
 //                    Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
-                    if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
+                    if (BETA_VER && json.has("beta_ver") && VERSION_CODE < json.getInt("beta_ver")) {
+                        Logger.i("Update", "Open Beta Update Window");
+                        DialogData dialogData = new DialogData("获取到新测试版: " + json.getString("beta_ver_name"), "更新日志：\n" +
+                                json.getString("beta_logs").replaceAll("&n", "\n"));
+                        dialogData.setPositiveButtonData(new ButtonData("打开更新链接") {
+                            @Override
+                            public void callback(DialogHelper dialogHelper) {
+                                super.callback(dialogHelper);
+                                try {
+                                    openUrl(json.getString("beta_update_url"), getApplicationContext());
+                                } catch (Exception ignore) {
+                                }
+                            }
+                        });
+                        dialogData.setCancelable(false);
+                        DialogLiveData.getINSTANCE(getApplicationContext()).addNewDialog(dialogData);
+                    } else if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
                         Logger.i("Update", "Open Update Window");
                         showUpdateDialog(
                                 json.getString("ver_name"),
@@ -103,6 +120,7 @@ public class MainActivity extends BaseActivity {
                                 json.getString("logs").replaceAll("&n", "\n")
                         );
                     }
+
                 } else {
                     Logger.d("Update", "Check Update Failed");
                     Log.makeToast("检查更新失败...");
