@@ -108,6 +108,7 @@
     <string name="types_yyb">YYB Server(QQ only)</string>
     <string name="types_qihoo">360 Server</string>
     <string name="overwrite_bh_ver">Overwrite Honkai Version</string>
+    <string name="overwrite_bh_ver_sum">Set version in the option below</string>
     <string name="keep_capture">Keep FabScanner</string>
     <string name="quit_on_success">Exit after successful scanning</string>
     <string name="debug_mode">Debug Mode</string>
@@ -115,6 +116,10 @@
     <string name="fab_header">Fab Setting</string>
     <string name="fab_save_img">Save Screenshot</string>
     <string name="keep_capture_no_cooling_down">Keep Capture No Cooling Down</string>
+    <string name="keep_capture_no_cooling_down_sum">As fast as you can</string>
+    <string name="enable_adv_setting">Enable Advance Setting</string>
+    <string name="no_server_tip">Disable Server Tips</string>
+    <string name="no_server_tip_sum">below scanner username</string>
 
 
     <string name="tips_tips">Only used as an auxiliary prompt when scanning the QR code</string>

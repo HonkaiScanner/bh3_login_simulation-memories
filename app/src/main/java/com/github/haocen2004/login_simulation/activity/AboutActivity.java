@@ -2,10 +2,12 @@ package com.github.haocen2004.login_simulation.activity;
 
 import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
 
+import android.content.SharedPreferences;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 import com.drakeet.about.Card;
 import com.drakeet.about.Category;
@@ -13,15 +15,36 @@ import com.drakeet.about.Contributor;
 import com.drakeet.about.License;
 import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.util.Logger;
 import com.github.haocen2004.login_simulation.util.Tools;
 
 import java.util.List;
 
 public class AboutActivity extends BaseAbsActivity {
+
+    private int counter = 0;
+
     @Override
     protected void onCreateHeader(@NonNull ImageView icon, @NonNull TextView slogan, @NonNull TextView version) {
         icon.setImageResource(R.mipmap.ic_launcher);
         slogan.setText(getApplicationInfo().loadLabel(getPackageManager()));
+        version.setOnClickListener(v -> {
+            SharedPreferences app_pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+            if (!app_pref.getBoolean("adv_setting", false)) {
+                if (counter < 7) {
+                    if (counter >= 3) {
+                        Logger.getLogger(this).makeToast("还需点击 " + (7 - counter) + " 下");
+                    }
+                    counter++;
+                } else {
+                    app_pref.edit().putBoolean("adv_setting", true).apply();
+                    Logger.getLogger(this).makeToast("已启用高级设置");
+                }
+            } else {
+                Logger.getLogger(this).makeToast("您已经启用高级设置了！");
+            }
+        });
         version.setText(BuildConfig.VERSION_NAME);
     }
 

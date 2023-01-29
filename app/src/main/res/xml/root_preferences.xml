@@ -7,13 +7,6 @@
             android:entryValues="@array/server_types_value"
             android:key="server_type"
             android:title="@string/settings_servers" />
-        <!--        <ListPreference-->
-        <!--            android:id="@+id/listPrefServer"-->
-        <!--            android:entries="@array/server_types"-->
-        <!--            android:entryValues="@array/server_types_value"-->
-        <!--            android:key="server_type"-->
-        <!--            android:summary="%s"-->
-        <!--            android:title="@string/settings_servers" />-->
         <SwitchPreference
             android:key="auto_confirm"
             android:title="@string/settings_fast_login" />
@@ -46,33 +39,53 @@
             android:title="@string/fab_save_img" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/adv_header">
+    <PreferenceCategory
+        android:dependency="adv_setting"
+        android:key="adv_group"
+        android:title="@string/adv_header">
 
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="adv_setting"
+            android:title="@string/enable_adv_setting" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:dependency="adv_setting"
+            android:key="bh_ver_overwrite"
+            android:summary="@string/overwrite_bh_ver_sum"
+            android:title="@string/overwrite_bh_ver" />
         <EditTextPreference
+            android:dependency="bh_ver_overwrite"
             android:key="custom_bh_ver"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/settings_bh_ver" />
         <SwitchPreference
-            android:defaultValue="false"
-            android:key="bh_ver_overwrite"
-            android:title="@string/overwrite_bh_ver" />
-        <SwitchPreference
+            android:dependency="adv_setting"
             android:defaultValue="false"
             android:key="socket_helper"
             android:title="@string/use_socket" />
         <SwitchPreference
+            android:dependency="adv_setting"
             android:defaultValue="false"
             android:key="use_token"
             android:title="@string/use_token_true" />
         <SwitchPreference
+            android:dependency="adv_setting"
             android:defaultValue="false"
             android:key="quit_on_success"
             android:title="@string/quit_on_success" />
         <SwitchPreference
+            android:dependency="adv_setting"
             android:defaultValue="false"
             android:key="keep_capture_no_cooling_down"
             android:title="@string/keep_capture_no_cooling_down" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:dependency="adv_setting"
+            android:key="no_server_tip"
+            android:summary="@string/no_server_tip_sum"
+            android:title="@string/no_server_tip" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="debug_mode"

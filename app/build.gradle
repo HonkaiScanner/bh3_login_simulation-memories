@@ -74,7 +74,7 @@ android {
             if (System.getenv("CI")) {
                 versionNameSuffix System.getenv("NAME_SUFFIX")
             } else {
-                versionNameSuffix '-snapshot-23w05b.dev'
+                versionNameSuffix '-snapshot-23w05c.dev'
             }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
