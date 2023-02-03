@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Constant.VIVO_APP_KEY;
-import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
+import static com.github.haocen2004.login_simulation.utils.Constant.VIVO_APP_KEY;
+import static com.github.haocen2004.login_simulation.utils.Tools.verifyAccount;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.RoleData;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 import com.vivo.unionsdk.open.VivoAccountCallback;
 import com.vivo.unionsdk.open.VivoUnionSDK;
 

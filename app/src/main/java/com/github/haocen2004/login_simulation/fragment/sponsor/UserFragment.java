@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.fragment.sponsor;
 
-import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.utils.Constant.HAS_ACCOUNT;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.activity.LoginActivity;
 import com.github.haocen2004.login_simulation.activity.SponsorInfoActivity;
 import com.github.haocen2004.login_simulation.databinding.FragmentSpUserBinding;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import cn.leancloud.LCUser;
 

@@ -1,8 +1,8 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Constant.FLYME_INIT;
-import static com.github.haocen2004.login_simulation.util.Constant.FLYME_OFFICIAL_PACK_INSTALLED;
-import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
+import static com.github.haocen2004.login_simulation.utils.Constant.FLYME_INIT;
+import static com.github.haocen2004.login_simulation.utils.Constant.FLYME_OFFICIAL_PACK_INSTALLED;
+import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -13,8 +13,8 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.meizu.gamesdk.model.model.LoginResultCode;
 import com.meizu.gamesdk.online.core.MzGameCenterPlatform;
 import com.tencent.bugly.crashreport.CrashReport;

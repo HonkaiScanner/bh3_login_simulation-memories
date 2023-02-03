@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.PmsHooker;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.PmsHooker;
 
 public class BaseActivity extends AppCompatActivity {
 

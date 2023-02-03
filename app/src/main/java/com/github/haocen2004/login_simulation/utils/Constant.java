@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.util;
+package com.github.haocen2004.login_simulation.utils;
 
 /**
  * 常量
@@ -14,6 +14,7 @@ public class Constant {
     public static final String BILI_APP_KEY = "dbf8f1b4496f430b8a3c0f436a35b931";
     public static final String VIVO_APP_KEY = "94c93e8ac604d1909943862f12803ac9";
     public static final String OPPO_APP_KEY = "f303388D89043bfEB1A667cfE42ea47E";
+    public static final String SP_APP_KEY = "VMh6lRyykuNDyhXxoi996cGI-gzGzoHsz";
 
     public static String SP_URL = "https://scanner.hellocraft.xyz";
     public static String AFD_URL = "https://afdian.net/@Haocen2004";
@@ -29,6 +30,7 @@ public class Constant {
     public static boolean SP_CHECKED = false;
     public static boolean BILI_INIT = false;
     public static boolean MI_INIT = false;
+    public static boolean MI_ADV_MODE = false;
     public static boolean YYB_INIT = false;
     public static boolean QIHOO_INIT = false;
     public static boolean HUAWEI_INIT = false;

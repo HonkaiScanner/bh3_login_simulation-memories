@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
+import static com.github.haocen2004.login_simulation.utils.Tools.verifyAccount;
 
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;

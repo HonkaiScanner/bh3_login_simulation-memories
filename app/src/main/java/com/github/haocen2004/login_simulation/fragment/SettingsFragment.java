@@ -1,7 +1,9 @@
 package com.github.haocen2004.login_simulation.fragment;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static com.github.haocen2004.login_simulation.utils.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.utils.Constant.MI_ADV_MODE;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
@@ -21,8 +23,8 @@ import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
-import com.github.haocen2004.login_simulation.util.DialogHelper;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.DialogHelper;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import java.util.Objects;
 
@@ -207,12 +209,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
 
             findPreference("beta_update").setOnPreferenceChangeListener((preference, newValue) -> {
+                if (VERSION_NAME.contains("snapshot")) {
+                    return false;
+                }
                 if ((Boolean) newValue) {
                     DialogData dialogData = new DialogData("确认启用测试版更新检测？", "测试版使用须知：\n" +
                             "测试版可能会存在一些影响使用的问题 请及时反馈\n" +
                             "反馈问题请详细描述 或使用扫码器内置的bug反馈 日志查看功能\n" +
                             "测试版更新通常为强制更新 即无法关闭更新提示窗口");
-                    dialogData.setPositiveButtonData("启用自定义版本号");
+                    dialogData.setPositiveButtonData("启用测试版更新检测");
                     dialogData.setNegativeButtonData(new ButtonData("取消") {
                         @Override
                         public void callback(DialogHelper dialogHelper) {
@@ -279,13 +284,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             findPreference("custom_bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
                 Logger.d(TAG, newValue.toString());
-                app_pref.edit().putString("custom_bh_ver", newValue.toString()).apply();
                 if (app_pref.getBoolean("bh_ver_overwrite", false)) {
                     BH_VER = newValue.toString();
                 }
                 Logger.d(TAG, "new bh version:" + BH_VER);
                 return true;
             });
+
+            findPreference("mi_adv_mode").setOnPreferenceChangeListener(((preference, newValue) -> {
+                MI_ADV_MODE = (boolean) newValue;
+                return true;
+            }));
         }
     }
 

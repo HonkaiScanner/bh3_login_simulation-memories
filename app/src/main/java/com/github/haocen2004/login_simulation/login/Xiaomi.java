@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Constant.MI_INIT;
+import static com.github.haocen2004.login_simulation.utils.Constant.MI_INIT;
 
 import android.app.Application;
 
@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.RoleData;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.xiaomi.gamecenter.sdk.MiCommplatform;
 import com.xiaomi.gamecenter.sdk.MiErrorCode;

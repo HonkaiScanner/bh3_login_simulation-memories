@@ -1,8 +1,8 @@
 package com.github.haocen2004.login_simulation.fragment.report;
 
-import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
-import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
-import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
+import static com.github.haocen2004.login_simulation.utils.Constant.QQ_GROUP_URL;
+import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
+import static com.github.haocen2004.login_simulation.utils.Tools.openUrl;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,8 +17,8 @@ import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentReportMainBinding;
-import com.github.haocen2004.login_simulation.util.DialogHelper;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.DialogHelper;
+import com.github.haocen2004.login_simulation.utils.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
 
 public class MainReportFragment extends Fragment implements View.OnClickListener {

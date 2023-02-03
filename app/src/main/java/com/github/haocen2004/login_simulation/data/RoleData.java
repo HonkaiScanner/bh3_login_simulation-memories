@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.data;
 
-import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
-import static com.github.haocen2004.login_simulation.util.Tools.getOAServer;
+import static com.github.haocen2004.login_simulation.utils.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.utils.Tools.getOAServer;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;

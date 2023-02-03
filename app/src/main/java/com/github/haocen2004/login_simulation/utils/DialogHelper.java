@@ -1,6 +1,6 @@
-package com.github.haocen2004.login_simulation.util;
+package com.github.haocen2004.login_simulation.utils;
 
-import static com.github.haocen2004.login_simulation.util.Tools.openUrl;
+import static com.github.haocen2004.login_simulation.utils.Tools.openUrl;
 
 import android.content.Context;
 import android.content.DialogInterface;

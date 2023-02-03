@@ -1,7 +1,7 @@
-package com.github.haocen2004.login_simulation.util;
+package com.github.haocen2004.login_simulation.utils;
 
-import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
-import static com.github.haocen2004.login_simulation.util.Network.sendPost;
+import static com.github.haocen2004.login_simulation.utils.Constant.OFFICIAL_TYPE;
+import static com.github.haocen2004.login_simulation.utils.Network.sendPost;
 import static java.lang.Integer.parseInt;
 
 import android.app.Activity;

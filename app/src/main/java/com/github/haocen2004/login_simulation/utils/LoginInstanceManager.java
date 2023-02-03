@@ -1,6 +1,6 @@
-package com.github.haocen2004.login_simulation.util;
+package com.github.haocen2004.login_simulation.utils;
 
-import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
+import static com.github.haocen2004.login_simulation.utils.Tools.changeToWDJ;
 
 import android.content.SharedPreferences;
 

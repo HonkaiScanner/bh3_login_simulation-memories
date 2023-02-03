@@ -1,9 +1,9 @@
-package com.github.haocen2004.login_simulation.util;
+package com.github.haocen2004.login_simulation.utils;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.util.Constant.HAS_TIPS;
-import static com.github.haocen2004.login_simulation.util.Constant.TIPS;
-import static com.github.haocen2004.login_simulation.util.Logger.processWithBlackList;
+import static com.github.haocen2004.login_simulation.utils.Constant.HAS_TIPS;
+import static com.github.haocen2004.login_simulation.utils.Constant.TIPS;
+import static com.github.haocen2004.login_simulation.utils.Logger.processWithBlackList;
 import static java.lang.Integer.parseInt;
 
 import android.annotation.SuppressLint;
@@ -411,10 +411,6 @@ public class QRScanner {
                 (dialog, which) -> makeToast("登录已被用户取消"));
 
         normalDialog.show();
-    }
-
-    public void setFabMode(boolean mode) {
-        fabMode = mode;
     }
 
 

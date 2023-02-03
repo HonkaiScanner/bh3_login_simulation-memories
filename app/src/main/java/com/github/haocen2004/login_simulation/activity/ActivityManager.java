@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

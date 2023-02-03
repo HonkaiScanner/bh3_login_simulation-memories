@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorData;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import java.util.List;
 

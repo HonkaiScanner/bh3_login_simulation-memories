@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static com.github.haocen2004.login_simulation.util.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
+import static com.github.haocen2004.login_simulation.utils.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -16,8 +16,8 @@ import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.ActivityTencentLoginBinding;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Tools;
 
 public class TencentLoginActivity extends BaseActivity {
 

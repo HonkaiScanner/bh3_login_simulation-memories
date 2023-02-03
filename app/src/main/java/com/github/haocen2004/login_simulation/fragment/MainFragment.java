@@ -3,11 +3,11 @@ package com.github.haocen2004.login_simulation.fragment;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
-import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
-import static com.github.haocen2004.login_simulation.util.Constant.OFFICIAL_TYPE;
-import static com.github.haocen2004.login_simulation.util.Constant.SP_CHECKED;
-import static com.github.haocen2004.login_simulation.util.Tools.changeToWDJ;
+import static com.github.haocen2004.login_simulation.utils.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.utils.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.utils.Constant.OFFICIAL_TYPE;
+import static com.github.haocen2004.login_simulation.utils.Constant.SP_CHECKED;
+import static com.github.haocen2004.login_simulation.utils.Tools.changeToWDJ;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -51,15 +51,15 @@ import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
-import com.github.haocen2004.login_simulation.util.ChipsHelper;
-import com.github.haocen2004.login_simulation.util.Constant;
-import com.github.haocen2004.login_simulation.util.DialogHelper;
-import com.github.haocen2004.login_simulation.util.FabScanner;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.LoginInstanceManager;
-import com.github.haocen2004.login_simulation.util.QRScanner;
-import com.github.haocen2004.login_simulation.util.SocketHelper;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.ChipsHelper;
+import com.github.haocen2004.login_simulation.utils.Constant;
+import com.github.haocen2004.login_simulation.utils.DialogHelper;
+import com.github.haocen2004.login_simulation.utils.FabScanner;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.LoginInstanceManager;
+import com.github.haocen2004.login_simulation.utils.QRScanner;
+import com.github.haocen2004.login_simulation.utils.SocketHelper;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
@@ -179,11 +179,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void loadSavedData(Bundle savedInstanceState, String loadTag) {
         if (savedInstanceState.containsKey("scanner_data:combo_token")) {
             Logger.d(loadTag, "detect saved RoleData,loading");
-            genLoginImpl();
-            if (loginImpl.isLogin() && loginImpl.getRole() != null) {
+            if (loginImpl != null && loginImpl.isLogin() && loginImpl.getRole() != null) {
                 Logger.d(loadTag, "loginImpl already has data,skip.");
                 return;
             }
+            genLoginImpl();
             Map<String, String> map = new HashMap<>();
             for (String s : savedInstanceState.keySet()) {
                 try {

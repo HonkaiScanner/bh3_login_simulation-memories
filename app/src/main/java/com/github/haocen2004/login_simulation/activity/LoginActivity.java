@@ -2,8 +2,8 @@ package com.github.haocen2004.login_simulation.activity;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
-import static com.github.haocen2004.login_simulation.util.Constant.AFD_URL;
-import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.utils.Constant.AFD_URL;
+import static com.github.haocen2004.login_simulation.utils.Constant.HAS_ACCOUNT;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -21,9 +21,9 @@ import androidx.annotation.NonNull;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityLoginBinding;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Network;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Network;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.jetbrains.annotations.NotNull;

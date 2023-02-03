@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.LogData;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

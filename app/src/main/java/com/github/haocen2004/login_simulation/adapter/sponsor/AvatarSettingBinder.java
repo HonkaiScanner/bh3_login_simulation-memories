@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.adapter.sponsor;
 
-import static com.github.haocen2004.login_simulation.util.Tools.showSecondConfirmDialog;
+import static com.github.haocen2004.login_simulation.utils.Tools.showSecondConfirmDialog;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
@@ -18,7 +18,7 @@ import com.bumptech.glide.Glide;
 import com.drakeet.about.AbsAboutActivity;
 import com.drakeet.multitype.ItemViewBinder;
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import cn.leancloud.LCObject;

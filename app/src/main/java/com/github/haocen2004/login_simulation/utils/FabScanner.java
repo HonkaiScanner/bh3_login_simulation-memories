@@ -1,8 +1,8 @@
-package com.github.haocen2004.login_simulation.util;
+package com.github.haocen2004.login_simulation.utils;
 
 import static android.app.Activity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.util.Constant.BAG_ALTER_NOTIFICATION;
+import static com.github.haocen2004.login_simulation.utils.Constant.BAG_ALTER_NOTIFICATION;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -312,7 +312,7 @@ public class FabScanner extends Service {
                                     Logger.d(TAG + failedCount, urls.toString());
                                     if (qrScanner.parseUrl(url)) {
                                         Toast.makeText(activity, "扫码成功\n处理中....", Toast.LENGTH_SHORT).show();
-                                        qrScanner.setFabMode(true);
+                                        Log.setFabMode(true);
                                         qrScanner.start();
                                         if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("keep_capture", false)) {
                                             stopProjection();
@@ -339,7 +339,7 @@ public class FabScanner extends Service {
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Log.makeToast("未找到二维码");
+                                    Log.makeToast("fab未找到二维码");
                                     isScreenCaptureStarted = false;
                                 } finally {
 

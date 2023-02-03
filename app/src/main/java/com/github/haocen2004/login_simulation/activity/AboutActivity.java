@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
+import static com.github.haocen2004.login_simulation.utils.Constant.QQ_GROUP_URL;
 
 import android.content.SharedPreferences;
 import android.widget.ImageView;
@@ -15,8 +15,8 @@ import com.drakeet.about.Contributor;
 import com.drakeet.about.License;
 import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Tools;
 
 import java.util.List;
 

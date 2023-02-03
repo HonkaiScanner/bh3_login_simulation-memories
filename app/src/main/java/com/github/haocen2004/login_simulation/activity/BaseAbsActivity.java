@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.drakeet.about.AbsAboutActivity;
-import com.github.haocen2004.login_simulation.util.PmsHooker;
+import com.github.haocen2004.login_simulation.utils.PmsHooker;
 
 import java.util.List;
 

@@ -1,11 +1,11 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Constant.BILI_APP_KEY;
-import static com.github.haocen2004.login_simulation.util.Constant.BILI_INIT;
-import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
-import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
-import static com.github.haocen2004.login_simulation.util.Encrypt.paySign;
-import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
+import static com.github.haocen2004.login_simulation.utils.Constant.BILI_APP_KEY;
+import static com.github.haocen2004.login_simulation.utils.Constant.BILI_INIT;
+import static com.github.haocen2004.login_simulation.utils.Constant.DEBUG_MODE;
+import static com.github.haocen2004.login_simulation.utils.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.utils.Encrypt.paySign;
+import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 import static java.lang.Long.parseLong;
 
 import android.annotation.SuppressLint;
@@ -30,10 +30,10 @@ import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
-import com.github.haocen2004.login_simulation.util.DialogHelper;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Network;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.DialogHelper;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Network;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONException;

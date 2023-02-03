@@ -122,6 +122,9 @@
     <string name="no_server_tip_sum">below scanner username</string>
     <string name="beta_update">Allow Snapshot update</string>
     <string name="beta_update_sum">Cannot disable when already in BETA</string>
+    <string name="use_token_sum">Hoyolab protocol Only for Official Channel</string>
+    <string name="mi_adv_mode">XiaoMi Channel Test Mode</string>
+    <string name="mi_adv_mode_sum">Allow Mi SDK access Service Module</string>
 
 
     <string name="tips_tips">Only used as an auxiliary prompt when scanning the QR code</string>

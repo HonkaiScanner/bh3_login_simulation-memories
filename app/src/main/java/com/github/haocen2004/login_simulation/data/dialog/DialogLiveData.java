@@ -4,7 +4,7 @@ import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

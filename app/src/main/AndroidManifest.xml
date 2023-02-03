@@ -79,7 +79,7 @@
             android:exported="true"
             tools:ignore="ExportedService" />
         <service
-            android:name=".util.FabScanner"
+            android:name=".utils.FabScanner"
             android:enabled="true"
             android:foregroundServiceType="mediaProjection"
             tools:ignore="Instantiatable" />

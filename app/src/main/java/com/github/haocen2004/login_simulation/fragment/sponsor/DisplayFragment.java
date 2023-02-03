@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.fragment.sponsor;
 
-import static com.github.haocen2004.login_simulation.util.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.utils.Constant.CHECK_VER;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,7 +19,7 @@ import com.github.haocen2004.login_simulation.adapter.SponsorAdapter;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorData;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.databinding.FragmentSpDisplayBinding;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import org.jetbrains.annotations.NotNull;
 

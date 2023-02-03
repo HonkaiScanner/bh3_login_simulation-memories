@@ -9,7 +9,7 @@ import androidx.core.content.FileProvider;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityCrashBinding;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Tools;
 
 import java.io.File;
 

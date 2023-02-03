@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.util;
+package com.github.haocen2004.login_simulation.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

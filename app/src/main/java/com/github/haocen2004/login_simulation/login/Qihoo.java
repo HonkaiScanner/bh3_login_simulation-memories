@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Constant.QIHOO_INIT;
-import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
+import static com.github.haocen2004.login_simulation.utils.Constant.QIHOO_INIT;
+import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,8 +11,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.qihoo.gamecenter.sdk.activity.ContainerActivity;
 import com.qihoo.gamecenter.sdk.common.IDispatcherCallback;
 import com.qihoo.gamecenter.sdk.matrix.Matrix;

@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static com.github.haocen2004.login_simulation.util.Tools.showSecondConfirmDialog;
+import static com.github.haocen2004.login_simulation.utils.Tools.showSecondConfirmDialog;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -27,8 +27,8 @@ import com.github.haocen2004.login_simulation.adapter.sponsor.CardSettingBinder;
 import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
-import com.github.haocen2004.login_simulation.util.DialogHelper;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.DialogHelper;
+import com.github.haocen2004.login_simulation.utils.Logger;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;

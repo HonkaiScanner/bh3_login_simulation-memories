@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Constant.HUAWEI_INIT;
-import static com.github.haocen2004.login_simulation.util.Logger.getLogger;
+import static com.github.haocen2004.login_simulation.utils.Constant.HUAWEI_INIT;
+import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -12,9 +12,9 @@ import android.text.TextUtils;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Network;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Network;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.api.HuaweiMobileServicesUtil;
 import com.huawei.hms.common.ApiException;

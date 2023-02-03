@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.util;
+package com.github.haocen2004.login_simulation.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -23,6 +23,7 @@ public class Logger implements Serializable {
     private static boolean useSnackBar;
     private static List<String> logBlackList;
     private static LogLiveData logLiveData;
+    private static boolean fabMode;
 //    private static String blackListString;
 
     public Logger(Context context) {
@@ -104,6 +105,7 @@ public class Logger implements Serializable {
     }
 
     public static void makeToast(Context context, String msg, Integer length) {
+        d("TOAST", "show Toast " + msg);
         if (useSnackBar) {
             if (length == Toast.LENGTH_SHORT) {
                 length = Snackbar.LENGTH_SHORT;
@@ -112,9 +114,10 @@ public class Logger implements Serializable {
             }
             d("Logger", "Transfer Toast Length to SnackBar Length: " + length);
             Snackbar.make(view, msg, length).show();
+        } else if (fabMode) {
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         } else {
             ToastUtils.show(msg);
-            d("TOAST", "show Toast " + msg);
         }
     }
 
@@ -128,5 +131,9 @@ public class Logger implements Serializable {
 
     public void makeToast(Context context, String msg) {
         makeToast(context, msg, Toast.LENGTH_SHORT);
+    }
+
+    public static void setFabMode(boolean b) {
+        fabMode = b;
     }
 }

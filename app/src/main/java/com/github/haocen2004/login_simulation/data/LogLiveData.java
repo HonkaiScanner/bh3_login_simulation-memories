@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.data;
 
-import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
+import static com.github.haocen2004.login_simulation.utils.Constant.DEBUG_MODE;
 
 import androidx.lifecycle.LiveData;
 

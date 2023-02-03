@@ -2,7 +2,7 @@ package com.github.haocen2004.login_simulation.data.database.sponsor;
 
 import android.content.Context;
 
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.jetbrains.annotations.NotNull;
