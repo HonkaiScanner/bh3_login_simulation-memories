@@ -81,30 +81,31 @@ public class Logger implements Serializable {
     }
 
     public static void e(String TAG, String msg) {
-        processWithBlackList(msg);
+        msg = processWithBlackList(msg);
         BuglyLog.e(TAG, msg);
         logLiveData.addNewLog("ERROR", TAG, msg);
     }
 
     public static void d(String TAG, String msg) {
-        processWithBlackList(msg);
+        msg = processWithBlackList(msg);
         BuglyLog.d(TAG, msg);
         logLiveData.addNewLog("DEBUG", TAG, msg);
     }
 
     public static void i(String TAG, String msg) {
-        processWithBlackList(msg);
+        msg = processWithBlackList(msg);
         BuglyLog.i(TAG, msg);
         logLiveData.addNewLog("INFO", TAG, msg);
     }
 
     public static void w(String TAG, String msg) {
-        processWithBlackList(msg);
+        msg = processWithBlackList(msg);
         BuglyLog.w(TAG, msg);
         logLiveData.addNewLog("WARNING", TAG, msg);
     }
 
     public static void makeToast(Context context, String msg, Integer length) {
+        msg = processWithBlackList(msg);
         d("TOAST", "show Toast " + msg);
         if (useSnackBar) {
             if (length == Toast.LENGTH_SHORT) {

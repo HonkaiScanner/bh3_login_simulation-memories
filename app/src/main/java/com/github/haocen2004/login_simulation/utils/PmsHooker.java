@@ -125,7 +125,7 @@ public class PmsHooker implements InvocationHandler {
         String methodName = el.getMethodName().toLowerCase(Locale.ROOT);
         return className.contains("intent") || className.contains("component") || methodName.contains("verifyofficialpack") ||
                 className.contains("storagemanager") || className.contains("sharepreferenceutils") || className.contains("android.widget.toast") ||
-                className.contains("wifimanager") || className.contains("android.app.contextimpl") || className.contains("runenvironmentcheck");
+                className.contains("wifimanager") || className.contains("android.app.contextimpl") || className.contains("runenvironmentcheck") || className.contains("com.xiaomi.gamecenter.sdk.anti.appantistatechangelistener");
     }
 
 
