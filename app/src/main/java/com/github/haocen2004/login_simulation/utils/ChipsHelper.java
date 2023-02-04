@@ -91,7 +91,14 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
             Logger.d(TAG, key);
 
             if (chipMap.containsKey(key)) {
-                mBinding.chipGroupResult.addView(chipMap.get(key));
+                Chip tempChip = chipMap.get(key);
+                if (tempChip != null) {
+                    try {
+                        ((ViewGroup) tempChip.getParent()).removeView(tempChip);
+                    } catch (Exception ignore) {
+                    }
+                    mBinding.chipGroupResult.addView(tempChip);
+                }
             } else {
                 Chip tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_result, null, false);
                 tempChip.setText(key);
@@ -150,7 +157,14 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
             lock.lock();
             for (String s : chipLevels.get(i)) {
                 if (chipMap.containsKey(s)) {
-                    tempGroup.addView(chipMap.get(s));
+                    Chip tempChip = chipMap.get(s);
+                    if (tempChip != null) {
+                        try {
+                            ((ViewGroup) tempChip.getParent()).removeView(tempChip);
+                        } catch (Exception ignore) {
+                        }
+                        mBinding.chipGroupResult.addView(tempChip);
+                    }
                 } else {
                     Chip tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_select, null, false);
                     tempChip.setText(s);
