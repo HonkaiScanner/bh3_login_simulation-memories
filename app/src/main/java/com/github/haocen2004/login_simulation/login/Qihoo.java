@@ -5,9 +5,7 @@ import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
@@ -114,7 +112,7 @@ public class Qihoo implements LoginImpl {
                 return;
             }
             // 显示一下登录结果
-//            Logger.d(TAG, data);
+            Logger.d("qihoo login process", data);
 //                isLogin = true;
             try {
                 JSONObject qihoo_result = new JSONObject(data);
@@ -138,7 +136,7 @@ public class Qihoo implements LoginImpl {
                 Log.makeToast(data);
                 return true;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return false;
     }
@@ -152,7 +150,6 @@ public class Qihoo implements LoginImpl {
         return true;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
     public void login() {
         if (QIHOO_INIT) {
@@ -163,6 +160,7 @@ public class Qihoo implements LoginImpl {
             Matrix.setActivity(activity, (context, functionCode, functionParams) -> {
 
                 Logger.d(TAG + " setActivity", functionParams);
+                Logger.d(TAG + " setActivity", "ProtocolConfigs." + functionCode);
 
                 if (functionCode == ProtocolConfigs.FUNC_CODE_SWITCH_ACCOUNT) {
                     logout();
@@ -172,11 +170,22 @@ public class Qihoo implements LoginImpl {
                     QIHOO_INIT = true;
                     doQihooLogin();
                 } else if (functionCode == ProtocolConfigs.FUNC_CODE_LOGIN) {
+                    Logger.d(TAG, "feedback: FUNC_CODE_LOGIN");
                     // sdk 登陆成功 --> verifyAccount
 //                    Logger.d(TAG,
 
                 } else if (functionCode == ProtocolConfigs.FUNC_CODE_LOGINAFTER_REALNAME_CALLBACK) {
-                    callback.onLoginFailed();
+                    try {
+                        JSONObject realName = new JSONObject(functionParams);
+                        if (realName.getInt("error_code") != 0) {
+                            Log.makeToast("实名返回错误 账号可能未实名验证！");
+                            callback.onLoginFailed();
+                        } else {
+                            username = realName.getJSONObject("content").getJSONArray("ret").getJSONObject(0).getString("qid");
+                        }
+                    } catch (Exception e) {
+                        callback.onLoginFailed();
+                    }
                     // 当收到此回调后才可调用SDK提供的实名状态查询接口、打开实名认证界面接口。具体的返回内容是functionParams，数据格式如下。
                 }
 

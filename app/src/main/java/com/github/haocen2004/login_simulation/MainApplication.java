@@ -80,6 +80,7 @@ public class MainApplication extends Application implements LifecycleOwner {
     @Override
     public void onCreate() {
         super.onCreate();
+        app_pref = getDefaultSharedPreferences(this);
         mLifecycle.setCurrentState(Lifecycle.State.CREATED);
         LogLiveData.getINSTANCE(); //init live data
         Log = Logger.getLogger(this);
@@ -89,13 +90,19 @@ public class MainApplication extends Application implements LifecycleOwner {
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(this);
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
+        if (app_pref.contains("server_type")) {
+            String appChannel = app_pref.getString("server_type", "noLogin");
+            strategy.setAppChannel(appChannel);
+            CrashReport.setAppChannel(this, appChannel);
+        }
+        strategy.setAppChannel("noLogin");
+        CrashReport.setAppChannel(this, "noLogin");
         strategy.setDeviceID(Tools.getUUID(this));
         CrashReport.setDeviceId(this, Tools.getUUID(this));
         strategy.setDeviceModel(Tools.getDeviceModel());
         strategy.setCrashHandleCallback(crashHandler);
         CrashReport.setIsDevelopmentDevice(getApplicationContext(), DEBUG);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG, strategy);
-        app_pref = getDefaultSharedPreferences(this);
         DEBUG_MODE = app_pref.getBoolean("debug_mode", false) || DEBUG;
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             Logger.d("prefSetup", "first run or version update detect.");
