@@ -287,53 +287,56 @@ public class QRScanner {
             custom_name.append(app_pref.getString("custom_username", "崩坏3外置扫码器用户"));
 
             if (HAS_TIPS) custom_name.append("\n").append(TIPS);
-            String server_type;
-            switch (Objects.requireNonNull(app_pref.getString("server_type", ""))) {
-                case "Official":
-                    switch (app_pref.getInt("official_type", 0)) {
-                        case 1:
-                            server_type = "全平台(桌面)服";
-                            break;
-                        case 2:
-                            server_type = "IOS国服";
-                            break;
-                        default:
-                            server_type = "安卓国服";
-                            break;
-                    }
-                    break;
-                case "Bilibili":
-                    server_type = activity.getString(R.string.types_bilibili);
-                    break;
-                case "Xiaomi":
-                    server_type = activity.getString(R.string.types_xiaomi);
-                    break;
-                case "UC":
-                    server_type = activity.getString(R.string.types_uc);
-                    break;
-                case "Vivo":
-                    server_type = activity.getString(R.string.types_vivo);
-                    break;
-                case "Oppo":
-                    server_type = activity.getString(R.string.types_oppo);
-                    break;
-                case "Flyme":
-                    server_type = activity.getString(R.string.types_flyme);
-                    break;
-                case "YYB":
-                    server_type = activity.getString(R.string.types_yyb);
-                    break;
-                case "Huawei":
-                    server_type = activity.getString(R.string.types_huawei);
-                    break;
-                case "Qihoo":
-                    server_type = activity.getString(R.string.types_qihoo);
-                    break;
-                default:
-                    server_type = "获取服务器错误";
-            }
 
-            custom_name.append("\n").append(server_type).append("\n");
+            if (!app_pref.getBoolean("no_server_tip", false)) {
+                String server_type;
+                switch (Objects.requireNonNull(app_pref.getString("server_type", ""))) {
+                    case "Official":
+                        switch (app_pref.getInt("official_type", 0)) {
+                            case 1:
+                                server_type = "全平台(桌面)服";
+                                break;
+                            case 2:
+                                server_type = "IOS国服";
+                                break;
+                            default:
+                                server_type = "安卓国服";
+                                break;
+                        }
+                        break;
+                    case "Bilibili":
+                        server_type = activity.getString(R.string.types_bilibili);
+                        break;
+                    case "Xiaomi":
+                        server_type = activity.getString(R.string.types_xiaomi);
+                        break;
+                    case "UC":
+                        server_type = activity.getString(R.string.types_uc);
+                        break;
+                    case "Vivo":
+                        server_type = activity.getString(R.string.types_vivo);
+                        break;
+                    case "Oppo":
+                        server_type = activity.getString(R.string.types_oppo);
+                        break;
+                    case "Flyme":
+                        server_type = activity.getString(R.string.types_flyme);
+                        break;
+                    case "YYB":
+                        server_type = activity.getString(R.string.types_yyb);
+                        break;
+                    case "Huawei":
+                        server_type = activity.getString(R.string.types_huawei);
+                        break;
+                    case "Qihoo":
+                        server_type = activity.getString(R.string.types_qihoo);
+                        break;
+                    default:
+                        server_type = "获取服务器错误";
+                }
+
+                custom_name.append("\n").append(server_type).append("\n");
+            }
 
             raw_json.put("heartbeat", false)
                     .put("open_id", open_id)
