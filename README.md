@@ -45,5 +45,8 @@ glide
 Gson  
 okhttp  
 
+## 联系方式 / Contact
+QQ Channel: https://pd.qq.com/s/hp1qtbnap  
+TG: https://t.me/honkaiscanner
 
 [ZXING][已被OPENCV代替]
