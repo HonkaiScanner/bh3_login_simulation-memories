@@ -47,7 +47,7 @@ public class Network {
                 result.append(line);
             }
         } catch (Exception e) {
-            Logger.i("Network", "sendPost: Failed. Target: " + url);
+            Logger.i("Network", "sendPost: Failed. Target: " + url + " \n" + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -90,7 +90,7 @@ public class Network {
                 result.append(line);
             }
         } catch (Exception e) {
-            Logger.i("Network", "sendGet: Failed. Target: " + url);
+            Logger.i("Network", "sendGet: Failed. Target: " + url + " \n" + e.getMessage());
             e.printStackTrace();
             return "null";
         }
@@ -127,7 +127,7 @@ public class Network {
     }
 
     public static String sendGet(String url, Boolean autoRetry) {
-        return sendGet(url, null, true);
+        return sendGet(url, null, autoRetry);
     }
 
     public static String sendPost(String url, String param) {
