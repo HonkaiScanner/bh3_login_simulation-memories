@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.QIHOO_INIT;
+import static com.github.haocen2004.login_simulation.data.Constant.QIHOO_INIT;
 import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 
 import android.content.Intent;

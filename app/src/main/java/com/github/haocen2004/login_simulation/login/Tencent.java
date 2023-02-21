@@ -2,8 +2,8 @@ package com.github.haocen2004.login_simulation.login;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static com.github.haocen2004.login_simulation.utils.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
-import static com.github.haocen2004.login_simulation.utils.Constant.YYB_INIT;
+import static com.github.haocen2004.login_simulation.data.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
+import static com.github.haocen2004.login_simulation.data.Constant.YYB_INIT;
 import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 
 import android.annotation.SuppressLint;

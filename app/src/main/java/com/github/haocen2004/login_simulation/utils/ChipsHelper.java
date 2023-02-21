@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.utils;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.HAS_TIPS;
-import static com.github.haocen2004.login_simulation.utils.Constant.TIPS;
+import static com.github.haocen2004.login_simulation.data.Constant.HAS_TIPS;
+import static com.github.haocen2004.login_simulation.data.Constant.TIPS;
 
 import android.content.Context;
 import android.content.DialogInterface;

@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.MI_INIT;
+import static com.github.haocen2004.login_simulation.data.Constant.MI_INIT;
 
 import android.app.Application;
 

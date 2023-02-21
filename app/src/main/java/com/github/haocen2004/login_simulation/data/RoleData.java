@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.data;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.data.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.utils.Tools.getOAServer;
 
 import android.os.Bundle;

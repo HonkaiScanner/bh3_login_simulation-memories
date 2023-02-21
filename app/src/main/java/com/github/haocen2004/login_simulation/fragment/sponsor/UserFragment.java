@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.fragment.sponsor;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.data.Constant.HAS_ACCOUNT;
 
 import android.content.Intent;
 import android.os.Bundle;

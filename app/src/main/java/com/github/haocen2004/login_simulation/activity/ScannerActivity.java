@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.INTENT_EXTRA_KEY_QR_SCAN;
+import static com.github.haocen2004.login_simulation.data.Constant.INTENT_EXTRA_KEY_QR_SCAN;
 
 import android.content.Intent;
 import android.os.Bundle;

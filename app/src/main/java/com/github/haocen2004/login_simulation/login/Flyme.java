@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.FLYME_INIT;
-import static com.github.haocen2004.login_simulation.utils.Constant.FLYME_OFFICIAL_PACK_INSTALLED;
+import static com.github.haocen2004.login_simulation.data.Constant.FLYME_INIT;
+import static com.github.haocen2004.login_simulation.data.Constant.FLYME_OFFICIAL_PACK_INSTALLED;
 import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 
 import android.annotation.SuppressLint;

@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
+import static com.github.haocen2004.login_simulation.data.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;

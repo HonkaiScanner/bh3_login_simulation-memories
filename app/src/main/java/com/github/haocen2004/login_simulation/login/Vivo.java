@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.VIVO_APP_KEY;
+import static com.github.haocen2004.login_simulation.data.Constant.VIVO_APP_KEY;
 import static com.github.haocen2004.login_simulation.utils.Tools.verifyAccount;
 
 import android.annotation.SuppressLint;

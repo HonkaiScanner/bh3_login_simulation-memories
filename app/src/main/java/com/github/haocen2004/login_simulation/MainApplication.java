@@ -4,14 +4,15 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
-import static com.github.haocen2004.login_simulation.utils.Constant.BETA_VER;
-import static com.github.haocen2004.login_simulation.utils.Constant.BH_VER;
-import static com.github.haocen2004.login_simulation.utils.Constant.CHECK_VER;
-import static com.github.haocen2004.login_simulation.utils.Constant.DEBUG_MODE;
-import static com.github.haocen2004.login_simulation.utils.Constant.MDK_VERSION;
-import static com.github.haocen2004.login_simulation.utils.Constant.MI_ADV_MODE;
-import static com.github.haocen2004.login_simulation.utils.Constant.SP_APP_KEY;
-import static com.github.haocen2004.login_simulation.utils.Constant.SP_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.BETA_VER;
+import static com.github.haocen2004.login_simulation.data.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.data.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.data.Constant.DEBUG_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.MDK_VERSION;
+import static com.github.haocen2004.login_simulation.data.Constant.MI_ADV_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.SP_APP_KEY;
+import static com.github.haocen2004.login_simulation.data.Constant.SP_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.VISITOR_COUNT;
 
 import android.app.Application;
 import android.app.NotificationChannel;
@@ -38,10 +39,13 @@ import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.utils.CrashHandler;
 import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Network;
 import com.github.haocen2004.login_simulation.utils.PmsHooker;
 import com.github.haocen2004.login_simulation.utils.Tools;
 import com.hjq.toast.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;
+
+import org.json.JSONObject;
 
 import java.util.Locale;
 
@@ -288,6 +292,23 @@ public class MainApplication extends Application implements LifecycleOwner {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 break;
         }
+
+        new Thread(() -> {
+
+            String feedback = Network.sendGet("https://api.z-notify.zxlee.cn/v1/public/statistics/8316326835763216384?tag=" + (BETA_VER ? "snapshot" : "release") + "&from=" + VERSION_NAME, false);
+            try {
+                JSONObject object = new JSONObject(feedback);
+                if (object.has("data")) {
+                    JSONObject data = object.getJSONObject("data");
+                    VISITOR_COUNT = data.getInt("visitor_count");
+                    Logger.d("z-notify", "get statistics succ");
+                }
+            } catch (Exception ignore) {
+                Logger.d("z-notify", "get statistics failed");
+            }
+
+        }).start();
+
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);

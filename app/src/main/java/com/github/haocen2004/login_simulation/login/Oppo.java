@@ -1,8 +1,8 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.OPPO_APP_KEY;
-import static com.github.haocen2004.login_simulation.utils.Constant.OPPO_INIT;
-import static com.github.haocen2004.login_simulation.utils.Constant.OPPO_OFFICIAL_PACK_INSTALLED;
+import static com.github.haocen2004.login_simulation.data.Constant.OPPO_APP_KEY;
+import static com.github.haocen2004.login_simulation.data.Constant.OPPO_INIT;
+import static com.github.haocen2004.login_simulation.data.Constant.OPPO_OFFICIAL_PACK_INSTALLED;
 import static com.github.haocen2004.login_simulation.utils.Tools.verifyAccount;
 
 import android.annotation.SuppressLint;

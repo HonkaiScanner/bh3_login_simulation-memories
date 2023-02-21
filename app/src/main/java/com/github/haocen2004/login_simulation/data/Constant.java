@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.utils;
+package com.github.haocen2004.login_simulation.data;
 
 /**
  * 常量
@@ -23,6 +23,7 @@ public class Constant {
     public static String MDK_VERSION = "1.25.1";
     public static String OFFICIAL_TYPE = "android01";
     public static String TIPS = "";
+    public static int VISITOR_COUNT = 0;
     public static boolean CHECK_VER = true;
     public static boolean BETA_VER = false;
     public static boolean HAS_TIPS = false;

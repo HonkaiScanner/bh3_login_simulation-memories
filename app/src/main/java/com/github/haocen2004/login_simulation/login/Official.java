@@ -1,8 +1,8 @@
 package com.github.haocen2004.login_simulation.login;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.utils.Constant.BH_PUBLIC_KEY;
-import static com.github.haocen2004.login_simulation.utils.Constant.MDK_VERSION;
+import static com.github.haocen2004.login_simulation.data.Constant.BH_PUBLIC_KEY;
+import static com.github.haocen2004.login_simulation.data.Constant.MDK_VERSION;
 import static com.github.haocen2004.login_simulation.utils.Tools.getDeviceID;
 import static com.github.haocen2004.login_simulation.utils.Tools.verifyAccount;
 

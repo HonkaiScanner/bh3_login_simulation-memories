@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.QQ_GROUP_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.QQ_GROUP_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.VISITOR_COUNT;
 
 import android.content.SharedPreferences;
 import android.widget.ImageView;
@@ -98,5 +99,6 @@ public class AboutActivity extends BaseAbsActivity {
         items.add(new Category("您已使用扫码器成功登陆 " + Tools.getInt(this, "succ_count") + " 次"));
         items.add(new Category(Tools.getUUID(this)));
         items.add(new Category(Tools.getString(this, "installationId")));
+        items.add(new Category("今日有 " + VISITOR_COUNT + " 台设备使用了扫码器"));
     }
 }

@@ -1,9 +1,9 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.BILI_APP_KEY;
-import static com.github.haocen2004.login_simulation.utils.Constant.BILI_INIT;
-import static com.github.haocen2004.login_simulation.utils.Constant.DEBUG_MODE;
-import static com.github.haocen2004.login_simulation.utils.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.data.Constant.BILI_APP_KEY;
+import static com.github.haocen2004.login_simulation.data.Constant.BILI_INIT;
+import static com.github.haocen2004.login_simulation.data.Constant.DEBUG_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.utils.Encrypt.paySign;
 import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 import static java.lang.Long.parseLong;

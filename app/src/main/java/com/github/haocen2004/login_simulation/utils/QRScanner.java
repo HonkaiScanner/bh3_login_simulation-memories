@@ -1,8 +1,8 @@
 package com.github.haocen2004.login_simulation.utils;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.utils.Constant.HAS_TIPS;
-import static com.github.haocen2004.login_simulation.utils.Constant.TIPS;
+import static com.github.haocen2004.login_simulation.data.Constant.HAS_TIPS;
+import static com.github.haocen2004.login_simulation.data.Constant.TIPS;
 import static com.github.haocen2004.login_simulation.utils.Logger.processWithBlackList;
 import static java.lang.Integer.parseInt;
 

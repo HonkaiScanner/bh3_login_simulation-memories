@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.fragment.report;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.QQ_GROUP_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.QQ_GROUP_URL;
 import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 import static com.github.haocen2004.login_simulation.utils.Tools.openUrl;
 

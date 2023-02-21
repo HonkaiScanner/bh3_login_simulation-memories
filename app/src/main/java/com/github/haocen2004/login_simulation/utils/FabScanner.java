@@ -2,7 +2,7 @@ package com.github.haocen2004.login_simulation.utils;
 
 import static android.app.Activity.RESULT_OK;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.utils.Constant.BAG_ALTER_NOTIFICATION;
+import static com.github.haocen2004.login_simulation.data.Constant.BAG_ALTER_NOTIFICATION;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

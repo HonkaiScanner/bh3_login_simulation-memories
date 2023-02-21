@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.utils;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.BH_APP_KEY;
+import static com.github.haocen2004.login_simulation.data.Constant.BH_APP_KEY;
 
 import android.os.Build;
 

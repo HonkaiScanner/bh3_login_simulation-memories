@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.fragment.sponsor;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.CHECK_VER;
+import static com.github.haocen2004.login_simulation.data.Constant.CHECK_VER;
 
 import android.os.Bundle;
 import android.os.Handler;

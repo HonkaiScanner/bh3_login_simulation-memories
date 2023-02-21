@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.utils;
 
-import static com.github.haocen2004.login_simulation.utils.Constant.MI_ADV_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.MI_ADV_MODE;
 
 import androidx.annotation.Keep;
 
