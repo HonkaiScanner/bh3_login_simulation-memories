@@ -21,8 +21,8 @@ public class DialogLiveData extends LiveData<List<DialogData>> {
 
     public static DialogLiveData getINSTANCE(Context context) {
         if (INSTANCE == null) {
-            Logger.d("DialogLiveData", "create new INSTANCE.");
             INSTANCE = new DialogLiveData(context);
+            Logger.d("DialogLiveData", "created new INSTANCE.");
         }
         return INSTANCE;
     }

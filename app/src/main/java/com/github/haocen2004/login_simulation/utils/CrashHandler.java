@@ -96,8 +96,7 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
             dir.mkdirs();
         }
         long current = System.currentTimeMillis();
-        String time = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.CHINA).format(new Date(current));
-        time = time.replace(":", "-");
+        String time = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.CHINA).format(new Date(current));
         File file = new File(PATH + FILE_NAME + "-" + time + FILE_NAME_SUFFIX);
         Tools.saveString(mContext, "crash-report-name", FILE_NAME + "-" + time + FILE_NAME_SUFFIX);
         Log.d(TAG, "crash-report-name: " + file.getName());
