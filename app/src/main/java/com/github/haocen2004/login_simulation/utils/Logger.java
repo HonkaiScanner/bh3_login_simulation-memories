@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 @SuppressLint("StaticFieldLeak")
@@ -28,7 +27,7 @@ public class Logger implements Serializable {
     private static Context context;
     private static View view;
     private static boolean useSnackBar;
-    private static List<String> logBlackList;
+    private static ArrayList<String> logBlackList;
     private static LogLiveData logLiveData;
     private static boolean fabMode;
     private static FileWriter fileWriter;
@@ -40,7 +39,7 @@ public class Logger implements Serializable {
     public Logger(Context context) {
         Logger.context = context;
         useSnackBar = false;
-        logBlackList = new ArrayList();
+        logBlackList = new ArrayList<>();
         createOutputStream();
         logLiveData = LogLiveData.getINSTANCE();
         DialogLiveData.getINSTANCE(context);
@@ -178,8 +177,10 @@ public class Logger implements Serializable {
         try {
             Date date1 = format.parse(date1str);
             Date date2 = format.parse(date2str);
-            int a = (int) ((date1.getTime() - date2.getTime()) / (1000 * 3600 * 24));
-            return a;
+            if (date1 != null && date2 != null) {
+                return (int) ((date1.getTime() - date2.getTime()) / (1000 * 3600 * 24));
+            }
+            return 0;
         } catch (Exception ignore) {
             return 0;
         }
@@ -192,10 +193,12 @@ public class Logger implements Serializable {
             long current = System.currentTimeMillis();
             String nowDate = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(new Date(current));
             File[] logs = dir.listFiles();
-            for (File log : logs) {
-                String oldDate = log.getName().replace("logs-", "").replace(".log", "");
-                if (daysBetween(nowDate, oldDate) > 14) {
-                    log.delete();
+            if (logs != null) {
+                for (File log : logs) {
+                    String oldDate = log.getName().replace("logs-", "").replace(".log", "");
+                    if (daysBetween(nowDate, oldDate) > 14) {
+                        log.delete();
+                    }
                 }
             }
         }
@@ -214,7 +217,6 @@ public class Logger implements Serializable {
         logFile = new File(dirPath + "logs-" + time + ".log");
         if (!logFile.exists()) {
             try {
-                //在指定的文件夹中创建文件
                 logFile.createNewFile();
             } catch (Exception ignored) {
                 logToFile = false;
