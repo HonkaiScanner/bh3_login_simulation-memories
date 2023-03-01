@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.activity.HistoryLogsActivity;
 import com.github.haocen2004.login_simulation.data.LogData;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.utils.Logger;
@@ -48,7 +50,11 @@ public class LoggerAdapter extends RecyclerView.Adapter<LoggerAdapter.LoggerView
         holder.textViewNumber.setText(String.valueOf(position));
         holder.textViewMessage.setText(LoggerData.getMessage());
         holder.textViewLevel.setText(LoggerData.getLevel() + " - " + LoggerData.getTAG());
-//        holder.itemView.lon
+        holder.itemView.setOnClickListener(v -> {
+            if (LoggerData.getLevel().equals("长按")) {
+                activity.startActivity(new Intent(activity, HistoryLogsActivity.class));
+            }
+        });
         holder.itemView.setOnLongClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
             if (LoggerData.getLevel().equals("长按")) {

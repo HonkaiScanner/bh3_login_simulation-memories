@@ -45,13 +45,8 @@
         android:theme="@style/ScannerAppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="s">
-        <activity
-            android:name=".activity.SponsorInfoActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+        <activity android:name=".activity.HistoryLogsActivity" />
+        <activity android:name=".activity.SponsorInfoActivity" />
         <activity android:name=".activity.TencentLoginActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.AboutActivity" />
