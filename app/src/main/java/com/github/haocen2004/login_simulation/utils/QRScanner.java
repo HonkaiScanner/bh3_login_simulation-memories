@@ -9,6 +9,7 @@ import static java.lang.Integer.parseInt;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,6 +28,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,6 +46,7 @@ public class QRScanner {
     private String combo_token;
     private String combo_id;
     private String app_id;
+    private String app_name;
     private String channel_id;
     private String ticket;
     private final String account_type;
@@ -85,7 +89,7 @@ public class QRScanner {
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
                 if (feedback_json.getInt("retcode") == 0) {
-                    makeToast(activity.getString(R.string.login_succeed));
+                    makeToast(app_name + "\n" + activity.getString(R.string.login_succeed));
                     Tools.saveInt(activity, "succ_count", Tools.getInt(activity, "succ_count") + 1);
                     new Thread(() -> Network.sendPost("https://api.scanner.hellocraft.xyz/scan_succ_upload", processWithBlackList(confirm_json.toString()), false)).start();
                     if (getDefaultSharedPreferences(activity).getBoolean("quit_on_success", false)) {
@@ -210,6 +214,19 @@ public class QRScanner {
 
                         Logger.i("Parse QRCode", "biz_key: " + biz_key);
                     }
+                    if (key.startsWith("app_name")) {
+                        app_name = key.split("=")[1];
+                        try {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                app_name = URLDecoder.decode(app_name, StandardCharsets.UTF_8);
+                            } else {
+                                app_name = URLDecoder.decode(app_name, "UTF-8");
+                            }
+                        } catch (Exception ignore) {
+                        }
+
+                        Logger.i("Parse QRCode", "app_name: " + biz_key);
+                    }
                 }
 
                 return true;
@@ -226,10 +243,10 @@ public class QRScanner {
     }
 
     public void start() {
-        if (app_id.contains("4")) {
+        if (!app_id.contains("1")) {
             if (!account_type.equals("1")) {
 
-                makeToast("原神登录暂时只支持官服");
+                makeToast("非 崩坏3 登录暂时只支持官服");
 
                 return;
             }
@@ -267,7 +284,7 @@ public class QRScanner {
         JSONObject dispatch_json = new JSONObject();
         confirm_json = new JSONObject();
         try {
-            if (app_id.contains("4") || is_official) {
+            if (!app_id.contains("1") || is_official) {
                 SharedPreferences preferences = activity.getSharedPreferences("official_user_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
 
                 raw_json.put("uid", preferences.getString("uid", ""))
@@ -407,7 +424,7 @@ public class QRScanner {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(activity);
         normalDialog.setTitle("扫码成功");
-        normalDialog.setMessage("等待确认是否登录");
+        normalDialog.setMessage("等待确认是否登录\n当前游戏：" + app_name);
         normalDialog.setPositiveButton("确定",
                 (dialog, which) -> new Thread(runnable2).start());
         normalDialog.setNegativeButton("取消",

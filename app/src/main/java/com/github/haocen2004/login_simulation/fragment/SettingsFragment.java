@@ -45,7 +45,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         findPreference("fab_save_img").setOnPreferenceChangeListener(((preference, newValue) -> {
             if ((Boolean) newValue) {
                 if (app_pref.getBoolean("capture_continue_before_result", false)) {
-                    DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量结果图片占用内存\n是否继续开启本功能？");
+                    DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量图片占用存储空间\n是否继续开启本功能？");
                     dialogData.setPositiveButtonData("确认");
                     dialogData.setNegativeButtonData(new ButtonData("取消") {
                         @Override
@@ -63,7 +63,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         findPreference("capture_continue_before_result").setOnPreferenceChangeListener(((preference, newValue) -> {
             if ((Boolean) newValue) {
                 if (app_pref.getBoolean("fab_save_img", false)) {
-                    DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量结果图片占用内存\n是否继续开启本功能？");
+                    DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量图片占用存储空间\n是否继续开启本功能？");
                     dialogData.setPositiveButtonData("确认");
                     dialogData.setNegativeButtonData(new ButtonData("取消") {
                         @Override
