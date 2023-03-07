@@ -99,6 +99,6 @@ public class AboutActivity extends BaseAbsActivity {
         items.add(new Category("您已使用扫码器成功登陆 " + Tools.getInt(this, "succ_count") + " 次"));
         items.add(new Category(Tools.getUUID(this)));
         items.add(new Category(Tools.getString(this, "installationId")));
-        items.add(new Category("今日有 " + VISITOR_COUNT + " 台设备使用了扫码器"));
+        items.add(new Category("累计有 " + VISITOR_COUNT + " 台设备使用了扫码器"));
     }
 }
