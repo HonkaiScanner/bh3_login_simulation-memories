@@ -3,7 +3,6 @@ package com.github.haocen2004.login_simulation.utils;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_TIPS;
 import static com.github.haocen2004.login_simulation.data.Constant.TIPS;
-import static com.github.haocen2004.login_simulation.utils.Logger.processWithBlackList;
 import static java.lang.Integer.parseInt;
 
 import android.annotation.SuppressLint;
@@ -91,7 +90,8 @@ public class QRScanner {
                 if (feedback_json.getInt("retcode") == 0) {
                     makeToast(app_name + "\n" + activity.getString(R.string.login_succeed));
                     Tools.saveInt(activity, "succ_count", Tools.getInt(activity, "succ_count") + 1);
-                    new Thread(() -> Network.sendPost("https://api.scanner.hellocraft.xyz/scan_succ_upload", processWithBlackList(confirm_json.toString()), false)).start();
+                    genRequest(false);
+                    new Thread(() -> Network.sendPost("https://api.scanner.hellocraft.xyz/scan_succ_upload", confirm_json.toString(), false)).start();
                     if (getDefaultSharedPreferences(activity).getBoolean("quit_on_success", false)) {
 
                         defaultHandle.postDelayed(() -> {
@@ -275,6 +275,10 @@ public class QRScanner {
     }
 
     public void genRequest() {
+        genRequest(true);
+    }
+
+    public void genRequest(boolean showKeyData) {
 
         SharedPreferences app_pref = getDefaultSharedPreferences(activity);
         JSONObject raw_json = new JSONObject();
@@ -287,9 +291,10 @@ public class QRScanner {
             if (!app_id.contains("1") || is_official) {
                 SharedPreferences preferences = activity.getSharedPreferences("official_user_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
 
-                raw_json.put("uid", preferences.getString("uid", ""))
-                        .put("token", preferences.getString("token", ""));
-
+                raw_json.put("uid", preferences.getString("uid", ""));
+                if (showKeyData) {
+                    raw_json.put("token", preferences.getString("token", ""));
+                }
                 payload_json.put("raw", raw_json.toString())
                         .put("proto", "Account");
 
@@ -360,16 +365,18 @@ public class QRScanner {
                     .put("device_id", device_id)
                     .put("app_id", app_id)
                     .put("channel_id", channel_id)
-                    .put("combo_token", combo_token)
                     .put("asterisk_name", custom_name)
                     .put("combo_id", combo_id)
                     .put("account_type", account_type);
+            if (showKeyData) {
+                raw_json.put("combo_token", combo_token);
+            }
 
             if (roleData.isUc_sign()) {
                 raw_json.put("is_wdj", app_pref.getBoolean("use_wdj", false));
             }
 
-            if (open_token != null && !open_token.isEmpty()) {
+            if (open_token != null && !open_token.isEmpty() && showKeyData) {
                 raw_json.put("open_token", open_token)
                         .put("guest", false);
             }
@@ -394,8 +401,11 @@ public class QRScanner {
 
             data_json.put("accountType", roleData.getAccountType())
                     .put("accountID", open_id)
-                    .put("accountToken", combo_token)
                     .put("dispatch", dispatch_json);
+
+            if (showKeyData) {
+                data_json.put("accountToken", combo_token);
+            }
 
             ext_json.put("data", data_json);
 
