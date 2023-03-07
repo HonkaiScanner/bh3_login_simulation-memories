@@ -21,6 +21,11 @@
             android:key="dark_type"
             android:summary="%s"
             android:title="@string/dark_theme" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="mi_adv_mode"
+            android:summary="@string/mi_adv_mode_sum"
+            android:title="@string/mi_adv_mode" />
     </PreferenceCategory>
 
 
@@ -77,12 +82,6 @@
             android:key="use_token"
             android:summary="@string/use_token_sum"
             android:title="@string/use_token_true" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:dependency="adv_setting"
-            android:key="mi_adv_mode"
-            android:summary="@string/mi_adv_mode_sum"
-            android:title="@string/mi_adv_mode" />
         <SwitchPreference
             android:dependency="adv_setting"
             android:defaultValue="false"
