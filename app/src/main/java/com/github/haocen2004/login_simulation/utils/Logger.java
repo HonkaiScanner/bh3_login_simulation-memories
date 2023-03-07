@@ -58,21 +58,21 @@ public class Logger implements Serializable {
 
     public static void addBlacklist(String blackMsg) {
         if (logBlackList.contains(blackMsg)) return;
-        if (blackMsg.length() < 2) {
+        if (blackMsg.length() < 4) {
             d("BlackList", "blackMsg is too short.");
             return;
         }
         if (blackMsg.contains("/")) {
             for (String s : blackMsg.split("/")) {
                 if (logBlackList.contains(s)) continue;
-                if (s.length() < 2) {
+                if (s.length() < 4) {
                     d("BlackList", "blackMsg is too short.");
                     continue;
                 }
-                logBlackList.add(s);
+                logBlackList.add(s.strip());
             }
         } else {
-            logBlackList.add(blackMsg);
+            logBlackList.add(blackMsg.strip());
         }
     }
 
@@ -83,6 +83,10 @@ public class Logger implements Serializable {
     public static String processWithBlackList(String msg) {
 
         for (String b : logBlackList) {
+            if (b.length() < 3) {
+                logBlackList.remove(b);
+                continue;
+            }
             try {
                 msg = msg.replace(b, "******");
             } catch (Exception ignore) {
