@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.utils.Logger;
 import com.github.haocen2004.login_simulation.utils.PmsHooker;
 
@@ -51,6 +52,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         Logger.d(TAG, "onDestroy: " + getClass().getName());
         activityManager.removeActivity(this);
+        DialogLiveData.getINSTANCE(this).notifyDialog();
         super.onDestroy();
     }
 

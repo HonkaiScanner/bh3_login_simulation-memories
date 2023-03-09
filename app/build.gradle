@@ -150,6 +150,7 @@ dependencies {
     implementation 'com.huawei.hms:hwid:6.8.0.300'
     implementation 'com.huawei.hms:game:6.8.0.300'
     implementation 'org.json:json:20220924'
+    implementation 'com.google.android.material:material:1.4.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     annotationProcessor 'androidx.room:room-compiler:2.5.0'
 //    testImplementation 'junit:junit:4.13.2'

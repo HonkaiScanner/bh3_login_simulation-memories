@@ -45,13 +45,15 @@
         android:theme="@style/ScannerAppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="s">
-        <activity android:name=".activity.HistoryLogsActivity" />
-        <activity android:name=".activity.SponsorInfoActivity" />
-        <activity android:name=".activity.TencentLoginActivity" />
-        <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.AboutActivity" />
-        <activity android:name=".activity.ScannerActivity" />
         <activity android:name=".activity.CrashActivity" />
+        <activity android:name=".activity.DisableActivity" />
+        <activity android:name=".activity.HistoryLogsActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.NotificationActivity" />
+        <activity android:name=".activity.SponsorInfoActivity" />
+        <activity android:name=".activity.ScannerActivity" />
+        <activity android:name=".activity.TencentLoginActivity" />
         <activity android:name=".wxapi.WXPayEntryActivity" />
 
         <activity
@@ -63,6 +65,7 @@
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="com.qihoo.sdkplugging.host.proxy.activity.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -81,7 +84,6 @@
             android:name="com.qihoo.pushsdk.keepalive.PushWakeUpReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MEDIA_MOUNTED" />
                 <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
@@ -303,7 +305,6 @@
         <service
             android:name="cn.gundam.sdk.shell.service.ProxyService"
             android:exported="true"
-            android:permission="TODO"
             android:process=":bgservice" /> <!-- sdk service end -->
         <provider
             android:name="androidx.core.content.FileProvider"

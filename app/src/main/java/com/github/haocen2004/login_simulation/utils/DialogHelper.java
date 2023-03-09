@@ -175,6 +175,7 @@ public class DialogHelper {
         normalDialog.show();
         currShow = true;
         currClose = false;
+        Logger.d(TAG, "dialog displayed.");
     }
 
     public void setCurrClose(boolean currClose) {

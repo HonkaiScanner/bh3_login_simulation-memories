@@ -31,7 +31,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 
 import com.github.haocen2004.login_simulation.activity.ActivityManager;
-import com.github.haocen2004.login_simulation.activity.MainActivity;
+import com.github.haocen2004.login_simulation.activity.NotificationActivity;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
 import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
@@ -200,12 +200,7 @@ public class MainApplication extends Application implements LifecycleOwner {
                         .putBoolean("adv_setting", false)
                         .putBoolean("beta_update", false)
                         .putBoolean("bh_ver_overwrite", false)
-                        .putBoolean("socket_helper", false)
-                        .putBoolean("use_token", false)
-                        .putBoolean("mi_adv_mode", false)
-                        .putBoolean("quit_on_success", false)
                         .putBoolean("keep_capture_no_cooling_down", false)
-                        .putBoolean("no_server_tip", false)
                         .putBoolean("no_server_tip", false)
                         .apply();
             }
@@ -225,16 +220,16 @@ public class MainApplication extends Application implements LifecycleOwner {
                     PushService.setDefaultChannelId(this, channel.getId());
                 }
                 if (DEBUG_MODE) {
-                    PushService.subscribe(this, "debug", MainActivity.class);
+                    PushService.subscribe(this, "debug", NotificationActivity.class);
                     PushService.unsubscribe(this, "release");
                 } else {
-                    PushService.subscribe(this, "release", MainActivity.class);
+                    PushService.subscribe(this, "release", NotificationActivity.class);
                     PushService.unsubscribe(this, "debug");
                 }
                 if (VERSION_NAME.contains("snapshot")) {
                     BETA_VER = true;
                     app_pref.edit().putBoolean("beta_update", true).apply();
-                    PushService.subscribe(this, "snapshot", MainActivity.class);
+                    PushService.subscribe(this, "snapshot", NotificationActivity.class);
                 } else {
                     BETA_VER = app_pref.getBoolean("beta_update", false);
                     PushService.unsubscribe(this, "snapshot");

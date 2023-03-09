@@ -23,6 +23,19 @@
             android:title="@string/dark_theme" />
         <SwitchPreference
             android:defaultValue="false"
+            android:key="quit_on_success"
+            android:title="@string/quit_on_success" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="socket_helper"
+            android:title="@string/use_socket" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="use_token"
+            android:summary="@string/use_token_sum"
+            android:title="@string/use_token_true" />
+        <SwitchPreference
+            android:defaultValue="false"
             android:key="mi_adv_mode"
             android:summary="@string/mi_adv_mode_sum"
             android:title="@string/mi_adv_mode" />
@@ -71,22 +84,6 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/settings_bh_ver" />
-        <SwitchPreference
-            android:dependency="adv_setting"
-            android:defaultValue="false"
-            android:key="socket_helper"
-            android:title="@string/use_socket" />
-        <SwitchPreference
-            android:dependency="adv_setting"
-            android:defaultValue="false"
-            android:key="use_token"
-            android:summary="@string/use_token_sum"
-            android:title="@string/use_token_true" />
-        <SwitchPreference
-            android:dependency="adv_setting"
-            android:defaultValue="false"
-            android:key="quit_on_success"
-            android:title="@string/quit_on_success" />
         <SwitchPreference
             android:dependency="adv_setting"
             android:defaultValue="false"

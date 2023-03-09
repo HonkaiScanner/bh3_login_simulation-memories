@@ -126,6 +126,10 @@ public class Network {
         return ret;
     }
 
+    public static String sendGet(String url) {
+        return sendGet(url, null, true);
+    }
+
     public static String sendGet(String url, Boolean autoRetry) {
         return sendGet(url, null, autoRetry);
     }

@@ -240,7 +240,7 @@ public class LoginActivity extends BaseActivity {
 
             } else if (retCode == -2) {
                 Looper.prepare();
-                makeToast(getString(R.string.error_ver_outdate));
+                makeToast(getString(R.string.error_ver_outdated));
                 Message msg = new Message();
                 Bundle data = new Bundle();
                 data.putBoolean("type", false);

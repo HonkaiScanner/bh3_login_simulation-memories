@@ -13,6 +13,7 @@ public class DialogLiveData extends LiveData<List<DialogData>> {
     private final Context context;
     private final List<DialogData> logDataList;
     private static DialogLiveData INSTANCE;
+    private boolean hasDataCache = false;
 
     public DialogLiveData(Context context) {
         this.context = context.getApplicationContext();
@@ -31,6 +32,19 @@ public class DialogLiveData extends LiveData<List<DialogData>> {
         Logger.d("DialogLiveData", "addNewDialog:" + dialog.getTitle());
         logDataList.add(dialog);
         postValue(logDataList);
+    }
+
+    public void addDelayDialog(DialogData dialog) {
+        Logger.d("DialogLiveData", "addNewDialog:" + dialog.getTitle());
+        logDataList.add(dialog);
+        hasDataCache = true;
+    }
+
+    public void notifyDialog() {
+        if (hasDataCache) {
+            postValue(logDataList);
+            hasDataCache = false;
+        }
     }
 
     public void insertEulaDialog(DialogData dialogData) {

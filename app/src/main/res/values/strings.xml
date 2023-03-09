@@ -30,7 +30,7 @@
     <string name="feedback_holder">Thanks for your report</string>
     <string name="support_holder">Thanks for your donation</string>
     <string name="types_uc">UC Server</string>
-    <string name="types_xiaomi">Xiao Mi Server</string>
+    <string name="types_xiaomi">XiaoMi Server</string>
     <string name="boolean_true">ON</string>
     <string name="boolean_false">OFF</string>
     <string name="confirm_prefix">Auto Confirm:</string>
@@ -69,7 +69,7 @@
     <string name="reg_scanner_key">Sponsor Key</string>
     <string name="error_email">Wrong Email Address</string>
     <string name="error_key">Wrong Sponsor Key</string>
-    <string name="error_ver_outdate">Scanner is OUTDATED</string>
+    <string name="error_ver_outdated">Scanner is OUTDATED</string>
     <string name="error_network">Network Error</string>
     <string name="reg_succ">Registered successfully</string>
     <string name="error_key_used">This Key is USED</string>
@@ -126,6 +126,7 @@
     <string name="mi_adv_mode">XiaoMi Channel Test Mode</string>
     <string name="mi_adv_mode_sum">Allow Mi SDK access Service Module</string>
 
+    <string name="disable_tips">The scanner is temporarily out of service for some reason.\n Please go to Bilibili\'s dynamic page or QQ group to check the specific reason.</string>
 
     <string name="tips_tips">Only used as an auxiliary prompt when scanning the QR code</string>
     <string name="crash_hint">Detected a recent crash happened.\nPlease bring a crash-report to get feedback from the developer in time!</string>

@@ -85,6 +85,11 @@ public class MainActivity extends BaseActivity {
                 JSONObject json;
                 if (feedback != null) {
                     json = new JSONObject(feedback);
+                    if (json.has("disable_scanner") && json.getBoolean("disable_scanner")) {
+                        Intent disableIntent = new Intent(getApplicationContext(), DisableActivity.class);
+                        startActivity(disableIntent);
+                        return;
+                    }
                     app_pref.edit().putString("cloud_bh_ver", json.getString("bh_ver"))
                             .putString("mdk_ver", json.getString("mdk_ver"))
                             .putString("sp_url", json.getString("sp_url"))
@@ -161,7 +166,7 @@ public class MainActivity extends BaseActivity {
                                 HAS_ACCOUNT = true;
                                 if (user.getUsername().equals("Hao_cen")) {
                                     Logger.d("PUSH", "admin registering");
-                                    PushService.subscribe(activity, "admin", MainActivity.class);
+                                    PushService.subscribe(activity, "admin", NotificationActivity.class);
                                 } else {
                                     PushService.unsubscribe(activity, "admin");
                                 }
@@ -316,7 +321,7 @@ public class MainActivity extends BaseActivity {
 
 
     Runnable update_rb = () -> {
-        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update", false);
+        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update");
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);
