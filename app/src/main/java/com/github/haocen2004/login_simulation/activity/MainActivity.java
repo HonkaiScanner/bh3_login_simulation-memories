@@ -12,6 +12,7 @@ import static com.github.haocen2004.login_simulation.data.Constant.DEBUG_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.data.Constant.MDK_VERSION;
 import static com.github.haocen2004.login_simulation.data.Constant.QQ_GROUP_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.QUICK_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.data.Constant.SP_URL;
 import static com.github.haocen2004.login_simulation.utils.Tools.openUrl;
@@ -415,7 +416,11 @@ public class MainActivity extends BaseActivity {
             startActivity(intent);
         }
 
-
+        Intent dataIntent = getIntent();
+        if (dataIntent.hasExtra("scanner.quick")) {
+            QUICK_MODE = true;
+            Logger.d("Shortcut", "start From ShortCut");
+        }
 //        }
     }
 

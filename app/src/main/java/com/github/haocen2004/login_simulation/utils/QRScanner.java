@@ -2,11 +2,13 @@ package com.github.haocen2004.login_simulation.utils;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_TIPS;
+import static com.github.haocen2004.login_simulation.data.Constant.QUICK_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.TIPS;
 import static java.lang.Integer.parseInt;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,9 +20,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.activity.ActivityManager;
+import com.github.haocen2004.login_simulation.activity.MainActivity;
 import com.github.haocen2004.login_simulation.data.RoleData;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -90,9 +96,24 @@ public class QRScanner {
                 if (feedback_json.getInt("retcode") == 0) {
                     makeToast(app_name + "\n" + activity.getString(R.string.login_succeed));
                     Tools.saveInt(activity, "succ_count", Tools.getInt(activity, "succ_count") + 1);
+                    Intent shortcutIntent = new Intent(activity, MainActivity.class);
+                    shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    shortcutIntent.setAction(Intent.ACTION_MAIN);
+                    shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+                    shortcutIntent.putExtra("scanner.quick", true);
+                    ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(activity, "scanner.quick")
+                            .setShortLabel("快速扫码")
+                            .setLongLabel("使用上一次登陆成功的数据进行扫码")
+                            .setIcon(IconCompat.createWithResource(activity, R.drawable.ic_baseline_camera_alt_24))
+                            .setIntent(shortcutIntent)
+                            .build();
+                    ShortcutManagerCompat.pushDynamicShortcut(activity, shortcut);
                     genRequest(false);
                     new Thread(() -> Network.sendPost("https://api.scanner.hellocraft.xyz/scan_succ_upload", confirm_json.toString(), false)).start();
-                    if (getDefaultSharedPreferences(activity).getBoolean("quit_on_success", false)) {
+                    if (QUICK_MODE) {
+                        Toast.makeText(activity, "快速模式\n" + app_name + " : " + activity.getString(R.string.login_succeed), Toast.LENGTH_LONG).show();
+                        ActivityManager.getInstance().clearActivity();
+                    } else if (getDefaultSharedPreferences(activity).getBoolean("quit_on_success", false)) {
 
                         defaultHandle.postDelayed(() -> {
                             makeToast("自动退出已启用\n将在5s后自动退出扫码器");

@@ -37,6 +37,7 @@ public class Constant {
     public static boolean HUAWEI_INIT = false;
     public static boolean FLYME_INIT = false;
     public static boolean OPPO_INIT = false;
+    public static boolean QUICK_MODE = false;
 
     public static boolean FLYME_OFFICIAL_PACK_INSTALLED = false;
     public static boolean OPPO_OFFICIAL_PACK_INSTALLED = false;

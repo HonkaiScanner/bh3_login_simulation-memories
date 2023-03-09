@@ -6,6 +6,7 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.data.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.data.Constant.OFFICIAL_TYPE;
+import static com.github.haocen2004.login_simulation.data.Constant.QUICK_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.utils.Tools.changeToWDJ;
 
@@ -37,6 +38,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
@@ -113,8 +115,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         }
                         currLoginTry = false;
                     } else {
+                        if (QUICK_MODE) {
+                            Logger.d("AutoLogin", "开始自动登陆...");
+                            doLogin();
+                        } else {
 //                makeToast("自动登录将在3s后开始");
-                        currLoginTry = true;
+                            currLoginTry = true;
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -126,8 +133,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     }
                     currLoginTry = false;
                 } else {
-//                makeToast("自动登录将在3s后开始");
-                    currLoginTry = true;
+                    if (QUICK_MODE) {
+                        Logger.d("AutoLogin", "开始自动登陆...");
+                        doLogin();
+                    } else {
+                        //                makeToast("自动登录将在3s后开始");
+                        currLoginTry = true;
+                    }
                 }
             }
         } else {
@@ -909,6 +921,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onLoginSucceed(RoleData roleData) {
+        int delay = 500;
+        if (QUICK_MODE) {
+            delay = 100;
+        }
         spCheckHandle.postDelayed(() -> {
             if (loginImpl == null) {
                 genLoginImpl();
@@ -930,7 +946,29 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             makeToast(R.string.login_succeed);
             refreshView();
             switchButtonState(true);
-        }, 500);
+            if (QUICK_MODE) {
+                if (Objects.equals(pref.getString("server_type", ""), "Official") && pref.getBoolean("use_token", false) && activity.getSharedPreferences("official_user_" + pref.getInt("official_slot", 1), Context.MODE_PRIVATE).getBoolean("has_token", false)) {
+//                makeToast("Token 登录模式");
+                    isOfficial = true;
+                    startQrCode();
+                    return;
+                }
+                try {
+                    if (loginImpl.isLogin()) {
+                        if (loginImpl.getRole().is_setup()) {
+                            startQrCode();
+                        } else {
+                            makeToast(R.string.error_oa_process);
+                        }
+                    } else {
+                        makeToast(R.string.error_not_login);
+                    }
+                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+                    makeToast(R.string.error_not_login);
+                }
+            }
+        }, delay);
     }
 
     @Override
@@ -945,6 +983,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             refreshView();
             switchButtonState(true);
             Logger.d("onLoginFailed", "登陆失败");
+            ShortcutManagerCompat.removeAllDynamicShortcuts(activity);
 //            Log.makeToast("登陆失败");
         });
 //        makeToast(R);
