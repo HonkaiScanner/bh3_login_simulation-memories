@@ -54,6 +54,46 @@
         <activity android:name=".activity.CrashActivity" />
         <activity android:name=".wxapi.WXPayEntryActivity" />
 
+        <activity
+            android:name="com.qihoo.sdkplugging.host.activity.HostProxyActivity"
+            android:configChanges="fontScale|orientation|keyboardHidden|locale|navigation|screenSize|uiMode|layoutDirection"
+            android:exported="true"
+            android:label="360SDK"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="com.qihoo.sdkplugging.host.proxy.activity.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="com.qihoo.sdkplugging.host.service.CommonHostProxyService"
+            android:exported="true"
+            android:persistent="true"
+            android:process=":gcpasremote">
+            <intent-filter>
+                <action android:name="com.qihoo.sdkplugging.host.service.CommonHostProxyService" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name="com.qihoo.pushsdk.keepalive.PushWakeUpReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.SIG_STR" />
+            </intent-filter>
+        </receiver>
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
