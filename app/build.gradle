@@ -55,7 +55,7 @@ android {
         applicationId "com.github.haocen2004.bh3_login_simulation"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 62
+        versionCode 63
         versionName '1.8.0'
 //        versionCode Integer.parseInt(System.currentTimeMillis().toString()[7..12])
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -75,7 +75,7 @@ android {
             if (System.getenv("CI")) {
                 versionNameSuffix System.getenv("NAME_SUFFIX")
             } else {
-                versionNameSuffix '-snapshot-23w11a.dev'
+                versionNameSuffix '-snapshot-23w11b.dev'
             }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -114,7 +114,7 @@ configurations {
 dependencies {
 
     implementation fileTree(dir: "libs", include: ["*.jar", "*.so", '*.aar'])
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -133,8 +133,8 @@ dependencies {
 //    implementation project(':360_sdk')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.tencent.bugly:crashreport:4.1.9'
-    implementation 'cn.leancloud:storage-android:8.2.15'
-    implementation 'cn.leancloud:realtime-android:8.2.15'
+    implementation 'cn.leancloud:storage-android:8.2.17'
+    implementation 'cn.leancloud:realtime-android:8.2.17'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation "androidx.room:room-runtime:2.5.0"
 //    implementation 'com.google.android.material:material:1.7.0'
