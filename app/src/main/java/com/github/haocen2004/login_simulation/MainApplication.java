@@ -10,6 +10,7 @@ import static com.github.haocen2004.login_simulation.data.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.DEBUG_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.MDK_VERSION;
 import static com.github.haocen2004.login_simulation.data.Constant.MI_ADV_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.SAVE_ALL_LOGS;
 import static com.github.haocen2004.login_simulation.data.Constant.SP_APP_KEY;
 import static com.github.haocen2004.login_simulation.data.Constant.SP_URL;
 import static com.github.haocen2004.login_simulation.data.Constant.VISITOR_COUNT;
@@ -48,6 +49,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 
 import cn.leancloud.LCInstallation;
@@ -77,6 +80,7 @@ public class MainApplication extends Application implements LifecycleOwner {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
+        Log = Logger.getLogger(this);
         PmsHooker.startHook(base);
     }
 
@@ -110,6 +114,25 @@ public class MainApplication extends Application implements LifecycleOwner {
         CrashReport.setIsDevelopmentDevice(getApplicationContext(), DEBUG);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG, strategy);
         DEBUG_MODE = app_pref.getBoolean("debug_mode", false) || DEBUG;
+        String dirPath = getExternalFilesDir(null) + "/logs/";
+        File dir = new File(dirPath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File saveAllLogs = new File(dirPath + ".saveAllLogs");
+        if (DEBUG_MODE) {
+            if (!saveAllLogs.exists()) {
+                try {
+                    saveAllLogs.createNewFile();
+                    SAVE_ALL_LOGS = true;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else {
+            saveAllLogs.delete();
+            SAVE_ALL_LOGS = false;
+        }
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             Logger.d("prefSetup", "first run or version update detect.");
             app_pref.edit()

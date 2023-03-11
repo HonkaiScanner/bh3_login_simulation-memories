@@ -55,7 +55,7 @@ public class HistoryLogsActivity extends BaseActivity {
                                 nextLine = nextLine.substring(20);
                                 String level = nextLine.substring(0, nextLine.indexOf("/"));
                                 String tag = nextLine.substring(nextLine.indexOf("/") + 1, nextLine.indexOf(":"));
-                                String message = nextLine.substring(nextLine.indexOf(":") + 2);
+                                String message = nextLine.substring(nextLine.indexOf(":") + 2).replace("{%&n%}", "\\n").replace("{%&t%}", "\\t").replace("{%&r%}", "\\r");
                                 logData.add(new LogData(level, tag, message));
                             }
                         }

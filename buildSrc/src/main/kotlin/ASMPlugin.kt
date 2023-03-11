@@ -18,7 +18,6 @@ import com.android.build.api.variant.AndroidComponentsExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
@@ -34,9 +33,52 @@ abstract class ASMPlugin : Plugin<Project> {
                 EMyClassVisitorFactory::class.java,
                 InstrumentationScope.ALL
             ) {
-                it.ignoreOwner.set("com/github/haocen2004/login_simulation/utils/ASMHelper")
+                it.ignoreOwner.set(
+                    listOf(
+                        "com/github/haocen2004/login_simulation/utils/ASMHelper",
+                        "com/github/haocen2004/login_simulation/utils/Logger",
+                        "com/tencent/bugly"
+                    )
+                )
                 it.listOfScans.set(
                     listOf(
+                        //  android/util/Log->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
+                        ScanBean(
+                            "android/util/Log",
+                            "e",
+                            "(Ljava/lang/String;Ljava/lang/String;)I",
+                            Opcodes.INVOKESTATIC,
+                            "com/github/haocen2004/login_simulation/utils/Logger",
+                            "fakeE",
+                            "(Ljava/lang/String;Ljava/lang/String;)I"
+                        ),
+                        ScanBean(
+                            "android/util/Log",
+                            "d",
+                            "(Ljava/lang/String;Ljava/lang/String;)I",
+                            Opcodes.INVOKESTATIC,
+                            "com/github/haocen2004/login_simulation/utils/Logger",
+                            "fakeD",
+                            "(Ljava/lang/String;Ljava/lang/String;)I"
+                        ),
+                        ScanBean(
+                            "android/util/Log",
+                            "i",
+                            "(Ljava/lang/String;Ljava/lang/String;)I",
+                            Opcodes.INVOKESTATIC,
+                            "com/github/haocen2004/login_simulation/utils/Logger",
+                            "fakeI",
+                            "(Ljava/lang/String;Ljava/lang/String;)I"
+                        ),
+                        ScanBean(
+                            "android/util/Log",
+                            "w",
+                            "(Ljava/lang/String;Ljava/lang/String;)I",
+                            Opcodes.INVOKESTATIC,
+                            "com/github/haocen2004/login_simulation/utils/Logger",
+                            "fakeW",
+                            "(Ljava/lang/String;Ljava/lang/String;)I"
+                        ),
                         ScanBean(
                             "LDC",
                             "LDC",
@@ -66,7 +108,7 @@ abstract class ASMPlugin : Plugin<Project> {
 
     interface ExampleParams : InstrumentationParameters {
         @get:Input
-        val ignoreOwner: Property<String>
+        val ignoreOwner: ListProperty<String>
 
         @get:Input
         val listOfScans: ListProperty<ScanBean>
@@ -86,9 +128,9 @@ abstract class ASMPlugin : Plugin<Project> {
         }
 
         override fun isInstrumentable(classData: ClassData): Boolean {
-            return !classData.className.startsWith(
-                parameters.get().ignoreOwner.get().replace("/", ".")
-            )
+            return !parameters.get().ignoreOwner.get().any {
+                classData.className.startsWith(it.replace("/", "."))
+            }
         }
 
     }

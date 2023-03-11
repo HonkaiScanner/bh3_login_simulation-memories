@@ -1,9 +1,14 @@
 package com.github.haocen2004.login_simulation.utils;
 
+import static com.github.haocen2004.login_simulation.data.Constant.SAVE_ALL_LOGS;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.Keep;
 
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
@@ -102,11 +107,37 @@ public class Logger implements Serializable {
         logToFile("ERROR", TAG, msg);
     }
 
+    @Keep
+    public static int fakeE(String TAG, String msg) {
+        if (SAVE_ALL_LOGS) {
+            msg = processWithBlackList(msg);
+            BuglyLog.e(TAG, msg);
+            logLiveData.addNewLog("ERROR", TAG, msg);
+            logToFile("ERROR", TAG, msg);
+        } else {
+            return Log.e(TAG, msg);
+        }
+        return 0;
+    }
+
     public static void d(String TAG, String msg) {
         msg = processWithBlackList(msg);
         BuglyLog.d(TAG, msg);
         logLiveData.addNewLog("DEBUG", TAG, msg);
         logToFile("DEBUG", TAG, msg);
+    }
+
+    @Keep
+    public static int fakeD(String TAG, String msg) {
+        if (SAVE_ALL_LOGS) {
+            msg = processWithBlackList(msg);
+            BuglyLog.d(TAG, msg);
+            logLiveData.addNewLog("DEBUG", TAG, msg);
+            logToFile("DEBUG", TAG, msg);
+        } else {
+            return Log.d(TAG, msg);
+        }
+        return 0;
     }
 
     public static void i(String TAG, String msg) {
@@ -116,11 +147,37 @@ public class Logger implements Serializable {
         logToFile("INFO", TAG, msg);
     }
 
+    @Keep
+    public static int fakeI(String TAG, String msg) {
+        if (SAVE_ALL_LOGS) {
+            msg = processWithBlackList(msg);
+            BuglyLog.i(TAG, msg);
+            logLiveData.addNewLog("INFO", TAG, msg);
+            logToFile("INFO", TAG, msg);
+        } else {
+            return Log.i(TAG, msg);
+        }
+        return 0;
+    }
+
     public static void w(String TAG, String msg) {
         msg = processWithBlackList(msg);
         BuglyLog.w(TAG, msg);
         logLiveData.addNewLog("WARNING", TAG, msg);
         logToFile("WARNING", TAG, msg);
+    }
+
+    @Keep
+    public static int fakeW(String TAG, String msg) {
+        if (SAVE_ALL_LOGS) {
+            msg = processWithBlackList(msg);
+            BuglyLog.w(TAG, msg);
+            logLiveData.addNewLog("WARNING", TAG, msg);
+            logToFile("WARNING", TAG, msg);
+        } else {
+            return Log.w(TAG, msg);
+        }
+        return 0;
     }
 
     public static void makeToast(Context context, String msg, Integer length) {
@@ -141,18 +198,6 @@ public class Logger implements Serializable {
         }
     }
 
-    public void makeToast(String msg) {
-        makeToast(context, msg, Toast.LENGTH_SHORT);
-    }
-
-    public void makeToast(Integer id) {
-        makeToast(context.getString(id));
-    }
-
-    public void makeToast(Context context, String msg) {
-        makeToast(context, msg, Toast.LENGTH_SHORT);
-    }
-
     public static void setFabMode(boolean b) {
         fabMode = b;
     }
@@ -164,7 +209,7 @@ public class Logger implements Serializable {
         if (logToFile) {
             long current = System.currentTimeMillis();
             SimpleDateFormat logFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            String outputLog = logFormat.format(new Date(current)) + " " + level + "/" + TAG + ": " + msg;
+            String outputLog = logFormat.format(new Date(current)) + " " + level + "/" + TAG + ": " + msg.replaceAll("\\t", "{%&t%}").replaceAll("\\n", "{%&n%}").replaceAll("\\r", "{%&r%}");
             try {
                 bufferedWriter.write(outputLog);
                 bufferedWriter.newLine();
@@ -218,6 +263,7 @@ public class Logger implements Serializable {
         if (!dir.exists()) {
             dir.mkdirs();
         }
+        SAVE_ALL_LOGS = new File(dirPath + ".saveAllLogs").exists();
         logFile = new File(dirPath + "logs-" + time + ".log");
         if (!logFile.exists()) {
             try {
@@ -244,5 +290,17 @@ public class Logger implements Serializable {
         } catch (IOException e) {
             logToFile = false;
         }
+    }
+
+    public void makeToast(String msg) {
+        makeToast(context, msg, Toast.LENGTH_SHORT);
+    }
+
+    public void makeToast(Integer id) {
+        makeToast(context.getString(id));
+    }
+
+    public void makeToast(Context context, String msg) {
+        makeToast(context, msg, Toast.LENGTH_SHORT);
     }
 }
