@@ -124,6 +124,8 @@
     <string name="use_token_sum">米游社扫码协议 仅官服</string>
     <string name="mi_adv_mode">小米渠道测试方案</string>
     <string name="mi_adv_mode_sum">允许小米SDK与游戏服务通信来进行QQ登录</string>
+    <string name="icon_type">选择额外扫码器图标</string>
+    <string name="enable_icon_pos">启用额外扫码器图标</string>
 
     <string name="disable_tips">扫码器因为某些原因暂时停用\n请前往Bilibili动态或群内查看具体原因</string>
 

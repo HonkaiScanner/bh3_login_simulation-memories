@@ -38,6 +38,7 @@ import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.utils.CrashHandler;
+import com.github.haocen2004.login_simulation.utils.ForegroundCallbacks;
 import com.github.haocen2004.login_simulation.utils.Logger;
 import com.github.haocen2004.login_simulation.utils.Network;
 import com.github.haocen2004.login_simulation.utils.PmsHooker;
@@ -88,6 +89,7 @@ public class MainApplication extends Application implements LifecycleOwner {
         mLifecycle.setCurrentState(Lifecycle.State.CREATED);
         LogLiveData.getINSTANCE(); //init live data
         Log = Logger.getLogger(this);
+        ForegroundCallbacks.init(this);
 //        YSDKApi.setMainActivity("com.github.haocen2004.login_simulation.activity.MainActivity");
         ToastUtils.init(this);
         ToastUtils.setGravity(Gravity.BOTTOM, 0, 50);

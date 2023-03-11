@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/basic_header">
         <rikka.preference.SimpleMenuPreference
@@ -21,6 +22,19 @@
             android:key="dark_type"
             android:summary="%s"
             android:title="@string/dark_theme" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="enable_icon_pos"
+            android:title="@string/enable_icon_pos" />
+        <rikka.preference.SimpleMenuPreference
+            android:defaultValue="0"
+            android:dependency="enable_icon_pos"
+            android:entries="@array/icon_type"
+            android:entryValues="@array/icon_type_values"
+            android:key="icon_pos"
+            android:summary="%s"
+            android:title="@string/icon_type"
+            app:isPreferenceVisible="false" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="quit_on_success"
@@ -58,6 +72,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        app:isPreferenceVisible="false"
         android:dependency="adv_setting"
         android:key="adv_group"
         android:title="@string/adv_header">
@@ -79,6 +94,7 @@
             android:summary="@string/overwrite_bh_ver_sum"
             android:title="@string/overwrite_bh_ver" />
         <EditTextPreference
+            app:isPreferenceVisible="false"
             android:dependency="bh_ver_overwrite"
             android:key="custom_bh_ver"
             android:selectAllOnFocus="true"

@@ -19,8 +19,10 @@ import static com.github.haocen2004.login_simulation.utils.Tools.openUrl;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,6 +45,7 @@ import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.github.haocen2004.login_simulation.utils.DialogHelper;
+import com.github.haocen2004.login_simulation.utils.ForegroundCallbacks;
 import com.github.haocen2004.login_simulation.utils.Logger;
 import com.github.haocen2004.login_simulation.utils.Network;
 import com.github.haocen2004.login_simulation.utils.Tools;
@@ -64,7 +67,7 @@ import cn.leancloud.push.PushService;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements ForegroundCallbacks.Listener {
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -347,6 +350,7 @@ public class MainActivity extends BaseActivity {
 //        Logger.setView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
         Log = Logger.getLogger(this);
+        ForegroundCallbacks.get(this).addListener(this);
         DialogHelper.getDialogHelper(this);
         Logger.d("dialogHelper", "loaded.");
 //        Toolbar toolbar = findViewById(R.id.toolbar);
@@ -448,5 +452,22 @@ public class MainActivity extends BaseActivity {
         DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
     }
 
+
+    @Override
+    public void onBecameForeground() {
+    }
+
+    @Override
+    public void onBecameBackground() {
+        String iconPos = app_pref.getString("icon_pos", "0");
+
+        PackageManager pm = getPackageManager();
+        pm.setComponentEnabledSetting(new ComponentName(this, "com.github.haocen2004.login_simulation.activity.icon.main1"),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        if (!iconPos.equals("0") && app_pref.getBoolean("enable_icon_pos", false)) {
+            pm.setComponentEnabledSetting(new ComponentName(this, "com.github.haocen2004.login_simulation.activity.icon.main" + iconPos),
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        }
+    }
 
 }

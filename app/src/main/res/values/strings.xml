@@ -125,6 +125,8 @@
     <string name="use_token_sum">Hoyolab protocol Only for Official Channel</string>
     <string name="mi_adv_mode">XiaoMi Channel Test Mode</string>
     <string name="mi_adv_mode_sum">Allow Mi SDK access Service Module</string>
+    <string name="icon_type">Select Extra Launcher Icon</string>
+    <string name="enable_icon_pos">Enable Extra Launcher Icon</string>
 
     <string name="disable_tips">The scanner is temporarily out of service for some reason.\n Please go to Bilibili\'s dynamic page or QQ group to check the specific reason.</string>
 

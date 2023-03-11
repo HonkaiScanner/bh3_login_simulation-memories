@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.haocen2004.login_simulation.R;
@@ -95,6 +94,25 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 });
                 DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
             }
+            return true;
+        });
+        findPreference("icon_pos").setVisible(app_pref.getBoolean("enable_icon_pos", false));
+        findPreference("enable_icon_pos").setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("是否启用额外扫码器图标？", "由于兼容性问题原有图标将不会自动隐藏\n\n设置后可能需要5-10秒才会看到新图标显示\n可能在部分机型上不生效");
+                dialogData.setPositiveButtonData("启用额外扫码器图标");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("enable_icon_pos", false).apply();
+                        findPreference("icon_pos").setVisible(app_pref.getBoolean("enable_icon_pos", false));
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+            }
+            findPreference("icon_pos").setVisible((Boolean) newValue);
             return true;
         });
 
@@ -185,117 +203,117 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 findPreference("server_type").setSummary("DEBUG -- SERVER ERROR");
         }
 
-        if (!app_pref.getBoolean("adv_setting", false)) {
-            PreferenceCategory hiddenGroup = findPreference("adv_group");
-            if (hiddenGroup != null) {
-                getPreferenceScreen().removePreference(hiddenGroup);
+        findPreference("mi_adv_mode").setOnPreferenceChangeListener(((preference, newValue) -> {
+            MI_ADV_MODE = (boolean) newValue;
+            return true;
+        }));
+
+
+        findPreference("adv_group").setVisible(app_pref.getBoolean("adv_setting", false));
+
+        findPreference("adv_setting").setOnPreferenceChangeListener(((preference, newValue) -> {
+            findPreference("adv_group").setVisible((boolean) newValue);
+            return true;
+        }));
+
+        findPreference("custom_bh_ver").setVisible(app_pref.getBoolean("bh_ver_overwrite", false));
+        findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("确认启用自定义版本号？", "通常只在官方接口下线时启用\n一般无需开启此选项\n\n开启后将不自动获取崩坏3版本号\n必须每次手动设置");
+                dialogData.setPositiveButtonData("启用自定义版本号");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("bh_ver_overwrite", false).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
+            } else {
+                BH_VER = app_pref.getString("bh_ver", BH_VER);
             }
-        } else {
-            findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
-                if ((Boolean) newValue) {
-                    DialogData dialogData = new DialogData("确认启用自定义版本号？", "通常只在官方接口下线时启用\n一般无需开启此选项\n\n开启后将不自动获取崩坏3版本号\n必须每次手动设置");
-                    dialogData.setPositiveButtonData("启用自定义版本号");
-                    dialogData.setNegativeButtonData(new ButtonData("取消") {
-                        @Override
-                        public void callback(DialogHelper dialogHelper) {
-                            super.callback(dialogHelper);
-                            app_pref.edit().putBoolean("bh_ver_overwrite", false).apply();
-                            preference.performClick();
-                        }
-                    });
-                    DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
-                }
-                return true;
-            });
+            findPreference("custom_bh_ver").setVisible((Boolean) newValue);
+            Logger.d(TAG, "new bh version:" + BH_VER);
+            return true;
+        });
 
-            findPreference("beta_update").setOnPreferenceChangeListener((preference, newValue) -> {
-                if (VERSION_NAME.contains("snapshot")) {
-                    return false;
-                }
-                if ((Boolean) newValue) {
-                    DialogData dialogData = new DialogData("确认启用测试版更新检测？", "测试版使用须知：\n" +
-                            "测试版可能会存在一些影响使用的问题 请及时反馈\n" +
-                            "反馈问题请详细描述 或使用扫码器内置的bug反馈 日志查看功能\n" +
-                            "测试版更新通常为强制更新 即无法关闭更新提示窗口");
-                    dialogData.setPositiveButtonData("启用测试版更新检测");
-                    dialogData.setNegativeButtonData(new ButtonData("取消") {
-                        @Override
-                        public void callback(DialogHelper dialogHelper) {
-                            super.callback(dialogHelper);
-                            app_pref.edit().putBoolean("beta_update", false).apply();
-                            preference.performClick();
-                        }
-                    });
-                    DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
-                }
-                return true;
-            });
+        findPreference("beta_update").setOnPreferenceChangeListener((preference, newValue) -> {
+            if (VERSION_NAME.contains("snapshot")) {
+                return false;
+            }
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("确认启用测试版更新检测？", "测试版使用须知：\n" +
+                        "测试版可能会存在一些影响使用的问题 请及时反馈\n" +
+                        "反馈问题请详细描述 或使用扫码器内置的bug反馈 日志查看功能\n" +
+                        "测试版更新通常为强制更新 即无法关闭更新提示窗口");
+                dialogData.setPositiveButtonData("启用测试版更新检测");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("beta_update", false).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+            }
+            return true;
+        });
 
 
-            findPreference("keep_capture_no_cooling_down").setOnPreferenceChangeListener((preference, newValue) -> {
-                if ((Boolean) newValue) {
-                    DialogData dialogData = new DialogData("确认启用持续扫码无冷却？", "可能会占用大量CPU资源而使得扫码器被系统杀死");
-                    dialogData.setPositiveButtonData("启用持续扫码无冷却");
-                    dialogData.setNegativeButtonData(new ButtonData("取消") {
-                        @Override
-                        public void callback(DialogHelper dialogHelper) {
-                            super.callback(dialogHelper);
-                            app_pref.edit().putBoolean("keep_capture_no_cooling_down", false).apply();
-                            preference.performClick();
-                        }
-                    });
-                    DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
-                }
-                return true;
-            });
+        findPreference("keep_capture_no_cooling_down").setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("确认启用持续扫码无冷却？", "可能会占用大量CPU资源而使得扫码器被系统杀死");
+                dialogData.setPositiveButtonData("启用持续扫码无冷却");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("keep_capture_no_cooling_down", false).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+            }
+            return true;
+        });
 
-            findPreference("debug_mode").setOnPreferenceChangeListener((preference, newValue) -> {
-                if ((Boolean) newValue) {
-                    DialogData dialogData = new DialogData("确认启用调试模式？", "该选项应该只在扫码器作者要求启用时打开\n\n需要重启扫码器才能生效\n确认启用将同时关闭扫码器");
-                    dialogData.setPositiveButtonData(new ButtonData("启用调试模式") {
-                        @Override
-                        public void callback(DialogHelper dialogHelper) {
-                            super.callback(dialogHelper);
-                            ActivityManager.getInstance().clearActivity();
-                        }
-                    });
-                    dialogData.setNegativeButtonData(new ButtonData("取消") {
-                        @Override
-                        public void callback(DialogHelper dialogHelper) {
-                            super.callback(dialogHelper);
-                            app_pref.edit().putBoolean("debug_mode", false).apply();
-                            preference.performClick();
-                        }
-                    });
-                    DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
-                }
-                return true;
-            });
+        findPreference("debug_mode").setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("确认启用调试模式？", "该选项应该只在扫码器作者要求启用时打开\n\n需要重启扫码器才能生效\n确认启用将同时关闭扫码器");
+                dialogData.setPositiveButtonData(new ButtonData("启用调试模式") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        ActivityManager.getInstance().clearActivity();
+                    }
+                });
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("debug_mode", false).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+            }
+            return true;
+        });
 
-            findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
-                if ((Boolean) newValue) {
-                    BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
-                } else {
-                    BH_VER = app_pref.getString("bh_ver", BH_VER);
-                }
-                Logger.d(TAG, "new bh version:" + BH_VER);
-                return true;
-            });
 
-            findPreference("custom_bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
-                Logger.d(TAG, newValue.toString());
-                if (app_pref.getBoolean("bh_ver_overwrite", false)) {
-                    BH_VER = newValue.toString();
-                }
-                Logger.d(TAG, "new bh version:" + BH_VER);
-                return true;
-            });
+        findPreference("custom_bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
+            Logger.d(TAG, newValue.toString());
+            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
+                BH_VER = newValue.toString();
+            }
+            Logger.d(TAG, "new bh version:" + BH_VER);
+            return true;
+        });
 
-            findPreference("mi_adv_mode").setOnPreferenceChangeListener(((preference, newValue) -> {
-                MI_ADV_MODE = (boolean) newValue;
-                return true;
-            }));
-        }
+
     }
 
     @Override

@@ -45,6 +45,18 @@
         android:theme="@style/ScannerAppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="s">
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.CrashActivity" />
         <activity android:name=".activity.DisableActivity" />
@@ -55,6 +67,20 @@
         <activity android:name=".activity.ScannerActivity" />
         <activity android:name=".activity.TencentLoginActivity" />
         <activity android:name=".wxapi.WXPayEntryActivity" />
+
+        <activity-alias
+            android:name=".activity.icon.main1"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_2"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_2_round"
+            android:targetActivity=".activity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <activity
             android:name="com.qihoo.sdkplugging.host.activity.HostProxyActivity"
@@ -99,17 +125,6 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
-        <activity
-            android:name=".activity.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <service
             android:name="cn.leancloud.push.PushService"
