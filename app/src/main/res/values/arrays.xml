@@ -31,8 +31,9 @@
         <item>Vivo</item>
         <item>Flyme</item>
         <item>Oppo</item>
+        <item>Huawei</item>
+        <item>YYB</item>
         <item>Qihoo</item>
-        <item>Tencent-QQ</item>
     </string-array>
     <string-array name="server_types_value_xp">
         <item>Official</item>
