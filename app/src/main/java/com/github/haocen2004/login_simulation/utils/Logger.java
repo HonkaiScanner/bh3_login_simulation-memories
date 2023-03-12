@@ -4,6 +4,7 @@ import static com.github.haocen2004.login_simulation.data.Constant.SAVE_ALL_LOGS
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -192,7 +193,13 @@ public class Logger implements Serializable {
             d("Logger", "Transfer Toast Length to SnackBar Length: " + length);
             Snackbar.make(view, msg, length).show();
         } else if (fabMode) {
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            try {
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            } catch (NullPointerException ignore) {
+                Looper.prepare();
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                Looper.loop();
+            }
         } else {
             ToastUtils.show(msg);
         }
