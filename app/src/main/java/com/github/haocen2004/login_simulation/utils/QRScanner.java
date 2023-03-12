@@ -265,7 +265,7 @@ public class QRScanner {
 
     public void start() {
         if (!app_id.contains("1")) {
-            if (!account_type.equals("1")) {
+            if (account_type == null || !account_type.equals("1")) {
 
                 makeToast("非 崩坏3 登录暂时只支持官服");
 
