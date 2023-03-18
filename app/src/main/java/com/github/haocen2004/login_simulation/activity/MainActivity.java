@@ -33,6 +33,7 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -422,8 +423,22 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
         Intent dataIntent = getIntent();
         if (dataIntent.hasExtra("scanner.quick")) {
-            QUICK_MODE = true;
             Logger.d("Shortcut", "start From ShortCut");
+            boolean autoLogin = app_pref.getBoolean("auto_login", false);
+            boolean lastLoginState = Tools.getBoolean(this, "last_login_succeed", false);
+            if (autoLogin) {
+                Logger.d("Shortcut", "auto login checked.");
+                if (lastLoginState) {
+                    Logger.d("Shortcut", "last login checked.");
+                    QUICK_MODE = true;
+                    return;
+                }
+            }
+            Logger.d("Shortcut", "pre login check failed");
+            DialogData dialogData = new DialogData("快速扫码失败", "由于某些原因 快速扫码初始化失败\n\n快速扫码快捷方式：" + (ShortcutManagerCompat.getDynamicShortcuts(this).size() > 0) + "\n自动登陆：" + autoLogin + "\n上次登陆情况：" + lastLoginState);
+            dialogData.setPositiveButtonData("确认");
+            DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
+            ShortcutManagerCompat.removeAllDynamicShortcuts(this);
         }
 //        }
     }
@@ -437,7 +452,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
     private void showBetaInfoDialog() {
 
         DialogData dialogData = new DialogData("自动构建使用须知", "你现在使用的是自动构建版本\n请及时通过左边侧滑栏反馈bug\n每次启动该消息都会显示");
-        dialogData.setPositiveButtonData(new ButtonData("我已知晓"));
+        dialogData.setPositiveButtonData("我已知晓");
         DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
     }
 
@@ -448,7 +463,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             supportedABI.append('\n');
         }
         DialogData dialogData = new DialogData("错误", "你所下载的版本可能不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
-        dialogData.setPositiveButtonData(new ButtonData("我已知晓"));
+        dialogData.setPositiveButtonData("我已知晓");
         DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
     }
 
