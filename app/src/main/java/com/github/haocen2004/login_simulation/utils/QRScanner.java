@@ -7,6 +7,7 @@ import static com.github.haocen2004.login_simulation.data.Constant.TIPS;
 import static java.lang.Integer.parseInt;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -27,6 +30,7 @@ import androidx.core.graphics.drawable.IconCompat;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.activity.MainActivity;
+import com.github.haocen2004.login_simulation.activity.NotificationActivity;
 import com.github.haocen2004.login_simulation.data.RoleData;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -41,6 +45,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 
 public class QRScanner {
@@ -124,6 +129,21 @@ public class QRScanner {
                             }, 5000);
 
                         }, 3000);
+                    } else {
+                        Intent updateIntent = new Intent(activity, NotificationActivity.class);
+                        updateIntent.setPackage(activity.getPackageName());
+                        updateIntent.putExtra("com.avoscloud.Data", app_name + "\n登陆成功");
+                        updateIntent.putExtra("com.avoscloud.Channel", "self_login_succ");
+                        PendingIntent pendingIntent = PendingIntent.getActivity(activity, UUID.randomUUID().hashCode(), updateIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                        NotificationCompat.Builder notification = new NotificationCompat.Builder(activity, "scanner_post_channel")
+                                .setContentTitle(app_name)
+                                .setContentText("登陆成功")
+                                .setContentIntent(pendingIntent)
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                .setAutoCancel(true);
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(activity);
+                        notificationManager.notify(100, notification.build());
                     }
                 } else {
 

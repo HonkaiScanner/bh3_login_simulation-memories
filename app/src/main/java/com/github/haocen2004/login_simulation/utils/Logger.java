@@ -210,20 +210,23 @@ public class Logger implements Serializable {
     }
 
     private static void logToFile(String level, String TAG, String msg) {
-        if (bufferedWriter == null) {
-            createOutputStream();
-        }
-        if (logToFile) {
-            long current = System.currentTimeMillis();
-            SimpleDateFormat logFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            String outputLog = logFormat.format(new Date(current)) + " " + level + "/" + TAG + ": " + msg.replaceAll("\\t", "{%&t%}").replaceAll("\\n", "{%&n%}").replaceAll("\\r", "{%&r%}");
-            try {
-                bufferedWriter.write(outputLog);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-            } catch (IOException ignore) {
-                logToFile = false;
+        try {
+            if (bufferedWriter == null) {
+                createOutputStream();
             }
+            if (logToFile) {
+                long current = System.currentTimeMillis();
+                SimpleDateFormat logFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+                String outputLog = logFormat.format(new Date(current)) + " " + level + "/" + TAG + ": " + msg.replaceAll("\\t", "{%&t%}").replaceAll("\\n", "{%&n%}").replaceAll("\\r", "{%&r%}");
+                try {
+                    bufferedWriter.write(outputLog);
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                } catch (IOException ignore) {
+                    logToFile = false;
+                }
+            }
+        } catch (Exception ignore) {
         }
 
     }
