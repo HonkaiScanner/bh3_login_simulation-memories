@@ -9,6 +9,7 @@ import static com.github.haocen2004.login_simulation.data.Constant.OFFICIAL_TYPE
 import static com.github.haocen2004.login_simulation.data.Constant.QUICK_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.SP_CHECKED;
 import static com.github.haocen2004.login_simulation.utils.Tools.changeToWDJ;
+import static java.lang.Integer.parseInt;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -64,14 +65,19 @@ import com.github.haocen2004.login_simulation.utils.QRScanner;
 import com.github.haocen2004.login_simulation.utils.SocketHelper;
 import com.github.haocen2004.login_simulation.utils.Tools;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
 
@@ -87,7 +93,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private SocketHelper socketHelper;
     private boolean loginProgress = false;
     private boolean SDKInit = false;
-    private int currSlot = 999;
+    private final List<Chip> chips = new ArrayList<>();
+    private final Map<String, Chip> chipMap = new HashMap<>();
     private int currType = 999;
     private boolean currLoginTry = false;
     private final Handler spCheckHandle = new Handler(Looper.getMainLooper()) {
@@ -100,11 +107,71 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private boolean accSwitch = false;
     private LoginInstanceManager loginInstanceManager;
     private ChipsHelper chipsHelper;
+    private final Map<Chip, String> chipKeys = new HashMap<>();
+
+    private void loadSavedData(Bundle savedInstanceState, String loadTag) {
+        if (savedInstanceState.containsKey("scanner_data:combo_token")) {
+            Logger.d(loadTag, "detect saved RoleData,loading");
+            if (loginImpl != null && loginImpl.isLogin() && loginImpl.getRole() != null) {
+                Logger.d(loadTag, "loginImpl already has data,skip.");
+                return;
+            }
+            genLoginImpl();
+            Map<String, String> map = new HashMap<>();
+            for (String s : savedInstanceState.keySet()) {
+                try {
+                    if (s.startsWith("scanner_data:")) {
+                        try {
+                            String real_key = s.split(":")[1];
+                            String value = savedInstanceState.getString(s);
+                            if (s.contains("combo_token")) {
+                                Logger.addBlacklist(value);
+                            }
+                            Logger.d(real_key, value);
+                            map.put(real_key, value);
+                            savedInstanceState.remove(s);
+                        } catch (ClassCastException ignore) {
+                        }
+                    }
+                } catch (NullPointerException ignore) {
+                }
+            }
+            try {
+                RoleData roleData = new RoleData(map, this);
+                loginImpl.setRole(roleData);
+                Logger.d(loadTag, "loaded RoleData");
+            } catch (NullPointerException e) {
+                Logger.d(loadTag, "load RoleData failed");
+            }
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activity = (AppCompatActivity) getActivity();
+        context = requireContext();
+        pref = getDefaultSharedPreferences(context);
+        Log = Logger.getLogger(getContext());
+        loginInstanceManager = LoginInstanceManager.getINSTANCE(activity);
+        if (savedInstanceState != null) {
+            loadSavedData(savedInstanceState, "onCreate");
+        }
+    }
+
+    private int currOfficialSlot = 999;
+    private int currBiliSlot = 999;
+    private LayoutInflater mLayoutInflater;
 
     @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
     private void delaySPCheck() {
         Logger.d("SPCheck", "检查赞助者账号及自动登陆信息中...");
         if (Tools.getBoolean(activity, "last_login_succeed", false) && pref.getBoolean("auto_login", false) && !loginProgress) {
+            String server = pref.getString("server_type", "").toLowerCase(Locale.ROOT);
+            if (server.startsWith("official") && !new File(activity.getFilesDir().getParent(), "shared_prefs/official_user_" + pref.getInt("official_slot", 1) + ".xml").exists())
+                Tools.saveBoolean(activity, "last_login_succeed", false);
+            if (server.startsWith("bili") && !new File(activity.getFilesDir().getParent(), "shared_prefs/bili_user_" + pref.getInt("bili_slot", 1) + ".xml").exists())
+                Tools.saveBoolean(activity, "last_login_succeed", false);
             try {
                 if (loginImpl.isLogin()) {
                     Logger.d("AutoLogin", "当前用户已登录");
@@ -189,56 +256,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         Logger.d("SPCheck", "当前线程结束");
     }
 
-    private void loadSavedData(Bundle savedInstanceState, String loadTag) {
-        if (savedInstanceState.containsKey("scanner_data:combo_token")) {
-            Logger.d(loadTag, "detect saved RoleData,loading");
-            if (loginImpl != null && loginImpl.isLogin() && loginImpl.getRole() != null) {
-                Logger.d(loadTag, "loginImpl already has data,skip.");
-                return;
-            }
-            genLoginImpl();
-            Map<String, String> map = new HashMap<>();
-            for (String s : savedInstanceState.keySet()) {
-                try {
-                    if (s.startsWith("scanner_data:")) {
-                        try {
-                            String real_key = s.split(":")[1];
-                            String value = savedInstanceState.getString(s);
-                            if (s.contains("combo_token")) {
-                                Logger.addBlacklist(value);
-                            }
-                            Logger.d(real_key, value);
-                            map.put(real_key, value);
-                            savedInstanceState.remove(s);
-                        } catch (ClassCastException ignore) {
-                        }
-                    }
-                } catch (NullPointerException ignore) {
-                }
-            }
-            try {
-                RoleData roleData = new RoleData(map, this);
-                loginImpl.setRole(roleData);
-                Logger.d(loadTag, "loaded RoleData");
-            } catch (NullPointerException e) {
-                Logger.d(loadTag, "load RoleData failed");
-            }
-        }
-    }
-
-    @Override
-    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = (AppCompatActivity) getActivity();
-        context = requireContext();
-        pref = getDefaultSharedPreferences(context);
-        Log = Logger.getLogger(getContext());
-        loginInstanceManager = LoginInstanceManager.getINSTANCE(activity);
-        if (savedInstanceState != null) {
-            loadSavedData(savedInstanceState, "onCreate");
-        }
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -248,18 +265,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         Log = Logger.getLogger(getContext());
         loginInstanceManager = LoginInstanceManager.getINSTANCE(activity);
         binding = FragmentMainBinding.inflate(inflater, container, false);
+        mLayoutInflater = inflater;
         if (savedInstanceState != null) {
             loadSavedData(savedInstanceState, "onCreateView");
         }
+
         chipsHelper = new ChipsHelper(context, this.getLayoutInflater());
         return binding.getRoot();
     }
-
 
     @SuppressLint("SetTextI18n")
     private void refreshView() {
         String server_type;
         binding.officialSlotSelect.setVisibility(View.GONE);
+        binding.slotSelectGroup.setVisibility(View.GONE);
 //        binding.tokenCheckBox.setVisibility(View.GONE);
         binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
@@ -270,20 +289,22 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "Official":
                 server_type = activity.getString(R.string.types_official);
-                binding.officialSlotSelect.setVisibility(View.VISIBLE);
+//                binding.officialSlotSelect.setVisibility(View.VISIBLE);
+                binding.slotSelectGroup.setVisibility(View.VISIBLE);
 //                binding.tokenCheckBox.setVisibility(View.VISIBLE);
                 binding.officialTypeSel.setVisibility(View.VISIBLE);
-                switch (pref.getInt("official_slot", 1)) {
-                    case 1:
-                        binding.officialSlotSelect.check(binding.slot1.getId());
-                        break;
-                    case 2:
-                        binding.officialSlotSelect.check(binding.slot2.getId());
-                        break;
-                    case 3:
-                        binding.officialSlotSelect.check(binding.slot3.getId());
-                        break;
-                }
+                initSlotSelectGroup("official_user_");
+//                switch (pref.getInt("official_slot", 1)) {
+//                    case 1:
+//                        binding.officialSlotSelect.check(binding.slot1.getId());
+//                        break;
+//                    case 2:
+//                        binding.officialSlotSelect.check(binding.slot2.getId());
+//                        break;
+//                    case 3:
+//                        binding.officialSlotSelect.check(binding.slot3.getId());
+//                        break;
+//                }
                 switch (pref.getInt("official_type", 0)) {
                     case 1:
                         binding.officialTypeSel.check(binding.radioPc.getId());
@@ -299,18 +320,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 break;
             case "Bilibili":
                 server_type = activity.getString(R.string.types_bilibili);
-                binding.officialSlotSelect.setVisibility(View.VISIBLE);
-                switch (pref.getInt("official_slot", 1)) {
-                    case 1:
-                        binding.officialSlotSelect.check(binding.slot1.getId());
-                        break;
-                    case 2:
-                        binding.officialSlotSelect.check(binding.slot2.getId());
-                        break;
-                    case 3:
-                        binding.officialSlotSelect.check(binding.slot3.getId());
-                        break;
-                }
+//                binding.officialSlotSelect.setVisibility(View.VISIBLE);
+                binding.slotSelectGroup.setVisibility(View.VISIBLE);
+                initSlotSelectGroup("bili_user_");
                 break;
             case "Xiaomi":
                 server_type = activity.getString(R.string.types_xiaomi);
@@ -362,6 +374,125 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         if (needRestart) {
             binding.cardViewMain.serverText.setText(R.string.logged_and_restart);
             binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
+        }
+    }
+
+    private void initSlotSelectGroup(String type) {
+
+        Logger.d("initSlot", type);
+        File sharedPrefs = new File(activity.getFilesDir().getParent(), "shared_prefs");
+        binding.chipGroupSlot.removeAllViews();
+        binding.chipGroupSlot.setSelectionRequired(true);
+        for (File file : sharedPrefs.listFiles()) {
+            if (file.getName().startsWith(type)) {
+                Logger.d("initSlot", file.getName());
+                String id = file.getName().replace(".xml", "");
+                SharedPreferences tempPref = activity.getSharedPreferences(id, Context.MODE_PRIVATE);
+                if (tempPref.getAll().size() < 2) {
+                    file.delete();
+                    continue;
+                }
+                Chip tempChip;
+                if (chipMap.containsKey(id)) {
+                    tempChip = chipMap.get(id);
+                } else {
+                    tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_select, null, false);
+                    tempChip.setText(tempPref.getString("username", id.replace(type, "")));
+                    chipMap.put(id, tempChip);
+                    chipKeys.put(tempChip, id);
+                    chips.add(tempChip);
+                }
+                try {
+                    ((ViewGroup) tempChip.getParent()).removeView(tempChip);
+                } catch (Exception ignore) {
+                }
+                binding.chipGroupSlot.addView(tempChip);
+            }
+        }
+        String id = "add_chip";
+        Chip tempChip;
+        if (chipMap.containsKey(id)) {
+            tempChip = chipMap.get(id);
+        } else {
+            tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_select, null, false);
+            tempChip.setText("写入新槽位");
+            chipMap.put(id, tempChip);
+            chipKeys.put(tempChip, id);
+            chips.add(tempChip);
+        }
+        try {
+            ((ViewGroup) tempChip.getParent()).removeView(tempChip);
+        } catch (Exception ignore) {
+        }
+        binding.chipGroupSlot.addView(tempChip);
+        String server = pref.getString("server_type", "").toLowerCase(Locale.ROOT);
+        if (server.startsWith("official") && (currOfficialSlot == 999 || tempChip.isChecked())) {
+            String activateKey = "official_user_" + pref.getInt("official_slot", 1);
+            if (chipMap.containsKey(activateKey)) {
+                chipMap.get(activateKey).setChecked(true);
+            } else {
+                tempChip.setChecked(true);
+                currOfficialSlot = pref.getInt("official_slot", 1);
+            }
+        } else if (server.startsWith("bili") && (currBiliSlot == 999 || tempChip.isChecked())) {
+
+            String activateKey = "bili_user_" + pref.getInt("bili_slot", 1);
+            if (chipMap.containsKey(activateKey)) {
+                chipMap.get(activateKey).setChecked(true);
+            } else {
+                tempChip.setChecked(true);
+                currBiliSlot = pref.getInt("bili_slot", 1);
+            }
+        }
+
+        binding.chipGroupSlot.setOnCheckedStateChangeListener(this::onCheckedStateChange);
+    }
+
+    private void onCheckedStateChange(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
+        if (loginProgress) {
+            while (true) {
+                if (loginProgress) break;
+                try {
+                    Thread.sleep(500);
+                    Logger.d("onCheckedStateChange", "waiting loginProgress finished.");
+                } catch (Exception ignore) {
+                    break;
+                }
+            }
+        }
+        SharedPreferences appPref = getDefaultSharedPreferences(activity);
+        for (Integer checkedId : checkedIds) {
+            Chip chip = chips.get(checkedId - 1);
+            String key = chipKeys.get(chip);
+            if (key.equals("add_chip")) {
+                String server = pref.getString("server_type", "").toLowerCase(Locale.ROOT);
+                int pos = UUID.randomUUID().hashCode();
+                if (server.startsWith("official")) {
+                    appPref.edit().putInt("official_slot", pos).apply();
+                } else if (server.startsWith("bili")) {
+                    appPref.edit().putInt("bili_slot", pos).apply();
+                }
+                Logger.d(TAG, "onCheckedChanged: Switch To Slot " + pos);
+            } else if (key.startsWith("official")) {
+                int pos = parseInt(key.replace("official_user_", ""));
+                appPref.edit().putInt("official_slot", pos).apply();
+                Logger.d(TAG, "onCheckedChanged: Switch To Slot " + pos);
+            } else if (key.startsWith("bili")) {
+                int pos = parseInt(key.replace("bili_user_", ""));
+                appPref.edit().putInt("bili_slot", pos).apply();
+                Logger.d(TAG, "onCheckedChanged: Switch To Slot " + pos);
+            }
+        }
+        try {
+            if (loginImpl.isLogin() || accSwitch) {
+                accSwitch = true;
+                if (loginImpl instanceof Official || loginImpl instanceof Bilibili) {
+                    loginImpl = loginInstanceManager.getLoginImpl(true);
+                }
+                refreshView();
+                makeToast("切换后需重新登录");
+            }
+        } catch (Exception ignore) {
         }
     }
 
@@ -761,11 +892,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     public boolean onLongClick(View view) {
         if (binding.cardViewMain.cardView2.equals(view)) {
             try {
-                if ("Official".equals(pref.getString("server_type", ""))) {
-                    activity.getSharedPreferences("official_user_" + pref.getInt("official_slot", 1), Context.MODE_PRIVATE).edit().clear().apply();
-                    makeToast(R.string.cache_delete);
-                    onLoginFailed();
-                } else if (loginImpl.isLogin()) {
+                if (loginImpl.isLogin()) {
                     if (loginImpl.logout()) {
                         onLoginFailed();
                     }
@@ -861,14 +988,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             Logger.d(TAG, "登陆中 已阻止切换服务器或账户槽位");
             return;
         }
-        if (group.equals(binding.officialSlotSelect)) {
-            if (checkedId == currSlot) {
-                return;
-            } else if (currSlot == 999) {
-                currSlot = checkedId;
-                return;
-            }
-        }
         if (group.equals(binding.officialTypeSel)) {
             if (checkedId == currType) {
                 return;
@@ -880,19 +999,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
         SharedPreferences app_pref = getDefaultSharedPreferences(activity);
         View viewById = activity.findViewById(checkedId);
-        if (binding.slot1.equals(viewById)) {
-            app_pref.edit().putInt("official_slot", 1).apply();
-            Logger.d(TAG, "onCheckedChanged: Switch To Slot 1");
-            currSlot = checkedId;
-        } else if (binding.slot2.equals(viewById)) {
-            app_pref.edit().putInt("official_slot", 2).apply();
-            Logger.d(TAG, "onCheckedChanged: Switch To Slot 2");
-            currSlot = checkedId;
-        } else if (binding.slot3.equals(viewById)) {
-            app_pref.edit().putInt("official_slot", 3).apply();
-            Logger.d(TAG, "onCheckedChanged: Switch To Slot 3");
-            currSlot = checkedId;
-        } else if (binding.radioPc.equals(viewById)) {
+//        if (binding.slot1.equals(viewById)) {
+//            app_pref.edit().putInt("official_slot", 1).apply();
+//            Logger.d(TAG, "onCheckedChanged: Switch To Slot 1");
+//            currSlot = checkedId;
+//        } else if (binding.slot2.equals(viewById)) {
+//            app_pref.edit().putInt("official_slot", 2).apply();
+//            Logger.d(TAG, "onCheckedChanged: Switch To Slot 2");
+//            currSlot = checkedId;
+//        } else if (binding.slot3.equals(viewById)) {
+//            app_pref.edit().putInt("official_slot", 3).apply();
+//            Logger.d(TAG, "onCheckedChanged: Switch To Slot 3");
+//            currSlot = checkedId;
+//        } else
+        if (binding.radioPc.equals(viewById)) {
             app_pref.edit().putInt("official_type", 1).apply();
             Logger.d(TAG, "onCheckedChanged: Switch To PC");
             resetOfficialServerType();
@@ -939,6 +1059,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         int delay = 500;
         if (QUICK_MODE) {
             delay = 100;
+        }
+        try {
+            this.notify();
+        } catch (Exception ignore) {
         }
         spCheckHandle.postDelayed(() -> {
             if (loginImpl == null) {
@@ -988,6 +1112,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onLoginFailed() {
+        try {
+            this.notify();
+        } catch (Exception ignore) {
+        }
         spCheckHandle.post(() -> {
             binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
             binding.cardViewMain.imageViewChecked.setVisibility(View.VISIBLE);

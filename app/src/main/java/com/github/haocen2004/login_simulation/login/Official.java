@@ -34,6 +34,7 @@ import com.github.haocen2004.login_simulation.utils.Network;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -144,9 +145,13 @@ public class Official implements LoginImpl {
                     JSONObject account_json = data_json.getJSONObject("account");
                     token = account_json.getString("token");
                     uid = account_json.getString("uid");
-                    email = account_json.getString("email");
+                    email = account_json.getString("mobile");
+                    if (email.equals("")) {
+                        email = account_json.getString("email");
+                    }
                     preferences.edit()
                             .clear()
+                            .putString("username", email)
                             .putString("token", token)
                             .putString("uid", uid)
                             .putBoolean("has_token", true)
@@ -402,6 +407,8 @@ public class Official implements LoginImpl {
     @Override
     public boolean logout() {
         preferences.edit().clear().apply();
+        new File(activity.getFilesDir().getParent(), "shared_prefs/official_user_" + preferences.getInt("official_slot", 1) + ".xml").delete();
+        Log.makeToast(R.string.cache_delete);
         isLogin = false;
         return true;
     }
