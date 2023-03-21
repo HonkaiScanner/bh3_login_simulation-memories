@@ -318,6 +318,10 @@ public class Bilibili implements LoginImpl {
                     try {
                         preferences.edit().clear().apply();
                         new File(activity.getFilesDir().getParent(), "shared_prefs/bili_user_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/usernamelist_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/TouristLogin_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/login_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/userinfoCache_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
                     } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
