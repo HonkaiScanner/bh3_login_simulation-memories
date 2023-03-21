@@ -61,13 +61,12 @@ public class Bilibili implements LoginImpl {
         public void onSuccess(Bundle arg0) {
             // 此处为操作成功时执行，返回值通过Bundle传回
 
-            Tools.saveBoolean(activity, "last_bili_login_succeed", true);
             uid = arg0.getString("uid");
             username = arg0.getString("username");
             access_token = arg0.getString("access_token");
 
             preferences.edit().clear().apply();
-            preferences.edit().putString("username", username).putString("uid", uid).apply();
+            preferences.edit().putString("username", username).putString("uid", uid).putBoolean("last_login_succeed", true).apply();
 
             String data_json = "{\"uid\":" +
                     uid +
@@ -112,7 +111,7 @@ public class Bilibili implements LoginImpl {
         @Override
         public void onFailed(BSGameSdkError arg0) {
 
-            Tools.saveBoolean(activity, "last_bili_login_succeed", false);
+            preferences.edit().putBoolean("last_login_succeed", false).apply();
             // 此处为操作失败时执行，返回值为BSGameSdkError类型变量，其中包含ErrorCode和ErrorMessage
             Logger.e(TAG, "onFailed\nErrorCode : "
                     + arg0.getErrorCode() + "\nErrorMessage : "
@@ -126,7 +125,7 @@ public class Bilibili implements LoginImpl {
         @Override
         public void onError(BSGameSdkError arg0) {
 
-            Tools.saveBoolean(activity, "last_bili_login_succeed", false);
+            preferences.edit().putBoolean("last_login_succeed", false).apply();
             // 此处为操作异常时执行，返回值为BSGameSdkError类型变量，其中包含ErrorCode和ErrorMessage
             Logger.e(TAG, "onError\nErrorCode : "
                     + arg0.getErrorCode() + "\nErrorMessage : "
@@ -156,7 +155,7 @@ public class Bilibili implements LoginImpl {
     private String honkai_uid;
 
     private void doBiliLogin() {
-        boolean checkLastLogin = Tools.getBoolean(activity, "last_bili_login_succeed");
+        boolean checkLastLogin = preferences.getBoolean("last_login_succeed", false);
         Logger.d(TAG, "checkBiliLastLogin: " + checkLastLogin);
         if (checkLastLogin) {
 
