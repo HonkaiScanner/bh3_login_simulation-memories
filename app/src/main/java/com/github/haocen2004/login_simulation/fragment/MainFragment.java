@@ -51,6 +51,7 @@ import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
+import com.github.haocen2004.login_simulation.login.Bilibili;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
@@ -298,6 +299,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 break;
             case "Bilibili":
                 server_type = activity.getString(R.string.types_bilibili);
+                binding.officialSlotSelect.setVisibility(View.VISIBLE);
+                switch (pref.getInt("official_slot", 1)) {
+                    case 1:
+                        binding.officialSlotSelect.check(binding.slot1.getId());
+                        break;
+                    case 2:
+                        binding.officialSlotSelect.check(binding.slot2.getId());
+                        break;
+                    case 3:
+                        binding.officialSlotSelect.check(binding.slot3.getId());
+                        break;
+                }
                 break;
             case "Xiaomi":
                 server_type = activity.getString(R.string.types_xiaomi);
@@ -898,7 +911,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         try {
             if (loginImpl.isLogin() || accSwitch) {
                 accSwitch = true;
-                loginImpl = new Official(activity, this);
+                if (loginImpl instanceof Official || loginImpl instanceof Bilibili) {
+                    loginImpl = loginInstanceManager.getLoginImpl(true);
+                }
                 refreshView();
                 makeToast("切换后需重新登录");
             }

@@ -47,6 +47,12 @@ public class LoginInstanceManager {
         return INSTANCE;
     }
 
+    public LoginImpl getLoginImpl(boolean forceRenew) {
+        if (forceRenew) genLoginImpl();
+        return getLoginImpl();
+
+    }
+
     public LoginImpl getLoginImpl() {
         if (mLoginImpl == null || tempServerType.equals("none")) {
             genLoginImpl();

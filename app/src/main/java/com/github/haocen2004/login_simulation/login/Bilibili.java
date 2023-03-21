@@ -1,5 +1,6 @@
 package com.github.haocen2004.login_simulation.login;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.data.Constant.BILI_APP_KEY;
 import static com.github.haocen2004.login_simulation.data.Constant.BILI_INIT;
 import static com.github.haocen2004.login_simulation.data.Constant.DEBUG_MODE;
@@ -48,6 +49,7 @@ public class Bilibili implements LoginImpl {
 
     private static final String TAG = "Bilibili Login";
     private String access_token;
+    private SharedPreferences app_pref;
     private String username;
     private String uid;
     private String open_id;
@@ -79,8 +81,6 @@ public class Bilibili implements LoginImpl {
                 e.printStackTrace();
             }
             try {
-
-
                 if (feedback_json == null) {
                     makeToast("Empty Return");
                     callback.onLoginFailed();
@@ -94,7 +94,7 @@ public class Bilibili implements LoginImpl {
                     combo_token = data_json2.getString("combo_token");
                     Logger.addBlacklist(combo_token);
 //                        String account_type = data_json2.getString("account_type");
-
+                    saveSlotInfo();
                     roleData = new RoleData(open_id, "", combo_id, combo_token, "14", "2", "bilibili", 0, callback);
                     isLogin = true;
 //                        makeToast(activity.getString(R.string.login_succeed));
@@ -148,6 +148,7 @@ public class Bilibili implements LoginImpl {
         callback = loginCallback;
         this.activity = activity;
         Log = getLogger(activity);
+        app_pref = getDefaultSharedPreferences(activity);
         //isLogin = false;
     }
 
@@ -350,9 +351,9 @@ public class Bilibili implements LoginImpl {
 
     @Override
     public void login() {
+        changeSlotInfo();
         if (BILI_INIT) {
             gameSdk = BSGameSdk.getInstance();
-            preferences = activity.getSharedPreferences("bili_user", Context.MODE_PRIVATE);
             doBiliLogin();
         } else {
             BSGameSdk.initialize(true, activity, "590", "180",
@@ -410,6 +411,96 @@ public class Bilibili implements LoginImpl {
     public void setRole(RoleData roleData) {
         this.roleData = roleData;
         isLogin = true;
+    }
+
+    private void saveSlotInfo() {
+        Logger.d(TAG, "saving slot " + app_pref.getInt("official_slot", 1));
+        SharedPreferences slotPref = activity.getSharedPreferences("bili_access_token_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        SharedPreferences mainPref = activity.getSharedPreferences("bili_access_token", Context.MODE_PRIVATE);
+        slotPref.edit().clear().apply();
+        for (String s : mainPref.getAll().keySet()) {
+            if (mainPref.getAll().get(s) instanceof String) {
+                slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+            }
+        }
+        slotPref = activity.getSharedPreferences("login_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        mainPref = activity.getSharedPreferences("login", Context.MODE_PRIVATE);
+        slotPref.edit().clear().apply();
+        for (String s : mainPref.getAll().keySet()) {
+            if (mainPref.getAll().get(s) instanceof String) {
+                slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+            }
+        }
+        slotPref = activity.getSharedPreferences("TouristLogin_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        mainPref = activity.getSharedPreferences("TouristLogin", Context.MODE_PRIVATE);
+        slotPref.edit().clear().apply();
+        for (String s : mainPref.getAll().keySet()) {
+            if (mainPref.getAll().get(s) instanceof String) {
+                slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+            }
+        }
+        slotPref = activity.getSharedPreferences("userinfoCache_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        mainPref = activity.getSharedPreferences("userinfoCache", Context.MODE_PRIVATE);
+        slotPref.edit().clear().apply();
+        for (String s : mainPref.getAll().keySet()) {
+            if (mainPref.getAll().get(s) instanceof String) {
+                slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+            }
+        }
+        slotPref = activity.getSharedPreferences("usernamelist_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        mainPref = activity.getSharedPreferences("usernamelist", Context.MODE_PRIVATE);
+        slotPref.edit().clear().apply();
+        for (String s : mainPref.getAll().keySet()) {
+            if (mainPref.getAll().get(s) instanceof String) {
+                slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+            }
+        }
+    }
+
+    private void changeSlotInfo() {
+        Logger.d(TAG, "loading slot " + app_pref.getInt("official_slot", 1));
+        preferences = activity.getSharedPreferences("bili_user_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        SharedPreferences slotPref = activity.getSharedPreferences("bili_access_token_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        SharedPreferences mainPref = activity.getSharedPreferences("bili_access_token", Context.MODE_PRIVATE);
+        mainPref.edit().clear().apply();
+        for (String s : slotPref.getAll().keySet()) {
+            if (slotPref.getAll().get(s) instanceof String) {
+                mainPref.edit().putString(s, slotPref.getString(s, "")).apply();
+            }
+        }
+        slotPref = activity.getSharedPreferences("login_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        mainPref = activity.getSharedPreferences("login", Context.MODE_PRIVATE);
+        mainPref.edit().clear().apply();
+        for (String s : slotPref.getAll().keySet()) {
+            if (slotPref.getAll().get(s) instanceof String) {
+                mainPref.edit().putString(s, slotPref.getString(s, "")).apply();
+            }
+        }
+        slotPref = activity.getSharedPreferences("TouristLogin_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        mainPref = activity.getSharedPreferences("TouristLogin", Context.MODE_PRIVATE);
+        mainPref.edit().clear().apply();
+        for (String s : slotPref.getAll().keySet()) {
+            if (slotPref.getAll().get(s) instanceof String) {
+                mainPref.edit().putString(s, slotPref.getString(s, "")).apply();
+            }
+        }
+        slotPref = activity.getSharedPreferences("userinfoCache_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        mainPref = activity.getSharedPreferences("userinfoCache", Context.MODE_PRIVATE);
+        mainPref.edit().clear().apply();
+        for (String s : slotPref.getAll().keySet()) {
+            if (slotPref.getAll().get(s) instanceof String) {
+                mainPref.edit().putString(s, slotPref.getString(s, "")).apply();
+            }
+        }
+        slotPref = activity.getSharedPreferences("usernamelist_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        mainPref = activity.getSharedPreferences("usernamelist", Context.MODE_PRIVATE);
+        mainPref.edit().clear().apply();
+        for (String s : slotPref.getAll().keySet()) {
+            if (slotPref.getAll().get(s) instanceof String) {
+                mainPref.edit().putString(s, slotPref.getString(s, "")).apply();
+            }
+        }
+        activity.getSharedPreferences("com.bilibili.track", Context.MODE_PRIVATE).edit().putString("LOGINID", preferences.getString("uid", "0")).apply();
     }
 
 
