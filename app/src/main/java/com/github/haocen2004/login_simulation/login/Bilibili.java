@@ -322,6 +322,7 @@ public class Bilibili implements LoginImpl {
                         new File(activity.getFilesDir().getParent(), "shared_prefs/TouristLogin_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
                         new File(activity.getFilesDir().getParent(), "shared_prefs/login_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
                         new File(activity.getFilesDir().getParent(), "shared_prefs/userinfoCache_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
+                        Log.makeToast(R.string.cache_delete);
                     } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
