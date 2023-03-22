@@ -63,7 +63,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/slotSelectGroup"
             app:selectionRequired="true"
-            app:singleSelection="true">
+            app:singleSelection="true"
+            tools:visibility="gone">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/slot1"
@@ -186,6 +187,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_selpic" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_hwAccountCenter"
+            style="@style/Widget.Material3.Button.ElevatedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/btn_hwacccenter"
+            android:visibility="gone"
+            app:icon="@drawable/baseline_people_24"
+            app:iconGravity="textStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_seltip"
+            tools:visibility="visible" />
+
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/token_checkBox"
             android:layout_width="wrap_content"
@@ -195,7 +213,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_seltip" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_hwAccountCenter" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/checkBoxWDJ"

@@ -53,6 +53,7 @@ import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
 import com.github.haocen2004.login_simulation.login.Bilibili;
+import com.github.haocen2004.login_simulation.login.Huawei;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
@@ -283,6 +284,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //        binding.tokenCheckBox.setVisibility(View.GONE);
         binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
+        binding.btnHwAccountCenter.setVisibility(View.GONE);
         if (!HAS_ACCOUNT && !SP_CHECKED) {
             binding.cardViewMain.sponsorStateText.setVisibility(View.INVISIBLE);
         }
@@ -347,6 +349,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 break;
             case "Huawei":
                 server_type = activity.getString(R.string.types_huawei);
+                binding.btnHwAccountCenter.setVisibility(View.VISIBLE);
                 break;
             case "Qihoo":
                 server_type = activity.getString(R.string.types_qihoo);
@@ -554,6 +557,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             } else {
                 ucSharedPref.edit().clear().apply();
             }
+        });
+        binding.btnHwAccountCenter.setOnClickListener(view -> {
+            Intent hwSwitchAccountIntent = new Intent(Intent.ACTION_VIEW);
+            hwSwitchAccountIntent.setPackage("com.huawei.hwid");
+            hwSwitchAccountIntent.setAction("com.huawei.hwid.ACTION_INNER_CENTER_ACTIVITY");
+//            hwSwitchAccountIntent.setClassName("com.huawei.hwid","com.huawei.hms.runtimekit.stubexplicit.HwIDCenterActivity");
+            startActivity(hwSwitchAccountIntent);
         });
         binding.btnSelpic.setOnClickListener(view1 -> {
             try {
@@ -902,15 +912,21 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     public boolean onLongClick(View view) {
         if (binding.cardViewMain.cardView2.equals(view)) {
             try {
-                if (loginImpl.isLogin()) {
-                    if (loginImpl.logout()) {
-                        onLoginFailed();
+                if (loginImpl instanceof Official) {
+                    if (loginImpl.isLogin()) {
+                        if (loginImpl.logout()) {
+                            onLoginFailed();
+                        }
                     }
-                } else if (loginImpl instanceof Official) {
                     new File(activity.getFilesDir().getParent(), "shared_prefs/official_user_" + pref.getInt("official_slot", 1) + ".xml").delete();
                     Log.makeToast(R.string.cache_delete);
                     onLoginFailed();
                 } else if (loginImpl instanceof Bilibili) {
+                    if (loginImpl.isLogin()) {
+                        if (loginImpl.logout()) {
+                            onLoginFailed();
+                        }
+                    }
                     int biliSlot = pref.getInt("bili_slot", 1);
                     new File(activity.getFilesDir().getParent(), "shared_prefs/bili_user_" + biliSlot + ".xml").delete();
                     new File(activity.getFilesDir().getParent(), "shared_prefs/usernamelist_" + biliSlot + ".xml").delete();
@@ -919,6 +935,22 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     new File(activity.getFilesDir().getParent(), "shared_prefs/userinfoCache_" + biliSlot + ".xml").delete();
                     Log.makeToast(R.string.cache_delete);
                     onLoginFailed();
+                } else if (loginImpl instanceof Huawei) {
+                    if (loginImpl.isLogin()) {
+                        if (loginImpl.logout()) {
+                            onLoginFailed();
+                        }
+                    }
+                    Log.makeToast("华为服切换账号请在华为账号中心操作！");
+                    Intent hwSwitchAccountIntent = new Intent(Intent.ACTION_VIEW);
+                    hwSwitchAccountIntent.setPackage("com.huawei.hwid");
+                    hwSwitchAccountIntent.setAction("com.huawei.hwid.ACTION_INNER_CENTER_ACTIVITY");
+//                    hwSwitchAccountIntent.setClassName("com.huawei.hwid","com.huawei.hms.runtimekit.stubexplicit.HwIDCenterActivity");
+                    startActivity(hwSwitchAccountIntent);
+                } else if (loginImpl.isLogin()) {
+                    if (loginImpl.logout()) {
+                        onLoginFailed();
+                    }
                 } else {
                     makeToast(R.string.error_not_login);
                 }
