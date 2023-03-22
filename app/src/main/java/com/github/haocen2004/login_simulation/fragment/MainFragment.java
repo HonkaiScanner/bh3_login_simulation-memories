@@ -57,6 +57,7 @@ import com.github.haocen2004.login_simulation.login.Huawei;
 import com.github.haocen2004.login_simulation.login.LoginCallback;
 import com.github.haocen2004.login_simulation.login.LoginImpl;
 import com.github.haocen2004.login_simulation.login.Official;
+import com.github.haocen2004.login_simulation.login.Tencent;
 import com.github.haocen2004.login_simulation.utils.ChipsHelper;
 import com.github.haocen2004.login_simulation.utils.DialogHelper;
 import com.github.haocen2004.login_simulation.utils.FabScanner;
@@ -162,6 +163,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     private int currOfficialSlot = 999;
     private int currBiliSlot = 999;
+    private int currYYBSlot = 999;
     private LayoutInflater mLayoutInflater;
 
     @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
@@ -275,6 +277,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         return binding.getRoot();
     }
 
+    private Map<String, Chip> currChipMap = new HashMap<>();
+
     @SuppressLint("SetTextI18n")
     private void refreshView() {
         Logger.d("MainFragment", "reloading View");
@@ -346,6 +350,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 break;
             case "YYB":
                 server_type = activity.getString(R.string.types_yyb);
+                binding.slotSelectGroup.setVisibility(View.VISIBLE);
+                initSlotSelectGroup("tencent_user_");
                 break;
             case "Huawei":
                 server_type = activity.getString(R.string.types_huawei);
@@ -387,6 +393,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
         File sharedPrefs = new File(activity.getFilesDir().getParent(), "shared_prefs");
         binding.chipGroupSlot.removeAllViews();
+        currChipMap.clear();
         binding.chipGroupSlot.setSelectionRequired(true);
         for (File file : sharedPrefs.listFiles()) {
             if (file.getName().startsWith(type)) {
@@ -412,6 +419,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 } catch (Exception ignore) {
                 }
                 binding.chipGroupSlot.addView(tempChip);
+                currChipMap.put(id, tempChip);
             }
         }
         String id = "add_chip";
@@ -433,8 +441,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         String server = pref.getString("server_type", "").toLowerCase(Locale.ROOT);
         if (server.startsWith("official") && (currOfficialSlot == 999 || tempChip.isChecked())) {
             String activateKey = "official_user_" + pref.getInt("official_slot", 1);
-            if (chipMap.containsKey(activateKey)) {
-                chipMap.get(activateKey).setChecked(true);
+            if (currChipMap.containsKey(activateKey)) {
+                currChipMap.get(activateKey).setChecked(true);
             } else {
                 tempChip.setChecked(true);
                 currOfficialSlot = pref.getInt("official_slot", 1);
@@ -442,11 +450,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         } else if (server.startsWith("bili") && (currBiliSlot == 999 || tempChip.isChecked())) {
 
             String activateKey = "bili_user_" + pref.getInt("bili_slot", 1);
-            if (chipMap.containsKey(activateKey)) {
-                chipMap.get(activateKey).setChecked(true);
+            if (currChipMap.containsKey(activateKey)) {
+                currChipMap.get(activateKey).setChecked(true);
             } else {
                 tempChip.setChecked(true);
                 currBiliSlot = pref.getInt("bili_slot", 1);
+            }
+        } else if (server.startsWith("yyb") && (currYYBSlot == 999 || tempChip.isChecked())) {
+            String activateKey = "tencent_user_" + pref.getInt("tencent_slot", 1);
+            if (currChipMap.containsKey(activateKey)) {
+                currChipMap.get(activateKey).setChecked(true);
+            } else {
+                tempChip.setChecked(true);
+                currYYBSlot = pref.getInt("tencent_slot", 1);
             }
         }
 
@@ -476,6 +492,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     appPref.edit().putInt("official_slot", pos).apply();
                 } else if (server.startsWith("bili")) {
                     appPref.edit().putInt("bili_slot", pos).apply();
+                } else if (server.startsWith("yyb")) {
+                    appPref.edit().putInt("tencent_slot", pos).apply();
                 }
                 Logger.d(TAG, "onCheckedChanged: New Slot " + pos);
             } else if (key.startsWith("official")) {
@@ -486,6 +504,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 int pos = parseInt(key.replace("bili_user_", ""));
                 appPref.edit().putInt("bili_slot", pos).apply();
                 Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currBiliSlot + " to " + pos);
+            } else if (key.startsWith("yyb")) {
+                int pos = parseInt(key.replace("tencent_user_", ""));
+                appPref.edit().putInt("tencent_slot", pos).apply();
+                Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currYYBSlot + " to " + pos);
             }
         }
         try {
@@ -497,7 +519,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     makeToast("切换后需重新登录");
                 }
             }
-            if (loginImpl instanceof Bilibili && currOfficialSlot != appPref.getInt("bili_slot", 1)) {
+            if (loginImpl instanceof Bilibili && currBiliSlot != appPref.getInt("bili_slot", 1)) {
+                if (loginImpl.isLogin() || accSwitch) {
+                    accSwitch = true;
+                    loginImpl = loginInstanceManager.getLoginImpl(true);
+                    refreshView();
+                    makeToast("切换后需重新登录");
+                }
+            }
+            if (loginImpl instanceof Tencent && currYYBSlot != appPref.getInt("tencent_slot", 1)) {
                 if (loginImpl.isLogin() || accSwitch) {
                     accSwitch = true;
                     loginImpl = loginInstanceManager.getLoginImpl(true);
@@ -947,6 +977,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     hwSwitchAccountIntent.setAction("com.huawei.hwid.ACTION_INNER_CENTER_ACTIVITY");
 //                    hwSwitchAccountIntent.setClassName("com.huawei.hwid","com.huawei.hms.runtimekit.stubexplicit.HwIDCenterActivity");
                     startActivity(hwSwitchAccountIntent);
+                } else if (loginImpl instanceof Tencent) {
+                    if (loginImpl.isLogin()) {
+                        if (loginImpl.logout()) {
+                            onLoginFailed();
+                        }
+                    }
+                    int tencentSlot = pref.getInt("tencent_slot", 1);
+                    new File(activity.getFilesDir().getParent(), "shared_prefs/tencent_user_" + tencentSlot + ".xml").delete();
                 } else if (loginImpl.isLogin()) {
                     if (loginImpl.logout()) {
                         onLoginFailed();

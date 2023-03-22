@@ -19,11 +19,16 @@ import com.github.haocen2004.login_simulation.databinding.ActivityTencentLoginBi
 import com.github.haocen2004.login_simulation.utils.Logger;
 import com.github.haocen2004.login_simulation.utils.Tools;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class TencentLoginActivity extends BaseActivity {
 
     private ActivityTencentLoginBinding binding;
 
     private WebView webView;
+
+    private String uin;
 
     private final String TAG = "Tencent Web login";
 
@@ -61,6 +66,19 @@ public class TencentLoginActivity extends BaseActivity {
                 super.onLoadResource(view, url);
 
                 Logger.d(TAG, "loading 2 " + url);
+                if (url.contains("uin=")) {
+                    try {
+                        URL url1 = new URL(url);
+                        for (String s : url1.getQuery().split("&")) {
+                            if (s.contains("uin")) {
+                                uin = s.split("=")[1];
+                                Logger.d(TAG, "find qq: " + uin);
+                            }
+                        }
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 if (url.contains("auth://")) {
                     if (!url.contains("access_token")) {
                         if (url.contains("progress/0")) {
@@ -77,6 +95,7 @@ public class TencentLoginActivity extends BaseActivity {
                     Logger.d(TAG, "login success");
                     Intent intent = new Intent();
                     intent.putExtra(INTENT_EXTRA_KEY_TENCENT_LOGIN, url);
+                    intent.putExtra("tencent.login.uin", uin);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
