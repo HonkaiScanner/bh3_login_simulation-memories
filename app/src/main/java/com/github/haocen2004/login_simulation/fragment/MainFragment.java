@@ -481,7 +481,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 }
             }
         }
-        SharedPreferences appPref = getDefaultSharedPreferences(activity);
         for (Integer checkedId : checkedIds) {
             Chip chip = chips.get(checkedId - 1);
             String key = chipKeys.get(chip);
@@ -490,29 +489,31 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 String server = pref.getString("server_type", "").toLowerCase(Locale.ROOT);
                 int pos = UUID.randomUUID().hashCode();
                 if (server.startsWith("official")) {
-                    appPref.edit().putInt("official_slot", pos).apply();
+                    pref.edit().putInt("official_slot", pos).apply();
+                    Logger.d(TAG, "onCheckedChanged: New official_slot " + pos);
                 } else if (server.startsWith("bili")) {
-                    appPref.edit().putInt("bili_slot", pos).apply();
-                } else if (server.startsWith("tencent")) {
-                    appPref.edit().putInt("tencent_slot", pos).apply();
+                    pref.edit().putInt("bili_slot", pos).apply();
+                    Logger.d(TAG, "onCheckedChanged: New bili_slot " + pos);
+                } else if (server.startsWith("yyb")) {
+                    pref.edit().putInt("tencent_slot", pos).apply();
+                    Logger.d(TAG, "onCheckedChanged: New tencent_slot " + pos);
                 }
-                Logger.d(TAG, "onCheckedChanged: New Slot " + pos);
             } else if (key.startsWith("official")) {
                 int pos = parseInt(key.replace("official_user_", ""));
-                appPref.edit().putInt("official_slot", pos).apply();
+                pref.edit().putInt("official_slot", pos).apply();
                 Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currOfficialSlot + " to " + pos);
             } else if (key.startsWith("bili")) {
                 int pos = parseInt(key.replace("bili_user_", ""));
-                appPref.edit().putInt("bili_slot", pos).apply();
+                pref.edit().putInt("bili_slot", pos).apply();
                 Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currBiliSlot + " to " + pos);
             } else if (key.startsWith("tencent")) {
                 int pos = parseInt(key.replace("tencent_user_", ""));
-                appPref.edit().putInt("tencent_slot", pos).apply();
+                pref.edit().putInt("tencent_slot", pos).apply();
                 Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currYYBSlot + " to " + pos);
             }
         }
         try {
-            if (loginImpl instanceof Official && currOfficialSlot != appPref.getInt("official_slot", 1)) {
+            if (loginImpl instanceof Official && currOfficialSlot != pref.getInt("official_slot", 1)) {
                 if (loginImpl.isLogin() || accSwitch) {
                     accSwitch = true;
                     loginImpl = loginInstanceManager.getLoginImpl(true);
@@ -520,7 +521,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     makeToast("切换后需重新登录");
                 }
             }
-            if (loginImpl instanceof Bilibili && currBiliSlot != appPref.getInt("bili_slot", 1)) {
+            if (loginImpl instanceof Bilibili && currBiliSlot != pref.getInt("bili_slot", 1)) {
                 if (loginImpl.isLogin() || accSwitch) {
                     accSwitch = true;
                     loginImpl = loginInstanceManager.getLoginImpl(true);
@@ -528,7 +529,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     makeToast("切换后需重新登录");
                 }
             }
-            if (loginImpl instanceof Tencent && currYYBSlot != appPref.getInt("tencent_slot", 1)) {
+            if (loginImpl instanceof Tencent && currYYBSlot != pref.getInt("tencent_slot", 1)) {
                 if (loginImpl.isLogin() || accSwitch) {
                     accSwitch = true;
                     loginImpl = loginInstanceManager.getLoginImpl(true);
@@ -948,24 +949,27 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         if (loginImpl.logout()) {
                             onLoginFailed();
                         }
+                    } else {
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/official_user_" + pref.getInt("official_slot", 1) + ".xml").delete();
+                        Log.makeToast(R.string.cache_delete);
+                        onLoginFailed();
                     }
-                    new File(activity.getFilesDir().getParent(), "shared_prefs/official_user_" + pref.getInt("official_slot", 1) + ".xml").delete();
-                    Log.makeToast(R.string.cache_delete);
-                    onLoginFailed();
                 } else if (loginImpl instanceof Bilibili) {
                     if (loginImpl.isLogin()) {
                         if (loginImpl.logout()) {
                             onLoginFailed();
+                            return true;
                         }
+                    } else {
+                        int biliSlot = pref.getInt("bili_slot", 1);
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/bili_user_" + biliSlot + ".xml").delete();
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/usernamelist_" + biliSlot + ".xml").delete();
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/TouristLogin_" + biliSlot + ".xml").delete();
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/login_" + biliSlot + ".xml").delete();
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/userinfoCache_" + biliSlot + ".xml").delete();
+                        Log.makeToast(R.string.cache_delete);
+                        onLoginFailed();
                     }
-                    int biliSlot = pref.getInt("bili_slot", 1);
-                    new File(activity.getFilesDir().getParent(), "shared_prefs/bili_user_" + biliSlot + ".xml").delete();
-                    new File(activity.getFilesDir().getParent(), "shared_prefs/usernamelist_" + biliSlot + ".xml").delete();
-                    new File(activity.getFilesDir().getParent(), "shared_prefs/TouristLogin_" + biliSlot + ".xml").delete();
-                    new File(activity.getFilesDir().getParent(), "shared_prefs/login_" + biliSlot + ".xml").delete();
-                    new File(activity.getFilesDir().getParent(), "shared_prefs/userinfoCache_" + biliSlot + ".xml").delete();
-                    Log.makeToast(R.string.cache_delete);
-                    onLoginFailed();
                 } else if (loginImpl instanceof Huawei) {
                     if (loginImpl.isLogin()) {
                         if (loginImpl.logout()) {
@@ -983,9 +987,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         if (loginImpl.logout()) {
                             onLoginFailed();
                         }
+                    } else {
+                        int tencentSlot = pref.getInt("tencent_slot", 1);
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/tencent_user_" + tencentSlot + ".xml").delete();
+                        onLoginFailed();
                     }
-                    int tencentSlot = pref.getInt("tencent_slot", 1);
-                    new File(activity.getFilesDir().getParent(), "shared_prefs/tencent_user_" + tencentSlot + ".xml").delete();
                 } else if (loginImpl.isLogin()) {
                     if (loginImpl.logout()) {
                         onLoginFailed();

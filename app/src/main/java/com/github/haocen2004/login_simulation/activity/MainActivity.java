@@ -113,11 +113,11 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                         dialogData.setPositiveButtonData(new ButtonData("打开更新链接") {
                             @Override
                             public void callback(DialogHelper dialogHelper) {
-                                super.callback(dialogHelper);
                                 try {
                                     openUrl(json.getString("beta_update_url"), getApplicationContext());
                                 } catch (Exception ignore) {
                                 }
+                                activityManager.clearActivity();
                             }
                         });
                         dialogData.setCancelable(false);
