@@ -276,6 +276,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @SuppressLint("SetTextI18n")
     private void refreshView() {
+        Logger.d("MainFragment", "reloading View");
         String server_type;
         binding.officialSlotSelect.setVisibility(View.GONE);
         binding.slotSelectGroup.setVisibility(View.GONE);
@@ -373,13 +374,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
         if (needRestart) {
             binding.cardViewMain.serverText.setText(R.string.logged_and_restart);
+            binding.cardViewMain.loginStateText.setVisibility(View.GONE);
+            binding.cardViewMain.sponsorStateText.setVisibility(View.GONE);
             binding.cardViewMain.imageViewChecked.setImageResource(R.drawable.ic_baseline_close_24);
         }
     }
 
     private void initSlotSelectGroup(String type) {
 
-        Logger.d("initSlot", type);
         File sharedPrefs = new File(activity.getFilesDir().getParent(), "shared_prefs");
         binding.chipGroupSlot.removeAllViews();
         binding.chipGroupSlot.setSelectionRequired(true);
@@ -472,25 +474,33 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 } else if (server.startsWith("bili")) {
                     appPref.edit().putInt("bili_slot", pos).apply();
                 }
-                Logger.d(TAG, "onCheckedChanged: Switch To Slot " + pos);
+                Logger.d(TAG, "onCheckedChanged: New Slot " + pos);
             } else if (key.startsWith("official")) {
                 int pos = parseInt(key.replace("official_user_", ""));
                 appPref.edit().putInt("official_slot", pos).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch To Slot " + pos);
+                Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currOfficialSlot + " to " + pos);
             } else if (key.startsWith("bili")) {
                 int pos = parseInt(key.replace("bili_user_", ""));
                 appPref.edit().putInt("bili_slot", pos).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch To Slot " + pos);
+                Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currBiliSlot + " to " + pos);
             }
         }
         try {
-            if (loginImpl.isLogin() || accSwitch) {
-                accSwitch = true;
-                if (loginImpl instanceof Official || loginImpl instanceof Bilibili) {
+            if (loginImpl instanceof Official && currOfficialSlot != appPref.getInt("official_slot", 1)) {
+                if (loginImpl.isLogin() || accSwitch) {
+                    accSwitch = true;
                     loginImpl = loginInstanceManager.getLoginImpl(true);
+                    refreshView();
+                    makeToast("切换后需重新登录");
                 }
-                refreshView();
-                makeToast("切换后需重新登录");
+            }
+            if (loginImpl instanceof Bilibili && currOfficialSlot != appPref.getInt("bili_slot", 1)) {
+                if (loginImpl.isLogin() || accSwitch) {
+                    accSwitch = true;
+                    loginImpl = loginInstanceManager.getLoginImpl(true);
+                    refreshView();
+                    makeToast("切换后需重新登录");
+                }
             }
         } catch (Exception ignore) {
         }
@@ -869,9 +879,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void showPermissionDialog() {
         DialogData dialogData;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅魅族服\n用于检测官方包安装情况\n详细说明见魅族服登陆\n\n4.通知权限\n用于通知用户版本更新及其他公告\n同时也用于悬浮窗后台进程\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅部分渠道服\n用于检测官方包安装情况\n具体渠道服请求权限时会额外说明\n\n4.通知权限\n用于通知用户版本更新、扫码成功提示及其他公告\n同时也用于悬浮窗后台进程\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
         } else {
-            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅魅族服\n用于检测官方包安装情况\n详细说明见魅族服登陆\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅部分渠道服\n用于检测官方包安装情况\n具体渠道服请求权限时会额外说明\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
         }
         dialogData.setPositiveButtonData(new ButtonData("我已知晓并授权使用") {
             @Override
@@ -1072,10 +1082,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         int delay = 500;
         if (QUICK_MODE) {
             delay = 100;
-        }
-        try {
-            this.notify();
-        } catch (Exception ignore) {
         }
         spCheckHandle.postDelayed(() -> {
             if (loginImpl == null) {

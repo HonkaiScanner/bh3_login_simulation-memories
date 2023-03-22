@@ -381,7 +381,6 @@ public class Bilibili implements LoginImpl {
                     }, () -> System.exit(0));
 
             gameSdk = BSGameSdk.getInstance();
-            preferences = activity.getSharedPreferences("bili_user", Context.MODE_PRIVATE);
         }
     }
 
