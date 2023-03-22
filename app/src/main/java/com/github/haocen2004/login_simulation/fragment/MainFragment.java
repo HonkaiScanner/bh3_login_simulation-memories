@@ -485,6 +485,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         for (Integer checkedId : checkedIds) {
             Chip chip = chips.get(checkedId - 1);
             String key = chipKeys.get(chip);
+            Logger.d("onSlotClick", key);
             if (key.equals("add_chip")) {
                 String server = pref.getString("server_type", "").toLowerCase(Locale.ROOT);
                 int pos = UUID.randomUUID().hashCode();
@@ -492,7 +493,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     appPref.edit().putInt("official_slot", pos).apply();
                 } else if (server.startsWith("bili")) {
                     appPref.edit().putInt("bili_slot", pos).apply();
-                } else if (server.startsWith("yyb")) {
+                } else if (server.startsWith("tencent")) {
                     appPref.edit().putInt("tencent_slot", pos).apply();
                 }
                 Logger.d(TAG, "onCheckedChanged: New Slot " + pos);
@@ -504,7 +505,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 int pos = parseInt(key.replace("bili_user_", ""));
                 appPref.edit().putInt("bili_slot", pos).apply();
                 Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currBiliSlot + " to " + pos);
-            } else if (key.startsWith("yyb")) {
+            } else if (key.startsWith("tencent")) {
                 int pos = parseInt(key.replace("tencent_user_", ""));
                 appPref.edit().putInt("tencent_slot", pos).apply();
                 Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currYYBSlot + " to " + pos);

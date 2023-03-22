@@ -85,6 +85,7 @@ public class Tencent implements LoginImpl {
         this.activity = activity;
         Log = getLogger(activity);
         preferences = activity.getSharedPreferences("tencent_user_" + PreferenceManager.getDefaultSharedPreferences(activity).getInt("tencent_slot", 1), MODE_PRIVATE);
+        Logger.d(TAG, "loading " + preferences.getString("username", "oldCache"));
         //isLogin = false;
     }
 
