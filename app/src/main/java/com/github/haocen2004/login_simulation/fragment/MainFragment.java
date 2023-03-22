@@ -899,6 +899,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 } else if (loginImpl instanceof Official) {
                     new File(activity.getFilesDir().getParent(), "shared_prefs/official_user_" + pref.getInt("official_slot", 1) + ".xml").delete();
                     Log.makeToast(R.string.cache_delete);
+                    onLoginFailed();
                 } else if (loginImpl instanceof Bilibili) {
                     int biliSlot = pref.getInt("bili_slot", 1);
                     new File(activity.getFilesDir().getParent(), "shared_prefs/bili_user_" + biliSlot + ".xml").delete();
@@ -907,6 +908,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     new File(activity.getFilesDir().getParent(), "shared_prefs/login_" + biliSlot + ".xml").delete();
                     new File(activity.getFilesDir().getParent(), "shared_prefs/userinfoCache_" + biliSlot + ".xml").delete();
                     Log.makeToast(R.string.cache_delete);
+                    onLoginFailed();
                 } else {
                     makeToast(R.string.error_not_login);
                 }
