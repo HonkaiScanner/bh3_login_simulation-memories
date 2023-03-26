@@ -113,6 +113,9 @@ public class Logger implements Serializable {
         if (SAVE_ALL_LOGS) {
             msg = processWithBlackList(msg);
             BuglyLog.e(TAG, msg);
+            if (msg.length() > 200) {
+                msg = msg.substring(0, 200) + "...";
+            }
             logLiveData.addNewLog("ERROR", TAG, msg);
             logToFile("ERROR", TAG, msg);
         } else {
@@ -133,6 +136,9 @@ public class Logger implements Serializable {
         if (SAVE_ALL_LOGS) {
             msg = processWithBlackList(msg);
             BuglyLog.d(TAG, msg);
+            if (msg.length() > 200) {
+                msg = msg.substring(0, 200) + "...";
+            }
             logLiveData.addNewLog("DEBUG", TAG, msg);
             logToFile("DEBUG", TAG, msg);
         } else {
@@ -153,6 +159,9 @@ public class Logger implements Serializable {
         if (SAVE_ALL_LOGS) {
             msg = processWithBlackList(msg);
             BuglyLog.i(TAG, msg);
+            if (msg.length() > 200) {
+                msg = msg.substring(0, 200) + "...";
+            }
             logLiveData.addNewLog("INFO", TAG, msg);
             logToFile("INFO", TAG, msg);
         } else {
@@ -173,6 +182,9 @@ public class Logger implements Serializable {
         if (SAVE_ALL_LOGS) {
             msg = processWithBlackList(msg);
             BuglyLog.w(TAG, msg);
+            if (msg.length() > 200) {
+                msg = msg.substring(0, 200) + "...";
+            }
             logLiveData.addNewLog("WARNING", TAG, msg);
             logToFile("WARNING", TAG, msg);
         } else {

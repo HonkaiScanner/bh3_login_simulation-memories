@@ -470,17 +470,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void onCheckedStateChange(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
-        if (loginProgress) {
-            while (true) {
-                if (loginProgress) break;
-                try {
-                    Thread.sleep(500);
-                    Logger.d("onCheckedStateChange", "waiting loginProgress finished.");
-                } catch (Exception ignore) {
-                    break;
-                }
+
+        while (loginProgress) {
+            try {
+                Thread.sleep(500);
+                Logger.d("onCheckedStateChange", "waiting loginProgress finished.");
+            } catch (Exception ignore) {
             }
         }
+
         for (Integer checkedId : checkedIds) {
             Chip chip = chips.get(checkedId - 1);
             String key = chipKeys.get(chip);
