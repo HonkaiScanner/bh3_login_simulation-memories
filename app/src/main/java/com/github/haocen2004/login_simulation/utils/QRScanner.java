@@ -59,7 +59,7 @@ public class QRScanner {
     private String app_name;
     private String channel_id;
     private String ticket;
-    private final String account_type;
+    private String account_type;
     private String biz_key;
     private final Boolean is_official;
     private Logger Log;
@@ -211,18 +211,28 @@ public class QRScanner {
 
         this.activity = activity;
         device_id = Tools.getDeviceID(activity);
-        open_id = roleData.getOpen_id();
-        open_token = roleData.getOpen_token();
-        combo_id = roleData.getCombo_id();
-        combo_token = roleData.getCombo_token();
-//        app_id = "1";
-        channel_id = roleData.getChannel_id();
-        oaserver = roleData.getOaserver();
-        account_type = roleData.getAccount_type();
         qr_check_map = new HashMap<>();
         this.roleData = roleData;
         is_official = false;
         Log = Logger.getLogger(activity);
+        try {
+            open_token = roleData.getOpen_token();
+            combo_id = roleData.getCombo_id();
+            combo_token = roleData.getCombo_token();
+//        app_id = "1";
+            channel_id = roleData.getChannel_id();
+            oaserver = roleData.getOaserver();
+            account_type = roleData.getAccount_type();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Logger.d(TAG, "init failed.");
+            Log.makeToast("扫码模块初始化失败！");
+        }
+        try {
+            open_id = roleData.getOpen_id();
+        } catch (Exception ignore) {
+            open_id = "";
+        }
 
     }
 

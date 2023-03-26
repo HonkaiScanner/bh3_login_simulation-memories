@@ -1159,16 +1159,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             delay = 100;
         }
         spCheckHandle.postDelayed(() -> {
+            QRScanner qrScanner;
+            RoleData cacheRoleData;
             if (loginImpl == null) {
                 genLoginImpl();
                 loginImpl.setRole(roleData);
+                cacheRoleData = roleData;
+            } else {
+                cacheRoleData = loginImpl.getRole();
             }
             Tools.saveBoolean(requireContext(), "last_login_succeed", true);
-            QRScanner qrScanner;
             if (isOfficial) {
                 qrScanner = new QRScanner(activity, true);
             } else {
-                qrScanner = new QRScanner(activity, loginImpl.getRole());
+                qrScanner = new QRScanner(activity, cacheRoleData);
             }
             if (pref.getBoolean("socket_helper", false)) {
                 socketHelper = new SocketHelper();
