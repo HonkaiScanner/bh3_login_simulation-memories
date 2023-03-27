@@ -95,7 +95,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private SocketHelper socketHelper;
     private boolean loginProgress = false;
     private boolean SDKInit = false;
-    private final List<Chip> chips = new ArrayList<>();
     private final Map<String, Chip> chipMap = new HashMap<>();
     private int currType = 999;
     private boolean currLoginTry = false;
@@ -412,7 +411,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     tempChip.setText(tempPref.getString("username", id.replace(type, "")));
                     chipMap.put(id, tempChip);
                     chipKeys.put(tempChip, id);
-                    chips.add(tempChip);
                 }
                 try {
                     ((ViewGroup) tempChip.getParent()).removeView(tempChip);
@@ -431,7 +429,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             tempChip.setText("写入新槽位");
             chipMap.put(id, tempChip);
             chipKeys.put(tempChip, id);
-            chips.add(tempChip);
         }
         try {
             ((ViewGroup) tempChip.getParent()).removeView(tempChip);
@@ -479,35 +476,39 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         }
 
-        for (Integer checkedId : checkedIds) {
-            Chip chip = chips.get(checkedId - 1);
-            String key = chipKeys.get(chip);
-            Logger.d("onSlotClick", key);
-            if (key.equals("add_chip")) {
-                String server = pref.getString("server_type", "").toLowerCase(Locale.ROOT);
-                int pos = UUID.randomUUID().hashCode();
-                if (server.startsWith("official")) {
-                    pref.edit().putInt("official_slot", pos).apply();
-                    Logger.d(TAG, "onCheckedChanged: New official_slot " + pos);
-                } else if (server.startsWith("bili")) {
-                    pref.edit().putInt("bili_slot", pos).apply();
-                    Logger.d(TAG, "onCheckedChanged: New bili_slot " + pos);
-                } else if (server.startsWith("yyb")) {
-                    pref.edit().putInt("tencent_slot", pos).apply();
-                    Logger.d(TAG, "onCheckedChanged: New tencent_slot " + pos);
+        for (int pos = 0; pos < group.getChildCount(); pos++) {
+            if (group.getChildAt(pos) instanceof Chip) {
+                Chip clickedChip = (Chip) group.getChildAt(pos);
+                if (clickedChip.isChecked()) {
+                    String key = chipKeys.get(clickedChip);
+                    Logger.d("onSlotClick", key);
+                    if (key.equals("add_chip")) {
+                        String server = pref.getString("server_type", "").toLowerCase(Locale.ROOT);
+                        int slot = UUID.randomUUID().hashCode();
+                        if (server.startsWith("official")) {
+                            pref.edit().putInt("official_slot", slot).apply();
+                            Logger.d(TAG, "onCheckedChanged: New official_slot " + slot);
+                        } else if (server.startsWith("bili")) {
+                            pref.edit().putInt("bili_slot", slot).apply();
+                            Logger.d(TAG, "onCheckedChanged: New bili_slot " + slot);
+                        } else if (server.startsWith("yyb")) {
+                            pref.edit().putInt("tencent_slot", slot).apply();
+                            Logger.d(TAG, "onCheckedChanged: New tencent_slot " + slot);
+                        }
+                    } else if (key.startsWith("official")) {
+                        int slot = parseInt(key.replace("official_user_", ""));
+                        pref.edit().putInt("official_slot", slot).apply();
+                        Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currOfficialSlot + " to " + slot);
+                    } else if (key.startsWith("bili")) {
+                        int slot = parseInt(key.replace("bili_user_", ""));
+                        pref.edit().putInt("bili_slot", slot).apply();
+                        Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currBiliSlot + " to " + slot);
+                    } else if (key.startsWith("tencent")) {
+                        int slot = parseInt(key.replace("tencent_user_", ""));
+                        pref.edit().putInt("tencent_slot", slot).apply();
+                        Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currYYBSlot + " to " + slot);
+                    }
                 }
-            } else if (key.startsWith("official")) {
-                int pos = parseInt(key.replace("official_user_", ""));
-                pref.edit().putInt("official_slot", pos).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currOfficialSlot + " to " + pos);
-            } else if (key.startsWith("bili")) {
-                int pos = parseInt(key.replace("bili_user_", ""));
-                pref.edit().putInt("bili_slot", pos).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currBiliSlot + " to " + pos);
-            } else if (key.startsWith("tencent")) {
-                int pos = parseInt(key.replace("tencent_user_", ""));
-                pref.edit().putInt("tencent_slot", pos).apply();
-                Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currYYBSlot + " to " + pos);
             }
         }
         try {

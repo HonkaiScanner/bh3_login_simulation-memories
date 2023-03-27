@@ -18,7 +18,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +31,11 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
     private final List<String> chipTypes = List.of(new String[]{"深渊", "战场", "乐土"});
     private final List<String> chipLevelA = List.of(new String[]{"苦痛", "红莲", "寂灭", "无限", "原罪", "禁忌"});
     private final List<String> chipLevelB = List.of(new String[]{"3档", "2档", "1档", "4档"});
-    private final List<String> chipLevelC = List.of(new String[]{"1.75x", "2.25x", "2.5x", "2.75x", "1x", "1.5x", "2x"});
+    private final List<String> chipLevelC = List.of(new String[]{"2.25x", "2.5x", "1x", "1.5x", "1.75x", "2x", "2.75x"});
     private final List<List<String>> chipLevels = List.of(chipLevelA, chipLevelB, chipLevelC);
     private final List<ChipGroup> chipGroups;
     private final List<Chip> headChipList;
     private final Map<String, Chip> chipMap = new HashMap<>();
-    private final List<Chip> chipList = new ArrayList<>();
     private final String TAG = "ChipsHelper";
     private MaterialAlertDialogBuilder dialog;
     private final ReentrantLock lock = new ReentrantLock();
@@ -78,38 +76,38 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
             }
         }
 
-        for (Integer checkedId : checkedIds) {
-            lock.lock();
-
-            String key;
-            try {
-                key = prefix + chipList.get(checkedId - 1).getText().toString();
-            } catch (IndexOutOfBoundsException e) {
-                Logger.d(TAG, "IOB error, please retry");
-                return;
-            }
-            Logger.d(TAG, key);
-
-            if (chipMap.containsKey(key)) {
-                Chip tempChip = chipMap.get(key);
-                if (tempChip != null) {
+        for (int pos = 0; pos < group.getChildCount(); pos++) {
+            if (group.getChildAt(pos) instanceof Chip) {
+                Chip clickedChip = (Chip) group.getChildAt(pos);
+                if (clickedChip.isChecked()) {
+                    String key;
                     try {
-                        ((ViewGroup) tempChip.getParent()).removeView(tempChip);
-                    } catch (Exception ignore) {
+                        key = prefix + clickedChip.getText().toString();
+                    } catch (IndexOutOfBoundsException e) {
+                        Logger.d(TAG, "IOB error, please retry");
+                        return;
                     }
-                    mBinding.chipGroupResult.addView(tempChip);
+                    Logger.d(TAG, key);
+
+                    if (chipMap.containsKey(key)) {
+                        Chip tempChip = chipMap.get(key);
+                        if (tempChip != null) {
+                            try {
+                                ((ViewGroup) tempChip.getParent()).removeView(tempChip);
+                            } catch (Exception ignore) {
+                            }
+                            mBinding.chipGroupResult.addView(tempChip);
+                        }
+                    } else {
+                        Chip tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_result, null, false);
+                        tempChip.setText(key);
+                        mBinding.chipGroupResult.addView(tempChip);
+                        chipMap.put(key, tempChip);
+                    }
                 }
-            } else {
-                Chip tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_result, null, false);
-                tempChip.setText(key);
-                mBinding.chipGroupResult.addView(tempChip);
-                chipList.add(tempChip);
-                chipMap.put(key, tempChip);
             }
-
-            lock.unlock();
-
         }
+
     }
 
     @Override
@@ -169,7 +167,6 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
                     Chip tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_select, null, false);
                     tempChip.setText(s);
                     tempGroup.addView(tempChip);
-                    chipList.add(tempChip);
                     chipMap.put(s, tempChip);
                 }
             }
