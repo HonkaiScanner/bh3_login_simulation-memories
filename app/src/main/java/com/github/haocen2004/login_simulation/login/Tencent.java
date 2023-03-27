@@ -14,8 +14,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Keep;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
@@ -222,6 +226,34 @@ public class Tencent implements LoginImpl {
 
             if (!Objects.equals(preferences.getString("openkey", ""), "")) {
 
+                if (preferences.contains("need_rename")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle("检测到扫码器版本升级");
+                    LinearLayout linearLayout = new LinearLayout(activity);
+                    final EditText edit = new EditText(activity);
+                    final TextView textView = new TextView(activity);
+                    textView.setText("请为当前账号设置一个备注");
+                    linearLayout.addView(textView);
+                    linearLayout.addView(edit);
+                    builder.setView(linearLayout);
+                    builder.setPositiveButton("确认", (dialog, which) -> {
+                        dialog.dismiss();
+                        username = edit.getText().toString().strip();
+                        preferences.edit().putString("username", username).remove("need_rename").apply();
+
+                        login();
+                    });
+                    builder.setNegativeButton("取消", (dialog, which) -> {
+                        dialog.dismiss();
+                        callback.onLoginFailed();
+                    });
+                    builder.setCancelable(false);
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.show();
+
+                    return;
+                }
                 username = preferences.getString("username", "本地缓存登陆");
                 open_id = preferences.getString("openid", "");
                 access_token = preferences.getString("openkey", "");

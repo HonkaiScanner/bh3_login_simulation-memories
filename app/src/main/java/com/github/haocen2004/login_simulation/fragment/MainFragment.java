@@ -390,6 +390,68 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     private void initSlotSelectGroup(String type) {
 
+        SharedPreferences toolsSp = activity.getSharedPreferences("scanner_pref", Context.MODE_PRIVATE);
+        if (toolsSp.contains("tencent_openkey")) {
+            activity.getSharedPreferences("tencent_user_1", Context.MODE_PRIVATE).edit()
+                    .putString("openkey", toolsSp.getString("tencent_openkey", ""))
+                    .putString("openid", toolsSp.getString("tencent_openid", ""))
+                    .putString("username", "旧版本缓存账号")
+                    .putBoolean("need_rename", true)
+                    .apply();
+        }
+        if (toolsSp.contains("last_bili_login_succeed") && toolsSp.getBoolean("last_bili_login_succeed", false)) {
+            Logger.d(TAG, "migration data to slot 1");
+            SharedPreferences slotPref = activity.getSharedPreferences("bili_access_token_1", Context.MODE_PRIVATE);
+            SharedPreferences mainPref = activity.getSharedPreferences("bili_access_token", Context.MODE_PRIVATE);
+            slotPref.edit().clear().apply();
+            for (String s : mainPref.getAll().keySet()) {
+                if (mainPref.getAll().get(s) instanceof String) {
+                    slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+                }
+            }
+            slotPref = activity.getSharedPreferences("bili_user_1", Context.MODE_PRIVATE);
+            mainPref = activity.getSharedPreferences("bili_user", Context.MODE_PRIVATE);
+            slotPref.edit().clear().apply();
+            for (String s : mainPref.getAll().keySet()) {
+                if (mainPref.getAll().get(s) instanceof String) {
+                    slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+                }
+            }
+            slotPref = activity.getSharedPreferences("login_1", Context.MODE_PRIVATE);
+            mainPref = activity.getSharedPreferences("login", Context.MODE_PRIVATE);
+            slotPref.edit().clear().apply();
+            for (String s : mainPref.getAll().keySet()) {
+                if (mainPref.getAll().get(s) instanceof String) {
+                    slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+                }
+            }
+            slotPref = activity.getSharedPreferences("TouristLogin_1", Context.MODE_PRIVATE);
+            mainPref = activity.getSharedPreferences("TouristLogin", Context.MODE_PRIVATE);
+            slotPref.edit().clear().apply();
+            for (String s : mainPref.getAll().keySet()) {
+                if (mainPref.getAll().get(s) instanceof String) {
+                    slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+                }
+            }
+            slotPref = activity.getSharedPreferences("userinfoCache_1", Context.MODE_PRIVATE);
+            mainPref = activity.getSharedPreferences("userinfoCache", Context.MODE_PRIVATE);
+            slotPref.edit().clear().apply();
+            for (String s : mainPref.getAll().keySet()) {
+                if (mainPref.getAll().get(s) instanceof String) {
+                    slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+                }
+            }
+            slotPref = activity.getSharedPreferences("usernamelist_1", Context.MODE_PRIVATE);
+            mainPref = activity.getSharedPreferences("usernamelist", Context.MODE_PRIVATE);
+            slotPref.edit().clear().apply();
+            for (String s : mainPref.getAll().keySet()) {
+                if (mainPref.getAll().get(s) instanceof String) {
+                    slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+                }
+            }
+        }
+        toolsSp.edit().remove("tencent_openkey").remove("tencent_openid").remove("last_bili_login_succeed").apply();
+
         File sharedPrefs = new File(activity.getFilesDir().getParent(), "shared_prefs");
         binding.chipGroupSlot.removeAllViews();
         currChipMap.clear();
@@ -413,6 +475,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     chipKeys.put(tempChip, id);
                 }
                 try {
+                    tempChip.setText(tempPref.getString("username", id.replace(type, "")));
                     ((ViewGroup) tempChip.getParent()).removeView(tempChip);
                 } catch (Exception ignore) {
                 }
