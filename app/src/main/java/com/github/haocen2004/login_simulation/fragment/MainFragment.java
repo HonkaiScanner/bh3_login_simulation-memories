@@ -388,6 +388,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
+    @SuppressLint("ApplySharedPref")
     private void initSlotSelectGroup(String type) {
 
         SharedPreferences toolsSp = activity.getSharedPreferences("scanner_pref", Context.MODE_PRIVATE);
@@ -397,10 +398,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     .putString("openid", toolsSp.getString("tencent_openid", ""))
                     .putString("username", "旧版本缓存账号")
                     .putBoolean("need_rename", true)
-                    .apply();
+                    .commit();
+            Logger.d("initSlot", "migration tencent data to slot 1");
         }
         if (toolsSp.contains("last_bili_login_succeed") && toolsSp.getBoolean("last_bili_login_succeed", false)) {
-            Logger.d(TAG, "migration data to slot 1");
+            Logger.d("initSlot", "migration bili data to slot 1");
             SharedPreferences slotPref = activity.getSharedPreferences("bili_access_token_1", Context.MODE_PRIVATE);
             SharedPreferences mainPref = activity.getSharedPreferences("bili_access_token", Context.MODE_PRIVATE);
             slotPref.edit().clear().apply();
@@ -414,7 +416,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             slotPref.edit().clear().apply();
             for (String s : mainPref.getAll().keySet()) {
                 if (mainPref.getAll().get(s) instanceof String) {
-                    slotPref.edit().putString(s, mainPref.getString(s, "")).apply();
+                    slotPref.edit().putString(s, mainPref.getString(s, "")).commit();
                 }
             }
             slotPref = activity.getSharedPreferences("login_1", Context.MODE_PRIVATE);
