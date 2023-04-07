@@ -1,4 +1,4 @@
-package com.github.haocen2004.login_simulation.data.database.sponsor;
+package com.github.haocen2004.login_simulation.data.sponsor.database;
 
 import android.content.Context;
 
@@ -20,8 +20,8 @@ public class SponsorRepo {
     private final SponsorDao sponsorDao;
 
     public SponsorRepo(Context context) {
-        SponsorDatabase sponsorDatabase = SponsorDatabase.getDatabase(context.getApplicationContext());
-        sponsorDao = sponsorDatabase.getSponsorDao();
+        SponsorDatabase sponsorDatabase = SponsorDatabase.Companion.getInstance(context.getApplicationContext());
+        sponsorDao = sponsorDatabase.sponsorDao();
         allSponsors = sponsorDao.getAllSponsors();
     }
 

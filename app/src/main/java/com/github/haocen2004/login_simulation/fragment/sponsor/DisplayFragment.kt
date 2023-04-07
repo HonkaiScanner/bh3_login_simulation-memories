@@ -1,70 +1,58 @@
-package com.github.haocen2004.login_simulation.fragment.sponsor;
+package com.github.haocen2004.login_simulation.fragment.sponsor
 
-import static com.github.haocen2004.login_simulation.data.Constant.CHECK_VER;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.haocen2004.login_simulation.adapter.LoadStateAdapter
+import com.github.haocen2004.login_simulation.adapter.SponsorAdapter
+import com.github.haocen2004.login_simulation.data.sponsor.SponsorViewModel
+import com.github.haocen2004.login_simulation.data.sponsor.SponsorViewModelFactory
+import com.github.haocen2004.login_simulation.data.sponsor.database.SponsorDao
+import com.github.haocen2004.login_simulation.data.sponsor.database.SponsorDatabase
+import com.github.haocen2004.login_simulation.databinding.FragmentSpDisplayBinding
+import com.github.haocen2004.login_simulation.utils.Logger
+import kotlinx.coroutines.launch
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+class DisplayFragment : Fragment() {
+    private lateinit var binding: FragmentSpDisplayBinding
+    private lateinit var dao: SponsorDao
+    private val viewModel: SponsorViewModel by viewModels { SponsorViewModelFactory(dao) }
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.haocen2004.login_simulation.adapter.SponsorAdapter;
-import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorData;
-import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorRepo;
-import com.github.haocen2004.login_simulation.databinding.FragmentSpDisplayBinding;
-import com.github.haocen2004.login_simulation.utils.Logger;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class DisplayFragment extends Fragment {
-    private FragmentSpDisplayBinding binding;
-
-    @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentSpDisplayBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSpDisplayBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        RecyclerView recyclerViewSp = binding.recyclerViewSp;
-        SponsorAdapter sponsorAdapter = new SponsorAdapter(getActivity());
-        initAdapter(sponsorAdapter);
-        recyclerViewSp.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerViewSp.setAdapter(sponsorAdapter);
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val recyclerViewSp = binding.recyclerViewSp
+        val sponsorAdapter = SponsorAdapter(activity)
+        recyclerViewSp.layoutManager = LinearLayoutManager(context)
+        recyclerViewSp.adapter = sponsorAdapter
 
-    private void initAdapter(SponsorAdapter adapter) {
-        List<SponsorData> sponsorDataOld = new ArrayList<>();
-        sponsorDataOld.add(new SponsorData("Loading...", "", "a", "b", "c", "d"));
-        adapter.setAllSponsors(sponsorDataOld);
-        if (CHECK_VER) {
-            new Thread(() -> {
-                SponsorRepo sponsorRepo = new SponsorRepo(requireContext());
-                if (sponsorRepo.getAllSponsors().size() > 0) {
-                    adapter.setAllSponsors(sponsorRepo.getAllSponsors());
-                    // 刷新操作
-                    try {
-                        Looper.prepare();
-                    } catch (Exception ignore) {
-                    }
-                    new Handler(Looper.getMainLooper()).post(adapter::notifyDataSetChanged);
-                } else {
-                    Logger.d("sponsor Adapter", "Sponsors get failed.");
-                }
-            }).start();
+        dao = SponsorDatabase.getInstance(requireContext()).sponsorDao()
+
+
+        recyclerViewSp.adapter = sponsorAdapter.withLoadStateFooter(
+            LoadStateAdapter()
+        )
+
+        lifecycleScope.launch {
+            viewModel.data.collect {
+                Logger.d("TAG", "loading data $it")
+                sponsorAdapter.submitData(it)
+            }
         }
+
     }
+
 }

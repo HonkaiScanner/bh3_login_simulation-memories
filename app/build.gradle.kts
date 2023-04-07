@@ -4,6 +4,7 @@ import java.util.*
 plugins {
     id("com.android.application")
     id("com.huawei.agconnect")
+    id("kotlin-kapt")
     kotlin("android")
     kotlin("plugin.serialization")
 }
@@ -157,6 +158,7 @@ dependencies {
     implementation("cn.leancloud:realtime-android:8.2.18")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("androidx.room:room-runtime:2.5.1")
+    implementation("androidx.room:room-ktx:2.5.1")
 //    implementation("com.google.android.material:material:1.7.0")
     implementation("dev.rikka.rikkax.material:material:2.7.0")
     implementation("dev.rikka.rikkax.material:material-preference:2.0.0")
@@ -169,10 +171,13 @@ dependencies {
 //    implementation("com.huawei.agconnect:agconnect-core:1.7.1.300")
     implementation("com.huawei.hms:hwid:6.8.0.300")
     implementation("com.huawei.hms:game:6.8.0.300")
+    implementation("androidx.paging:paging-runtime:3.1.1")
+
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     annotationProcessor("androidx.room:room-compiler:2.5.1")
 //    testImplementation 'junit:junit:4.13.2'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
+    kapt("androidx.room:room-compiler:2.5.1")
 }
