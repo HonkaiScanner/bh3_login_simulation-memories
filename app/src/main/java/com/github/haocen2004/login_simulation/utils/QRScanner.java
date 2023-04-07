@@ -147,6 +147,7 @@ public class QRScanner {
                                 .setAutoCancel(true);
                         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(activity);
                         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                            Logger.w(TAG, "no permission to sent notification!");
                             return;
                         }
                         notificationManager.notify(100, notification.build());
