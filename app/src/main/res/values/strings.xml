@@ -15,6 +15,7 @@
     <string name="settings_fast_login">Automatic confirmation</string>
     <string name="settings_bh_ver">Honkai Impact Version</string>
     <string name="settings_update">Check Update</string>
+    <string name="settings_pure_black_theme">Pure black dark theme</string>
 
     <string name="toolbar_icon_description">Icon PlaceHolder</string>
     <string name="nav_header_pid" translatable="false">Pixiv:89418903</string>

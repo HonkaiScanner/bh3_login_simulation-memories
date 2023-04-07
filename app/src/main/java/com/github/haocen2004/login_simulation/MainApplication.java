@@ -287,7 +287,8 @@ public class MainApplication extends Application implements LifecycleOwner {
                 Logger.d("PUSH Service", "temp disable push service." + Build.VERSION.SDK_INT + ":" + Tools.getDeviceModel());
             }
         } catch (UnsatisfiedLinkError error) {
-            Logger.d("LeanCloud", "ABI ERROR");
+            Logger.d("LeanCloud", "ABI ERROR " + error.getMessage());
+            error.printStackTrace();
 
             StringBuilder supportedABI = new StringBuilder();
             for (String abi : Build.SUPPORTED_ABIS) {

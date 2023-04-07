@@ -49,6 +49,7 @@ public class DialogHelper {
 
         });
 
+        Logger.d("dialogHelper", "loaded.");
     }
 
     public static DialogHelper getDialogHelper(Context context) {

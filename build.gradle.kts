@@ -7,10 +7,8 @@ buildscript {
     }
     dependencies {
         classpath(kotlin("gradle-plugin", version = "1.7.20"))
-        classpath("com.android.tools.build:gradle:7.4.1")
-        classpath("com.tencent.bugly:symtabfileuploader:2.2.1")
+        classpath("com.android.tools.build:gradle:7.4.2")
         classpath("com.huawei.agconnect:agcp:1.7.3.300")
-        classpath("dev.rikka.tools.materialthemebuilder:gradle-plugin:1.3.3")
 // NOTE: Do not place your application dependencies here; they belong
 // in the individual module build.gradle files
     }

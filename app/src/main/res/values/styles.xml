@@ -6,6 +6,15 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="aboutPageHeaderTextColor">#000000</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <!-- SubtitleCollapsingToolbarLayout styles -->
+    <style name="Widget.Design.SubtitleCollapsingToolbar" parent="Widget.Design.CollapsingToolbar" />
+
+    <style name="TextAppearance.Design.SubtitleCollapsingToolbar.ExpandedTitle" parent="TextAppearance.Design.CollapsingToolbar.Expanded" />
+
+    <style name="TextAppearance.Design.SubtitleCollapsingToolbar.ExpandedSubtitle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
 </resources>

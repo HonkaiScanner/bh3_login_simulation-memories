@@ -24,6 +24,10 @@
             android:title="@string/dark_theme" />
         <SwitchPreference
             android:defaultValue="false"
+            android:key="pure_black_theme"
+            android:title="@string/settings_pure_black_theme" />
+        <SwitchPreference
+            android:defaultValue="false"
             android:key="enable_icon_pos"
             android:title="@string/enable_icon_pos" />
         <rikka.preference.SimpleMenuPreference

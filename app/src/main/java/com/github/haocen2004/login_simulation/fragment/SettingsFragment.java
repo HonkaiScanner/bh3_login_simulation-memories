@@ -130,6 +130,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
             return true;
         });
+
+        findPreference("pure_black_theme").setOnPreferenceChangeListener(((preference, newValue) -> {
+            ActivityManager.getInstance().getTopActivity().recreate();
+            return true;
+        }));
+
         findPreference("server_type").setOnPreferenceChangeListener((preference, newValue) -> {
             switch (newValue.toString()) {
                 case "Official":

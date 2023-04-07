@@ -6,10 +6,6 @@ plugins {
     id("com.huawei.agconnect")
     kotlin("android")
     kotlin("plugin.serialization")
-    id("com.google.devtools.ksp")
-    id("dev.rikka.tools.autoresconfig")
-    id("dev.rikka.tools.materialthemebuilder")
-    id("dev.rikka.tools.refine")
 }
 apply<ASMPlugin>()
 
@@ -99,6 +95,11 @@ android {
         }
     }
 
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs("libs")
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -123,76 +124,6 @@ android {
 
 }
 
-materialThemeBuilder {
-    themes {
-        for ((name, color) in listOf(
-            "Red" to "F44336",
-            "Pink" to "E91E63",
-            "Purple" to "9C27B0",
-            "DeepPurple" to "673AB7",
-            "Indigo" to "3F51B5",
-            "Blue" to "2196F3",
-            "LightBlue" to "03A9F4",
-            "Cyan" to "00BCD4",
-            "Teal" to "009688",
-            "Green" to "4FAF50",
-            "LightGreen" to "8BC3A4",
-            "Lime" to "CDDC39",
-            "Yellow" to "FFEB3B",
-            "Amber" to "FFC107",
-            "Orange" to "FF9800",
-            "DeepOrange" to "FF5722",
-            "Brown" to "795548",
-            "BlueGrey" to "607D8F",
-            "Sakura" to "FF9CA8"
-        )) {
-            create("Material$name") {
-                lightThemeFormat = "ThemeOverlay.Light.%s"
-                darkThemeFormat = "ThemeOverlay.Dark.%s"
-                primaryColor = "#$color"
-            }
-        }
-    }
-    // Add Material Design 3 color tokens (such as palettePrimary100) in generated theme
-    // rikka.material >= 2.0.0 provides such attributes
-    generatePalette = true
-}
-
-
-//materialThemeBuilder {
-//    themes {
-//        for ((name, color) in listOf(
-//            "Red" to "F44336",
-//            "Pink" to "E91E63",
-//            "Purple" to "9C27B0",
-//            "DeepPurple" to "673AB7",
-//            "Indigo" to "3F51B5",
-//            "Blue" to "2196F3",
-//            "LightBlue" to "03A9F4",
-//            "Cyan" to "00BCD4",
-//            "Teal" to "009688",
-//            "Green" to "4FAF50",
-//            "LightGreen" to "8BC3A4",
-//            "Lime" to "CDDC39",
-//            "Yellow" to "FFEB3B",
-//            "Amber" to "FFC107",
-//            "Orange" to "FF9800",
-//            "DeepOrange" to "FF5722",
-//            "Brown" to "795548",
-//            "BlueGrey" to "607D8F",
-//            "Sakura" to "FF9CA8"
-//        )) {
-//            create("Material$name") {
-//                lightThemeFormat = "ThemeOverlay.Light.%s"
-//                darkThemeFormat = "ThemeOverlay.Dark.%s"
-//                primaryColor = "#$color"
-//            }
-//        }
-//    }
-//    // Add Material Design 3 color tokens (such as palettePrimary100) in generated theme
-//    // rikka.material >= 2.0.0 provides such attributes
-//    generatePalette = true
-//}
 
 configurations {
     all {
@@ -210,22 +141,22 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment:2.5.3")
     implementation("androidx.navigation:navigation-ui:2.5.3")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv:1.2.0")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv-armv7a:1.2.0")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv-armv64:1.2.0")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv-x86:1.2.0")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv-x86_64:1.2.0")
-    implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode:1.2.0")
-    implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode-scanning:1.2.0")
-    implementation("com.github.jenly1314.MLKit:mlkit-camera-core:1.2.0")
+    implementation("com.github.jenly1314.WeChatQRCode:opencv:1.2.1")
+    implementation("com.github.jenly1314.WeChatQRCode:opencv-armv7a:1.2.1")
+    implementation("com.github.jenly1314.WeChatQRCode:opencv-armv64:1.2.1")
+    implementation("com.github.jenly1314.WeChatQRCode:opencv-x86:1.2.1")
+    implementation("com.github.jenly1314.WeChatQRCode:opencv-x86_64:1.2.1")
+    implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode:1.2.1")
+    implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode-scanning:1.2.1")
+    implementation("com.github.jenly1314.MLKit:mlkit-camera-core:1.3.0")
     implementation(project(":mi_sdk"))
 //    implementation(project(":360_sdk"))
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.tencent.bugly:crashreport:4.1.9")
-    implementation("cn.leancloud:storage-android:8.2.17")
-    implementation("cn.leancloud:realtime-android:8.2.17")
+    implementation("cn.leancloud:storage-android:8.2.18")
+    implementation("cn.leancloud:realtime-android:8.2.18")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-    implementation("androidx.room:room-runtime:2.5.0")
+    implementation("androidx.room:room-runtime:2.5.1")
 //    implementation("com.google.android.material:material:1.7.0")
     implementation("dev.rikka.rikkax.material:material:2.7.0")
     implementation("dev.rikka.rikkax.material:material-preference:2.0.0")
@@ -238,8 +169,8 @@ dependencies {
 //    implementation("com.huawei.agconnect:agconnect-core:1.7.1.300")
     implementation("com.huawei.hms:hwid:6.8.0.300")
     implementation("com.huawei.hms:game:6.8.0.300")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
-    annotationProcessor("androidx.room:room-compiler:2.5.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
+    annotationProcessor("androidx.room:room-compiler:2.5.1")
 //    testImplementation 'junit:junit:4.13.2'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'

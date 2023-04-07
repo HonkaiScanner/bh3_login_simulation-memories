@@ -1,16 +1,21 @@
 package com.github.haocen2004.login_simulation.activity;
 
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.utils.Logger;
 import com.github.haocen2004.login_simulation.utils.PmsHooker;
+import com.github.haocen2004.login_simulation.utils.ThemeUtils;
 
-public class BaseActivity extends AppCompatActivity {
+import rikka.material.app.MaterialActivity;
+
+public class BaseActivity extends MaterialActivity {
 
     ActivityManager activityManager = ActivityManager.getInstance();
     private final String TAG = "activityManager";
@@ -19,6 +24,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityManager.addActivity(this);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         Logger.d(TAG, "onCreate: " + getClass().getName());
     }
 
@@ -67,4 +73,17 @@ public class BaseActivity extends AppCompatActivity {
         return PmsHooker.getPackageNameFilter(super.getPackageName());
     }
 
+    @Override
+    public void onApplyUserThemeResource(@NonNull Resources.Theme theme, boolean isDecorView) {
+        super.onApplyUserThemeResource(theme, isDecorView);
+        theme.applyStyle(ThemeUtils.getNightThemeStyleRes(this), true);
+    }
+
+
+    @Override
+    public void onApplyTranslucentSystemBars() {
+        super.onApplyTranslucentSystemBars();
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+    }
 }

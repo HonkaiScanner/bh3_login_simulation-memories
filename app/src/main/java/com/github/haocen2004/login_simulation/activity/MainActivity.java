@@ -10,6 +10,7 @@ import static com.github.haocen2004.login_simulation.data.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.DEBUG_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.data.Constant.HAS_UPDATE_THREAD;
 import static com.github.haocen2004.login_simulation.data.Constant.MDK_VERSION;
 import static com.github.haocen2004.login_simulation.data.Constant.QQ_GROUP_URL;
 import static com.github.haocen2004.login_simulation.data.Constant.QUICK_MODE;
@@ -31,7 +32,6 @@ import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.navigation.NavController;
@@ -276,16 +276,16 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         //super.onBackPressed();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
 //        if (YYB_INIT) {
 //            YSDKApi.onActivityResult(requestCode, resultCode, data);
 //        }
 //        if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
 //            .onActivityResult(requestCode,resultCode,data);
 //        }
-    }
+//    }
 
     private void showUpdateDialog(String ver, String url, String logs) {
         DialogData dialogData = new DialogData("获取到新版本: " + ver, "更新日志：\n" + logs);
@@ -326,6 +326,8 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
 
     Runnable update_rb = () -> {
+        if (HAS_UPDATE_THREAD) return;
+        HAS_UPDATE_THREAD = true;
         String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update");
         Message msg = new Message();
         Bundle data = new Bundle();
@@ -348,12 +350,10 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         activity = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//        Logger.setView(binding.getRoot());
         app_pref = getDefaultSharedPreferences(this);
         Log = Logger.getLogger(this);
         ForegroundCallbacks.get(this).addListener(this);
         DialogHelper.getDialogHelper(this);
-        Logger.d("dialogHelper", "loaded.");
 //        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(binding.mainInclude.toolbar);
         navController = Navigation.findNavController(this, R.id.hostFragment);
@@ -384,15 +384,17 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             binding.mainInclude.collapsingToolbarLayout.setTitle(toolbarTitle);
         });
         try {
-            OpenCV.initAsync(this);
-            WeChatQRCodeDetector.init(this);
+            if (!HAS_UPDATE_THREAD) {
+                OpenCV.initAsync(this);
+                WeChatQRCodeDetector.init(this);
+            }
         } catch (UnsatisfiedLinkError e) {
             Logger.e("ABI", "Wrong ABI");
             e.printStackTrace();
             showWrongABIDialog();
             return;
         }
-        if (VERSION_NAME.contains("dev") || DEBUG) {
+        if (!HAS_UPDATE_THREAD && (VERSION_NAME.contains("dev") || DEBUG)) {
             showBetaInfoDialog();
         }
 
@@ -406,13 +408,12 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         BH_VER = app_pref.getBoolean("bh_ver_overwrite", false) ? app_pref.getString("custom_bh_ver", BH_VER) : app_pref.getString("bh_ver", BH_VER);
         MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
 
-//        if (CHECK_VER) {
-        new Thread(update_rb).start();
-//        }
+        if (!HAS_UPDATE_THREAD) {
+            new Thread(update_rb).start();
 
-
-        if (!app_pref.getBoolean("bh_ver_overwrite", false)) {
-            new Thread(bh_update_rb).start();
+            if (!app_pref.getBoolean("bh_ver_overwrite", false)) {
+                new Thread(bh_update_rb).start();
+            }
         }
 
         if (Tools.getBoolean(this, "has_crash") && !app_pref.getBoolean("no_crash_page", false)) {
@@ -485,4 +486,9 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ForegroundCallbacks.get(this).removeListener(this);
+    }
 }

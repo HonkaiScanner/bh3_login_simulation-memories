@@ -11,6 +11,7 @@
 
     <string name="basic_header">基础设置</string>
     <string name="settings_fast_login">自动确认扫码结果</string>
+    <string name="settings_pure_black_theme">纯黑主题</string>
 
     <string name="types_official">官服</string>
     <string name="types_prefix">当前选择：</string>
