@@ -6,11 +6,13 @@ import static com.github.haocen2004.login_simulation.data.Constant.QUICK_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.TIPS;
 import static java.lang.Integer.parseInt;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
@@ -143,6 +146,9 @@ public class QRScanner {
                                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                                 .setAutoCancel(true);
                         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(activity);
+                        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
                         notificationManager.notify(100, notification.build());
                     }
                 } else {
