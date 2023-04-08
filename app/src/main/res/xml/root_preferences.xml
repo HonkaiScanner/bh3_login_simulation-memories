@@ -53,7 +53,7 @@
             android:summary="@string/use_token_sum"
             android:title="@string/use_token_true" />
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="mi_adv_mode"
             android:summary="@string/mi_adv_mode_sum"
             android:title="@string/mi_adv_mode" />

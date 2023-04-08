@@ -63,7 +63,7 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 67
+        versionCode = 68
         versionName = "1.8.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -82,7 +82,7 @@ android {
             if (System.getenv("CI").toBoolean()) {
                 versionNameSuffix = System.getenv("NAME_SUFFIX")
             } else {
-                versionNameSuffix = "-snapshot-23w13c.dev"
+                versionNameSuffix = "-snapshot-23w15a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -123,17 +123,27 @@ android {
     namespace = "com.github.haocen2004.login_simulation"
 
     if (!System.getenv("CI").toBoolean()) {
-        this.buildOutputs.all {
 
-            val variantOutputImpl =
-                this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+        applicationVariants.all {
+            println(versionName)
 
-            val variantName: String = variantOutputImpl.name
 
-            val outputFileName = "Scanner-${variantName}.apk"
+            buildOutputs.all {
 
-            variantOutputImpl.outputFileName = outputFileName
+                val variantOutputImpl =
+                    this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+
+                val variantName: String = variantOutputImpl.name
+
+                val outputFileName = "Scanner-${versionName}-${variantName}.apk"
+
+                variantOutputImpl.outputFileName = outputFileName
+
+                println(variantOutputImpl.outputFileName)
+            }
         }
+
+
     }
 
 }

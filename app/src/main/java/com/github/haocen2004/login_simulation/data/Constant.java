@@ -31,7 +31,7 @@ public class Constant {
     public static boolean SP_CHECKED = false;
     public static boolean BILI_INIT = false;
     public static boolean MI_INIT = false;
-    public static boolean MI_ADV_MODE = false;
+    public static boolean MI_ADV_MODE = true;
     public static boolean YYB_INIT = false;
     public static boolean QIHOO_INIT = false;
     public static boolean HUAWEI_INIT = false;
