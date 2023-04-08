@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.fragment;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static com.github.haocen2004.login_simulation.data.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.MI_ADV_MODE;

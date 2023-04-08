@@ -9,9 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -43,20 +42,18 @@ public class Encrypt {
             '8', '9', '+', '/'};
 
     public static String paySign(Map<String, Object> map, String key) {
-        ArrayList<String> arrayList = new ArrayList(map.keySet());
-        Collections.sort(arrayList);
+        TreeMap<String, Object> treeMap = new TreeMap<>(map);
         StringBuilder sb = new StringBuilder();
-        for (String str2 : arrayList) {
+        for (String str2 : treeMap.keySet()) {
             sb.append(map.get(str2));
         }
         return sha256HMAC(sb.toString(), key);
     }
 
     public static String bh3Sign(Map<String, Object> paramMap) {
-        ArrayList<Comparable> arrayList = new ArrayList(paramMap.keySet());
-        Collections.sort(arrayList);
+        TreeMap<String, Object> treeMap = new TreeMap<>(paramMap);
         StringBuilder stringBuilder = new StringBuilder();
-        for (Comparable str : arrayList) {
+        for (String str : treeMap.keySet()) {
             stringBuilder.append(str);
             stringBuilder.append("=");
             stringBuilder.append(paramMap.get(str));
@@ -65,10 +62,10 @@ public class Encrypt {
         return sha256HMAC(stringBuilder.substring(0, stringBuilder.length() - 1), BH_APP_KEY);
     }
 
-    public static String byteArrayToHexString(byte[] paramArrayOfbyte) {
+    public static String byteArrayToHexString(byte[] paramArrayOfByte) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (byte b = 0; paramArrayOfbyte != null && b < paramArrayOfbyte.length; b++) {
-            String str = Integer.toHexString(0xFF & paramArrayOfbyte[b]);
+        for (byte b = 0; paramArrayOfByte != null && b < paramArrayOfByte.length; b++) {
+            String str = Integer.toHexString(0xFF & paramArrayOfByte[b]);
             if (str.length() == 1)
                 stringBuilder.append('0');
             stringBuilder.append(str);
@@ -77,12 +74,11 @@ public class Encrypt {
     }
 
     public static String sha256HMAC(String paramString1, String paramString2) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("sha256HMAC:");
-        stringBuilder.append(paramString1);
-        stringBuilder.append(" secret ");
-        stringBuilder.append(paramString2);
-        Logger.d(TAG, stringBuilder.toString());
+        String stringBuilder = "sha256HMAC:" +
+                paramString1 +
+                " secret " +
+                paramString2;
+        Logger.d(TAG, stringBuilder);
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(paramString2.getBytes(), "HmacSHA256"));

@@ -1,6 +1,5 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.data.Constant.AFD_URL;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_ACCOUNT;
@@ -18,6 +17,7 @@ import android.view.View;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityLoginBinding;
@@ -301,7 +301,8 @@ public class LoginActivity extends BaseActivity {
         try {
             this.user = user;
             LCUser.changeCurrentUser(user, true);
-            getDefaultSharedPreferences(this).edit()
+            PreferenceManager.getDefaultSharedPreferences(this).edit()
+//            getDefaultSharedPreferences(this).edit()
                     .putBoolean("has_account", true)
                     .putString("account_token", user.getSessionToken())
                     .putString("custom_username", user.getString("custom_username"))

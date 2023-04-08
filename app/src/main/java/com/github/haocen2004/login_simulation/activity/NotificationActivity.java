@@ -24,7 +24,7 @@ public class NotificationActivity extends BaseActivity {
         Intent dataIntent = getIntent();
         try {
             for (String s : dataIntent.getExtras().keySet()) {
-                Logger.d("PushService", s + ":" + dataIntent.getExtras().get(s));
+                Logger.d("PushService", s + ":" + dataIntent.getExtras().getString(s));
             }
         } catch (Exception e) {
             e.printStackTrace();

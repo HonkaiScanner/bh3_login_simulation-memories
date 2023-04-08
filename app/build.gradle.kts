@@ -10,6 +10,12 @@ plugins {
 }
 apply<ASMPlugin>()
 
+//tasks {
+//    withType<JavaCompile> {
+//        options.compilerArgs.add("-Xlint:deprecation")
+//    }
+//}
+
 android {
 
     splits {
@@ -21,6 +27,9 @@ android {
         }
     }
 
+    lint {
+        disable.add("RestrictedApi")
+    }
 
     signingConfigs {
         if (!System.getenv("CI").toBoolean()) {
@@ -105,6 +114,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlin {
+        jvmToolchain(11)
     }
 
     namespace = "com.github.haocen2004.login_simulation"
