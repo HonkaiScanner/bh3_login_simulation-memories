@@ -31,7 +31,6 @@ import com.github.haocen2004.login_simulation.utils.Tools;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
@@ -99,8 +98,6 @@ public class Tencent implements LoginImpl {
 
     @Override
     public boolean logout() {
-        preferences.edit().clear().apply();
-        new File(activity.getFilesDir().getParent(), "shared_prefs/tencent_user_" + PreferenceManager.getDefaultSharedPreferences(activity).getInt("tencent_slot", 1) + ".xml").delete();
         isLogin = false;
         return true;
         //

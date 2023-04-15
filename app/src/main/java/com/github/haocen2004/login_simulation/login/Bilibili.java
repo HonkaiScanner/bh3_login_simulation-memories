@@ -40,7 +40,6 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -315,17 +314,6 @@ public class Bilibili implements LoginImpl {
                 public void onSuccess(Bundle arg0) {
                     // 此处为操作成功时执行，返回值通过Bundle传回
                     Logger.d(TAG, "onSuccess");
-                    try {
-                        preferences.edit().clear().apply();
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/bili_user_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/usernamelist_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/TouristLogin_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/login_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/userinfoCache_" + app_pref.getInt("bili_slot", 1) + ".xml").delete();
-                        Log.makeToast(R.string.cache_delete);
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
                     makeToast(activity.getString(R.string.logout));
 
                 }

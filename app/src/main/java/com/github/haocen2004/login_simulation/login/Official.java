@@ -34,7 +34,6 @@ import com.github.haocen2004.login_simulation.utils.Network;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -406,9 +405,6 @@ public class Official implements LoginImpl {
 
     @Override
     public boolean logout() {
-        preferences.edit().clear().apply();
-        new File(activity.getFilesDir().getParent(), "shared_prefs/official_user_" + preferences.getInt("official_slot", 1) + ".xml").delete();
-        Log.makeToast(R.string.cache_delete);
         isLogin = false;
         return true;
     }

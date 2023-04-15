@@ -473,6 +473,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 } else {
                     tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_select, null, false);
                     tempChip.setText(tempPref.getString("username", id.replace(type, "")));
+                    tempChip.setOnLongClickListener(this);
                     chipMap.put(id, tempChip);
                     chipKeys.put(tempChip, id);
                 }
@@ -492,6 +493,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         } else {
             tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_select, null, false);
             tempChip.setText("写入新槽位");
+            tempChip.setOnLongClickListener(this);
             chipMap.put(id, tempChip);
             chipKeys.put(tempChip, id);
         }
@@ -530,6 +532,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
         binding.chipGroupSlot.setOnCheckedStateChangeListener(this::onCheckedStateChange);
     }
+
 
     private void onCheckedStateChange(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
 
@@ -1008,33 +1011,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     public boolean onLongClick(View view) {
         if (binding.cardViewMain.cardView2.equals(view)) {
             try {
-                if (loginImpl instanceof Official) {
-                    if (loginImpl.isLogin()) {
-                        if (loginImpl.logout()) {
-                            onLoginFailed();
-                        }
-                    } else {
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/official_user_" + pref.getInt("official_slot", 1) + ".xml").delete();
-                        Log.makeToast(R.string.cache_delete);
-                        onLoginFailed();
-                    }
-                } else if (loginImpl instanceof Bilibili) {
-                    if (loginImpl.isLogin()) {
-                        if (loginImpl.logout()) {
-                            onLoginFailed();
-                            return true;
-                        }
-                    } else {
-                        int biliSlot = pref.getInt("bili_slot", 1);
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/bili_user_" + biliSlot + ".xml").delete();
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/usernamelist_" + biliSlot + ".xml").delete();
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/TouristLogin_" + biliSlot + ".xml").delete();
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/login_" + biliSlot + ".xml").delete();
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/userinfoCache_" + biliSlot + ".xml").delete();
-                        Log.makeToast(R.string.cache_delete);
-                        onLoginFailed();
-                    }
-                } else if (loginImpl instanceof Huawei) {
+                if (loginImpl instanceof Huawei) {
                     if (loginImpl.isLogin()) {
                         if (loginImpl.logout()) {
                             onLoginFailed();
@@ -1046,16 +1023,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     hwSwitchAccountIntent.setAction("com.huawei.hwid.ACTION_INNER_CENTER_ACTIVITY");
 //                    hwSwitchAccountIntent.setClassName("com.huawei.hwid","com.huawei.hms.runtimekit.stubexplicit.HwIDCenterActivity");
                     startActivity(hwSwitchAccountIntent);
-                } else if (loginImpl instanceof Tencent) {
-                    if (loginImpl.isLogin()) {
-                        if (loginImpl.logout()) {
-                            onLoginFailed();
-                        }
-                    } else {
-                        int tencentSlot = pref.getInt("tencent_slot", 1);
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/tencent_user_" + tencentSlot + ".xml").delete();
-                        onLoginFailed();
-                    }
                 } else if (loginImpl.isLogin()) {
                     if (loginImpl.logout()) {
                         onLoginFailed();
@@ -1120,7 +1087,26 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
             }
         } else {
-            makeToast("你点了什么玩意？");
+            if (chipMap.containsValue(view)) {
+                String key = chipKeys.get(view);
+                Logger.d("ChipsLongClick", key);
+                if (key.equals("add_chip")) return true;
+                SharedPreferences preferences = activity.getSharedPreferences(key, Context.MODE_PRIVATE);
+                DialogData dialogData = new DialogData("删除账号数据", "你是否要删除 " + preferences.getString("username", key) + " 的缓存数据？");
+                dialogData.setPositiveButtonData(new ButtonData("确认") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        new File(activity.getFilesDir().getParent(), "shared_prefs/" + key + ".xml").delete();
+                        refreshView();
+                    }
+                });
+                dialogData.setNegativeButtonData("取消");
+                DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
+
+            } else {
+                makeToast("你点了什么玩意？");
+            }
         }
 
         return true;
