@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class Official implements LoginImpl {
 
-    private static final String TAG = "Official Login.";
+    private static final String TAG = "Official Login";
     private final AppCompatActivity activity;
     private final SharedPreferences preferences;
     private final Logger Log;

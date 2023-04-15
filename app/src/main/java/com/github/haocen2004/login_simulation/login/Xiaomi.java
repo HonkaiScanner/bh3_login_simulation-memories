@@ -30,7 +30,7 @@ public class Xiaomi extends Application implements LoginImpl {
 
 
     private final AppCompatActivity activity;
-    private final String TAG = "MiLogin";
+    private final String TAG = "Mi Login";
     private boolean isLogin;
     private String uid;
     private String username;
