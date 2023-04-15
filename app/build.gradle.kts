@@ -127,7 +127,6 @@ android {
         applicationVariants.all {
             println(versionName)
 
-
             buildOutputs.all {
 
                 val variantOutputImpl =
@@ -172,7 +171,7 @@ dependencies {
     implementation("com.github.jenly1314.WeChatQRCode:opencv-x86_64:1.2.1")
     implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode:1.2.1")
     implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode-scanning:1.2.1")
-    implementation("com.github.jenly1314.MLKit:mlkit-camera-core:1.3.0")
+    implementation("com.github.jenly1314.MLKit:mlkit-camera-core:1.2.0")
     implementation(project(":mi_sdk"))
 //    implementation(project(":360_sdk"))
     implementation("androidx.multidex:multidex:2.0.1")
