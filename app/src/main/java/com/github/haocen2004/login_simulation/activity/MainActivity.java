@@ -76,6 +76,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
     private Logger Log;
     private long backTime = 0;
     private boolean catchBackAction = false;
+    private boolean closeOnBackground = false;
     private Activity activity;
 
     @SuppressLint("HandlerLeak")
@@ -117,7 +118,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                                     openUrl(json.getString("beta_update_url"), getApplicationContext());
                                 } catch (Exception ignore) {
                                 }
-                                activityManager.clearActivity();
+                                closeOnBackground = true;
                             }
                         });
                         dialogData.setCancelable(false);
@@ -483,6 +484,10 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         if (!iconPos.equals("0") && app_pref.getBoolean("enable_icon_pos", false)) {
             pm.setComponentEnabledSetting(new ComponentName(this, "com.github.haocen2004.login_simulation.activity.icon.main" + iconPos),
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        }
+
+        if (closeOnBackground) {
+            activityManager.clearActivity();
         }
     }
 
