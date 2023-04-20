@@ -65,4 +65,14 @@
         <item>0</item>
         <item>1</item>
     </string-array>
+    <string-array name="official_login_type">
+        <item>Password</item>
+        <item>SMS verification</item>
+        <item>QRCode(From other Devices)</item>
+    </string-array>
+    <string-array name="official_login_type_values">
+        <item>password</item>
+        <item>sms</item>
+        <item>qrcode</item>
+    </string-array>
 </resources>

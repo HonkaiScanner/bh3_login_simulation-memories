@@ -36,7 +36,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
@@ -69,6 +68,7 @@ import com.github.haocen2004.login_simulation.utils.Tools;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
 import java.io.File;
@@ -709,7 +709,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 }
                 itemSelected++;
             }
-            new AlertDialog.Builder(context)
+            new MaterialAlertDialogBuilder(context)
                     .setTitle(activity.getString(R.string.sel_server))
                     .setSingleChoiceItems(singleChoiceItems, itemSelected, (dialogInterface, i) -> {
 

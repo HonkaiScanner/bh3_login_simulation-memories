@@ -33,4 +33,9 @@
         <item>默认图标</item>
         <item>图标A</item>
     </string-array>
+    <string-array name="official_login_type">
+        <item>密码</item>
+        <item>短信验证码</item>
+        <item>二维码</item>
+    </string-array>
 </resources>
