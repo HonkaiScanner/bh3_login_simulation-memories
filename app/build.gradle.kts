@@ -1,5 +1,5 @@
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -63,7 +63,7 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 70
+        versionCode = 71
         versionName = "1.8.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -82,7 +82,7 @@ android {
             if (System.getenv("CI").toBoolean()) {
                 versionNameSuffix = System.getenv("NAME_SUFFIX")
             } else {
-                versionNameSuffix = "-snapshot-23w16a.dev"
+                versionNameSuffix = "-snapshot-23w17a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
