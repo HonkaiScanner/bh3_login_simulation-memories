@@ -35,6 +35,9 @@ import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.activity.MainActivity;
 import com.github.haocen2004.login_simulation.activity.NotificationActivity;
 import com.github.haocen2004.login_simulation.data.RoleData;
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONException;
@@ -48,6 +51,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.UUID;
 
 
@@ -151,6 +155,30 @@ public class QRScanner {
                             return;
                         }
                         notificationManager.notify(100, notification.build());
+                        int succCount = Tools.getInt(activity, "succ_count");
+                        if (succCount > 10 && !Tools.getBoolean(activity, "showFollowDialog", false) && new Random().nextBoolean()) {
+
+                            DialogData dialogData = new DialogData("感谢使用", "您已经使用扫码器成功登录了 " + succCount + " 次\n\n感谢您对扫码器的认可与支持\n\n能否关注一下作者的B站账号呢\n(◍•ᴗ•◍)❤\n\nHao_cen\n269140934");
+                            dialogData.setPositiveButtonData(new ButtonData("前往关注") {
+                                @Override
+                                public void callback(DialogHelper dialogHelper) {
+                                    super.callback(dialogHelper);
+                                    Tools.saveBoolean(activity, "showFollowDialog", true);
+                                    Tools.openUrl("https://space.bilibili.com/269140934", activity);
+                                }
+                            });
+                            dialogData.setNegativeButtonData(new ButtonData("不再提醒") {
+                                @Override
+                                public void callback(DialogHelper dialogHelper) {
+                                    super.callback(dialogHelper);
+                                    Tools.saveBoolean(activity, "showFollowDialog", true);
+                                    Log.makeToast("很抱歉打扰到您\n该弹窗不再显示");
+                                }
+                            });
+                            dialogData.setNeutralButtonData("下次再说");
+                            DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
+                        }
+
                     }
                 } else {
 
