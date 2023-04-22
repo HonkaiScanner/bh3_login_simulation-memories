@@ -24,6 +24,8 @@ public class Network {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
             if (map != null) {
                 ArrayList<String> arrayList = new ArrayList<>(map.keySet());
                 for (String key : arrayList) {
@@ -76,6 +78,8 @@ public class Network {
             conn.setRequestMethod("GET");
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
 //            conn.setRequestProperty("user-agent", "okhttp/3.10.0");
             if (map != null) {
                 ArrayList<String> arrayList = new ArrayList<>(map.keySet());
