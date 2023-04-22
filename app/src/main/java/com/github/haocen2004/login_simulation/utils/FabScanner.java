@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -31,6 +32,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -195,6 +197,22 @@ public class FabScanner extends Service {
         }
     }
 
+    private void setActiveDisplay(boolean isActive) {
+
+        for (XToast<?> xToast2 : toastInst) {
+            ImageView imageView = ((ImageView) xToast2.getContentView().findViewById(R.id.fab_scanner_image));
+//            Logger.d(TAG,imageView.getColorFilter().toString());
+            if (isActive) {
+
+//                imageView.setImageResource(R.drawable.baseline_photo_camera_24);
+                imageView.setColorFilter(Color.RED);
+            } else {
+                imageView.clearColorFilter();
+//                imageView.setImageResource(R.drawable.ic_menu_camera);
+            }
+        }
+    }
+
     private XToast<?> createNewToast() {
 
         @SuppressLint("WrongConstant") XToast<?> xToast = new XToast<>(activity.getApplication())
@@ -209,10 +227,11 @@ public class FabScanner extends Service {
                             xToast1.recycle();
                             toastInst.remove(xToast1);
                         }
-                        stopForeground(true);
+                        stopProjection();
                         needStop = false;
                         return;
                     }
+                    setActiveDisplay(true);
 
                     isScreenCaptureStarted = true;
                     WindowManager window = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
@@ -244,6 +263,7 @@ public class FabScanner extends Service {
                                 xToast1.recycle();
                                 toastInst.remove(xToast1);
                             }
+                            setActiveDisplay(false);
                             needStop = true;
                             stopForeground(true);
                         } catch (Exception ignore) {
@@ -287,9 +307,6 @@ public class FabScanner extends Service {
                                             if (file.length() < 100000) {
                                                 file.delete();
                                             }
-                                            //保存图片后发送广播通知更新数据库
-//                                            Uri uri = Uri.fromFile(file);
-//                                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -316,7 +333,6 @@ public class FabScanner extends Service {
                                         qrScanner.start();
                                         if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("keep_capture", false)) {
                                             stopProjection();
-                                            stopForeground(true);
                                             needStop = true;
                                             for (XToast<?> xToast1 : toastInst) {
                                                 xToast1.cancel();
@@ -326,10 +342,12 @@ public class FabScanner extends Service {
                                         } else {
                                             Logger.d(TAG, "keep capture is true,continue.");
                                             isScreenCaptureStarted = false;
+                                            setActiveDisplay(false);
                                         }
                                     } else {
 //                                            Log.makeToast("未找到二维码");  toast 由 qrScanner 发出
                                         isScreenCaptureStarted = false;
+                                        setActiveDisplay(false);
                                     }
                                     try {
                                         mVirtualDisplay.release();
@@ -341,6 +359,7 @@ public class FabScanner extends Service {
                                     e.printStackTrace();
                                     Log.makeToast("fab未找到二维码");
                                     isScreenCaptureStarted = false;
+                                    setActiveDisplay(false);
                                 } finally {
 
                                     if (null != bitmap) {
@@ -365,6 +384,7 @@ public class FabScanner extends Service {
         } catch (Exception ignore) {
         }
         isScreenCaptureStarted = false;
+        setActiveDisplay(false);
         mHandler.post(() -> {
             if (sMediaProjection != null) {
                 Logger.d(TAG, "stopProjection");
@@ -374,6 +394,7 @@ public class FabScanner extends Service {
             if (toastInst.size() > 0) {
                 for (XToast<?> xToast : toastInst) {
                     while (xToast.isShowing()) {
+                        xToast.cancel();
                         Logger.d(TAG, xToast.toString());
                         xToast.recycle();
                         Logger.d(TAG, "cancelled");

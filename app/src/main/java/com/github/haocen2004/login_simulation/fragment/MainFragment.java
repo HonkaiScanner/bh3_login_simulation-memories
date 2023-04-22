@@ -1,5 +1,6 @@
 package com.github.haocen2004.login_simulation.fragment;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -888,9 +889,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     //Constant.REQ_PERM_WINDOW
     private final ActivityResultLauncher<Intent> reqPermWindowLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
-        if (callback.getResultCode() == RESULT_OK) {
-            fabScanner.showAlertScanner();
+
+        switch (callback.getResultCode()) {
+            case RESULT_OK:
+                fabScanner.showAlertScanner();
+                break;
+            case RESULT_CANCELED:
+                if (Settings.canDrawOverlays(activity)) {
+                    fabScanner.showAlertScanner();
+                }
+                break;
+            default:
+                Logger.d("fabScanner", "req perm callback: " + callback);
         }
+
     });
     //Constant.REQ_PERM_RECORD
     private final ActivityResultLauncher<Intent> reqPermRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> fabScanner.getResultApiCallback().onActivityResult(callback));
