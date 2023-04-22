@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -27,6 +28,11 @@ import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.QRCodeEncoder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,6 +60,18 @@ public static void changeToWDJ(Activity activity) {
             .putInt("cn.uc.gamesdk.appcachepolicy", 0)
             .apply();
 }
+
+    public static Bitmap generateQRCode(String text, Integer size) {
+        Mat mat = new Mat();
+        QRCodeEncoder.create().encode(text, mat);
+        while (mat.cols() < size) {
+            Imgproc.resize(mat, mat, new Size(0, 0), 2, 2, Imgproc.INTER_NEAREST);
+        }
+        Bitmap bitmap = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mat, bitmap);
+        Logger.d(TAG, "generating " + mat.width() + "x" + mat.height() + " qrcode");
+        return bitmap;
+    }
 
     public static boolean isMIUI(Context context) {
         String KEY_MIUI_VERSION_CODE = "ro.miui.ui.version.code";

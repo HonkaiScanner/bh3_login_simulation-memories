@@ -402,65 +402,10 @@ public class Official implements LoginImpl {
                                 customizeDialog.show();
                                 break;
                             case "sms":
-                                smsMode = true;
-                                String phonePattern = "^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$";
-                                MaterialAlertDialogBuilder smsDialog =
-                                        new MaterialAlertDialogBuilder(activity);
-                                final View smsDialogView = LayoutInflater.from(activity)
-                                        .inflate(R.layout.offical_sms_login_layout, null);
-                                smsDialog.setTitle(R.string.types_official);
-                                smsDialog.setView(smsDialogView);
-                                smsDialog.setPositiveButton(R.string.btn_login, null);
-                                smsDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
-                                    Log.makeToast(R.string.login_cancel);
-                                    loginCallback.onLoginFailed();
-                                });
-                                smsDialog.setCancelable(false);
-                                AlertDialog alertDialog = smsDialog.create();
-                                alertDialog.setOnShowListener(dialog -> {
-
-
-                                    EditText edit_text = smsDialogView.findViewById(R.id.phoneNumber);
-                                    getSmsButton = smsDialogView.findViewById(R.id.btn_sms);
-                                    getSmsButton.setOnClickListener(v -> {
-
-                                        smsCooling = 60;
-                                        username = edit_text.getText().toString();
-                                        Logger.d(TAG, "try get sms code for " + username);
-                                        if (Pattern.matches(phonePattern, username)) {
-
-                                            v.setEnabled(false);
-
-                                            getSmsCode(username);
-
-                                            smsTimeoutHandle.sendEmptyMessageDelayed(0, 1000);
-
-                                        } else {
-                                            Log.makeToast("手机号格式不正确！");
-                                        }
-                                    });
-                                    Button button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-                                    button.setOnClickListener(v -> {
-                                        EditText password_text = smsDialogView.findViewById(R.id.sms);
-                                        username = edit_text.getText().toString();
-                                        captcha = password_text.getText().toString().strip();
-
-                                        if (captcha.length() != 6) {
-                                            Log.makeToast("验证码格式不正确！");
-                                        } else {
-                                            new Thread(smsLoginRunnable).start();
-                                            alertDialog.dismiss();
-
-                                        }
-                                    });
-                                });
-                                alertDialog.setOnDismissListener(dialog -> smsCooling = 0);
-                                alertDialog.show();
-
+                                smsLogin();
                                 break;
                             case "qrcode":
-                                Log.makeToast("TODD");
-                                loginCallback.onLoginFailed();
+                                qrLogin();
                                 break;
                             default:
                                 Log.makeToast(R.string.login_cancel);
@@ -487,6 +432,68 @@ public class Official implements LoginImpl {
                 loginCallback.onLoginFailed();
             }
         }
+    }
+
+    private void qrLogin() {
+
+    }
+
+    private void smsLogin() {
+
+        smsMode = true;
+        String phonePattern = "^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$";
+        MaterialAlertDialogBuilder smsDialog =
+                new MaterialAlertDialogBuilder(activity);
+        final View smsDialogView = LayoutInflater.from(activity)
+                .inflate(R.layout.offical_sms_login_layout, null);
+        smsDialog.setTitle(R.string.types_official);
+        smsDialog.setView(smsDialogView);
+        smsDialog.setPositiveButton(R.string.btn_login, null);
+        smsDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
+            Log.makeToast(R.string.login_cancel);
+            loginCallback.onLoginFailed();
+        });
+        smsDialog.setCancelable(false);
+        AlertDialog alertDialog = smsDialog.create();
+        alertDialog.setOnShowListener(dialog -> {
+
+
+            EditText edit_text = smsDialogView.findViewById(R.id.phoneNumber);
+            getSmsButton = smsDialogView.findViewById(R.id.btn_sms);
+            getSmsButton.setOnClickListener(v -> {
+
+                smsCooling = 60;
+                username = edit_text.getText().toString();
+                Logger.d(TAG, "try get sms code for " + username);
+                if (Pattern.matches(phonePattern, username)) {
+
+                    v.setEnabled(false);
+
+                    getSmsCode(username);
+
+                    smsTimeoutHandle.sendEmptyMessageDelayed(0, 1000);
+
+                } else {
+                    Log.makeToast("手机号格式不正确！");
+                }
+            });
+            Button button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            button.setOnClickListener(v -> {
+                EditText password_text = smsDialogView.findViewById(R.id.sms);
+                username = edit_text.getText().toString();
+                captcha = password_text.getText().toString().strip();
+
+                if (captcha.length() != 6) {
+                    Log.makeToast("验证码格式不正确！");
+                } else {
+                    new Thread(smsLoginRunnable).start();
+                    alertDialog.dismiss();
+
+                }
+            });
+        });
+        alertDialog.setOnDismissListener(dialog -> smsCooling = 0);
+        alertDialog.show();
     }
 
     private RoleData roleData;
