@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+option java_package = "com.github.haocen2004.login_simulation.data.proto";
+
+message ServerDispatchData {
+  string onlineReplayUploadUrl = 188;
+  bool iINOPFNCDEN = 334;
+  string _AsbReloginDesc = 7;
+  bool eventTrackingOpen = 549;
+  string privacyInGameUrl = 789;
+  bool enableUploadBattleLog = 1340;
+  string custom_service_url = 1521;
+  string name = 9;
+  string cECLAOALPJD = 1995;
+  int64 stopEndTime = 8;
+  uint32 m_value = 15;
+  string iFixPatchRevision = 1423;
+  uint32 port = 11;
+  string luaPatchVersion = 270;
+  string community_activity_url = 1751;
+  string ec2b_key = 472;
+  bool iOSExam = 1115;
+  string loginWhiteMsg = 471;
+  bool fOIJNCKDHNK = 415;
+  string _LuaBundleVersionUpdateUrl = 4;
+  string official_community_url = 385;
+  bool mTPSwitch = 684;
+  string _DesignDataBundleVersionUpdateUrl = 6;
+  string host = 13;
+  string onlineReplayDownloadUrl = 1771;
+  string redeem_code_url = 241;
+  string temporary_maintenance_url = 1084;
+  uint32 _DesignDataReloginType = 3;
+  string stopDesc = 14;
+  bool useTcp = 2044;
+  int64 stopBeginTime = 2;
+  string _predownloadUpdateUrl = 1276;
+  bool forbidRecharge = 1659;
+  bool enableAssetBundleVersionUpdate = 12;
+  string serverDescription = 242;
+  bool enableSaveReplayFile = 306;
+  string thirdPrivacyInGameUrl = 659;
+  string teenagerPrivacyInGameUrl = 87;
+  uint32 _AsbReloginType = 10;
+  string _DesignDataReloginDesc = 926;
+  string personalInformationInGameUrl = 971;
+  string _AssetBundleVersionUpdateUrl = 1;
+  string operation_feedback_url = 704;
+  string _IFixPatchVersionUpdateUrl = 1471;
+  bool enableDesignDataBundleVersionUpdate = 5;
+}
+
+// .\tools\protoc.exe --java_out=./app/src/main/java .\app\src\main\proto\ServerDispatchData.proto
