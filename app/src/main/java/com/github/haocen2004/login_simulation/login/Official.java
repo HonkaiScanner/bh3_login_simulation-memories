@@ -92,7 +92,7 @@ public class Official implements LoginImpl {
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/verify", login_json.toString(), map);
             }
 
-            Message msg = new Message();
+            Message msg = Message.obtain();
             Bundle data = new Bundle();
             data.putString("value", feedback);
             msg.setData(data);
@@ -260,7 +260,7 @@ public class Official implements LoginImpl {
             String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/loginMobile", smsLoginParam, map);
 
 
-            Message msg = new Message();
+            Message msg = Message.obtain();
             Bundle data = new Bundle();
             data.putString("value", feedback);
             msg.setData(data);
@@ -294,7 +294,7 @@ public class Official implements LoginImpl {
                     e.printStackTrace();
                 }
             }
-            Message msg = new Message();
+            Message msg = Message.obtain();
             Bundle data = new Bundle();
             data.putString("value", feedback);
             msg.setData(data);
@@ -310,7 +310,7 @@ public class Official implements LoginImpl {
             JSONObject data_json = new JSONObject();
             try {
                 data_json.put("uid", uid).put("token", token).put("guest", false);
-                Message msg = new Message();
+                Message msg = Message.obtain();
                 Bundle data = new Bundle();
                 data.putString("value", verifyAccount(activity, "1", data_json.toString()));
                 msg.setData(data);
@@ -440,21 +440,7 @@ public class Official implements LoginImpl {
     }
 
     private AlertDialog qrCodeDialog;
-    Handler getQRCodeHandle = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String url = data.getString("value");
-            Bitmap qrCode = Tools.generateQRCode(url, 512);
-            MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(activity);
-            ImageView imageView = new ImageView(activity);
-            imageView.setImageBitmap(qrCode);
-            dialogBuilder.setView(imageView);
-            qrCodeDialog = dialogBuilder.create();
-            qrCodeDialog.show();
-        }
-    };
+    private boolean stopQrcode = false;
     private AlertDialog qrCodePendingDialog;
     private boolean showPendingDialog = true;
     Handler showQRCodePending = new Handler(Looper.getMainLooper()) {
@@ -490,6 +476,29 @@ public class Official implements LoginImpl {
             }
         }
     };
+    Handler getQRCodeHandle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String url = data.getString("value");
+            Bitmap qrCode = Tools.generateQRCode(url, 512);
+            MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(activity);
+            ImageView imageView = new ImageView(activity);
+            imageView.setImageBitmap(qrCode);
+            dialogBuilder.setView(imageView);
+            dialogBuilder.setCancelable(false);
+            dialogBuilder.setTitle("二维码登录（仅官服）");
+            dialogBuilder.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
+                dialog.dismiss();
+                loginCallback.onLoginFailed();
+                stopQrcode = true;
+                Log.makeToast("用户取消二维码登录");
+            });
+            qrCodeDialog = dialogBuilder.create();
+            qrCodeDialog.show();
+        }
+    };
 
     private void qrLogin() {
         new Thread() {
@@ -506,7 +515,7 @@ public class Official implements LoginImpl {
 
                         if (url.contains("qr_code_in_game.html")) {
 
-                            Message msg = new Message();
+                            Message msg = Message.obtain();
                             Bundle data = new Bundle();
                             data.putString("value", url);
                             msg.setData(data);
@@ -523,12 +532,27 @@ public class Official implements LoginImpl {
                             }
 
                             while (true) {
+                                if (stopQrcode) {
+                                    cleanQRCodeDialogs();
+                                    loginCallback.onLoginFailed();
+                                    break;
+                                }
                                 try {
                                     Thread.sleep(2000);
                                 } catch (Exception ignore) {
                                 }
                                 String qrCodeScanResult = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/query", "{\"app_id\":\"1\",\"ticket\":\"" + ticket + "\",\"device\":\"" + getDeviceID(null) + "\"}");
-                                if (qrCodeScanResult.contains("\"stat\":\"Init\"")) {
+                                if (qrCodeScanResult.contains("ExpiredCode")) {
+                                    stopQrcode = true;
+                                    Logger.d(TAG, qrCodeScanResult);
+                                    Message errMsg = Message.obtain();
+                                    Bundle errData = new Bundle();
+                                    errData.putString("value", "二维码已过期");
+                                    errMsg.setData(errData);
+                                    showQRCodeFailed.sendMessage(errMsg);
+                                    loginCallback.onLoginFailed();
+                                    break;
+                                } else if (qrCodeScanResult.contains("\"stat\":\"Init\"")) {
                                     Logger.d(TAG, "qrcode: waiting for scan...");
                                 } else if (qrCodeScanResult.contains("\"stat\":\"Scanned\"")) {
                                     showQRCodePending.sendEmptyMessage(0);
@@ -542,11 +566,11 @@ public class Official implements LoginImpl {
 
                                         if (raw.has("channel_id")) {
                                             if (!raw.getString("channel_id").equals("1")) {
-                                                Message errMsg = new Message();
+                                                Message errMsg = Message.obtain();
                                                 Bundle errData = new Bundle();
                                                 errData.putString("value", "请扫码登陆官服账号！");
                                                 errMsg.setData(errData);
-                                                showQRCodeFailed.sendMessage(msg);
+                                                showQRCodeFailed.sendMessage(errMsg);
                                                 loginCallback.onLoginFailed();
                                                 break;
                                             }
@@ -574,11 +598,12 @@ public class Official implements LoginImpl {
                                     break;
                                 } else {
                                     Logger.d(TAG, qrCodeScanResult);
-                                    Message errMsg = new Message();
+                                    Message errMsg = Message.obtain();
                                     Bundle errData = new Bundle();
-                                    errData.putString("value", "二维码已过期");
+                                    errData.putString("value", "未知错误！");
                                     errMsg.setData(errData);
-                                    showQRCodeFailed.sendMessage(msg);
+                                    showQRCodeFailed.sendMessage(errMsg);
+                                    loginCallback.onLoginFailed();
                                     break;
                                 }
 
