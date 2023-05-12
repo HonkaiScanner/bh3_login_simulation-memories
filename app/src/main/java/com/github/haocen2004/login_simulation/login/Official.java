@@ -524,7 +524,7 @@ public class Official implements LoginImpl {
 
                             while (true) {
                                 try {
-                                    Thread.sleep(500);
+                                    Thread.sleep(2000);
                                 } catch (Exception ignore) {
                                 }
                                 String qrCodeScanResult = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/query", "{\"app_id\":\"1\",\"ticket\":\"" + ticket + "\",\"device\":\"" + getDeviceID(null) + "\"}");
