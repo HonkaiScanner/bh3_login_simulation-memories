@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -28,10 +30,12 @@ import com.geetest.sdk.GT3ErrorBean;
 import com.geetest.sdk.GT3GeetestUtils;
 import com.geetest.sdk.GT3Listener;
 import com.github.haocen2004.login_simulation.R;
+import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.data.RoleData;
 import com.github.haocen2004.login_simulation.utils.Encrypt;
 import com.github.haocen2004.login_simulation.utils.Logger;
 import com.github.haocen2004.login_simulation.utils.Network;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.json.JSONException;
@@ -67,11 +71,12 @@ public class Official implements LoginImpl {
     };
     private final Map<String, String> login_map = new HashMap<>();
     private final LoginCallback loginCallback;
+    private boolean qrLogin = false;
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
             String feedback;
-            if (!preferences.getBoolean("has_token", false)) {
+            if (!preferences.getBoolean("has_token", false) && !qrLogin) {
                 feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/login", login_json.toString(), login_map);
             } else {
 
@@ -434,8 +439,188 @@ public class Official implements LoginImpl {
         }
     }
 
-    private void qrLogin() {
+    private AlertDialog qrCodeDialog;
+    Handler getQRCodeHandle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String url = data.getString("value");
+            Bitmap qrCode = Tools.generateQRCode(url, 512);
+            MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(activity);
+            ImageView imageView = new ImageView(activity);
+            imageView.setImageBitmap(qrCode);
+            dialogBuilder.setView(imageView);
+            qrCodeDialog = dialogBuilder.create();
+            qrCodeDialog.show();
+        }
+    };
+    private AlertDialog qrCodePendingDialog;
+    private boolean showPendingDialog = true;
+    Handler showQRCodePending = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (showPendingDialog) {
+                cleanQRCodeDialogs();
+                Context mContext = ActivityManager.getInstance().getTopActivity();
+                final MaterialAlertDialogBuilder normalDialog = new MaterialAlertDialogBuilder(mContext);
+                normalDialog.setTitle("二维码登录");
+                normalDialog.setMessage("二维码已扫描\n请确认登陆");
+                normalDialog.setCancelable(false);
+                qrCodePendingDialog = normalDialog.create();
+                qrCodePendingDialog.show();
+                showPendingDialog = false;
+            }
+        }
+    };
+    Handler showQRCodeFailed = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String errorMsg = data.getString("value");
+            cleanQRCodeDialogs();
+            if (showPendingDialog) {
+                Context mContext = ActivityManager.getInstance().getTopActivity();
+                final MaterialAlertDialogBuilder normalDialog = new MaterialAlertDialogBuilder(mContext);
+                normalDialog.setTitle("二维码登录");
+                normalDialog.setMessage(errorMsg);
+                normalDialog.show();
+            }
+        }
+    };
 
+    private void qrLogin() {
+        new Thread() {
+            @Override
+            public void run() {
+                showPendingDialog = true;
+                qrLogin = true;
+                String qrCodeResult = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/fetch", "{\"app_id\":\"1\",\"device\":\"" + getDeviceID(activity) + "\"}");
+                try {
+                    JSONObject jsonObject = new JSONObject(qrCodeResult);
+                    if (jsonObject.getInt("retcode") == 0) {
+                        String url = jsonObject.getJSONObject("data").getString("url");
+                        String ticket = "";
+
+                        if (url.contains("qr_code_in_game.html")) {
+
+                            Message msg = new Message();
+                            Bundle data = new Bundle();
+                            data.putString("value", url);
+                            msg.setData(data);
+                            getQRCodeHandle.sendMessage(msg);
+
+                            String[] split = url.split("\\?");
+                            String[] param = split[1].split("&");
+                            for (String key : param) {
+                                if (key.startsWith("ticket")) {
+                                    ticket = key.split("=")[1];
+                                    Logger.i(TAG, "Parse QRCode: ticket: " + ticket);
+                                    break;
+                                }
+                            }
+
+                            while (true) {
+                                try {
+                                    Thread.sleep(500);
+                                } catch (Exception ignore) {
+                                }
+                                String qrCodeScanResult = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/query", "{\"app_id\":\"1\",\"ticket\":\"" + ticket + "\",\"device\":\"" + getDeviceID(null) + "\"}");
+                                if (qrCodeScanResult.contains("\"stat\":\"Init\"")) {
+                                    Logger.d(TAG, "qrcode: waiting for scan...");
+                                } else if (qrCodeScanResult.contains("\"stat\":\"Scanned\"")) {
+                                    showQRCodePending.sendEmptyMessage(0);
+                                } else if (qrCodeScanResult.contains("\"stat\":\"Confirmed\"")) {
+                                    JSONObject raw = new JSONObject();
+                                    try {
+                                        JSONObject qrCodeScanJSON = new JSONObject(qrCodeScanResult);
+                                        JSONObject payload = qrCodeScanJSON.getJSONObject("data").getJSONObject("payload");
+
+                                        raw = new JSONObject(payload.getString("raw").replace("\\", ""));
+
+                                        if (raw.has("channel_id")) {
+                                            if (!raw.getString("channel_id").equals("1")) {
+                                                Message errMsg = new Message();
+                                                Bundle errData = new Bundle();
+                                                errData.putString("value", "请扫码登陆官服账号！");
+                                                errMsg.setData(errData);
+                                                showQRCodeFailed.sendMessage(msg);
+                                                loginCallback.onLoginFailed();
+                                                break;
+                                            }
+                                            uid = raw.getString("open_id");
+                                            token = raw.getString("open_token");
+                                        } else {
+                                            uid = raw.getString("uid");
+                                            token = raw.getString("token");
+                                        }
+                                        login_json = new JSONObject();
+                                        login_json.put("uid", uid);
+                                        login_json.put("token", token);
+                                        Logger.addBlacklist(token);
+                                        new Thread(login_runnable).start();
+
+                                    } catch (JSONException jsonException) {
+                                        jsonException.printStackTrace();
+                                        Logger.w(TAG, "qrLogin: " + qrCodeScanResult);
+                                        Logger.w(TAG, "qrLogin: " + raw);
+                                        Log.makeToast("获取扫码信息失败！");
+                                        cleanQRCodeDialogs();
+                                        loginCallback.onLoginFailed();
+                                        break;
+                                    }
+                                    break;
+                                } else {
+                                    Logger.d(TAG, qrCodeScanResult);
+                                    Message errMsg = new Message();
+                                    Bundle errData = new Bundle();
+                                    errData.putString("value", "二维码已过期");
+                                    errMsg.setData(errData);
+                                    showQRCodeFailed.sendMessage(msg);
+                                    break;
+                                }
+
+                            }
+
+                            Logger.d(TAG, "qrLogin: stop fetch.");
+                            cleanQRCodeDialogs();
+
+                        } else {
+
+                            Logger.w(TAG, "qrLogin: " + qrCodeResult);
+                            Log.makeToast("获取登录二维码失败！");
+                            cleanQRCodeDialogs();
+                            loginCallback.onLoginFailed();
+                        }
+
+                    } else {
+                        Logger.w(TAG, "qrLogin: " + qrCodeResult);
+                        Log.makeToast("获取登录二维码失败！");
+                        cleanQRCodeDialogs();
+                        loginCallback.onLoginFailed();
+                    }
+                } catch (JSONException e) {
+                    Logger.w(TAG, "qrLogin: " + qrCodeResult);
+                    Log.makeToast("获取登录二维码失败！");
+                    cleanQRCodeDialogs();
+                    loginCallback.onLoginFailed();
+                }
+                super.run();
+            }
+        }.start();
+    }
+
+    private void cleanQRCodeDialogs() {
+        try {
+            qrCodeDialog.dismiss();
+        } catch (Exception ignore) {
+        }
+        try {
+            qrCodePendingDialog.dismiss();
+        } catch (Exception ignore) {
+        }
     }
 
     private void smsLogin() {

@@ -45,6 +45,7 @@ import java.util.UUID;
 public class Tools {
     private static final String TAG = "Tools";
     private static final String name = "scanner_pref";
+    private static String deviceId = null;
 
 public static void changeToWDJ(Activity activity) {
     activity.getSharedPreferences("cn.uc.gamesdk.pref", 0).edit()//.clear()
@@ -162,17 +163,18 @@ public static void changeToWDJ(Activity activity) {
     }
 
     public static String getDeviceID(Context paramContext) {
-        String str = getString(paramContext, "device_id");
-        if (TextUtils.isEmpty(str)) {
-            str = Settings.System.getString(paramContext.getContentResolver(), "android_id");
-            if (TextUtils.isEmpty(str)) {
-                str = getDeviceModel() +
+        if (deviceId != null) return deviceId;
+        deviceId = getString(paramContext, "device_id");
+        if (TextUtils.isEmpty(deviceId)) {
+            deviceId = Settings.System.getString(paramContext.getContentResolver(), "android_id");
+            if (TextUtils.isEmpty(deviceId)) {
+                deviceId = getDeviceModel() +
                         getSystemVersion() +
                         System.currentTimeMillis();
             }
-            saveString(paramContext, "device_id", str);
+            saveString(paramContext, "device_id", deviceId);
         }
-        return str;
+        return deviceId;
     }
 
     public static String getDeviceModel() {
