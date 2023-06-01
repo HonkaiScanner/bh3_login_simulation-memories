@@ -1,6 +1,8 @@
 package com.github.haocen2004.login_simulation.utils;
 
+import static com.github.haocen2004.login_simulation.data.Constant.ENC_DISPATCH;
 import static com.github.haocen2004.login_simulation.data.Constant.OFFICIAL_TYPE;
+import static com.github.haocen2004.login_simulation.utils.Network.sendGet;
 import static com.github.haocen2004.login_simulation.utils.Network.sendPost;
 import static java.lang.Integer.parseInt;
 
@@ -115,8 +117,12 @@ public static void changeToWDJ(Activity activity) {
 
     public static String getOAServer(RoleData roleData) {
         try {
-
-            String getOAUrl = "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key().replace("6.7.0", "6.6.0") + "&t=" + System.currentTimeMillis();
+            if (ENC_DISPATCH) {
+                String getOAUrl = "https://dispatch.scanner.hellocraft.xyz/v1/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
+                String feedback = sendGet(getOAUrl, false);
+                return feedback;
+            }
+            String getOAUrl = "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
             Logger.d(TAG, "getOAServer-Param: " + getOAUrl);
             String feedback = sendPost(getOAUrl, "");
             Logger.d(TAG, "getOAServer: " + feedback);

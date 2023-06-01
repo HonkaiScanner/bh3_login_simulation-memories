@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.utils;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.data.Constant.ENC_DISPATCH;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_TIPS;
 import static com.github.haocen2004.login_simulation.data.Constant.QUICK_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.TIPS;
@@ -262,10 +263,8 @@ public class QRScanner {
             Logger.d(TAG, "init failed.");
             Log.makeToast("扫码模块初始化失败！");
         }
-        try {
+        if (!ENC_DISPATCH) {
             oaserver = roleData.getOaserver();
-        } catch (Exception ignore) {
-
         }
         try {
             open_id = roleData.getOpen_id();
@@ -471,7 +470,7 @@ public class QRScanner {
                         .put("guest", false);
             }
 
-            try {
+            if (!ENC_DISPATCH) {
                 dispatch_json.put("account_url", oaserver.getString("account_url"))
                         .put("account_url_backup", oaserver.getString("account_url_backup"))
                         .put("asset_bundle_url_list", oaserver.getJSONArray("asset_bundle_url_list"))
@@ -491,7 +490,7 @@ public class QRScanner {
                 data_json.put("accountType", roleData.getAccountType())
                         .put("accountID", open_id)
                         .put("dispatch", dispatch_json);
-            } catch (Exception ignore) {
+            } else {
                 data_json.put("accountType", roleData.getAccountType())
                         .put("accountID", open_id)
                         .put("dispatch", roleData.getEnc_oaserver());

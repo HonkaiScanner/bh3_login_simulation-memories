@@ -45,4 +45,5 @@ public class Constant {
     public static boolean DEBUG_MODE = false;
     public static boolean SAVE_ALL_LOGS = false;
     public static boolean HAS_UPDATE_THREAD = false;
+    public static boolean ENC_DISPATCH = true;
 }

@@ -63,7 +63,7 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 71
+        versionCode = 72
         versionName = "1.8.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -82,7 +82,7 @@ android {
             if (System.getenv("CI").toBoolean()) {
                 versionNameSuffix = System.getenv("NAME_SUFFIX")
             } else {
-                versionNameSuffix = "-snapshot-23w17a.dev"
+                versionNameSuffix = "-snapshot-23w23a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

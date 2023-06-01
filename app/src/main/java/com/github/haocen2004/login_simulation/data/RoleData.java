@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.data;
 
 import static com.github.haocen2004.login_simulation.data.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.data.Constant.ENC_DISPATCH;
 import static com.github.haocen2004.login_simulation.utils.Tools.getOAServer;
 
 import android.os.Bundle;
@@ -44,6 +45,12 @@ public class RoleData {
             String feedback = data.getString("value");
             try {
                 if (feedback != null) {
+                    if (ENC_DISPATCH) {
+                        enc_oaserver = feedback;
+                        is_setup = true;
+                        callback.onLoginSucceed(RoleData.this);
+                        return;
+                    }
                     JSONObject oaserver = new JSONObject(feedback);
                     Logger.i("GetOAServer", "handleMessage: " + oaserver);
                     if (!oaserver.getBoolean("is_data_ready")) {
@@ -69,9 +76,6 @@ public class RoleData {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                enc_oaserver = feedback;
-                is_setup = true;
-                callback.onLoginSucceed(RoleData.this);
             }
         }
     };
