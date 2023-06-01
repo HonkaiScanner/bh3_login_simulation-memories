@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.util;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.util.Constant.ENC_DISPATCH;
 import static com.github.haocen2004.login_simulation.util.Logger.processWithBlackList;
 import static java.lang.Integer.parseInt;
 
@@ -168,7 +169,9 @@ public class QRScanner {
         combo_token = roleData.getCombo_token();
 //        app_id = "1";
         channel_id = roleData.getChannel_id();
-        oaserver = roleData.getOaserver();
+        if (!ENC_DISPATCH) {
+            oaserver = roleData.getOaserver();
+        }
         account_type = roleData.getAccount_type();
         qr_check_map = new HashMap<>();
         this.roleData = roleData;
@@ -291,36 +294,44 @@ public class QRScanner {
                 .put("combo_id", combo_id)
                 .put("account_type", account_type);
 
-        if (roleData.isUc_sign()) {
-            raw_json.put("is_wdj", getDefaultSharedPreferences(activity).getBoolean("use_wdj", false));
-        }
-        if (!open_token.isEmpty()) {
-            raw_json.put("open_token", open_token)
-                    .put("guest", false);
-        }
+            if (roleData.isUc_sign()) {
+                raw_json.put("is_wdj", getDefaultSharedPreferences(activity).getBoolean("use_wdj", false));
+            }
+            if (!open_token.isEmpty()) {
+                raw_json.put("open_token", open_token)
+                        .put("guest", false);
+            }
+
+            if (ENC_DISPATCH) {
+
+                data_json.put("accountType", roleData.getAccountType())
+                        .put("accountID", open_id)
+                        .put("accountToken", combo_token)
+                        .put("dispatch", roleData.getEnc_oaserver());
+            } else {
+
+                dispatch_json.put("account_url", oaserver.getString("account_url"))
+                        .put("account_url_backup", oaserver.getString("account_url_backup"))
+                        .put("asset_bundle_url_list", oaserver.getJSONArray("asset_bundle_url_list"))
+                        .put("ex_resource_url_list", oaserver.getJSONArray("ex_resource_url_list"))
+                        .put("ex_audio_and_video_url_list", oaserver.getJSONArray("ex_audio_and_video_url_list"))
+                        .put("ext", oaserver.getJSONObject("ext"))
+                        .put("gameserver", oaserver.getJSONObject("gameserver"))
+                        .put("gateway", oaserver.getJSONObject("gateway"))
+                        .put("oaserver_url", oaserver.get("oaserver_url"))
+                        .put("server_cur_time", oaserver.get("server_cur_time"))
+                        .put("server_cur_timezone", oaserver.get("server_cur_timezone"))
+                        .put("region_name", oaserver.getString("region_name"))
+                        .put("retcode", "0")
+                        .put("is_data_ready", true)
+                        .put("server_ext", oaserver.getJSONObject("server_ext"));
 
 
-        dispatch_json.put("account_url", oaserver.getString("account_url"))
-                .put("account_url_backup", oaserver.getString("account_url_backup"))
-                .put("asset_bundle_url_list", oaserver.getJSONArray("asset_bundle_url_list"))
-                .put("ex_resource_url_list", oaserver.getJSONArray("ex_resource_url_list"))
-                .put("ex_audio_and_video_url_list", oaserver.getJSONArray("ex_audio_and_video_url_list"))
-                .put("ext", oaserver.getJSONObject("ext"))
-                .put("gameserver", oaserver.getJSONObject("gameserver"))
-                .put("gateway", oaserver.getJSONObject("gateway"))
-                .put("oaserver_url", oaserver.get("oaserver_url"))
-                .put("server_cur_time", oaserver.get("server_cur_time"))
-                .put("server_cur_timezone", oaserver.get("server_cur_timezone"))
-                .put("region_name", oaserver.getString("region_name"))
-                .put("retcode", "0")
-                .put("is_data_ready", true)
-                .put("server_ext", oaserver.getJSONObject("server_ext"));
-
-
-        data_json.put("accountType", roleData.getAccountType())
-                .put("accountID", open_id)
-                .put("accountToken", combo_token)
-                .put("dispatch", dispatch_json);
+                data_json.put("accountType", roleData.getAccountType())
+                        .put("accountID", open_id)
+                        .put("accountToken", combo_token)
+                        .put("dispatch", dispatch_json);
+            }
 
         ext_json.put("data", data_json);
 

@@ -30,4 +30,5 @@ public class Constant {
     public static boolean HUAWEI_INIT = false;
 
     public static boolean DEBUG_MODE = false;
+    public static boolean ENC_DISPATCH = true;
 }
