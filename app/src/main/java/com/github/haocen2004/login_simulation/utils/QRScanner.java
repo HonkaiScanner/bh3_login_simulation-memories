@@ -256,12 +256,16 @@ public class QRScanner {
             combo_token = roleData.getCombo_token();
 //        app_id = "1";
             channel_id = roleData.getChannel_id();
-            oaserver = roleData.getOaserver();
             account_type = roleData.getAccount_type();
         } catch (Exception e) {
             e.printStackTrace();
             Logger.d(TAG, "init failed.");
             Log.makeToast("扫码模块初始化失败！");
+        }
+        try {
+            oaserver = roleData.getOaserver();
+        } catch (Exception ignore) {
+
         }
         try {
             open_id = roleData.getOpen_id();
@@ -467,27 +471,32 @@ public class QRScanner {
                         .put("guest", false);
             }
 
+            try {
+                dispatch_json.put("account_url", oaserver.getString("account_url"))
+                        .put("account_url_backup", oaserver.getString("account_url_backup"))
+                        .put("asset_bundle_url_list", oaserver.getJSONArray("asset_bundle_url_list"))
+                        .put("ex_resource_url_list", oaserver.getJSONArray("ex_resource_url_list"))
+                        .put("ex_audio_and_video_url_list", oaserver.getJSONArray("ex_audio_and_video_url_list"))
+                        .put("ext", oaserver.getJSONObject("ext"))
+                        .put("gameserver", oaserver.getJSONObject("gameserver"))
+                        .put("gateway", oaserver.getJSONObject("gateway"))
+                        .put("oaserver_url", oaserver.get("oaserver_url"))
+                        .put("server_cur_time", oaserver.get("server_cur_time"))
+                        .put("server_cur_timezone", oaserver.get("server_cur_timezone"))
+                        .put("region_name", oaserver.getString("region_name"))
+                        .put("retcode", "0")
+                        .put("is_data_ready", true)
+                        .put("server_ext", oaserver.getJSONObject("server_ext"));
 
-            dispatch_json.put("account_url", oaserver.getString("account_url"))
-                    .put("account_url_backup", oaserver.getString("account_url_backup"))
-                    .put("asset_bundle_url_list", oaserver.getJSONArray("asset_bundle_url_list"))
-                    .put("ex_resource_url_list", oaserver.getJSONArray("ex_resource_url_list"))
-                    .put("ex_audio_and_video_url_list", oaserver.getJSONArray("ex_audio_and_video_url_list"))
-                    .put("ext", oaserver.getJSONObject("ext"))
-                    .put("gameserver", oaserver.getJSONObject("gameserver"))
-                    .put("gateway", oaserver.getJSONObject("gateway"))
-                    .put("oaserver_url", oaserver.get("oaserver_url"))
-                    .put("server_cur_time", oaserver.get("server_cur_time"))
-                    .put("server_cur_timezone", oaserver.get("server_cur_timezone"))
-                    .put("region_name", oaserver.getString("region_name"))
-                    .put("retcode", "0")
-                    .put("is_data_ready", true)
-                    .put("server_ext", oaserver.getJSONObject("server_ext"));
+                data_json.put("accountType", roleData.getAccountType())
+                        .put("accountID", open_id)
+                        .put("dispatch", dispatch_json);
+            } catch (Exception ignore) {
+                data_json.put("accountType", roleData.getAccountType())
+                        .put("accountID", open_id)
+                        .put("dispatch", roleData.getEnc_oaserver());
+            }
 
-
-            data_json.put("accountType", roleData.getAccountType())
-                    .put("accountID", open_id)
-                    .put("dispatch", dispatch_json);
 
             if (showKeyData) {
                 data_json.put("accountToken", combo_token);

@@ -116,7 +116,7 @@ public static void changeToWDJ(Activity activity) {
     public static String getOAServer(RoleData roleData) {
         try {
 
-            String getOAUrl = "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
+            String getOAUrl = "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key().replace("6.7.0", "6.6.0") + "&t=" + System.currentTimeMillis();
             Logger.d(TAG, "getOAServer-Param: " + getOAUrl);
             String feedback = sendPost(getOAUrl, "");
             Logger.d(TAG, "getOAServer: " + feedback);
