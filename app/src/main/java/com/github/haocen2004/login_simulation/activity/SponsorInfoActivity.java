@@ -201,7 +201,7 @@ public class SponsorInfoActivity extends BaseAbsActivity {
 
 //                                            ((TextView)object).setText(newValue);
                                             DialogData dialogData1 = new DialogData("提交成功", "修改已提交\n请耐心等待作者审核\n也可带上下方赞助者身份码私聊催审", "好的");
-                                            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData1);
+                                            DialogLiveData.getINSTANCE().addNewDialog(dialogData1);
                                             Logger.d(TAG, "send update custom_username request succ");
                                         }
 
@@ -223,7 +223,7 @@ public class SponsorInfoActivity extends BaseAbsActivity {
                 }
             });
             dialogData.setNegativeButtonData("取消修改");
-            DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
         }));
 
         items.add(new Category("赞助者身份码"));

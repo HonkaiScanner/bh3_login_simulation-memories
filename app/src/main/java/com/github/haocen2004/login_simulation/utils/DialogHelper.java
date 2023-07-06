@@ -17,13 +17,13 @@ import java.util.List;
 
 public class DialogHelper {
     private static volatile DialogHelper INSTANCE;
-    private final Context context;
     private static DialogLiveData dialogLiveData;
+    private final Context context;
+    private final String TAG = "dialogHelper";
     private int currPos = 0;
     private boolean currClose = false;
     private boolean currShow = false;
     private DialogInterface dialogInterface;
-    private final String TAG = "dialogHelper";
 //    private static String blackListString;
 
     public DialogHelper(Context context) {
@@ -31,7 +31,7 @@ public class DialogHelper {
 
         Logger.i("dialogHelper", "loading...");
 
-        dialogLiveData = DialogLiveData.getINSTANCE(context);
+        dialogLiveData = DialogLiveData.getINSTANCE();
 
         eulaCheck();
 
@@ -122,12 +122,12 @@ public class DialogHelper {
         Logger.i(TAG, "show eula");
     }
 
-    public void setCurrPos(int newPos) {
-        currPos = newPos;
-    }
-
     public int getCurrPos() {
         return currPos;
+    }
+
+    public void setCurrPos(int newPos) {
+        currPos = newPos;
     }
 
     public void setCurrShow(boolean currShow) {

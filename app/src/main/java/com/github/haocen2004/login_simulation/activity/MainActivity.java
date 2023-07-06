@@ -74,11 +74,42 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
     private ActivityMainBinding binding;
     private SharedPreferences app_pref;
     private Logger Log;
+    Handler bh_update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+            if (feedback != null) {
+                try {
+                    JSONObject feedback_json = new JSONObject(feedback);
+                    if (feedback_json.getInt("retcode") == 0) {
+                        String new_bh_ver = feedback_json.getJSONObject("data").getJSONObject("game").getJSONObject("latest").getString("version");
+                        Logger.d("VersionCheck", "cloud bh ver: " + new_bh_ver);
+                        app_pref.edit().putString("bh_ver", new_bh_ver).apply();
+                        BH_VER = new_bh_ver;
+                        return;
+                    } else {
+                        Log.makeToast("崩坏3版本更新失败\n" + feedback_json.getString("message"));
+                    }
+                } catch (Exception ignore) {
+                }
+            }
+            BH_VER = app_pref.getString("cloud_bh_ver", BH_VER);
+        }
+    };
+    Runnable bh_update_rb = () -> {
+        String feedback = Network.sendGet("https://sdk-static.mihoyo.com/bh3_cn/mdk/launcher/api/resource?launcher_id=4", false);
+        Message msg = new Message();
+        Bundle data = new Bundle();
+        data.putString("value", feedback);
+        msg.setData(data);
+        bh_update_check_hd.sendMessage(msg);
+    };
     private long backTime = 0;
     private boolean catchBackAction = false;
     private boolean closeOnBackground = false;
     private Activity activity;
-
     @SuppressLint("HandlerLeak")
     Handler update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
         @Override
@@ -122,7 +153,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                             }
                         });
                         dialogData.setCancelable(false);
-                        DialogLiveData.getINSTANCE(getApplicationContext()).addNewDialog(dialogData);
+                        DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                     } else if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
                         Logger.i("Update", "Open Update Window");
                         showUpdateDialog(
@@ -223,30 +254,27 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             }
         }
     };
-    Handler bh_update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String feedback = data.getString("value");
-            if (feedback != null) {
-                try {
-                    JSONObject feedback_json = new JSONObject(feedback);
-                    if (feedback_json.getInt("retcode") == 0) {
-                        String new_bh_ver = feedback_json.getJSONObject("data").getJSONObject("game").getJSONObject("latest").getString("version");
-                        Logger.d("VersionCheck", "cloud bh ver: " + new_bh_ver);
-                        app_pref.edit().putString("bh_ver", new_bh_ver).apply();
-                        BH_VER = new_bh_ver;
-                        return;
-                    } else {
-                        Log.makeToast("崩坏3版本更新失败\n" + feedback_json.getString("message"));
-                    }
-                } catch (Exception ignore) {
-                }
-            }
-            BH_VER = app_pref.getString("cloud_bh_ver", BH_VER);
-        }
+    Runnable update_rb = () -> {
+        if (HAS_UPDATE_THREAD) return;
+        HAS_UPDATE_THREAD = true;
+        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update");
+        Message msg = new Message();
+        Bundle data = new Bundle();
+        data.putString("value", feedback);
+        msg.setData(data);
+        update_check_hd.sendMessage(msg);
     };
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (YYB_INIT) {
+//            YSDKApi.onActivityResult(requestCode, resultCode, data);
+//        }
+//        if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
+//            .onActivityResult(requestCode,resultCode,data);
+//        }
+//    }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -276,17 +304,6 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         }
         //super.onBackPressed();
     }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (YYB_INIT) {
-//            YSDKApi.onActivityResult(requestCode, resultCode, data);
-//        }
-//        if (requestCode == REQ_TENCENT_WEB_LOGIN_CALLBACK) {
-//            .onActivityResult(requestCode,resultCode,data);
-//        }
-//    }
 
     private void showUpdateDialog(String ver, String url, String logs) {
         DialogData dialogData = new DialogData("获取到新版本: " + ver, "更新日志：\n" + logs);
@@ -322,28 +339,8 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             }
         });
 
-        DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
+        DialogLiveData.getINSTANCE().addNewDialog(dialogData);
     }
-
-
-    Runnable update_rb = () -> {
-        if (HAS_UPDATE_THREAD) return;
-        HAS_UPDATE_THREAD = true;
-        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update");
-        Message msg = new Message();
-        Bundle data = new Bundle();
-        data.putString("value", feedback);
-        msg.setData(data);
-        update_check_hd.sendMessage(msg);
-    };
-    Runnable bh_update_rb = () -> {
-        String feedback = Network.sendGet("https://sdk-static.mihoyo.com/bh3_cn/mdk/launcher/api/resource?launcher_id=4", false);
-        Message msg = new Message();
-        Bundle data = new Bundle();
-        data.putString("value", feedback);
-        msg.setData(data);
-        bh_update_check_hd.sendMessage(msg);
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -439,7 +436,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             Logger.d("Shortcut", "pre login check failed");
             DialogData dialogData = new DialogData("快速扫码失败", "由于某些原因 快速扫码初始化失败\n\n快速扫码快捷方式：" + (ShortcutManagerCompat.getDynamicShortcuts(this).size() > 0) + "\n自动登陆：" + autoLogin + "\n上次登陆情况：" + lastLoginState);
             dialogData.setPositiveButtonData("确认");
-            DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             ShortcutManagerCompat.removeAllDynamicShortcuts(this);
         }
 //        }
@@ -455,7 +452,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
         DialogData dialogData = new DialogData("自动构建使用须知", "你现在使用的是自动构建版本\n请及时通过左边侧滑栏反馈bug\n每次启动该消息都会显示");
         dialogData.setPositiveButtonData("我已知晓");
-        DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
+        DialogLiveData.getINSTANCE().addNewDialog(dialogData);
     }
 
     private void showWrongABIDialog() {
@@ -466,7 +463,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         }
         DialogData dialogData = new DialogData("错误", "你所下载的版本可能不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
         dialogData.setPositiveButtonData("我已知晓");
-        DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
+        DialogLiveData.getINSTANCE().addNewDialog(dialogData);
     }
 
 

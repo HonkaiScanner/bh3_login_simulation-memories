@@ -51,7 +51,45 @@ public class Official implements LoginImpl {
     private final AppCompatActivity activity;
     private final SharedPreferences preferences;
     private final Logger Log;
+    private final Map<String, String> login_map = new HashMap<>();
+    private final LoginCallback loginCallback;
+    private final GT3GeetestUtils gt3GeetestUtils;
     private JSONObject login_json;
+    private boolean qrLogin = false;
+    private boolean smsMode = false;
+    private int smsCooling = 60;
+    private String captcha;
+    private Button getSmsButton;
+    private JSONObject risky_check_json;
+    private String token;
+    Handler smsTimeoutHandle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Logger.d(TAG, "sms countdown " + smsCooling);
+            if (smsCooling > 0) {
+                smsCooling--;
+                try {
+                    activity.runOnUiThread(() -> getSmsButton.setText("" + smsCooling));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                smsTimeoutHandle.sendEmptyMessageDelayed(0, 1000);
+            } else {
+                try {
+                    activity.runOnUiThread(() -> {
+                        getSmsButton.setEnabled(true);
+                        getSmsButton.setText(R.string.btn_get_sms);
+                    });
+                } catch (Exception ignore) {
+                }
+            }
+        }
+    };
+    private String email;
+    private String uid;
+    private String username;
+    private String password;
     Runnable getSmsRunnable = new Runnable() {
         @Override
         public void run() {
@@ -69,9 +107,188 @@ public class Official implements LoginImpl {
             }
         }
     };
-    private final Map<String, String> login_map = new HashMap<>();
-    private final LoginCallback loginCallback;
-    private boolean qrLogin = false;
+    private boolean isLogin;
+    private GT3ConfigBean gt3ConfigBean;
+    private AlertDialog qrCodeDialog;
+    private boolean stopQrcode = false;
+    Handler getQRCodeHandle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String url = data.getString("value");
+            Bitmap qrCode = Tools.generateQRCode(url, 512);
+            MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(activity);
+            ImageView imageView = new ImageView(activity);
+            imageView.setImageBitmap(qrCode);
+            dialogBuilder.setView(imageView);
+            dialogBuilder.setCancelable(false);
+            dialogBuilder.setTitle("二维码登录（仅官服）");
+            dialogBuilder.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
+                dialog.dismiss();
+                loginCallback.onLoginFailed();
+                stopQrcode = true;
+                Log.makeToast("用户取消二维码登录");
+            });
+            qrCodeDialog = dialogBuilder.create();
+            qrCodeDialog.show();
+        }
+    };
+    private AlertDialog qrCodePendingDialog;
+    private boolean showPendingDialog = true;
+    Handler showQRCodePending = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (showPendingDialog) {
+                cleanQRCodeDialogs();
+                Context mContext = ActivityManager.getInstance().getTopActivity();
+                final MaterialAlertDialogBuilder normalDialog = new MaterialAlertDialogBuilder(mContext);
+                normalDialog.setTitle("二维码登录");
+                normalDialog.setMessage("二维码已扫描\n请确认登陆");
+                normalDialog.setCancelable(false);
+                qrCodePendingDialog = normalDialog.create();
+                qrCodePendingDialog.show();
+                showPendingDialog = false;
+            }
+        }
+    };
+    Handler showQRCodeFailed = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String errorMsg = data.getString("value");
+            cleanQRCodeDialogs();
+            if (showPendingDialog) {
+                Context mContext = ActivityManager.getInstance().getTopActivity();
+                final MaterialAlertDialogBuilder normalDialog = new MaterialAlertDialogBuilder(mContext);
+                normalDialog.setTitle("二维码登录");
+                normalDialog.setMessage(errorMsg);
+                normalDialog.show();
+            }
+        }
+    };
+    private RoleData roleData;
+    @SuppressLint("HandlerLeak")
+    Handler login_handler2 = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+            gt3GeetestUtils.dismissGeetestDialog();
+            gt3GeetestUtils.destory();
+            Logger.d(TAG, "handleMessage: " + feedback);
+
+            try {
+                JSONObject feedback_json = new JSONObject(feedback);
+                if (feedback_json.getInt("retcode") == 0) {
+                    JSONObject account_json = feedback_json.getJSONObject("data");
+                    String combo_id = account_json.getString("combo_id");
+                    String combo_token = account_json.getString("combo_token");
+                    Logger.addBlacklist(combo_token);
+                    Logger.addBlacklist(token);
+
+                    roleData = new RoleData(uid, token, combo_id, combo_token, "1", "1", "", 0, loginCallback);
+                    isLogin = true;
+                } else {
+                    Logger.w(TAG, "handleMessage: 登录失败2：" + feedback);
+                    Log.makeToast("登录失败：" + feedback);
+                    loginCallback.onLoginFailed();
+                }
+            } catch (JSONException e) {
+                loginCallback.onLoginFailed();
+                e.printStackTrace();
+            }
+        }
+    };
+    Runnable login_runnable2 = new Runnable() {
+        @Override
+        public void run() {
+            JSONObject data_json = new JSONObject();
+            try {
+                data_json.put("uid", uid).put("token", token).put("guest", false);
+                Message msg = Message.obtain();
+                Bundle data = new Bundle();
+                data.putString("value", verifyAccount(activity, "1", data_json.toString()));
+                msg.setData(data);
+                login_handler2.sendMessage(msg);
+
+            } catch (JSONException e) {
+                Logger.w(TAG, "run: JSON WRONG\n" + e);
+                loginCallback.onLoginFailed();
+            }
+        }
+    };
+    @SuppressLint("HandlerLeak")
+    Handler login_handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+//            Logger.debug(feedback);
+            Logger.d(TAG, "login_handler: " + feedback);
+
+            try {
+                JSONObject feedback_json = new JSONObject(feedback);
+                if (feedback_json.getInt("retcode") == 0) {
+                    JSONObject data_json = feedback_json.getJSONObject("data");
+                    JSONObject account_json = data_json.getJSONObject("account");
+                    token = account_json.getString("token");
+                    uid = account_json.getString("uid");
+                    email = account_json.getString("mobile");
+                    if (email.equals("")) {
+                        email = account_json.getString("email");
+                    }
+                    preferences.edit()
+                            .clear()
+                            .putString("username", email)
+                            .putString("token", token)
+                            .putString("uid", uid)
+                            .putBoolean("has_token", true)
+                            .apply();
+                    Logger.addBlacklist(token);
+                    new Thread(login_runnable2).start();
+                } else {
+//                    Logger.warning("登录失败");
+                    Log.makeToast("登录失败: " + feedback_json.getInt("retcode") + "\n" + feedback_json.getString("message"));
+                    Logger.w(TAG, "handleMessage: 登录失败1" + feedback);
+                    loginCallback.onLoginFailed();
+//                    Logger.warning(feedback);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                loginCallback.onLoginFailed();
+            }
+        }
+    };
+    Runnable smsLoginRunnable = new Runnable() {
+        @Override
+        public void run() {
+
+            Map<String, String> map = new HashMap<>();
+
+            map.put("x-rpc-device_id", getDeviceID(activity));
+            map.put("x-rpc-client_type", "2");
+            map.put("x-rpc-game_biz", "bh3_cn");
+            map.put("x-rpc-language", "zh-cn");
+            map.put("x-rpc-channel_id", "1");
+            map.put("User-Agent", "okhttp/3.10.0");
+
+            String smsLoginParam = "{\"mobile\":\"" + username + "\",\"captcha\":\"" + captcha + "\",\"action\":\"Login\",\"area\":\"+86\"}";
+
+            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/loginMobile", smsLoginParam, map);
+
+
+            Message msg = Message.obtain();
+            Bundle data = new Bundle();
+            data.putString("value", feedback);
+            msg.setData(data);
+            login_handler.sendMessage(msg);
+        }
+    };
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
@@ -99,7 +316,6 @@ public class Official implements LoginImpl {
             login_handler.sendMessage(msg);
         }
     };
-    private boolean smsMode = false;
     Handler risky_check_handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -216,59 +432,6 @@ public class Official implements LoginImpl {
             }
         }
     };
-    private int smsCooling = 60;
-    Handler smsTimeoutHandle = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Logger.d(TAG, "sms countdown " + smsCooling);
-            if (smsCooling > 0) {
-                smsCooling--;
-                try {
-                    activity.runOnUiThread(() -> getSmsButton.setText("" + smsCooling));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                smsTimeoutHandle.sendEmptyMessageDelayed(0, 1000);
-            } else {
-                try {
-                    activity.runOnUiThread(() -> {
-                        getSmsButton.setEnabled(true);
-                        getSmsButton.setText(R.string.btn_get_sms);
-                    });
-                } catch (Exception ignore) {
-                }
-            }
-        }
-    };
-    private String captcha;
-    Runnable smsLoginRunnable = new Runnable() {
-        @Override
-        public void run() {
-
-            Map<String, String> map = new HashMap<>();
-
-            map.put("x-rpc-device_id", getDeviceID(activity));
-            map.put("x-rpc-client_type", "2");
-            map.put("x-rpc-game_biz", "bh3_cn");
-            map.put("x-rpc-language", "zh-cn");
-            map.put("x-rpc-channel_id", "1");
-            map.put("User-Agent", "okhttp/3.10.0");
-
-            String smsLoginParam = "{\"mobile\":\"" + username + "\",\"captcha\":\"" + captcha + "\",\"action\":\"Login\",\"area\":\"+86\"}";
-
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/mdk/shield/api/loginMobile", smsLoginParam, map);
-
-
-            Message msg = Message.obtain();
-            Bundle data = new Bundle();
-            data.putString("value", feedback);
-            msg.setData(data);
-            login_handler.sendMessage(msg);
-        }
-    };
-    private Button getSmsButton;
-    private JSONObject risky_check_json;
     Runnable risky_check_runnable = new Runnable() {
         @Override
         public void run() {
@@ -301,75 +464,22 @@ public class Official implements LoginImpl {
             risky_check_handler.sendMessage(msg);
         }
     };
-    private String token;
-    private String email;
-    private String uid;
-    Runnable login_runnable2 = new Runnable() {
-        @Override
-        public void run() {
-            JSONObject data_json = new JSONObject();
-            try {
-                data_json.put("uid", uid).put("token", token).put("guest", false);
-                Message msg = Message.obtain();
-                Bundle data = new Bundle();
-                data.putString("value", verifyAccount(activity, "1", data_json.toString()));
-                msg.setData(data);
-                login_handler2.sendMessage(msg);
 
-            } catch (JSONException e) {
-                Logger.w(TAG, "run: JSON WRONG\n" + e);
-                loginCallback.onLoginFailed();
-            }
-        }
-    };
-    @SuppressLint("HandlerLeak")
-    Handler login_handler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String feedback = data.getString("value");
-//            Logger.debug(feedback);
-            Logger.d(TAG, "login_handler: " + feedback);
+    public Official(AppCompatActivity activity, LoginCallback callback) {
+        loginCallback = callback;
+        isLogin = false;
+        this.activity = activity;
+        preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
+        Log = Logger.getLogger(activity);
 
-            try {
-                JSONObject feedback_json = new JSONObject(feedback);
-                if (feedback_json.getInt("retcode") == 0) {
-                    JSONObject data_json = feedback_json.getJSONObject("data");
-                    JSONObject account_json = data_json.getJSONObject("account");
-                    token = account_json.getString("token");
-                    uid = account_json.getString("uid");
-                    email = account_json.getString("mobile");
-                    if (email.equals("")) {
-                        email = account_json.getString("email");
-                    }
-                    preferences.edit()
-                            .clear()
-                            .putString("username", email)
-                            .putString("token", token)
-                            .putString("uid", uid)
-                            .putBoolean("has_token", true)
-                            .apply();
-                    Logger.addBlacklist(token);
-                    new Thread(login_runnable2).start();
-                } else {
-//                    Logger.warning("登录失败");
-                    Log.makeToast("登录失败: " + feedback_json.getInt("retcode") + "\n" + feedback_json.getString("message"));
-                    Logger.w(TAG, "handleMessage: 登录失败1" + feedback);
-                    loginCallback.onLoginFailed();
-//                    Logger.warning(feedback);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                loginCallback.onLoginFailed();
-            }
-        }
-    };
-    private String username;
-    private String password;
-    private boolean isLogin;
-    private GT3ConfigBean gt3ConfigBean;
-    private final GT3GeetestUtils gt3GeetestUtils;
+        gt3GeetestUtils = new GT3GeetestUtils(activity);
+    }
+
+    @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
+    }
 
     @Override
     public void login() {
@@ -438,67 +548,6 @@ public class Official implements LoginImpl {
             }
         }
     }
-
-    private AlertDialog qrCodeDialog;
-    private boolean stopQrcode = false;
-    private AlertDialog qrCodePendingDialog;
-    private boolean showPendingDialog = true;
-    Handler showQRCodePending = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            if (showPendingDialog) {
-                cleanQRCodeDialogs();
-                Context mContext = ActivityManager.getInstance().getTopActivity();
-                final MaterialAlertDialogBuilder normalDialog = new MaterialAlertDialogBuilder(mContext);
-                normalDialog.setTitle("二维码登录");
-                normalDialog.setMessage("二维码已扫描\n请确认登陆");
-                normalDialog.setCancelable(false);
-                qrCodePendingDialog = normalDialog.create();
-                qrCodePendingDialog.show();
-                showPendingDialog = false;
-            }
-        }
-    };
-    Handler showQRCodeFailed = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String errorMsg = data.getString("value");
-            cleanQRCodeDialogs();
-            if (showPendingDialog) {
-                Context mContext = ActivityManager.getInstance().getTopActivity();
-                final MaterialAlertDialogBuilder normalDialog = new MaterialAlertDialogBuilder(mContext);
-                normalDialog.setTitle("二维码登录");
-                normalDialog.setMessage(errorMsg);
-                normalDialog.show();
-            }
-        }
-    };
-    Handler getQRCodeHandle = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String url = data.getString("value");
-            Bitmap qrCode = Tools.generateQRCode(url, 512);
-            MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(activity);
-            ImageView imageView = new ImageView(activity);
-            imageView.setImageBitmap(qrCode);
-            dialogBuilder.setView(imageView);
-            dialogBuilder.setCancelable(false);
-            dialogBuilder.setTitle("二维码登录（仅官服）");
-            dialogBuilder.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
-                dialog.dismiss();
-                loginCallback.onLoginFailed();
-                stopQrcode = true;
-                Log.makeToast("用户取消二维码登录");
-            });
-            qrCodeDialog = dialogBuilder.create();
-            qrCodeDialog.show();
-        }
-    };
 
     private void qrLogin() {
         new Thread() {
@@ -706,51 +755,6 @@ public class Official implements LoginImpl {
         alertDialog.show();
     }
 
-    private RoleData roleData;
-    @SuppressLint("HandlerLeak")
-    Handler login_handler2 = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String feedback = data.getString("value");
-            gt3GeetestUtils.dismissGeetestDialog();
-            gt3GeetestUtils.destory();
-            Logger.d(TAG, "handleMessage: " + feedback);
-
-            try {
-                JSONObject feedback_json = new JSONObject(feedback);
-                if (feedback_json.getInt("retcode") == 0) {
-                    JSONObject account_json = feedback_json.getJSONObject("data");
-                    String combo_id = account_json.getString("combo_id");
-                    String combo_token = account_json.getString("combo_token");
-                    Logger.addBlacklist(combo_token);
-                    Logger.addBlacklist(token);
-
-                    roleData = new RoleData(uid, token, combo_id, combo_token, "1", "1", "", 0, loginCallback);
-                    isLogin = true;
-                } else {
-                    Logger.w(TAG, "handleMessage: 登录失败2：" + feedback);
-                    Log.makeToast("登录失败：" + feedback);
-                    loginCallback.onLoginFailed();
-                }
-            } catch (JSONException e) {
-                loginCallback.onLoginFailed();
-                e.printStackTrace();
-            }
-        }
-    };
-
-    public Official(AppCompatActivity activity, LoginCallback callback) {
-        loginCallback = callback;
-        isLogin = false;
-        this.activity = activity;
-        preferences = activity.getSharedPreferences("official_user_" + getDefaultSharedPreferences(activity).getInt("official_slot", 1), Context.MODE_PRIVATE);
-        Log = Logger.getLogger(activity);
-
-        gt3GeetestUtils = new GT3GeetestUtils(activity);
-    }
-
     private void getSmsCode(String mobile) {
         risky_check_json = new JSONObject();
         try {
@@ -764,7 +768,6 @@ public class Official implements LoginImpl {
             loginCallback.onLoginFailed();
         }
     }
-
 
     public void loginByAccount() {
 
@@ -810,6 +813,7 @@ public class Official implements LoginImpl {
         return roleData;
     }
 
+
     @Override
     public boolean isLogin() {
         return isLogin;
@@ -820,10 +824,5 @@ public class Official implements LoginImpl {
         return email;
     }
 
-    @Override
-    public void setRole(RoleData roleData) {
-        this.roleData = roleData;
-        isLogin = true;
-    }
 
 }

@@ -297,7 +297,7 @@ public class MainApplication extends Application implements LifecycleOwner {
             }
             DialogData dialogData = new DialogData("错误", "你所下载的版本可能不支持在当前设备上运行\n请下载正确的版本\n\n参考数据:\n" + supportedABI);
             dialogData.setPositiveButtonData(new ButtonData("我已知晓"));
-            DialogLiveData.getINSTANCE(this).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
         }
 
         CHECK_VER = app_pref.getBoolean("check_update", true);

@@ -31,99 +31,14 @@ import cn.uc.gamesdk.UCGameSdk;
 
 public class UC implements LoginImpl {
 
+    private static final String TAG = "UC Login";
     private final AppCompatActivity activity;
     private final LoginCallback callback;
+    private final Logger Log;
     private UCGameSdk sdk;
     private String sid;
     private boolean isLogin;
     private RoleData roleData;
-    private static final String TAG = "UC Login";
-    private final Logger Log;
-    private Boolean init = false;
-    private final SDKEventReceiver eventReceiver = new SDKEventReceiver() {
-
-        @Subscribe(event = SDKEventKey.ON_INIT_SUCC)
-        private void onInitSucc() {
-            Logger.d(TAG, "Init SUCCEED");
-            init = true;
-            try {
-                sdk.login(activity, null);
-            } catch (AliNotInitException | AliLackActivityException e) {
-                Logger.d(TAG, "Login Failed.");
-                e.printStackTrace();
-            }
-        }
-
-        @Subscribe(event = SDKEventKey.ON_LOGIN_SUCC)
-        private void onLoginSucc(String sid) {
-//            System.out.println("开始登陆" + sid);
-            Logger.i(TAG, "onLoginSucc: sid:" + sid);
-            setSid(sid);
-            Logger.addBlacklist(sid);
-            doBHLogin();
-        }
-
-        @Subscribe(event = SDKEventKey.ON_LOGIN_FAILED)
-        private void onLoginFailed() {
-            callback.onLoginFailed();
-        }
-
-        @Subscribe(event = SDKEventKey.ON_INIT_FAILED)
-        private void onInitFailed() {
-            callback.onLoginFailed();
-        }
-
-    };
-
-    public void setSid(String sid) {
-        this.sid = sid;
-        Logger.addBlacklist(sid);
-    }
-
-    public UC(AppCompatActivity activity, LoginCallback callback) {
-        this.callback = callback;
-        this.activity = activity;
-        isLogin = false;
-        Log = Logger.getLogger(activity);
-
-    }
-
-    @Override
-    public void login() {
-        if (!init) {
-            sdk = UCGameSdk.defaultSdk();
-            sdk.registerSDKEventReceiver(this.eventReceiver);
-            ParamInfo gpi = new ParamInfo();
-
-            gpi.setGameId(654463);
-
-            if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                gpi.setOrientation(UCOrientation.PORTRAIT);
-            } else {
-                gpi.setOrientation(UCOrientation.LANDSCAPE);
-            }
-            SDKParams sdkParams = new SDKParams();
-            sdkParams.put(SDKParamKey.GAME_PARAMS, gpi);
-            try {
-
-                sdk.initSdk(activity, sdkParams);
-
-            } catch (AliLackActivityException e) {
-                e.printStackTrace();
-                callback.onLoginFailed();
-            }
-        } else {
-            try {
-                Logger.d(TAG, "try to login...");
-                sdk.login(activity, null);
-            } catch (AliNotInitException | AliLackActivityException e) {
-                Logger.d(TAG, "Login Failed.");
-                callback.onLoginFailed();
-                e.printStackTrace();
-            }
-        }
-    }
-
     @SuppressLint("HandlerLeak")
     Handler login_handler = new Handler() {
         @Override
@@ -173,7 +88,6 @@ public class UC implements LoginImpl {
             }
         }
     };
-
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
@@ -186,6 +100,90 @@ public class UC implements LoginImpl {
         }
 
     };
+    private Boolean init = false;
+    private final SDKEventReceiver eventReceiver = new SDKEventReceiver() {
+
+        @Subscribe(event = SDKEventKey.ON_INIT_SUCC)
+        private void onInitSucc() {
+            Logger.d(TAG, "Init SUCCEED");
+            init = true;
+            try {
+                sdk.login(activity, null);
+            } catch (AliNotInitException | AliLackActivityException e) {
+                Logger.d(TAG, "Login Failed.");
+                e.printStackTrace();
+            }
+        }
+
+        @Subscribe(event = SDKEventKey.ON_LOGIN_SUCC)
+        private void onLoginSucc(String sid) {
+//            System.out.println("开始登陆" + sid);
+            Logger.i(TAG, "onLoginSucc: sid:" + sid);
+            setSid(sid);
+            Logger.addBlacklist(sid);
+            doBHLogin();
+        }
+
+        @Subscribe(event = SDKEventKey.ON_LOGIN_FAILED)
+        private void onLoginFailed() {
+            callback.onLoginFailed();
+        }
+
+        @Subscribe(event = SDKEventKey.ON_INIT_FAILED)
+        private void onInitFailed() {
+            callback.onLoginFailed();
+        }
+
+    };
+
+    public UC(AppCompatActivity activity, LoginCallback callback) {
+        this.callback = callback;
+        this.activity = activity;
+        isLogin = false;
+        Log = Logger.getLogger(activity);
+
+    }
+
+    public void setSid(String sid) {
+        this.sid = sid;
+        Logger.addBlacklist(sid);
+    }
+
+    @Override
+    public void login() {
+        if (!init) {
+            sdk = UCGameSdk.defaultSdk();
+            sdk.registerSDKEventReceiver(this.eventReceiver);
+            ParamInfo gpi = new ParamInfo();
+
+            gpi.setGameId(654463);
+
+            if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                gpi.setOrientation(UCOrientation.PORTRAIT);
+            } else {
+                gpi.setOrientation(UCOrientation.LANDSCAPE);
+            }
+            SDKParams sdkParams = new SDKParams();
+            sdkParams.put(SDKParamKey.GAME_PARAMS, gpi);
+            try {
+
+                sdk.initSdk(activity, sdkParams);
+
+            } catch (AliLackActivityException e) {
+                e.printStackTrace();
+                callback.onLoginFailed();
+            }
+        } else {
+            try {
+                Logger.d(TAG, "try to login...");
+                sdk.login(activity, null);
+            } catch (AliNotInitException | AliLackActivityException e) {
+                Logger.d(TAG, "Login Failed.");
+                callback.onLoginFailed();
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void doBHLogin() {
         new Thread(login_runnable).start();
@@ -219,6 +217,12 @@ public class UC implements LoginImpl {
     }
 
     @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
+    }
+
+    @Override
     public boolean isLogin() {
         return isLogin;
     }
@@ -226,12 +230,6 @@ public class UC implements LoginImpl {
     @Override
     public String getUsername() {
         return sid;
-    }
-
-    @Override
-    public void setRole(RoleData roleData) {
-        this.roleData = roleData;
-        isLogin = true;
     }
 
 }

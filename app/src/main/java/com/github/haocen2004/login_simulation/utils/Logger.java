@@ -48,7 +48,7 @@ public class Logger implements Serializable {
         logBlackList = new ArrayList<>();
         createOutputStream();
         logLiveData = LogLiveData.getINSTANCE();
-        DialogLiveData.getINSTANCE(context);
+        DialogLiveData.getINSTANCE();
     }
 
     public static Logger getLogger(Context context) {

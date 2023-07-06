@@ -54,7 +54,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             preference.performClick();
                         }
                     });
-                    DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                 }
             }
             return true;
@@ -72,7 +72,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             preference.performClick();
                         }
                     });
-                    DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                 }
             }
             return true;
@@ -92,7 +92,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         preference.performClick();
                     }
                 });
-                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             }
             return true;
         });
@@ -110,7 +110,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         preference.performClick();
                     }
                 });
-                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             }
             findPreference("icon_pos").setVisible((Boolean) newValue);
             return true;
@@ -235,7 +235,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         preference.performClick();
                     }
                 });
-                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                 BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
             } else {
                 BH_VER = app_pref.getString("bh_ver", BH_VER);
@@ -263,7 +263,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         preference.performClick();
                     }
                 });
-                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             }
             return true;
         });
@@ -281,7 +281,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         preference.performClick();
                     }
                 });
-                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             }
             return true;
         });
@@ -304,7 +304,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         preference.performClick();
                     }
                 });
-                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             }
             return true;
         });

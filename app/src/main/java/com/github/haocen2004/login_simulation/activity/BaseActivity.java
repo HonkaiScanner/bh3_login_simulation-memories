@@ -17,8 +17,8 @@ import rikka.material.app.MaterialActivity;
 
 public class BaseActivity extends MaterialActivity {
 
-    ActivityManager activityManager = ActivityManager.getInstance();
     private final String TAG = "activityManager";
+    ActivityManager activityManager = ActivityManager.getInstance();
 
     @Override
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class BaseActivity extends MaterialActivity {
     protected void onDestroy() {
         Logger.d(TAG, "onDestroy: " + getClass().getName());
         activityManager.removeActivity(this);
-        DialogLiveData.getINSTANCE(this).notifyDialog();
+        DialogLiveData.getINSTANCE().notifyDialog();
         super.onDestroy();
     }
 

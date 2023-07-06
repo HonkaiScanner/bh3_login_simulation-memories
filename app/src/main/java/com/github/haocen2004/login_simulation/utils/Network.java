@@ -52,8 +52,7 @@ public class Network {
             Logger.i("Network", "sendPost: Failed. Target: " + url + " \n" + e.getMessage());
             e.printStackTrace();
             return null;
-        }
-        finally {
+        } finally {
             try {
                 if (out != null) {
                     out.close();
@@ -97,8 +96,7 @@ public class Network {
             Logger.i("Network", "sendGet: Failed. Target: " + url + " \n" + e.getMessage());
             e.printStackTrace();
             return "null";
-        }
-        finally {
+        } finally {
             try {
                 if (in != null) {
                     in.close();

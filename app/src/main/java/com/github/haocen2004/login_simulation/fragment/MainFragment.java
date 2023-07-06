@@ -85,31 +85,132 @@ import java.util.UUID;
 public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
 
     private final String TAG = "MainFragment";
-    private LoginImpl loginImpl;
-    private AppCompatActivity activity;
-    private Context context;
-    private boolean isOfficial = false;
-    private SharedPreferences pref;
-    private FragmentMainBinding binding;
-    private Logger Log;
-    private FabScanner fabScanner;
-    private SocketHelper socketHelper;
-    private boolean loginProgress = false;
-    private boolean SDKInit = false;
     private final Map<String, Chip> chipMap = new HashMap<>();
-    private int currType = 999;
-    private boolean currLoginTry = false;
     private final Handler spCheckHandle = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
         }
     };
+    private final Map<Chip, String> chipKeys = new HashMap<>();
+    private final ArrayList<LaunchActivityCallback> launchActivityCallbacks = new ArrayList<>();
+    private final ActivityResultLauncher<Intent> tempLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+        for (LaunchActivityCallback launchActivityCallback : launchActivityCallbacks) {
+            launchActivityCallback.run(callback);
+            launchActivityCallbacks.remove(launchActivityCallback);
+        }
+    });
+    private LoginImpl loginImpl;
+    private AppCompatActivity activity;
+    private Context context;
+    private final ActivityResultLauncher<String[]> permissionReqLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+        if (isGranted.containsValue(false)) {
+            for (String s : isGranted.keySet()) {
+                if (Objects.equals(isGranted.get(s), false)) {
+                    Logger.d(TAG, "request permission " + isGranted.get(s) + " was denied.");
+                }
+            }
+            Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+        }
+    });
+    private boolean isOfficial = false;
+    private SharedPreferences pref;
+    private FragmentMainBinding binding;
+    private Logger Log;
+    //Constant.REQ_QR_CODE
+    private final ActivityResultLauncher<Intent> reqQRCodeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+        if (callback.getResultCode() == RESULT_OK) {
+
+            Bundle bundle = null;
+            if (callback.getData() != null) {
+                bundle = callback.getData().getExtras();
+            }
+            if (bundle != null) {
+                String[] result = bundle.getStringArray(Constant.INTENT_EXTRA_KEY_QR_SCAN);
+                if (result != null) {
+                    QRScanner qrScanner;
+                    if (isOfficial) {
+                        qrScanner = new QRScanner(activity, true);
+                    } else {
+                        qrScanner = new QRScanner(activity, loginImpl.getRole());
+                    }
+                    if (!qrScanner.parseUrl(result)) return;
+                    qrScanner.start();
+                } else {
+                    makeToast(R.string.error_scan);
+                }
+            }
+        }
+    });
+    //Constant.REQ_CODE_SCAN_GALLERY
+    private final ActivityResultLauncher<Intent> reqGalleryScanLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+        if (callback.getResultCode() == RESULT_OK) {
+            Bitmap bitmap;
+            try {
+                if (callback.getData() != null) {
+                    bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), callback.getData().getData());
+                } else {
+                    Logger.d(TAG, "wrong album result");
+                    return;
+                }
+                List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
+                for (String s : result) {
+                    Logger.d(TAG, "album result:" + s);
+                }
+                if (result.size() >= 1) {
+                    String[] url = result.toArray(new String[0]);
+                    QRScanner qrScanner;
+                    if (isOfficial) {
+                        qrScanner = new QRScanner(activity, true);
+                    } else {
+                        qrScanner = new QRScanner(activity, loginImpl.getRole());
+                    }
+
+                    if (!qrScanner.parseUrl(url)) return;
+                    qrScanner.start();
+
+                } else {
+                    Log.makeToast("未找到二维码");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    });
+    private FabScanner fabScanner;
+    //Constant.REQ_PERM_WINDOW
+    private final ActivityResultLauncher<Intent> reqPermWindowLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+
+        switch (callback.getResultCode()) {
+            case RESULT_OK:
+                fabScanner.showAlertScanner();
+                break;
+            case RESULT_CANCELED:
+                if (Settings.canDrawOverlays(activity)) {
+                    fabScanner.showAlertScanner();
+                }
+                break;
+            default:
+                Logger.d("fabScanner", "req perm callback: " + callback);
+        }
+
+    });
+    //Constant.REQ_PERM_RECORD
+    private final ActivityResultLauncher<Intent> reqPermRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> fabScanner.getResultApiCallback().onActivityResult(callback));
+    private SocketHelper socketHelper;
+    private boolean loginProgress = false;
+    private boolean SDKInit = false;
+    private int currType = 999;
+    private boolean currLoginTry = false;
     private boolean needRestart = false;
     private boolean accSwitch = false;
     private LoginInstanceManager loginInstanceManager;
     private ChipsHelper chipsHelper;
-    private final Map<Chip, String> chipKeys = new HashMap<>();
+    private final Map<String, Chip> currChipMap = new HashMap<>();
+    private int currOfficialSlot = 999;
+    private int currBiliSlot = 999;
+    private int currYYBSlot = 999;
+    private LayoutInflater mLayoutInflater;
 
     private void loadSavedData(Bundle savedInstanceState, String loadTag) {
         if (savedInstanceState.containsKey("scanner_data:combo_token")) {
@@ -160,11 +261,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             loadSavedData(savedInstanceState, "onCreate");
         }
     }
-
-    private int currOfficialSlot = 999;
-    private int currBiliSlot = 999;
-    private int currYYBSlot = 999;
-    private LayoutInflater mLayoutInflater;
 
     @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
     private void delaySPCheck() {
@@ -276,8 +372,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         chipsHelper = new ChipsHelper(context, this.getLayoutInflater());
         return binding.getRoot();
     }
-
-    private Map<String, Chip> currChipMap = new HashMap<>();
 
     @SuppressLint("SetTextI18n")
     private void refreshView() {
@@ -534,7 +628,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.chipGroupSlot.setOnCheckedStateChangeListener(this::onCheckedStateChange);
     }
 
-
     private void onCheckedStateChange(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
 
         while (loginProgress) {
@@ -636,7 +729,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
         return raw_server;
     }
-
 
     private void setupListener() {
         //        binding.btnLogin.setOnClickListener(this);
@@ -765,7 +857,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         delaySPCheck();
     }
 
-
     private void doLogin() {
         if (needRestart) {
             makeToast(R.string.logged_and_restart);
@@ -814,98 +905,35 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     }
 
-    private final ActivityResultLauncher<String[]> permissionReqLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+    private void showPermissionDialog() {
+        DialogData dialogData;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅部分渠道服\n用于检测官方包安装情况\n具体渠道服请求权限时会额外说明\n\n4.通知权限\n用于通知用户版本更新、扫码成功提示及其他公告\n同时也用于悬浮窗后台进程\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+        } else {
+            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅部分渠道服\n用于检测官方包安装情况\n具体渠道服请求权限时会额外说明\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
+        }
+        dialogData.setPositiveButtonData(new ButtonData("我已知晓并授权使用") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.POST_NOTIFICATIONS});
+                } else {
+                    permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE});
+                }
+                super.callback(dialogHelper);
+            }
+        });
+        DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+    }
+
+    private final ActivityResultLauncher<String[]> qrCodeNoPermLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
         if (isGranted.containsValue(false)) {
-            for (String s : isGranted.keySet()) {
-                if (Objects.equals(isGranted.get(s), false)){
-                    Logger.d(TAG,"request permission "+isGranted.get(s)+" was denied.");
-                }
-            }
             Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            startQrCode();
         }
     });
-    //Constant.REQ_QR_CODE
-    private final ActivityResultLauncher<Intent> reqQRCodeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
-        if (callback.getResultCode() == RESULT_OK) {
-
-            Bundle bundle = null;
-            if (callback.getData() != null) {
-                bundle = callback.getData().getExtras();
-            }
-            if (bundle != null) {
-                String[] result = bundle.getStringArray(Constant.INTENT_EXTRA_KEY_QR_SCAN);
-                if (result != null) {
-                    QRScanner qrScanner;
-                    if (isOfficial) {
-                        qrScanner = new QRScanner(activity, true);
-                    } else {
-                        qrScanner = new QRScanner(activity, loginImpl.getRole());
-                    }
-                    if (!qrScanner.parseUrl(result)) return;
-                    qrScanner.start();
-                } else {
-                    makeToast(R.string.error_scan);
-                }
-            }
-        }
-    });
-
-    //Constant.REQ_CODE_SCAN_GALLERY
-    private final ActivityResultLauncher<Intent> reqGalleryScanLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
-        if (callback.getResultCode() == RESULT_OK) {
-            Bitmap bitmap;
-            try {
-                if (callback.getData() != null) {
-                    bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), callback.getData().getData());
-                } else {
-                    Logger.d(TAG, "wrong album result");
-                    return;
-                }
-                List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
-                for (String s : result) {
-                    Logger.d(TAG, "album result:" + s);
-                }
-                if (result.size() >= 1) {
-                    String[] url = result.toArray(new String[0]);
-                    QRScanner qrScanner;
-                    if (isOfficial) {
-                        qrScanner = new QRScanner(activity, true);
-                    } else {
-                        qrScanner = new QRScanner(activity, loginImpl.getRole());
-                    }
-
-                    if (!qrScanner.parseUrl(url)) return;
-                    qrScanner.start();
-
-                } else {
-                    Log.makeToast("未找到二维码");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-
-
-    //Constant.REQ_PERM_WINDOW
-    private final ActivityResultLauncher<Intent> reqPermWindowLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
-
-        switch (callback.getResultCode()) {
-            case RESULT_OK:
-                fabScanner.showAlertScanner();
-                break;
-            case RESULT_CANCELED:
-                if (Settings.canDrawOverlays(activity)) {
-                    fabScanner.showAlertScanner();
-                }
-                break;
-            default:
-                Logger.d("fabScanner", "req perm callback: " + callback);
-        }
-
-    });
-    //Constant.REQ_PERM_RECORD
-    private final ActivityResultLauncher<Intent> reqPermRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> fabScanner.getResultApiCallback().onActivityResult(callback));
 
     private void checkPermissions() {
 
@@ -918,14 +946,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             showPermissionDialog();
         }
     }
-
-    private final ActivityResultLauncher<String[]> qrCodeNoPermLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
-        if (isGranted.containsValue(false)) {
-            Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
-        } else {
-            startQrCode();
-        }
-    });
 
     private void startQrCode() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -971,8 +991,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     }
 
-
-
     private void makeToast(String result) {
         try {
 
@@ -995,28 +1013,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             Log.makeToast(result);
             Looper.loop();
         }
-    }
-
-    private void showPermissionDialog() {
-        DialogData dialogData;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅部分渠道服\n用于检测官方包安装情况\n具体渠道服请求权限时会额外说明\n\n4.通知权限\n用于通知用户版本更新、扫码成功提示及其他公告\n同时也用于悬浮窗后台进程\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
-        } else {
-            dialogData = new DialogData("权限说明", "使用扫码器需要以下权限:\n1.使用摄像头\n用于扫描登录二维码\n\n2.读取设备文件\n用于提供相册扫码\n\n3.获取应用列表\n仅部分渠道服\n用于检测官方包安装情况\n具体渠道服请求权限时会额外说明\n\n可选：显示悬浮窗和获取屏幕内容\n仅在使用悬浮窗扫码功能时申请\n\n其他权限为各家SDK适配所需\n可不授予权限");
-        }
-        dialogData.setPositiveButtonData(new ButtonData("我已知晓并授权使用") {
-            @Override
-            public void callback(DialogHelper dialogHelper) {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.POST_NOTIFICATIONS});
-                } else {
-                    permissionReqLauncher.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE});
-                }
-                super.callback(dialogHelper);
-            }
-        });
-        DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
     }
 
     @Override
@@ -1072,7 +1068,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                                     super.callback(dialogHelper);
                                 }
                             });
-                            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                         } else {
                             fabScanner.showAlertScanner();
                         }
@@ -1096,7 +1092,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     }
                 });
                 dialogData.setNegativeButtonData("取消");
-                DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             }
         } else {
             if (chipMap.containsValue(view)) {
@@ -1114,7 +1110,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     }
                 });
                 dialogData.setNegativeButtonData("取消");
-                DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
 
             } else {
                 makeToast("你点了什么玩意？");
@@ -1123,6 +1119,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
         return true;
     }
+
 
     private void resetOfficialServerType() {
         int i = getDefaultSharedPreferences(activity).getInt("official_type", 0);
@@ -1140,7 +1137,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
         Logger.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
     }
-
 
     @Override
     public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
@@ -1293,14 +1289,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         });
 //        makeToast(R);
     }
-
-    private final ArrayList<LaunchActivityCallback> launchActivityCallbacks = new ArrayList<>();
-    private final ActivityResultLauncher<Intent> tempLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
-        for (LaunchActivityCallback launchActivityCallback : launchActivityCallbacks) {
-            launchActivityCallback.run(callback);
-            launchActivityCallbacks.remove(launchActivityCallback);
-        }
-    });
 
     @Override
     public void launchActivityForResult(Intent intent, LaunchActivityCallback callback) {

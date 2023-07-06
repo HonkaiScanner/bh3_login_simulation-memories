@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "Sponsors")
 public class SponsorData {
+    @ColumnInfo
+    private final String scannerKey;
     @PrimaryKey(autoGenerate = true)
     private int id;
     @ColumnInfo
@@ -20,8 +22,6 @@ public class SponsorData {
     private String personalPageUrl;
     @ColumnInfo
     private String deviceId;
-    @ColumnInfo
-    private final String scannerKey;
 
     public SponsorData(String name, String desc, String avatarImgUrl, String personalPageUrl, String deviceId, String scannerKey) {
         this.name = name;

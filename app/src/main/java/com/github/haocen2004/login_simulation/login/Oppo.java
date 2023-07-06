@@ -28,12 +28,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Oppo implements LoginImpl {
+    private static final String TAG = "Oppo Login";
     private final Activity activity;
+    private final Logger Log;
+    private final LoginCallback callback;
     private boolean isLogin;
     private String uid;
     private String token;
     private RoleData roleData;
-    private static final String TAG = "Oppo Login";
     @SuppressLint("HandlerLeak")
     Handler login_handler = new Handler() {
         @Override
@@ -82,8 +84,28 @@ public class Oppo implements LoginImpl {
             }
         }
     };
-    private final Logger Log;
-    private final LoginCallback callback;
+    Runnable login_runnable = new Runnable() {
+        @Override
+        public void run() {
+//            JSONObject data_json = new JSONObject();
+//            try {
+//                data_json.put("ssoid",uid).put("token",token);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+            String data_json = "{\"token\":\"" +
+                    token +
+                    "\",\"ssoid\":\"" +
+                    uid +
+                    "\"}";
+            Message msg = new Message();
+            Bundle data = new Bundle();
+            data.putString("value", verifyAccount(activity, "18", data_json));
+            msg.setData(data);
+            login_handler.sendMessage(msg);
+        }
+
+    };
     private GameCenterSDK sdk;
 
     public Oppo(Activity activity, LoginCallback callback) {
@@ -115,6 +137,12 @@ public class Oppo implements LoginImpl {
     }
 
     @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
+    }
+
+    @Override
     public boolean isLogin() {
         return isLogin;
     }
@@ -126,7 +154,7 @@ public class Oppo implements LoginImpl {
         OPPO_OFFICIAL_PACK_INSTALLED = Tools.verifyOfficialPack(activity, "com.miHoYo.bh3.nearme.gamecenter");
         if (!OPPO_OFFICIAL_PACK_INSTALLED) {
             DialogData dialogData = new DialogData("Oppo特殊操作提示", "Oppo服需要同时安装官方客户端\n\n在您的手机上未检测到官方客户端存在或没有获取手机安装应用列表权限\n\n请授予扫码器获取手机应用列表权限\n并正确安装任意版本官方客户端\n\n无需下载任何资源\n无需下载任何资源\n无需下载任何资源", "我已知晓");
-            DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             callback.onLoginFailed();
         } else if (!OPPO_INIT) {
             SdkInit(true);
@@ -169,29 +197,6 @@ public class Oppo implements LoginImpl {
         }
     }
 
-    Runnable login_runnable = new Runnable() {
-        @Override
-        public void run() {
-//            JSONObject data_json = new JSONObject();
-//            try {
-//                data_json.put("ssoid",uid).put("token",token);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-            String data_json = "{\"token\":\"" +
-                    token +
-                    "\",\"ssoid\":\"" +
-                    uid +
-                    "\"}";
-            Message msg = new Message();
-            Bundle data = new Bundle();
-            data.putString("value", verifyAccount(activity, "18", data_json));
-            msg.setData(data);
-            login_handler.sendMessage(msg);
-        }
-
-    };
-
     public void doBHLogin() {
         new Thread(login_runnable).start();
     }
@@ -212,12 +217,6 @@ public class Oppo implements LoginImpl {
     @Override
     public String getUsername() {
         return uid;
-    }
-
-    @Override
-    public void setRole(RoleData roleData) {
-        this.roleData = roleData;
-        isLogin = true;
     }
 
 }

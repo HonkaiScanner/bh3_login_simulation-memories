@@ -1,7 +1,6 @@
 package com.github.haocen2004.login_simulation.utils;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.data.Constant.ENC_DISPATCH;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_TIPS;
 import static com.github.haocen2004.login_simulation.data.Constant.QUICK_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.TIPS;
@@ -157,7 +156,7 @@ public class QRScanner {
                         }
                         notificationManager.notify(100, notification.build());
                         int succCount = Tools.getInt(activity, "succ_count");
-                        if (succCount > 10 && !Tools.getBoolean(activity, "showFollowDialog", false) && new Random().nextBoolean()) {
+                        if (succCount > 20 && !Tools.getBoolean(activity, "showFollowDialog", false) && new Random().nextBoolean()) {
 
                             DialogData dialogData = new DialogData("感谢使用", "您已经使用扫码器成功登录了 " + succCount + " 次\n\n感谢您对扫码器的认可与支持\n\n能否关注一下作者的B站账号呢\n(◍•ᴗ•◍)❤\n\nHao_cen\n269140934");
                             dialogData.setPositiveButtonData(new ButtonData("前往关注") {
@@ -173,17 +172,17 @@ public class QRScanner {
                                 public void callback(DialogHelper dialogHelper) {
                                     super.callback(dialogHelper);
                                     Tools.saveBoolean(activity, "showFollowDialog", true);
-                                    Log.makeToast("很抱歉打扰到您\n该弹窗不再显示");
+                                    Log.makeToast("很抱歉打扰到您\n该弹窗将不再显示");
                                 }
                             });
                             dialogData.setNeutralButtonData("下次再说");
-                            DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
+                            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                         }
 
                     }
                 } else {
 
-                    Logger.w(TAG, "handleMessage: 扫码登录失败 2");
+                    Logger.w(TAG, "handleMessage: 扫码登录失败 pos:2");
                     makeToast("登录失败 code: " + feedback_json.getInt("retcode") + "\n" + feedback_json.getString("msg"));
                 }
             } catch (JSONException e) {
@@ -263,7 +262,7 @@ public class QRScanner {
             Logger.d(TAG, "init failed.");
             Log.makeToast("扫码模块初始化失败！");
         }
-        if (!ENC_DISPATCH) {
+        if (roleData.getEnc_oaserver().equals("dec_oaserver")) {
             oaserver = roleData.getOaserver();
         }
         try {
@@ -470,7 +469,7 @@ public class QRScanner {
                         .put("guest", false);
             }
 
-            if (!ENC_DISPATCH) {
+            if (roleData.getEnc_oaserver().equals("dec_oaserver")) {
                 dispatch_json.put("account_url", oaserver.getString("account_url"))
                         .put("account_url_backup", oaserver.getString("account_url_backup"))
                         .put("asset_bundle_url_list", oaserver.getJSONArray("asset_bundle_url_list"))

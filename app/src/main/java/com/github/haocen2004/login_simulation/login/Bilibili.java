@@ -48,12 +48,19 @@ import java.util.Objects;
 public class Bilibili implements LoginImpl {
 
     private static final String TAG = "Bilibili Login";
+    private final AppCompatActivity activity;
+    private final Logger Log;
+    private final LoginCallback callback;
     private String access_token;
-    private SharedPreferences app_pref;
+    private final SharedPreferences app_pref;
     private String username;
     private String uid;
     private String open_id;
     private String combo_token;
+    private BSGameSdk gameSdk;
+    private SharedPreferences preferences;
+    private boolean isLogin;
+    private RoleData roleData;
     private final CallbackListener biliLogin = new CallbackListener() {
 
         @Override
@@ -134,14 +141,7 @@ public class Bilibili implements LoginImpl {
             callback.onLoginFailed();
         }
     };
-    private BSGameSdk gameSdk;
-    private SharedPreferences preferences;
-    private final AppCompatActivity activity;
-    private boolean isLogin;
-    private RoleData roleData;
-    private final Logger Log;
-    private final LoginCallback callback;
-
+    private String honkai_uid;
 
     public Bilibili(AppCompatActivity activity, LoginCallback loginCallback) {
         callback = loginCallback;
@@ -150,8 +150,6 @@ public class Bilibili implements LoginImpl {
         app_pref = getDefaultSharedPreferences(activity);
         //isLogin = false;
     }
-
-    private String honkai_uid;
 
     private void doBiliLogin() {
         boolean checkLastLogin = preferences.getBoolean("last_login_succeed", false);
@@ -169,7 +167,7 @@ public class Bilibili implements LoginImpl {
                     gameSdk.login(biliLogin);
                 }
             });
-            DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
         }
     }
 
@@ -296,7 +294,7 @@ public class Bilibili implements LoginImpl {
                     }
                 });
                 confirm_dialog.setNegativeButtonData("取消");
-                DialogLiveData.getINSTANCE(activity).addNewDialog(confirm_dialog);
+                DialogLiveData.getINSTANCE().addNewDialog(confirm_dialog);
             });
             builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
             builder.setCancelable(false);
@@ -377,6 +375,12 @@ public class Bilibili implements LoginImpl {
         return roleData;
     }
 
+    @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
+    }
+
     @SuppressLint("ShowToast")
     private void makeToast(String result) {
         try {
@@ -398,12 +402,6 @@ public class Bilibili implements LoginImpl {
     @Override
     public String getUsername() {
         return username;
-    }
-
-    @Override
-    public void setRole(RoleData roleData) {
-        this.roleData = roleData;
-        isLogin = true;
     }
 
     private void saveSlotInfo() {

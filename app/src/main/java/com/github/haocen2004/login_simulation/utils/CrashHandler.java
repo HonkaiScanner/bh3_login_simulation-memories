@@ -28,10 +28,17 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
     private static final String TAG = "CrashHandler";
     @SuppressLint("StaticFieldLeak")
     private static final CrashHandler instance = new CrashHandler();
-    private String PATH = "";
     private static final String FILE_NAME = "crash";
     private static final String FILE_NAME_SUFFIX = ".txt";
+    private String PATH = "";
     private Context mContext;
+
+    private CrashHandler() {
+    }
+
+    public static CrashHandler getInstance() {
+        return instance;
+    }
 
     @Override
     public synchronized Map<String, String> onCrashHandleStart(int i, String s, String s1, String s2) {
@@ -75,13 +82,6 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
 
         }
         return output.toString();
-    }
-
-    private CrashHandler() {
-    }
-
-    public static CrashHandler getInstance() {
-        return instance;
     }
 
     public void init(Context context) {

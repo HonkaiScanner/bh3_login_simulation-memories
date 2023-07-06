@@ -15,8 +15,8 @@ public class ForegroundCallbacks implements Application.ActivityLifecycleCallbac
     public static final String TAG = ForegroundCallbacks.class.getName();
     private static ForegroundCallbacks instance;
     private boolean foreground = false, paused = true;
-    private Handler handler = new Handler();
-    private List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
+    private final Handler handler = new Handler();
+    private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
     private Runnable check;
 
     public static ForegroundCallbacks init(Application application) {
@@ -88,7 +88,7 @@ public class ForegroundCallbacks implements Application.ActivityLifecycleCallbac
 
 
                 } catch (Exception exc) {
-                    Logger.d(TAG, "Listener threw exception!:" + exc.toString());
+                    Logger.d(TAG, "Listener threw exception!:" + exc);
                 }
             }
         } else {
@@ -111,7 +111,7 @@ public class ForegroundCallbacks implements Application.ActivityLifecycleCallbac
                         try {
                             l.onBecameBackground();
                         } catch (Exception exc) {
-                            Logger.d(TAG, "Listener threw exception!:" + exc.toString());
+                            Logger.d(TAG, "Listener threw exception!:" + exc);
                         }
                     }
                 } else {
@@ -142,8 +142,8 @@ public class ForegroundCallbacks implements Application.ActivityLifecycleCallbac
     }
 
     public interface Listener {
-        public void onBecameForeground();
+        void onBecameForeground();
 
-        public void onBecameBackground();
+        void onBecameBackground();
     }
 }

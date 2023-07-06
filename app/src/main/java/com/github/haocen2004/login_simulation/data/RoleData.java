@@ -1,7 +1,6 @@
 package com.github.haocen2004.login_simulation.data;
 
 import static com.github.haocen2004.login_simulation.data.Constant.BH_VER;
-import static com.github.haocen2004.login_simulation.data.Constant.ENC_DISPATCH;
 import static com.github.haocen2004.login_simulation.utils.Tools.getOAServer;
 
 import android.os.Bundle;
@@ -27,16 +26,14 @@ public class RoleData {
     private final String combo_id;
     private final String combo_token;
     private final String channel_id;
-    private String str_oaserver;
-    private String enc_oaserver;
     private final String account_type;
-    private String accountType;
     private final String oa_req_key;
-    private boolean is_setup;
-    private boolean uc_sign;
     //    private Activity activity;
     private final LoginCallback callback;
-
+    private String str_oaserver;
+    private String enc_oaserver = "dec_oaserver";
+    private String accountType;
+    private boolean is_setup;
     Handler getOA_handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -45,37 +42,37 @@ public class RoleData {
             String feedback = data.getString("value");
             try {
                 if (feedback != null) {
-                    if (ENC_DISPATCH) {
-                        enc_oaserver = feedback;
-                        is_setup = true;
-                        callback.onLoginSucceed(RoleData.this);
-                        return;
-                    }
                     JSONObject oaserver = new JSONObject(feedback);
                     Logger.i("GetOAServer", "handleMessage: " + oaserver);
-                    if (!oaserver.getBoolean("is_data_ready")) {
-                        String msg1 = oaserver.getString("msg");
-                        if (msg1.contains("更新"))
-                            msg1 = "崩坏3维护中或热更新服务器离线\n请等待维护完成\n或尝试在设置里手动更改崩坏3版本并重新启动";
+//                    if (!oaserver.getBoolean("is_data_ready")) {
+//                        String msg1 = oaserver.getString("msg");
+//                        if (msg1.contains("更新"))
+//                            msg1 = "崩坏3维护中或热更新服务器离线\n请等待维护完成\n或尝试在设置里手动更改崩坏3版本并重新启动";
+//                        callback.onLoginFailed();
+//                        Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
+//                        return;
+//                    } else if (oaserver.has("stop_end_time")) {
+//                        if (oaserver.getLong("server_cur_time") < oaserver.getLong("stop_end_time")) {
+//                            String msg1 = "崩坏3停服维护中\n请等待维护完成后再尝试登陆\n";
+//                            callback.onLoginFailed();
+//                            Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
+//                            return;
+//                        }
+//                    }
+                    if (oaserver.getInt("retcode") == 0) {
+                        enc_oaserver = oaserver.getString("data");
+                        is_setup = true;
+                        callback.onLoginSucceed(RoleData.this);
+                    } else {
+                        Logger.getLogger(null).makeToast(oaserver.getString("message"));
                         callback.onLoginFailed();
-                        Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
-                        return;
-                    } else if (oaserver.has("stop_end_time")) {
-                        if (oaserver.getLong("server_cur_time") < oaserver.getLong("stop_end_time")) {
-                            String msg1 = "崩坏3停服维护中\n请等待维护完成后再尝试登陆\n";
-                            callback.onLoginFailed();
-                            Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
-                            return;
-                        }
                     }
-                    str_oaserver = feedback;
-                    is_setup = true;
-                    callback.onLoginSucceed(RoleData.this);
                 } else {
                     callback.onLoginFailed();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                callback.onLoginFailed();
             }
         }
     };
@@ -87,6 +84,7 @@ public class RoleData {
         msg.setData(data);
         getOA_handler.sendMessage(msg);
     };
+    private boolean uc_sign;
 
     public RoleData(String open_id, String open_token, String combo_id, String combo_token, String channel_id, String account_type, String oa_req_key, int special_tag, LoginCallback callback) {
         this.callback = callback;
@@ -127,6 +125,21 @@ public class RoleData {
         new Thread(getOA_runnable).start();
     }
 
+
+    public RoleData(Map<String, String> map, LoginCallback callback) {
+        open_id = map.get("open_id");
+        open_token = map.get("open_token");
+        combo_id = map.get("combo_id");
+        combo_token = map.get("combo_token");
+        channel_id = map.get("channel_id");
+        str_oaserver = map.get("str_oaserver");
+        account_type = map.get("account_type");
+        accountType = map.get("accountType");
+        oa_req_key = map.get("oa_req_key");
+        is_setup = Boolean.parseBoolean(map.get("is_setup"));
+        uc_sign = Boolean.parseBoolean(map.get("uc_sign"));
+        this.callback = callback;
+    }
 
     public String getOpen_id() {
         return open_id;
@@ -179,21 +192,6 @@ public class RoleData {
 
     public String getEnc_oaserver() {
         return enc_oaserver;
-    }
-
-    public RoleData(Map<String, String> map, LoginCallback callback) {
-        open_id = map.get("open_id");
-        open_token = map.get("open_token");
-        combo_id = map.get("combo_id");
-        combo_token = map.get("combo_token");
-        channel_id = map.get("channel_id");
-        str_oaserver = map.get("str_oaserver");
-        account_type = map.get("account_type");
-        accountType = map.get("accountType");
-        oa_req_key = map.get("oa_req_key");
-        is_setup = Boolean.parseBoolean(map.get("is_setup"));
-        uc_sign = Boolean.parseBoolean(map.get("uc_sign"));
-        this.callback = callback;
     }
 
     public Map<String, String> getMap() {

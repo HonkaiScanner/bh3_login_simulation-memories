@@ -63,7 +63,7 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 72
+        versionCode = 73
         versionName = "1.8.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -79,10 +79,10 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
-            if (System.getenv("CI").toBoolean()) {
-                versionNameSuffix = System.getenv("NAME_SUFFIX")
+            versionNameSuffix = if (System.getenv("CI").toBoolean()) {
+                System.getenv("NAME_SUFFIX")
             } else {
-                versionNameSuffix = "-snapshot-23w23a.dev"
+                "-snapshot-23w28a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -161,9 +161,9 @@ dependencies {
     implementation("androidx.preference:preference:1.2.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.navigation:navigation-fragment:2.5.3")
-    implementation("androidx.navigation:navigation-ui:2.5.3")
-    implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
+    implementation("androidx.navigation:navigation-fragment:2.6.0")
+    implementation("androidx.navigation:navigation-ui:2.6.0")
+    implementation("androidx.viewpager2:viewpager2:1.1.0-beta02")
     implementation("com.github.jenly1314.WeChatQRCode:opencv:1.3.0")
     implementation("com.github.jenly1314.WeChatQRCode:opencv-armv7a:1.3.0")
     implementation("com.github.jenly1314.WeChatQRCode:opencv-armv64:1.3.0")
@@ -178,8 +178,8 @@ dependencies {
     implementation("cn.leancloud:storage-android:8.2.18")
     implementation("cn.leancloud:realtime-android:8.2.18")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-    implementation("androidx.room:room-runtime:2.5.1")
-    implementation("androidx.room:room-ktx:2.5.1")
+    implementation("androidx.room:room-runtime:2.5.2")
+    implementation("androidx.room:room-ktx:2.5.2")
 //    implementation("com.google.android.material:material:1.7.0")
     implementation("dev.rikka.rikkax.material:material:2.7.0")
     implementation("dev.rikka.rikkax.material:material-preference:2.0.0")
@@ -195,10 +195,10 @@ dependencies {
     implementation("androidx.paging:paging-runtime:3.1.1")
 
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
-    annotationProcessor("androidx.room:room-compiler:2.5.1")
+    annotationProcessor("androidx.room:room-compiler:2.5.2")
 //    testImplementation 'junit:junit:4.13.2'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
-    kapt("androidx.room:room-compiler:2.5.1")
+    kapt("androidx.room:room-compiler:2.5.2")
 }

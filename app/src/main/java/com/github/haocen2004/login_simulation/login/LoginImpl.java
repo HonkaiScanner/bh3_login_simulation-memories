@@ -9,9 +9,9 @@ public interface LoginImpl {
 
     RoleData getRole();
 
+    void setRole(RoleData roleData);
+
     boolean isLogin();
 
     String getUsername();
-
-    void setRole(RoleData roleData);
 }

@@ -45,12 +45,12 @@ import java.util.Objects;
 public class Huawei implements LoginImpl {
 
     private static final String TAG = "Huawei Login";
-    private String username;
     private final AppCompatActivity activity;
-    private boolean isLogin;
-    private RoleData roleData;
     private final Logger Log;
     private final LoginCallback callback;
+    private String username;
+    private boolean isLogin;
+    private RoleData roleData;
     private JSONObject verifyJson;
 
     public Huawei(AppCompatActivity activity, LoginCallback loginCallback) {
@@ -338,6 +338,12 @@ public class Huawei implements LoginImpl {
         return roleData;
     }
 
+    @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
+    }
+
     @SuppressLint("ShowToast")
     private void makeToast(String result) {
         try {
@@ -359,12 +365,6 @@ public class Huawei implements LoginImpl {
     @Override
     public String getUsername() {
         return username;
-    }
-
-    @Override
-    public void setRole(RoleData roleData) {
-        this.roleData = roleData;
-        isLogin = true;
     }
 
 

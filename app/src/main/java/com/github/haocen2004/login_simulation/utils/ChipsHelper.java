@@ -37,8 +37,8 @@ public class ChipsHelper implements ChipGroup.OnCheckedStateChangeListener, View
     private final List<Chip> headChipList;
     private final Map<String, Chip> chipMap = new HashMap<>();
     private final String TAG = "ChipsHelper";
-    private MaterialAlertDialogBuilder dialog;
     private final ReentrantLock lock = new ReentrantLock();
+    private MaterialAlertDialogBuilder dialog;
 
 
     public ChipsHelper(Context context, LayoutInflater layoutInflater) {

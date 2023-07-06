@@ -23,15 +23,72 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Vivo implements LoginImpl {
+    private static final String TAG = "Vivo Login";
     private final Activity activity;
+    private final Logger Log;
+    private final LoginCallback loginCallback;
     private boolean isLogin;
     private String uid;
     private String token;
     private RoleData roleData;
-    private static final String TAG = "Vivo Login";
-    private final Logger Log;
-    private final LoginCallback loginCallback;
+    @SuppressLint("HandlerLeak")
+    Handler login_handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+//            Logger.debug(feedback);
+            Logger.d(TAG, "handleMessage: " + feedback);
+            JSONObject feedback_json = null;
+            try {
+                feedback_json = new JSONObject(feedback);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                loginCallback.onLoginFailed();
+            }
+//            Logger.info(feedback);
+            Logger.i(TAG, "handleMessage: " + feedback);
+            try {
+                if (feedback_json.getInt("retcode") == 0) {
 
+                    JSONObject data_json2 = feedback_json.getJSONObject("data");
+                    String combo_id = data_json2.getString("combo_id");
+                    String open_id = data_json2.getString("open_id");
+                    String combo_token = data_json2.getString("combo_token");
+                    String account_type = data_json2.getString("account_type");
+                    Logger.addBlacklist(combo_token);
+
+                    roleData = new RoleData(open_id, "", combo_id, combo_token, "19", account_type, "vivo", 2, loginCallback);
+
+                    isLogin = true;
+//                    makeToast(activity.getString(R.string.login_succeed));
+
+                } else {
+
+                    makeToast(feedback_json.getString("message"));
+                    isLogin = false;
+                    loginCallback.onLoginFailed();
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                loginCallback.onLoginFailed();
+            }
+        }
+    };
+    Runnable login_runnable = new Runnable() {
+        @Override
+        public void run() {
+            String data_json = "{\"authtoken\":\"" + token + "\"}";
+            Message msg = new Message();
+            Bundle data = new Bundle();
+            data.putString("value", verifyAccount(activity, "19", data_json));
+            msg.setData(data);
+            login_handler.sendMessage(msg);
+        }
+
+    };
     private final VivoAccountCallback callback = new VivoAccountCallback() {
         @Override
         public void onVivoAccountLogin(String s, String s1, String s2) {
@@ -80,69 +137,15 @@ public class Vivo implements LoginImpl {
     }
 
     @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
+    }
+
+    @Override
     public boolean isLogin() {
         return isLogin;
     }
-
-    @SuppressLint("HandlerLeak")
-    Handler login_handler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String feedback = data.getString("value");
-//            Logger.debug(feedback);
-            Logger.d(TAG, "handleMessage: " + feedback);
-            JSONObject feedback_json = null;
-            try {
-                feedback_json = new JSONObject(feedback);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                loginCallback.onLoginFailed();
-            }
-//            Logger.info(feedback);
-            Logger.i(TAG, "handleMessage: " + feedback);
-            try {
-                if (feedback_json.getInt("retcode") == 0) {
-
-                    JSONObject data_json2 = feedback_json.getJSONObject("data");
-                    String combo_id = data_json2.getString("combo_id");
-                    String open_id = data_json2.getString("open_id");
-                    String combo_token = data_json2.getString("combo_token");
-                    String account_type = data_json2.getString("account_type");
-                    Logger.addBlacklist(combo_token);
-
-                    roleData = new RoleData(open_id, "", combo_id, combo_token, "19", account_type, "vivo", 2, loginCallback);
-
-                    isLogin = true;
-//                    makeToast(activity.getString(R.string.login_succeed));
-
-                } else {
-
-                    makeToast(feedback_json.getString("message"));
-                    isLogin = false;
-                    loginCallback.onLoginFailed();
-
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                loginCallback.onLoginFailed();
-            }
-        }
-    };
-
-    Runnable login_runnable = new Runnable() {
-        @Override
-        public void run() {
-            String data_json = "{\"authtoken\":\"" + token + "\"}";
-            Message msg = new Message();
-            Bundle data = new Bundle();
-            data.putString("value", verifyAccount(activity, "19", data_json));
-            msg.setData(data);
-            login_handler.sendMessage(msg);
-        }
-
-    };
 
     public void doBHLogin() {
         new Thread(login_runnable).start();
@@ -164,11 +167,5 @@ public class Vivo implements LoginImpl {
     @Override
     public String getUsername() {
         return uid;
-    }
-
-    @Override
-    public void setRole(RoleData roleData) {
-        this.roleData = roleData;
-        isLogin = true;
     }
 }

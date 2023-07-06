@@ -13,11 +13,8 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 public class SocketHelper {
-    private QRScanner qrScanner;
     private final String TAG = "SocketHelper";
-    private MulticastSocket ms;
     private final String multicastHost = "239.0.1.255";
-    private InetAddress receiveAddress;
     private final Logger logger;
     private final Handler loopHandle = new Handler(Looper.getMainLooper()) {
         @Override
@@ -25,31 +22,8 @@ public class SocketHelper {
             super.handleMessage(msg);
         }
     };
-
-    public SocketHelper() {
-        logger = Logger.getLogger(null);
-    }
-
-    public void setQrScanner(QRScanner qrScanner) {
-        Logger.d(TAG, "扫码模块数据载入成功");
-        this.qrScanner = qrScanner;
-    }
-
-    public void start() {
-        loopHandle.post(() -> {
-            Logger.d(TAG, "启动广播监听线程...");
-            logger.makeToast("开始监听Socket广播");
-            try {
-                ms = new MulticastSocket(12585);
-                receiveAddress = InetAddress.getByName(multicastHost);
-                ms.joinGroup(receiveAddress);
-                new Thread(socket_runnable).start();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
+    private QRScanner qrScanner;
+    private MulticastSocket ms;
     Runnable socket_runnable = new Runnable() {
         @Override
         public void run() {
@@ -86,4 +60,29 @@ public class SocketHelper {
 
         }
     };
+    private InetAddress receiveAddress;
+
+    public SocketHelper() {
+        logger = Logger.getLogger(null);
+    }
+
+    public void setQrScanner(QRScanner qrScanner) {
+        Logger.d(TAG, "扫码模块数据载入成功");
+        this.qrScanner = qrScanner;
+    }
+
+    public void start() {
+        loopHandle.post(() -> {
+            Logger.d(TAG, "启动广播监听线程...");
+            logger.makeToast("开始监听Socket广播");
+            try {
+                ms = new MulticastSocket(12585);
+                receiveAddress = InetAddress.getByName(multicastHost);
+                ms.joinGroup(receiveAddress);
+                new Thread(socket_runnable).start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }

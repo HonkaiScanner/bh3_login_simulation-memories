@@ -24,15 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoggerAdapter extends RecyclerView.Adapter<LoggerAdapter.LoggerViewHolder> {
-    public void setAllLogs(List<LogData> allLogs) {
-        this.allLogs = allLogs;
-    }
-
-    private List<LogData> allLogs = new ArrayList<>();
     private final Activity activity;
+    private List<LogData> allLogs = new ArrayList<>();
 
     public LoggerAdapter(Activity activity) {
         this.activity = activity;
+    }
+
+    public void setAllLogs(List<LogData> allLogs) {
+        this.allLogs = allLogs;
     }
 
     @NonNull

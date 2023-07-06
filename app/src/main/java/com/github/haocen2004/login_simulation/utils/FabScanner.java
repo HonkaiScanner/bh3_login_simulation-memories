@@ -60,6 +60,7 @@ import java.util.Objects;
 public class FabScanner extends Service {
     private volatile static FabScanner INSTANCE;
     private final String TAG = "FabScanner";
+    private final List<XToast<?>> toastInst = new ArrayList<>();
     boolean isScreenCaptureStarted;
     private MediaProjectionManager mProjectionManager = null;
     private MediaProjection sMediaProjection;
@@ -80,36 +81,11 @@ public class FabScanner extends Service {
     private Intent mResultData;
     private boolean needStop;
     private ActivityResultLauncher<Intent> activityResultLauncher;
-    private final List<XToast<?>> toastInst = new ArrayList<>();
     private int counter = 0;
     private SharedPreferences pref;
+    private boolean showMIUIAlert = true;
 
     public FabScanner() {
-    }
-
-    public void setActivityResultLauncher(ActivityResultLauncher<Intent> activityResultLauncher) {
-        this.activityResultLauncher = activityResultLauncher;
-    }
-
-    public ActivityResultCallback<ActivityResult> getResultApiCallback() {
-        return callback -> {
-            if (callback.getResultCode() == RESULT_OK) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Intent service = new Intent(activity, FabScanner.class);
-                    service.putExtra("code", callback.getResultCode());
-                    service.putExtra("data", callback.getData());
-//                    service.putExtra("fragment");
-                    activity.startForegroundService(service);
-                } else {
-                    mResultCode = callback.getResultCode();
-                    mResultData = callback.getData();
-                    sMediaProjection = mProjectionManager.getMediaProjection(mResultCode, mResultData);
-                    hasData = true;
-                    showAlertScanner();
-
-                }
-            }
-        };
     }
 
     public FabScanner(Activity activity) {
@@ -146,18 +122,40 @@ public class FabScanner extends Service {
         return INSTANCE;
     }
 
+    public void setActivityResultLauncher(ActivityResultLauncher<Intent> activityResultLauncher) {
+        this.activityResultLauncher = activityResultLauncher;
+    }
+
+    public ActivityResultCallback<ActivityResult> getResultApiCallback() {
+        return callback -> {
+            if (callback.getResultCode() == RESULT_OK) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Intent service = new Intent(activity, FabScanner.class);
+                    service.putExtra("code", callback.getResultCode());
+                    service.putExtra("data", callback.getData());
+//                    service.putExtra("fragment");
+                    activity.startForegroundService(service);
+                } else {
+                    mResultCode = callback.getResultCode();
+                    mResultData = callback.getData();
+                    sMediaProjection = mProjectionManager.getMediaProjection(mResultCode, mResultData);
+                    hasData = true;
+                    showAlertScanner();
+
+                }
+            }
+        };
+    }
+
     public void setQrScanner(QRScanner qrScanner) {
         this.qrScanner = qrScanner;
     }
-
 
     public void setsMediaProjection(MediaProjection sMediaProjection) {
         this.sMediaProjection = sMediaProjection;
         hasData = true;
         showAlertScanner();
     }
-
-    private boolean showMIUIAlert = true;
 
     public void showAlertScanner() {
         if (showMIUIAlert && Tools.isMIUI(activity)) {
@@ -171,7 +169,7 @@ public class FabScanner extends Service {
                     super.callback(dialogHelper);
                 }
             });
-            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
         } else {
             Logger.d(TAG, "toast: " + toastInst);
             Logger.d(TAG, "count: " + counter);
@@ -200,7 +198,7 @@ public class FabScanner extends Service {
     private void setActiveDisplay(boolean isActive) {
 
         for (XToast<?> xToast2 : toastInst) {
-            ImageView imageView = ((ImageView) xToast2.getContentView().findViewById(R.id.fab_scanner_image));
+            ImageView imageView = xToast2.getContentView().findViewById(R.id.fab_scanner_image);
 //            Logger.d(TAG,imageView.getColorFilter().toString());
             if (isActive) {
 
@@ -329,7 +327,7 @@ public class FabScanner extends Service {
                                     Logger.d(TAG + failedCount, urls.toString());
                                     if (qrScanner.parseUrl(url)) {
                                         Toast.makeText(activity, "扫码成功\n处理中....", Toast.LENGTH_SHORT).show();
-                                        Log.setFabMode(true);
+                                        Logger.setFabMode(true);
                                         qrScanner.start();
                                         if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("keep_capture", false)) {
                                             stopProjection();

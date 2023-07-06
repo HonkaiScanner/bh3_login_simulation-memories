@@ -36,12 +36,12 @@ public class NotificationActivity extends BaseActivity {
             Logger.d("PushService", "message=" + message + ", channel=" + channel);
             if (channel.equals("self_login_succ")) {
                 DialogData dialogData = new DialogData("扫码成功通知", message, "确定");
-                DialogLiveData.getINSTANCE(null).addDelayDialog(dialogData);
+                DialogLiveData.getINSTANCE().addDelayDialog(dialogData);
             } else {
                 try {
                     JSONObject messageJson = new JSONObject(message);
                     DialogData dialogData = new DialogData("新通知：", messageJson.getString("alert"), "确定");
-                    DialogLiveData.getINSTANCE(null).addDelayDialog(dialogData);
+                    DialogLiveData.getINSTANCE().addDelayDialog(dialogData);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }

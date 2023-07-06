@@ -64,7 +64,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
                     super.callback(dialogHelper);
                 }
             });
-            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
         } else if (binding.reportHand.equals(view)) {
             DialogData dialogData = new DialogData("反馈须知", "该按钮为遇到错误时未发生崩溃使用\n请完整执行完会产生错误的操作后再点击\n请优先切换至日志窗口查看日志后再判断是否需要上报完整日志\n\n请再次确认是否上报");
             dialogData.setPositiveButtonData(new ButtonData("确认开始上报") {
@@ -75,7 +75,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
                     super.callback(dialogHelper);
                 }
             });
-            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
         } else {
             Log.makeToast("Wrong Button");
         }

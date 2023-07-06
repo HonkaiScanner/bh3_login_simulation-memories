@@ -24,13 +24,10 @@ import java.net.URL;
 
 public class TencentLoginActivity extends BaseActivity {
 
-    private ActivityTencentLoginBinding binding;
-
-    private WebView webView;
-
-    private String uin;
-
     private final String TAG = "Tencent Web login";
+    private ActivityTencentLoginBinding binding;
+    private WebView webView;
+    private String uin;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -84,7 +81,7 @@ public class TencentLoginActivity extends BaseActivity {
                         if (url.contains("progress/0")) {
                             DialogData dialogData = new DialogData("登录失败", "code: progress/0\n可能是账号被腾讯风控阻止登陆");
                             dialogData.setPositiveButtonData(new ButtonData("我已知晓"));
-                            DialogLiveData.getINSTANCE(getApplicationContext()).addNewDialog(dialogData);
+                            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                             setResult(RESULT_CANCELED);
                             finish();
                         }

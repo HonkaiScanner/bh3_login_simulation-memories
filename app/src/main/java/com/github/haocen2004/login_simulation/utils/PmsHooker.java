@@ -18,8 +18,8 @@ import java.util.Locale;
 // code from https://github.com/fourbrother/HookPmsSignature/blob/master/src/cn/wjdiankong/hookpms/PmsHookBinderInvocationHandler.java
 
 public class PmsHooker implements InvocationHandler {
-    private Object base;
     private static final String TAG = "PMSHook";
+    private Object base;
 
     public PmsHooker(Object base, int hashCode) {
         try {

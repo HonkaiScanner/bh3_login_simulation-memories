@@ -78,7 +78,7 @@ public class LogInfoAdapter extends RecyclerView.Adapter<LogInfoAdapter.LogInfoV
                 }
             });
             dialogData.setNegativeButtonData("取消");
-            DialogLiveData.getINSTANCE(null).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             return true;
         });
     }

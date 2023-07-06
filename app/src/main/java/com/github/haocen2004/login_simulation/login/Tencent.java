@@ -39,14 +39,14 @@ import java.util.Objects;
 public class Tencent implements LoginImpl {
 
     private static final String TAG = "Tencent Login";
+    private final AppCompatActivity activity;
+    private final Logger Log;
+    private final LoginCallback callback;
     private String access_token;
     private String username;
     private String open_id;
-    private final AppCompatActivity activity;
     private boolean isLogin;
     private RoleData roleData;
-    private final Logger Log;
-    private final LoginCallback callback;
     private String verify_data;
     private boolean first_auto_login = false;
     private SharedPreferences preferences;
@@ -80,6 +80,17 @@ public class Tencent implements LoginImpl {
                 callback.onLoginFailed();
                 e.printStackTrace();
             }
+        }
+    };
+    Runnable login_runnable = new Runnable() {
+        @Override
+        public void run() {
+            Message msg = new Message();
+            Bundle data = new Bundle();
+            data.putString("value", Tools.verifyAccount(activity, "13", verify_data));
+            msg.setData(data);
+            login_handler.sendMessage(msg);
+
         }
     };
 
@@ -116,21 +127,15 @@ public class Tencent implements LoginImpl {
         return roleData;
     }
 
-
-    @Override
-    public boolean isLogin() {
-        return isLogin;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
     @Override
     public void setRole(RoleData roleData) {
         this.roleData = roleData;
         isLogin = true;
+    }
+
+    @Override
+    public boolean isLogin() {
+        return isLogin;
     }
 
 
@@ -203,17 +208,10 @@ public class Tencent implements LoginImpl {
 ////        userLoginRet.get
 //    }
 
-    Runnable login_runnable = new Runnable() {
-        @Override
-        public void run() {
-            Message msg = new Message();
-            Bundle data = new Bundle();
-            data.putString("value", Tools.verifyAccount(activity, "13", verify_data));
-            msg.setData(data);
-            login_handler.sendMessage(msg);
-
-        }
-    };
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
     @Override
     public void login() {

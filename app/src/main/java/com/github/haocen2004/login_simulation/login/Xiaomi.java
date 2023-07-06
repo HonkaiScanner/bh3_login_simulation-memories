@@ -31,12 +31,12 @@ public class Xiaomi extends Application implements LoginImpl {
 
     private final AppCompatActivity activity;
     private final String TAG = "Mi Login";
+    private final LoginCallback callback;
     private boolean isLogin;
     private String uid;
     private String username;
     private String session;
     private RoleData roleData;
-    private final LoginCallback callback;
 
     public Xiaomi(AppCompatActivity activity, LoginCallback loginCallback) {
         this.activity = activity;
@@ -58,7 +58,7 @@ public class Xiaomi extends Application implements LoginImpl {
                     xiaomiLogin(false);
                 }
             });
-            DialogLiveData.getINSTANCE(activity).addNewDialog(dialogData);
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             return;
         }
 
@@ -174,6 +174,12 @@ public class Xiaomi extends Application implements LoginImpl {
         return roleData;
     }
 
+    @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
+    }
+
     private void makeToast(String result) {
         Logger.getLogger(this).makeToast(result);
     }
@@ -186,12 +192,6 @@ public class Xiaomi extends Application implements LoginImpl {
     @Override
     public String getUsername() {
         return username;
-    }
-
-    @Override
-    public void setRole(RoleData roleData) {
-        this.roleData = roleData;
-        isLogin = true;
     }
 
 
