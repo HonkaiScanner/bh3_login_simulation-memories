@@ -532,7 +532,7 @@ public final class SubtitleCollapsingTextHelper {
         }
     }
 
-    public final boolean setState(final int[] state) {
+    public boolean setState(final int[] state) {
         this.state = state;
 
         if (isStateful()) {
@@ -543,7 +543,7 @@ public final class SubtitleCollapsingTextHelper {
         return false;
     }
 
-    public final boolean isStateful() {
+    public boolean isStateful() {
         return (collapsedTitleTextColor != null && collapsedTitleTextColor.isStateful())
                 || (expandedTitleTextColor != null && expandedTitleTextColor.isStateful());
     }

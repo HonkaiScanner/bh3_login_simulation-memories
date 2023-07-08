@@ -53,7 +53,7 @@ public class SubtitleCollapsingToolbarLayout extends FrameLayout {
     @Nullable
     WindowInsetsCompat lastInsets;
     private boolean refreshToolbar = true;
-    private int toolbarId;
+    private final int toolbarId;
     @Nullable
     private Toolbar toolbar;
     @Nullable
