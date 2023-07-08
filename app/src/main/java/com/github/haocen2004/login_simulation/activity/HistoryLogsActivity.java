@@ -117,6 +117,7 @@ public class HistoryLogsActivity extends BaseActivity {
             File[] logs = dir.listFiles();
             if (logs != null) {
                 for (File log : logs) {
+                    if (log.getName().contains(".saveAllLogs")) continue;
                     String logName = log.getName().replace("logs-", "").replace(".log", "");
                     logData.add(new LogData(logName, String.valueOf(processLogFile(log).size()), getAutoFileOrFilesSize(log)));
                 }
