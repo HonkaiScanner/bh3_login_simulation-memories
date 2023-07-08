@@ -488,7 +488,8 @@ public class Official implements LoginImpl {
         if (!preferences.getBoolean("has_token", false)) {
             smsMode = false;
             new MaterialAlertDialogBuilder(activity)
-                    .setTitle(activity.getString(R.string.sel_server))
+                    .setTitle("点选一个登陆方式")
+                    .setCancelable(false)
                     .setSingleChoiceItems(R.array.official_login_type, 0, (dialogInterface, i) -> {
                         String[] loginType = activity.getResources().getStringArray(R.array.official_login_type_values);
                         Logger.d(TAG, "select " + loginType[i]);

@@ -19,7 +19,7 @@ public class Constant {
     public static String SP_URL = "https://scanner.hellocraft.xyz";
     public static String AFD_URL = "https://afdian.net/@Haocen2004";
     public static String QQ_GROUP_URL = "https://jq.qq.com/?_wv=1027&k=yym6JCqT";
-    public static String BH_VER = "6.4.0";
+    public static String BH_VER = "6.8.0";
     public static String MDK_VERSION = "1.25.1";
     public static String OFFICIAL_TYPE = "android01";
     public static String TIPS = "";
@@ -45,5 +45,4 @@ public class Constant {
     public static boolean DEBUG_MODE = false;
     public static boolean SAVE_ALL_LOGS = false;
     public static boolean HAS_UPDATE_THREAD = false;
-    public static boolean ENC_DISPATCH = true;
 }
