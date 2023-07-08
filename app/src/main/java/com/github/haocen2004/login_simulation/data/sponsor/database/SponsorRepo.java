@@ -32,12 +32,16 @@ public class SponsorRepo {
     public void refreshSponsors() {
         new Thread(() -> {
             LCQuery<LCObject> query = new LCQuery<>("Sponsors");
+            query.limit(500);
+            query.orderByAscending("createdAt");
+
             query.findInBackground().subscribe(new Observer<>() {
                 public void onSubscribe(@NotNull Disposable disposable) {
                 }
 
                 public void onNext(@NotNull List<LCObject> Sponsors) {
                     new Thread(() -> {
+                        Logger.d("update sponsor", "get " + Sponsors.size() + " sponsors data");
                         List<String> scanner_keys = new ArrayList<>();
                         for (LCObject object : Sponsors) {
                             scanner_keys.add(object.getString("scannerKey"));

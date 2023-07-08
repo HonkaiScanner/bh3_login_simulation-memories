@@ -61,7 +61,7 @@ public class SponsorAdapter extends PagingDataAdapter<SponsorData, SponsorAdapte
                 if (url.getProtocol().contains("http")) {
                     Glide.with(activity.getApplicationContext()).load(sponsorData.getAvatarImgUrl()).circleCrop().into(holder.imageViewAvatar);
                 } else {
-                    throw new RuntimeException("wrong protocol");
+                    Glide.with(activity.getApplicationContext()).load("https://i0.hdslb.com/bfs/face/member/noface.jpg").circleCrop().into(holder.imageViewAvatar);
                 }
             } catch (Exception e) {
                 Glide.with(activity.getApplicationContext()).load("https://i0.hdslb.com/bfs/face/member/noface.jpg").circleCrop().into(holder.imageViewAvatar);

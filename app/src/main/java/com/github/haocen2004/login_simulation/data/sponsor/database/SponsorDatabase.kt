@@ -17,7 +17,7 @@ abstract class SponsorDatabase : RoomDatabase() {
                 val instance = databaseBuilder(
                     context,
                     SponsorDatabase::class.java,
-                    "item_database"
+                    "sponsors_db"
                 ).build()
 
                 INSTANCE = instance

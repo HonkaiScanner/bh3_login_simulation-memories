@@ -23,10 +23,12 @@ class SponsorDataSource(private val sponsorDao: SponsorDao) : PagingSource<Int, 
         return try {
             Logger.d("load", "loading ${params.loadSize} to ${page * params.loadSize}")
             val entities = sponsorDao.getPagedList(params.loadSize, page * params.loadSize)
+            var nextKey = if (entities.isEmpty()) null else page + 1
+            if (params.loadSize > 8) nextKey = params.loadSize / 8
             LoadResult.Page(
                 data = entities,
                 prevKey = if (page == 0) null else page - 1,
-                nextKey = if (entities.isEmpty()) null else page + 1
+                nextKey = nextKey
             )
         } catch (e: Exception) {
             LoadResult.Error(e)
