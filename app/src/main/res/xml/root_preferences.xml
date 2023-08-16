@@ -3,7 +3,6 @@
 
     <PreferenceCategory android:title="@string/basic_header">
         <rikka.preference.SimpleMenuPreference
-            android:id="@+id/listPrefServer"
             android:entries="@array/server_types"
             android:entryValues="@array/server_types_value"
             android:key="server_type"

@@ -3,9 +3,7 @@
     <string name="app_info" translatable="false">Powered By Hao_cen</string>
     <string name="app_ver" translatable="false">ver_placeholder</string>
     <string name="btn_login">Login</string>
-    <string name="login_finished">Login Succeed</string>
     <string name="btn_scan">Scan Qr Code</string>
-    <string name="btn_logout">Logout</string>
     <string name="list_main">Main</string>
     <string name="page_main">Scanner</string>
     <string name="list_settings">Settings</string>
@@ -29,29 +27,22 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="feedback_holder">Thanks for your report</string>
-    <string name="support_holder">Thanks for your donation</string>
     <string name="types_uc">UC Server</string>
     <string name="types_xiaomi">XiaoMi Server</string>
     <string name="boolean_true">ON</string>
     <string name="boolean_false">OFF</string>
     <string name="confirm_prefix">Auto Confirm:</string>
-    <string name="channel_name">Proxy</string>
-    <string name="channel_description">Magic for Inject SDK</string>
     <string name="error_scan">Wrong QR Code</string>
     <string name="error_oa_process">Waiting for OAServer URL</string>
     <string name="error_not_login">Not Login</string>
     <string name="has_login">Account Logged</string>
     <string name="error_wrong_server">Wrong Server</string>
-    <string name="cache_delete">Cache Deleted</string>
     <string name="login_succeed">Login Succeed</string>
     <string name="logout">Account Logout</string>
     <string name="outdate_qr">QR Code OutDated</string>
-    <string name="custom_username">Custom Display User Name</string>
-    <string name="create_short_cut">Create Short Cut For Last Succeed</string>
     <string name="slot1">Slot 1</string>
     <string name="slot2">Slot 2</string>
     <string name="slot3">Slot 3</string>
-    <string name="start_proxy">Start Proxy</string>
     <string name="use_token_true">Token Mode</string>
     <string name="types_vivo">Vivo Server</string>
     <string name="types_oppo">Oppo Server</string>
@@ -64,21 +55,18 @@
     <string name="btn_register">Register</string>
     <string name="sponsors_list">Sponsors List</string>
     <string name="become_sp">Donate</string>
-    <string name="user_rule">Agree User Rules</string>
     <string name="checkbox_wdj">WandouJia Account</string>
     <string name="reg_email">Email</string>
     <string name="reg_scanner_key">Sponsor Key</string>
     <string name="error_email">Wrong Email Address</string>
     <string name="error_key">Wrong Sponsor Key</string>
     <string name="error_ver_outdated">Scanner is OUTDATED</string>
-    <string name="error_network">Network Error</string>
     <string name="reg_succ">Registered successfully</string>
     <string name="error_key_used">This Key is USED</string>
     <string name="sel_pc">PC</string>
     <string name="sel_android">Android</string>
     <string name="sel_ios">IOS</string>
     <string name="desc_click_login">Click to login.</string>
-    <string name="dark_mode">Dark Mode Type</string>
     <string name="reg_new">Register</string>
     <string name="btn_get_key">Get Sponsor Key</string>
     <string name="btn_pic">Select from album</string>
@@ -90,7 +78,6 @@
     <string name="sp_login_pref">Sponsor Account:</string>
     <string name="login_true">Logged</string>
     <string name="login_false">Not Login</string>
-    <string name="update_check_off">Update Check Disable</string>
     <string name="sel_server">Select Server</string>
     <string name="auto_login_pref">Auto Login:</string>
     <string name="logged_and_restart">Account Logged\nPlease restart to apply change</string>
@@ -102,7 +89,6 @@
     <string name="use_socket">Receive socket requests</string>
     <string name="log_msg">Logger Message</string>
     <string name="log_level">Logger Level</string>
-    <string name="list_log">Logs</string>
     <string name="feedback_way">Feed Back</string>
     <string name="logs">Logs</string>
     <string name="list_about">About</string>
@@ -117,7 +103,6 @@
     <string name="fab_header">Fab Setting</string>
     <string name="fab_save_img">Save Screenshot</string>
     <string name="keep_capture_no_cooling_down">Keep Capture No Cooling Down</string>
-    <string name="keep_capture_no_cooling_down_sum">As fast as you can</string>
     <string name="enable_adv_setting">Enable Advance Setting</string>
     <string name="no_server_tip">Disable Server Tips</string>
     <string name="no_server_tip_sum">below scanner username</string>
