@@ -99,7 +99,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         }
     };
     Runnable bh_update_rb = () -> {
-        String feedback = Network.sendGet("https://sdk-static.mihoyo.com/bh3_cn/mdk/launcher/api/resource?launcher_id=4", false);
+        String feedback = Network.sendGet("https://bh3-launcher-static.mihoyo.com/bh3_cn/mdk/launcher/api/resource?launcher_id=4", false);
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);
