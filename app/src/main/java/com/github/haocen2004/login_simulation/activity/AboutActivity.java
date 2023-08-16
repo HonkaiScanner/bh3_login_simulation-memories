@@ -87,8 +87,8 @@ public class AboutActivity extends BaseAbsActivity {
         items.add(new License("Bugly", "Tencent", "UNKNOWN", "https://github.com/BuglyDevTeam/Bugly-Android"));
         items.add(new License("java-unified-sdk", "leancloud", License.APACHE_2, "https://github.com/leancloud/java-unified-sdk"));
         items.add(new License("RxJava", "ReactiveX", License.APACHE_2, "https://github.com/ReactiveX/RxJava"));
-        items.add(new License("ToastUtils", "getActivity", License.APACHE_2, "https://github.com/getActivity/ToastUtils"));
-        items.add(new License("XToast", "getActivity", License.APACHE_2, "https://github.com/getActivity/XToast"));
+        items.add(new License("Toaster", "getActivity", License.APACHE_2, "https://github.com/getActivity/Toaster"));
+        items.add(new License("EasyWindow", "getActivity", License.APACHE_2, "https://github.com/getActivity/EasyWindow"));
         items.add(new License("sensebot", "Geetest", License.APACHE_2, "https://github.com/GeeTeam/gt3-android-sdk"));
         items.add(new License("glide", "Google", License.APACHE_2, "https://github.com/bumptech/glide"));
         items.add(new License("RikkaX", "Rikka", License.MIT, "https://github.com/RikkaApps/RikkaX"));
@@ -99,6 +99,6 @@ public class AboutActivity extends BaseAbsActivity {
         items.add(new Category("您已使用扫码器成功登陆 " + Tools.getInt(this, "succ_count") + " 次"));
         items.add(new Category(Tools.getUUID(this)));
         items.add(new Category(Tools.getString(this, "installationId")));
-        items.add(new Category("累计有 " + VISITOR_COUNT + " 台设备使用过扫码器"));
+        items.add(new Category("累计有 " + VISITOR_COUNT + " 台设备使用过扫码器 (统计访问更新服务的IP)"));
     }
 }

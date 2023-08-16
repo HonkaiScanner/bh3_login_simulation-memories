@@ -7,18 +7,18 @@
 
 官服   
 Bilibili  
-Vivo  
-oppo  
-UC(豌豆荚/九游)  
 小米  
+UC(豌豆荚/九游)  
+Vivo  
 魅族  
-应用宝(Xposed)
+oppo  
+华为  
+应用宝(仅QQ)  
+360
 
 ## 不支持协议 / Unsupported protocol
 
-华为  
-以上SDK有包名和签名验证暂时无解（等待有缘人提供思路  
-360 (获取sdk需要开发者账号，必须年满18)
+应用宝(其他渠道)
 
 ## B站演示视频 / Video
 
@@ -38,15 +38,14 @@ opencv
 Bugly  
 java-unified-sdk  
 RxJava  
-ToastUtils  
-XToast  
+Toaster  
+EasyWindow  
 sensebot  
 glide  
 Gson  
-okhttp  
+okhttp
 
 ## 联系方式 / Contact
 QQ Channel: https://pd.qq.com/s/hp1qtbnap  
 TG: https://t.me/honkaiscanner
 
-[ZXING][已被OPENCV代替]
