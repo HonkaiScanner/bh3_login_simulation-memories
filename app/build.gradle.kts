@@ -63,8 +63,8 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 74
-        versionName = "1.8.0"
+        versionCode = 75
+        versionName = "1.8.1"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
@@ -158,11 +158,11 @@ configurations {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.so", "*.aar"))))
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.preference:preference:1.2.0")
+    implementation("androidx.preference:preference:1.2.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.navigation:navigation-fragment:2.6.0")
-    implementation("androidx.navigation:navigation-ui:2.6.0")
+    implementation("androidx.navigation:navigation-fragment:2.7.0")
+    implementation("androidx.navigation:navigation-ui:2.7.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta02")
     implementation("com.github.jenly1314.WeChatQRCode:opencv:1.3.0")
     implementation("com.github.jenly1314.WeChatQRCode:opencv-armv7a:1.3.0")
@@ -184,15 +184,15 @@ dependencies {
     implementation("dev.rikka.rikkax.material:material:2.7.0")
     implementation("dev.rikka.rikkax.material:material-preference:2.0.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
-    implementation("com.github.getActivity:ToastUtils:9.1")
-    implementation("com.github.getActivity:XToast:8.9")
+    implementation("com.github.getActivity:Toaster:12.3")
+    implementation("com.github.getActivity:EasyWindow:10.3")
     implementation("com.geetest.sensebot:sensebot:4.3.9.1")
     implementation("com.drakeet.about:about:2.5.2")
     implementation("com.drakeet.multitype:multitype:4.3.0")
 //    implementation("com.huawei.agconnect:agconnect-core:1.7.1.300")
     implementation("com.huawei.hms:hwid:6.8.0.300")
     implementation("com.huawei.hms:game:6.8.0.300")
-    implementation("androidx.paging:paging-runtime:3.1.1")
+    implementation("androidx.paging:paging-runtime:3.2.0")
 
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     annotationProcessor("androidx.room:room-compiler:2.5.2")

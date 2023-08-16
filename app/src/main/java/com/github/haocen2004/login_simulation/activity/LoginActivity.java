@@ -121,7 +121,7 @@ public class LoginActivity extends BaseActivity {
 //                    String postParam = "{\"app_ver\":" + VERSION_CODE + ",\"sponsor_key\":\"" + sc_key + "\"}";
                     LCQuery<LCObject> query = new LCQuery<>("Sponsors"); // 请求云端查重 1  LeanCloud
                     query.whereEqualTo("scannerKey", sc_key);
-                    query.findInBackground().subscribe(new Observer<List<LCObject>>() {
+                    query.findInBackground().subscribe(new Observer<>() {
                         public void onSubscribe(@NonNull Disposable disposable) {
                         }
 
@@ -220,7 +220,7 @@ public class LoginActivity extends BaseActivity {
                 user.put("deviceId", Tools.getDeviceID(getApplicationContext()));
 
 
-                user.signUpInBackground().subscribe(new Observer<LCUser>() {
+                user.signUpInBackground().subscribe(new Observer<>() {
                     public void onSubscribe(@NotNull Disposable disposable) {
                     }
 
@@ -317,11 +317,11 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void showProgressBar() {
-        binding.progessBarUser.setVisibility(View.VISIBLE);
+        binding.progressBarUser.setVisibility(View.VISIBLE);
     }
 
     private void hideProgressBar() {
-        binding.progessBarUser.setVisibility(View.GONE);
+        binding.progressBarUser.setVisibility(View.GONE);
     }
 
 }

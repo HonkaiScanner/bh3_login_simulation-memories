@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -83,7 +82,6 @@ public class QRScanner {
     };
     private RoleData roleData;
     private final AppCompatActivity activity;
-    private boolean fabMode = false;
     @SuppressLint("HandlerLeak")
     private final Handler defaultHandle = new Handler(Looper.getMainLooper()) {
         @Override
@@ -92,7 +90,7 @@ public class QRScanner {
         }
     };
     @SuppressLint("HandlerLeak")
-    Handler handler2 = new Handler() {
+    Handler handler2 = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -123,7 +121,8 @@ public class QRScanner {
                     genRequest(false);
                     new Thread(() -> Network.sendPost("https://api.scanner.hellocraft.xyz/scan_succ_upload", confirm_json.toString(), false)).start();
                     if (QUICK_MODE) {
-                        Toast.makeText(activity, "快速模式\n" + app_name + " : " + activity.getString(R.string.login_succeed), Toast.LENGTH_LONG).show();
+                        makeToast("快速模式\n" + app_name + " : " + activity.getString(R.string.login_succeed));
+//                        Toast.makeText(activity, "快速模式\n" + app_name + " : " + activity.getString(R.string.login_succeed), Toast.LENGTH_LONG).show();
                         ActivityManager.getInstance().clearActivity();
                     } else if (getDefaultSharedPreferences(activity).getBoolean("quit_on_success", false)) {
 
@@ -308,7 +307,7 @@ public class QRScanner {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 app_name = URLDecoder.decode(app_name, StandardCharsets.UTF_8);
                             } else {
-                                app_name = URLDecoder.decode(app_name, "UTF-8");
+                                app_name = URLDecoder.decode(app_name, StandardCharsets.UTF_8);
                             }
                         } catch (Exception ignore) {
                         }
@@ -538,16 +537,16 @@ public class QRScanner {
 
 
     private void makeToast(String msg) {
-        if (fabMode) {
-            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-        } else {
-            try {
-                Log.makeToast(msg);
-            } catch (Exception e) {
-                Logger.w(TAG, "Logger Class Missing... try get it.");
-                Log = Logger.getLogger(null);
-                makeToast(msg);
-            }
+//        if (fabMode) {
+//            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+//        } else {
+        try {
+            Log.makeToast(msg);
+        } catch (Exception e) {
+            Logger.w(TAG, "Logger Class Missing... try get it.");
+            Log = Logger.getLogger(null);
+            makeToast(msg);
         }
+//        }
     }
 }

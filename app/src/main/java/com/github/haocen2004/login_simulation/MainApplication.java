@@ -44,7 +44,7 @@ import com.github.haocen2004.login_simulation.utils.Logger;
 import com.github.haocen2004.login_simulation.utils.Network;
 import com.github.haocen2004.login_simulation.utils.PmsHooker;
 import com.github.haocen2004.login_simulation.utils.Tools;
-import com.hjq.toast.ToastUtils;
+import com.hjq.toast.Toaster;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
@@ -63,7 +63,6 @@ import io.reactivex.disposables.Disposable;
 
 public class MainApplication extends Application implements LifecycleOwner {
     private SharedPreferences app_pref;
-    private Logger Log;
 
 
     @Override
@@ -80,7 +79,7 @@ public class MainApplication extends Application implements LifecycleOwner {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        Log = Logger.getLogger(this);
+        Logger.getLogger(this);
         PmsHooker.startHook(base);
     }
 
@@ -92,11 +91,11 @@ public class MainApplication extends Application implements LifecycleOwner {
         app_pref = getDefaultSharedPreferences(this);
         mLifecycle.setCurrentState(Lifecycle.State.CREATED);
         LogLiveData.getINSTANCE(); //init live data
-        Log = Logger.getLogger(this);
+        Logger.getLogger(this);
         ForegroundCallbacks.init(this);
 //        YSDKApi.setMainActivity("com.github.haocen2004.login_simulation.activity.MainActivity");
-        ToastUtils.init(this);
-        ToastUtils.setGravity(Gravity.BOTTOM, 0, 50);
+        Toaster.init(this);
+        Toaster.setGravity(Gravity.BOTTOM, 0, 50);
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(this);
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());

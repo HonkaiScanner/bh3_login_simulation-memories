@@ -22,7 +22,7 @@
 -optimizationpasses 5          # 指定代码的压缩级别
 -dontusemixedcaseclassnames   # 是否使用大小写混合
 -verbose
--printconfiguration ~/tmp/full-r8-config.txt
+-printconfiguration /tmp/full-r8-config.txt
 
 -keep class com.nearme.** { *; }
 -keep class com.bun.miitmdid.core.** {*;}

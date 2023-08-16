@@ -16,7 +16,7 @@ public class ForegroundCallbacks implements Application.ActivityLifecycleCallbac
     private static ForegroundCallbacks instance;
     private boolean foreground = false, paused = true;
     private final Handler handler = new Handler();
-    private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
+    private final List<Listener> listeners = new CopyOnWriteArrayList<>();
     private Runnable check;
 
     public static ForegroundCallbacks init(Application application) {
@@ -101,22 +101,19 @@ public class ForegroundCallbacks implements Application.ActivityLifecycleCallbac
         paused = true;
         if (check != null)
             handler.removeCallbacks(check);
-        handler.postDelayed(check = new Runnable() {
-            @Override
-            public void run() {
-                if (foreground && paused) {
-                    foreground = false;
-                    Logger.d(TAG, "went background");
-                    for (Listener l : listeners) {
-                        try {
-                            l.onBecameBackground();
-                        } catch (Exception exc) {
-                            Logger.d(TAG, "Listener threw exception!:" + exc);
-                        }
+        handler.postDelayed(check = () -> {
+            if (foreground && paused) {
+                foreground = false;
+                Logger.d(TAG, "went background");
+                for (Listener l : listeners) {
+                    try {
+                        l.onBecameBackground();
+                    } catch (Exception exc) {
+                        Logger.d(TAG, "Listener threw exception!:" + exc);
                     }
-                } else {
-                    Logger.d(TAG, "still foreground");
                 }
+            } else {
+                Logger.d(TAG, "still foreground");
             }
         }, CHECK_DELAY);
     }

@@ -80,14 +80,14 @@
 上述 SDK 可能为提供上述服务之目的，收集您的个人信息。SDK 列表如附件。
 SDK承担的法律责任等具体情况请参见 SDK 运营方的隐私政策；
 
-| 渠道SDK 名称 | 渠道SDK 运营方 | 接入 SDK 的目的 | 涉及的个人信息的类型 | 渠道 SDK 隐私政策/用户协议 |
-| ---- | ---- | ---- | ---- | ---- |
-| Bugly | 深圳市腾讯计算机系统有限公司 | 收集崩溃信息 | 设备信息 | https://bugly.qq.com/v2/contract |
-| 小米 SDK | 北京瓦力网络科技有限公司 | 提供账号登录、⽀付以及实名制服务 | 个人常用设备信息（包括硬件序列号、硬件型号、设备MAC 地址、操作系统类型、软件列表、唯一设备识别码）| https://privacy.mi.com/xiaomigame/zh_CN/ https://privacy.mi.com/xiaomigame-sdk/zh_CN/ |
-| Bilibili SDK | 上海宽娱数码科技有限公司 | 提供账号登录、支付以及实名制服务 | 个人常用设备信息（包括硬件序列号、硬件型号、设备MAC 地址、操作系统类型、软件列表、唯一设备识别码）| https://www.bilibili.com/blackboard/privacyh5.html https://game.bilibili.com/yhxy/ |
-| OPPO SDK | 广东欢太科技有限公司 | 提供账号登录、支付以及实名制服务 | 设备识别码、实名认证姓名及年龄、账号识别码、支付订单、用于缓存数据的存储权限 | https://cdofs.heytapimage.com/cdoactivity/static/gamecenter/heytap/doc/privacy.html?2020&c=0&ls=1 https://cdofs.heytapimage.com/cdoactivity/static/gamecenter/sdk/doc/child-privacy.html?c=0 |
-| Vivo SDK | 广东天宸网络科技有限公司 | 提供欢太账号登录、支付及实名制服务 | 设备识别码、实名认证信息、账号 UID、订单号等支付信息 | https://www.vivo.com.cn/about-vivo/privacy-policy |
-| 九游（UC）SDK | 广州爱九游信息技术有限公司 | 提供九游账号登录、⽀付以及实名制服务 | 个人常用设备信息（包括硬件序列号、硬件型号、设备MAC 地址、操作系统类型、软件列表、唯一设备识别码）| https://www.9game.cn/tpl/pc/app/private.html |
+| 渠道SDK 名称     | 渠道SDK 运营方      | 接入 SDK 的目的         | 涉及的个人信息的类型                                          | 渠道 SDK 隐私政策/用户协议                                                                                                                                                                             |
+|--------------|----------------|--------------------|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Bugly        | 深圳市腾讯计算机系统有限公司 | 收集崩溃信息             | 设备信息                                                | https://bugly.qq.com/v2/contract                                                                                                                                                             |
+| 小米 SDK       | 北京瓦力网络科技有限公司   | 提供账号登录、⽀付以及实名制服务   | 个人常用设备信息（包括硬件序列号、硬件型号、设备MAC 地址、操作系统类型、软件列表、唯一设备识别码） | https://privacy.mi.com/xiaomigame/zh_CN/ https://privacy.mi.com/xiaomigame-sdk/zh_CN/                                                                                                        |
+| Bilibili SDK | 上海宽娱数码科技有限公司   | 提供账号登录、支付以及实名制服务   | 个人常用设备信息（包括硬件序列号、硬件型号、设备MAC 地址、操作系统类型、软件列表、唯一设备识别码） | https://www.bilibili.com/blackboard/privacyh5.html https://game.bilibili.com/yhxy/                                                                                                           |
+| OPPO SDK     | 广东欢太科技有限公司     | 提供账号登录、支付以及实名制服务   | 设备识别码、实名认证姓名及年龄、账号识别码、支付订单、用于缓存数据的存储权限              | https://cdofs.heytapimage.com/cdoactivity/static/gamecenter/heytap/doc/privacy.html?2020&c=0&ls=1 https://cdofs.heytapimage.com/cdoactivity/static/gamecenter/sdk/doc/child-privacy.html?c=0 |
+| Vivo SDK     | 广东天宸网络科技有限公司   | 提供欢太账号登录、支付及实名制服务  | 设备识别码、实名认证信息、账号 UID、订单号等支付信息                        | https://www.vivo.com.cn/about-vivo/privacy-policy                                                                                                                                            |
+| 九游（UC）SDK    | 广州爱九游信息技术有限公司  | 提供九游账号登录、⽀付以及实名制服务 | 个人常用设备信息（包括硬件序列号、硬件型号、设备MAC 地址、操作系统类型、软件列表、唯一设备识别码） | https://www.9game.cn/tpl/pc/app/private.html                                                                                                                                                 |
 
 # **特别提醒**
 # **本软件始终是免费软件且授权非商业使用，如果你发现有人商用本软件或以此牟取利润，请拒绝并不遗余力地在一切平台举报投诉他！**

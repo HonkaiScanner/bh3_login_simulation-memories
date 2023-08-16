@@ -40,7 +40,7 @@ public class UC implements LoginImpl {
     private boolean isLogin;
     private RoleData roleData;
     @SuppressLint("HandlerLeak")
-    Handler login_handler = new Handler() {
+    Handler login_handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);

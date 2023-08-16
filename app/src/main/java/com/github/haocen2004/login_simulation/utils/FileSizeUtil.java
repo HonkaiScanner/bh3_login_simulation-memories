@@ -4,39 +4,9 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
 import java.text.DecimalFormat;
 
 public class FileSizeUtil {
-    public static final int SIZETYPE_B = 1;// 获取文件大小单位为B的double值
-    public static final int SIZETYPE_KB = 2;// 获取文件大小单位为KB的double值
-    public static final int SIZETYPE_MB = 3;// 获取文件大小单位为MB的double值
-    public static final int SIZETYPE_GB = 4;// 获取文件大小单位为GB的double值
-
-    /**
-     * 获取文件指定文件的指定单位的大小
-     *
-     * @param filePath 文件路径
-     * @param sizeType 获取大小的类型1为B、2为KB、3为MB、4为GB
-     * @return double值的大小
-     */
-    public static double FormatFileSize(String filePath, int sizeType) {
-        File file = new File(filePath);
-        long blockSize = 0;
-        try {
-            if (file.isDirectory()) {
-                blockSize = getFileSizes(file);
-            } else {
-                blockSize = getFileSize(file);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("获取文件大小", "获取失败!");
-        }
-        return FormatFileSize(blockSize, sizeType);
-    }
 
     /**
      * 调用此方法自动计算指定文件或指定文件夹的大小
@@ -124,46 +94,7 @@ public class FileSizeUtil {
         return fileSizeString;
     }
 
-    /**
-     * 转换文件大小,指定转换的类型
-     *
-     * @param fileS
-     * @param sizeType
-     * @return
-     */
-    private static double FormatFileSize(long fileS, int sizeType) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        double fileSizeLong = 0;
-        switch (sizeType) {
-            case SIZETYPE_B:
-                fileSizeLong = Double.parseDouble(df.format((double) fileS));
-                break;
-            case SIZETYPE_KB:
-                fileSizeLong = Double.parseDouble(df.format((double) fileS / 1024));
-                break;
-            case SIZETYPE_MB:
-                fileSizeLong = Double.parseDouble(df.format((double) fileS / 1048576));
-                break;
-            case SIZETYPE_GB:
-                fileSizeLong = Double.parseDouble(df
-                        .format((double) fileS / 1073741824));
-                break;
-            default:
-                break;
-        }
-        return fileSizeLong;
-    }
 
-
-    public static int getFileLineNum(File file) {
-        try (LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(file))) {
-            lineNumberReader.skip(Long.MAX_VALUE);
-            int lineNumber = lineNumberReader.getLineNumber();
-            return lineNumber + 1;//实际上是读取换行符数量 , 所以需要+1
-        } catch (IOException e) {
-            return -1;
-        }
-    }
 }
 
 // https://gist.github.com/A-W-C-J/7eb4ea2a21c2e77328ed484650615329

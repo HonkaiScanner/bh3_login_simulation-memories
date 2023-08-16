@@ -21,7 +21,7 @@ public class PmsHooker implements InvocationHandler {
     private static final String TAG = "PMSHook";
     private Object base;
 
-    public PmsHooker(Object base, int hashCode) {
+    public PmsHooker(Object base) {
         try {
             this.base = base;
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class PmsHooker implements InvocationHandler {
             Object proxy = Proxy.newProxyInstance(
                     iPackageManagerInterface.getClassLoader(),
                     new Class<?>[]{iPackageManagerInterface},
-                    new PmsHooker(sPackageManager, 0));
+                    new PmsHooker(sPackageManager));
             // 1. 替换掉ActivityThread里面的 sPackageManager 字段
             sPackageManagerField.set(currentActivityThread, proxy);
             // 2. 替换 ApplicationPackageManager里面的 mPM对象

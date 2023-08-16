@@ -5,7 +5,7 @@
         <item name="android:button">@drawable/mio_selector_float_tip_check</item>
     </style>
 
-    <style name="splashStyle" parent="@android:style/Theme.Light.NoTitleBar.Fullscreen"></style>
+    <style name="splashStyle" parent="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
 
     <style name="MioNoticeChcekBox" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@null</item>

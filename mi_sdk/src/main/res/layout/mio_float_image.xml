@@ -15,7 +15,7 @@
             android:id="@+id/img_float_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/float_window_nor"></ImageSwitcher>
+            android:background="@drawable/float_window_nor" />
 
         <ImageView
             android:id="@+id/img_float_point"

@@ -4,7 +4,6 @@ import static com.github.haocen2004.login_simulation.data.Constant.QIHOO_INIT;
 import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,8 +30,6 @@ public class Qihoo implements LoginImpl {
     private final LoginCallback callback;
     private String access_token;
     private String username;
-    private String uid;
-    private SharedPreferences preferences;
     private boolean isLogin;
     private RoleData roleData;
     Runnable login_runnable = new Runnable() {

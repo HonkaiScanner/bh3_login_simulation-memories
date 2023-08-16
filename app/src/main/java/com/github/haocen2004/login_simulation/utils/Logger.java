@@ -4,7 +4,6 @@ import static com.github.haocen2004.login_simulation.data.Constant.SAVE_ALL_LOGS
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -14,7 +13,7 @@ import androidx.annotation.Keep;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.google.android.material.snackbar.Snackbar;
-import com.hjq.toast.ToastUtils;
+import com.hjq.toast.Toaster;
 import com.tencent.bugly.crashreport.BuglyLog;
 
 import java.io.BufferedWriter;
@@ -35,7 +34,6 @@ public class Logger implements Serializable {
     private static boolean useSnackBar;
     private static ArrayList<String> logBlackList;
     private static LogLiveData logLiveData;
-    private static boolean fabMode;
     private static FileWriter fileWriter;
     private static BufferedWriter bufferedWriter;
     private static File logFile;
@@ -80,10 +78,6 @@ public class Logger implements Serializable {
         } else {
             logBlackList.add(blackMsg.strip());
         }
-    }
-
-    public static void setView(View view) {
-        Logger.view = view;
     }
 
     public static String processWithBlackList(String msg) {
@@ -204,21 +198,17 @@ public class Logger implements Serializable {
             }
             d("Logger", "Transfer Toast Length to SnackBar Length: " + length);
             Snackbar.make(view, msg, length).show();
-        } else if (fabMode) {
-            try {
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-            } catch (NullPointerException ignore) {
-                Looper.prepare();
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                Looper.loop();
-            }
+//        } else if (fabMode) {
+//            try {
+//                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+//            } catch (NullPointerException ignore) {
+//                Looper.prepare();
+//                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+//                Looper.loop();
+//            }
         } else {
-            ToastUtils.show(msg);
+            Toaster.show(msg);
         }
-    }
-
-    public static void setFabMode(boolean b) {
-        fabMode = b;
     }
 
     private static void logToFile(String level, String TAG, String msg) {
