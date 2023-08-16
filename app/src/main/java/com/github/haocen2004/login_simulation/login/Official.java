@@ -243,7 +243,7 @@ public class Official implements LoginImpl {
                         email = account_json.getString("email");
                     }
                     preferences.edit()
-                            .clear()
+//                            .clear()
                             .putString("username", email)
                             .putString("token", token)
                             .putString("uid", uid)
@@ -255,6 +255,8 @@ public class Official implements LoginImpl {
 //                    Logger.warning("登录失败");
                     Log.makeToast("登录失败: " + feedback_json.getInt("retcode") + "\n" + feedback_json.getString("message"));
                     Logger.w(TAG, "handleMessage: 登录失败1" + feedback);
+
+                    preferences.edit().putBoolean("has_token", false).apply();
                     loginCallback.onLoginFailed();
 //                    Logger.warning(feedback);
                 }

@@ -30,6 +30,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -395,17 +396,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //                binding.tokenCheckBox.setVisibility(View.VISIBLE);
                 binding.officialTypeSel.setVisibility(View.VISIBLE);
                 initSlotSelectGroup("official_user_");
-//                switch (pref.getInt("official_slot", 1)) {
-//                    case 1:
-//                        binding.officialSlotSelect.check(binding.slot1.getId());
-//                        break;
-//                    case 2:
-//                        binding.officialSlotSelect.check(binding.slot2.getId());
-//                        break;
-//                    case 3:
-//                        binding.officialSlotSelect.check(binding.slot3.getId());
-//                        break;
-//                }
                 switch (pref.getInt("official_type", 0)) {
                     case 1:
                         binding.officialTypeSel.check(binding.radioPc.getId());
@@ -567,13 +557,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     tempChip = chipMap.get(id);
                 } else {
                     tempChip = (Chip) mLayoutInflater.inflate(R.layout.chip_select, null, false);
-                    tempChip.setText(tempPref.getString("username", id.replace(type, "")));
                     tempChip.setOnLongClickListener(this);
                     chipMap.put(id, tempChip);
                     chipKeys.put(tempChip, id);
                 }
                 try {
-                    tempChip.setText(tempPref.getString("username", id.replace(type, "")));
+                    String displayName = tempPref.getString("username", id.replace(type, ""));
+                    if (tempPref.getBoolean("has_custom_name", false)) {
+                        displayName = tempPref.getString("display_name", displayName);
+                    }
+                    tempChip.setText(displayName);
                     ((ViewGroup) tempChip.getParent()).removeView(tempChip);
                 } catch (Exception ignore) {
                 }
@@ -1100,17 +1093,46 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 Logger.d("ChipsLongClick", key);
                 if (key.equals("add_chip")) return true;
                 SharedPreferences preferences = activity.getSharedPreferences(key, Context.MODE_PRIVATE);
-                DialogData dialogData = new DialogData("删除账号数据", "你是否要删除 " + preferences.getString("username", key) + " 的缓存数据？");
-                dialogData.setPositiveButtonData(new ButtonData("确认") {
-                    @Override
-                    public void callback(DialogHelper dialogHelper) {
-                        super.callback(dialogHelper);
-                        new File(activity.getFilesDir().getParent(), "shared_prefs/" + key + ".xml").delete();
+                MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(activity);
+                materialAlertDialogBuilder.setCancelable(false);
+                materialAlertDialogBuilder.setTitle("账号管理");
+                View dialogView = activity.getLayoutInflater().inflate(R.layout.dialog_slot_setname, null);
+                EditText editText = dialogView.findViewById(R.id.customNameEditText);
+                String displayName = preferences.getString("username", key);
+                if (preferences.getBoolean("has_custom_name", false)) {
+                    displayName = preferences.getString("display_name", key);
+                }
+                editText.setText(displayName);
+
+                materialAlertDialogBuilder.setView(dialogView);
+                String finalDisplayName = displayName;
+                materialAlertDialogBuilder.setPositiveButton("确认", (dialog, which) -> {
+                    String newName = editText.getText().toString();
+                    if (!finalDisplayName.equals(newName)) {
+                        if (newName.length() == 0) {
+                            preferences.edit().remove("has_custom_name").remove("display_name").apply();
+                        } else {
+                            preferences.edit().putString("display_name", newName).putBoolean("has_custom_name", true).apply();
+                        }
                         refreshView();
                     }
                 });
-                dialogData.setNegativeButtonData("取消");
-                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                materialAlertDialogBuilder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
+                materialAlertDialogBuilder.setNeutralButton("删除此账号", ((dialog, which) -> {
+
+                    DialogData dialogData = new DialogData("删除账号数据", "你是否要删除 " + finalDisplayName + " 的缓存数据？");
+                    dialogData.setPositiveButtonData(new ButtonData("确认") {
+                        @Override
+                        public void callback(DialogHelper dialogHelper) {
+                            super.callback(dialogHelper);
+                            new File(activity.getFilesDir().getParent(), "shared_prefs/" + key + ".xml").delete();
+                            refreshView();
+                        }
+                    });
+                    dialogData.setNegativeButtonData("取消");
+                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                }));
+                materialAlertDialogBuilder.show();
 
             } else {
                 makeToast("你点了什么玩意？");

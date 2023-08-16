@@ -71,7 +71,6 @@ public class Bilibili implements LoginImpl {
             username = arg0.getString("username");
             access_token = arg0.getString("access_token");
 
-            preferences.edit().clear().apply();
             preferences.edit().putString("username", username).putString("uid", uid).putBoolean("last_login_succeed", true).apply();
 
             String data_json = "{\"uid\":" +
