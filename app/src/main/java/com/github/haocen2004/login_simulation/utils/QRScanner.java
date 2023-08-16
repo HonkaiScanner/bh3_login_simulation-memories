@@ -307,7 +307,7 @@ public class QRScanner {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 app_name = URLDecoder.decode(app_name, StandardCharsets.UTF_8);
                             } else {
-                                app_name = URLDecoder.decode(app_name, StandardCharsets.UTF_8);
+                                app_name = URLDecoder.decode(app_name, "UTF-8");
                             }
                         } catch (Exception ignore) {
                         }
