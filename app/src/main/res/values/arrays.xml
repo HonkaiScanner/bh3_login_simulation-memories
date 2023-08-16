@@ -5,10 +5,11 @@
         <item>Xiaomi</item>
         <item>UC</item>
         <item>Vivo</item>
-<!--        <item>Flyme</item>-->
+        <item>Flyme</item>
         <item>Oppo</item>
         <item>Huawei</item>
         <item>Tencent-QQ</item>
+        <item>Qihoo</item>
     </string-array>
     <string-array name="server_types_value">
         <item>Official</item>
@@ -16,10 +17,11 @@
         <item>Xiaomi</item>
         <item>UC</item>
         <item>Vivo</item>
-        <!--        <item>Flyme</item>-->
+        <item>Flyme</item>
         <item>Oppo</item>
         <item>Huawei</item>
         <item>YYB</item>
+        <item>Qihoo</item>
     </string-array>
     <string-array name="server_types_xp">
         <item>Official</item>
@@ -29,8 +31,9 @@
         <item>Vivo</item>
         <item>Flyme</item>
         <item>Oppo</item>
+        <item>Huawei</item>
+        <item>YYB</item>
         <item>Qihoo</item>
-        <item>Tencent-QQ</item>
     </string-array>
     <string-array name="server_types_value_xp">
         <item>Official</item>
@@ -53,5 +56,23 @@
         <item>-1</item>
         <item>1</item>
         <item>2</item>
+    </string-array>
+    <string-array name="icon_type">
+        <item>Default</item>
+        <item>Type A</item>
+    </string-array>
+    <string-array name="icon_type_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="official_login_type">
+        <item>Password</item>
+        <item>SMS verification</item>
+        <item>QRCode(From other Devices)</item>
+    </string-array>
+    <string-array name="official_login_type_values">
+        <item>password</item>
+        <item>sms</item>
+        <item>qrcode</item>
     </string-array>
 </resources>

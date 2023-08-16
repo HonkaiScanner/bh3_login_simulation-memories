@@ -1,7 +1,8 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static com.github.haocen2004.login_simulation.util.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
+import static com.github.haocen2004.login_simulation.data.Constant.INTENT_EXTRA_KEY_TENCENT_LOGIN;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -11,23 +12,24 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
 import com.github.haocen2004.login_simulation.databinding.ActivityTencentLoginBinding;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Tools;
 
-public class TencentLoginActivity extends AppCompatActivity {
+import java.net.MalformedURLException;
+import java.net.URL;
 
-    private ActivityTencentLoginBinding binding;
-
-    private WebView webView;
+public class TencentLoginActivity extends BaseActivity {
 
     private final String TAG = "Tencent Web login";
+    private ActivityTencentLoginBinding binding;
+    private WebView webView;
+    private String uin;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,12 +63,25 @@ public class TencentLoginActivity extends AppCompatActivity {
                 super.onLoadResource(view, url);
 
                 Logger.d(TAG, "loading 2 " + url);
+                if (url.contains("uin=")) {
+                    try {
+                        URL url1 = new URL(url);
+                        for (String s : url1.getQuery().split("&")) {
+                            if (s.contains("uin")) {
+                                uin = s.split("=")[1];
+                                Logger.d(TAG, "find qq: " + uin);
+                            }
+                        }
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 if (url.contains("auth://")) {
                     if (!url.contains("access_token")) {
                         if (url.contains("progress/0")) {
                             DialogData dialogData = new DialogData("登录失败", "code: progress/0\n可能是账号被腾讯风控阻止登陆");
                             dialogData.setPositiveButtonData(new ButtonData("我已知晓"));
-                            DialogLiveData.getINSTANCE(getApplicationContext()).addNewDialog(dialogData);
+                            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                             setResult(RESULT_CANCELED);
                             finish();
                         }
@@ -77,6 +92,7 @@ public class TencentLoginActivity extends AppCompatActivity {
                     Logger.d(TAG, "login success");
                     Intent intent = new Intent();
                     intent.putExtra(INTENT_EXTRA_KEY_TENCENT_LOGIN, url);
+                    intent.putExtra("tencent.login.uin", uin);
                     setResult(RESULT_OK, intent);
                     finish();
                 }

@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Constant.VIVO_APP_KEY;
-import static com.github.haocen2004.login_simulation.util.Tools.verifyAccount;
+import static com.github.haocen2004.login_simulation.data.Constant.VIVO_APP_KEY;
+import static com.github.haocen2004.login_simulation.utils.Tools.verifyAccount;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,8 +15,7 @@ import androidx.annotation.NonNull;
 import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.RoleData;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
 import com.vivo.unionsdk.open.VivoAccountCallback;
 import com.vivo.unionsdk.open.VivoUnionSDK;
 
@@ -24,67 +23,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Vivo implements LoginImpl {
+    private static final String TAG = "Vivo Login";
     private final Activity activity;
+    private final Logger Log;
+    private final LoginCallback loginCallback;
     private boolean isLogin;
     private String uid;
     private String token;
     private RoleData roleData;
-    private final String device_id;
-    private static final String TAG = "Vivo Login";
-    private final Logger Log;
-    private final LoginCallback loginCallback;
-
-    private final VivoAccountCallback callback = new VivoAccountCallback() {
-        @Override
-        public void onVivoAccountLogin(String s, String s1, String s2) {
-            uid = s1;
-            token = s2;
-            Logger.addBlacklist(token);
-            doBHLogin();
-//            roleData = new RoleData()
-        }
-
-        @Override
-        public void onVivoAccountLogout(int i) {
-            makeToast(activity.getString(R.string.logout));
-            isLogin = false;
-        }
-
-        @Override
-        public void onVivoAccountLoginCancel() {
-            isLogin = false;
-        }
-    };
-
-    public Vivo(Activity activity, LoginCallback callback) {
-        loginCallback = callback;
-        this.activity = activity;
-        device_id = Tools.getDeviceID(activity);
-        VivoUnionSDK.initSdk(activity, VIVO_APP_KEY, BuildConfig.DEBUG);
-        VivoUnionSDK.registerAccountCallback(activity, this.callback);
-        Log = Logger.getLogger(activity);
-    }
-
-    @Override
-    public void login() {
-        VivoUnionSDK.login(activity);
-    }
-
-    @Override
-    public void logout() {
-
-    }
-
-    @Override
-    public RoleData getRole() {
-        return roleData;
-    }
-
-    @Override
-    public boolean isLogin() {
-        return isLogin;
-    }
-
     @SuppressLint("HandlerLeak")
     Handler login_handler = new Handler() {
         @Override
@@ -131,7 +77,6 @@ public class Vivo implements LoginImpl {
             }
         }
     };
-
     Runnable login_runnable = new Runnable() {
         @Override
         public void run() {
@@ -144,6 +89,63 @@ public class Vivo implements LoginImpl {
         }
 
     };
+    private final VivoAccountCallback callback = new VivoAccountCallback() {
+        @Override
+        public void onVivoAccountLogin(String s, String s1, String s2) {
+            uid = s1;
+            token = s2;
+            Logger.addBlacklist(token);
+            doBHLogin();
+//            roleData = new RoleData()
+        }
+
+        @Override
+        public void onVivoAccountLogout(int i) {
+            makeToast(activity.getString(R.string.logout));
+            isLogin = false;
+        }
+
+        @Override
+        public void onVivoAccountLoginCancel() {
+            makeToast(activity.getString(R.string.login_cancel));
+            isLogin = false;
+        }
+    };
+
+    public Vivo(Activity activity, LoginCallback callback) {
+        loginCallback = callback;
+        this.activity = activity;
+        VivoUnionSDK.initSdk(activity, VIVO_APP_KEY, BuildConfig.DEBUG);
+        VivoUnionSDK.registerAccountCallback(activity, this.callback);
+        Log = Logger.getLogger(activity);
+    }
+
+    @Override
+    public void login() {
+        VivoUnionSDK.login(activity);
+    }
+
+    @Override
+    public boolean logout() {
+        Log.makeToast("Vivo渠道未提供主动切换账号功能！");
+        return false;
+    }
+
+    @Override
+    public RoleData getRole() {
+        return roleData;
+    }
+
+    @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
+    }
+
+    @Override
+    public boolean isLogin() {
+        return isLogin;
+    }
 
     public void doBHLogin() {
         new Thread(login_runnable).start();
@@ -165,11 +167,5 @@ public class Vivo implements LoginImpl {
     @Override
     public String getUsername() {
         return uid;
-    }
-
-    @Override
-    public void setRole(RoleData roleData) {
-        this.roleData = roleData;
-        isLogin = true;
     }
 }

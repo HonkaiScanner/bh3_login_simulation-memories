@@ -2,18 +2,16 @@ package com.github.haocen2004.login_simulation.login;
 
 import com.github.haocen2004.login_simulation.data.RoleData;
 
-import java.io.Serializable;
-
-public interface LoginImpl extends Serializable {
+public interface LoginImpl {
     void login();
 
-    void logout();
+    boolean logout();
 
     RoleData getRole();
+
+    void setRole(RoleData roleData);
 
     boolean isLogin();
 
     String getUsername();
-
-    void setRole(RoleData roleData);
 }

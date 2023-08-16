@@ -1,7 +1,7 @@
 package com.github.haocen2004.login_simulation.data.dialog;
 
-import com.github.haocen2004.login_simulation.util.DialogHelper;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.DialogHelper;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 public class ButtonData {
     private final String text;

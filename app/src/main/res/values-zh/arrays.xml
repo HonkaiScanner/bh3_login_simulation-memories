@@ -6,10 +6,11 @@
         <item>小米服</item>
         <item>九游服</item>
         <item>Vivo服</item>
-<!--        <item>魅族服</item>-->
+        <item>魅族服</item>
         <item>Oppo服</item>
         <item>华为服</item>
         <item>应用宝-QQ</item>
+        <item>360服</item>
     </string-array>
     <string-array name="server_types_xp">
         <item>官服</item>
@@ -19,12 +20,22 @@
         <item>Vivo服</item>
         <item>魅族服</item>
         <item>Oppo服</item>
-        <item>360服</item>
+        <item>华为服</item>
         <item>应用宝-QQ</item>
+        <item>360服</item>
     </string-array>
     <string-array name="dark_type">
         <item>跟随系统</item>
         <item>浅色主题</item>
         <item>深色主题</item>
+    </string-array>
+    <string-array name="icon_type">
+        <item>默认图标</item>
+        <item>图标A</item>
+    </string-array>
+    <string-array name="official_login_type">
+        <item>密码</item>
+        <item>短信验证码</item>
+        <item>二维码</item>
     </string-array>
 </resources>

@@ -1,7 +1,9 @@
 package com.github.haocen2004.login_simulation.fragment;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.github.haocen2004.login_simulation.util.Constant.BH_VER;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static com.github.haocen2004.login_simulation.data.Constant.BH_VER;
+import static com.github.haocen2004.login_simulation.data.Constant.MI_ADV_MODE;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
@@ -12,12 +14,16 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.activity.ActivityManager;
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
+import com.github.haocen2004.login_simulation.utils.DialogHelper;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import java.util.Objects;
 
@@ -34,42 +40,79 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         SharedPreferences app_pref = getDefaultSharedPreferences(getContext());
+
+        findPreference("fab_save_img").setOnPreferenceChangeListener(((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                if (app_pref.getBoolean("capture_continue_before_result", false)) {
+                    DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量图片占用存储空间\n是否继续开启本功能？");
+                    dialogData.setPositiveButtonData("确认");
+                    dialogData.setNegativeButtonData(new ButtonData("取消") {
+                        @Override
+                        public void callback(DialogHelper dialogHelper) {
+                            super.callback(dialogHelper);
+                            app_pref.edit().putBoolean("fab_save_img", false).apply();
+                            preference.performClick();
+                        }
+                    });
+                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                }
+            }
+            return true;
+        }));
+        findPreference("capture_continue_before_result").setOnPreferenceChangeListener(((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                if (app_pref.getBoolean("fab_save_img", false)) {
+                    DialogData dialogData = new DialogData("功能同时启用提醒", "您同时启用了自动重试功能\n这可能会产生大量图片占用存储空间\n是否继续开启本功能？");
+                    dialogData.setPositiveButtonData("确认");
+                    dialogData.setNegativeButtonData(new ButtonData("取消") {
+                        @Override
+                        public void callback(DialogHelper dialogHelper) {
+                            super.callback(dialogHelper);
+                            app_pref.edit().putBoolean("capture_continue_before_result", false).apply();
+                            preference.performClick();
+                        }
+                    });
+                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                }
+            }
+            return true;
+        }));
+
+        findPreference("fab_save_img").setSummary(getContext().getExternalFilesDir(null) + "/screenshot/");
+
         findPreference("check_update").setOnPreferenceChangeListener((preference, newValue) -> {
             if (!((Boolean) newValue)) {
-                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(requireContext());
-                normalDialog.setTitle("是否关闭更新检查？");
-                normalDialog.setMessage("将无法获取扫码器最新更新\n\n以下功能将会一起关闭：\n赞助者列表更新\n公告更新");
-                normalDialog.setPositiveButton(R.string.btn_close_update,
-                        (dialog, which) -> dialog.dismiss());
-                normalDialog.setNegativeButton(R.string.btn_cancel,
-                        (dialog, which) -> {
-                            app_pref.edit().putBoolean("check_update", true).apply();
-                            preference.performClick();
-                            dialog.dismiss();
-                        });
-                normalDialog.setCancelable(false);
-                normalDialog.show();
+                DialogData dialogData = new DialogData("是否关闭更新提示？", "将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
+                dialogData.setPositiveButtonData("关闭更新提示");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("check_update", true).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             }
             return true;
         });
-
-        findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
+        findPreference("icon_pos").setVisible(app_pref.getBoolean("enable_icon_pos", false));
+        findPreference("enable_icon_pos").setOnPreferenceChangeListener((preference, newValue) -> {
             if ((Boolean) newValue) {
-                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
-            } else {
-                BH_VER = app_pref.getString("bh_ver", BH_VER);
+                DialogData dialogData = new DialogData("是否启用额外扫码器图标？", "由于兼容性问题原有图标将不会自动隐藏\n\n设置后可能需要5-10秒才会看到新图标显示\n可能在部分机型上不生效");
+                dialogData.setPositiveButtonData("启用额外扫码器图标");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("enable_icon_pos", false).apply();
+                        findPreference("icon_pos").setVisible(app_pref.getBoolean("enable_icon_pos", false));
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             }
-            Logger.d(TAG, "new bh version:" + BH_VER);
-            return true;
-        });
-
-        findPreference("custom_bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
-            Logger.d(TAG, newValue.toString());
-            app_pref.edit().putString("custom_bh_ver", newValue.toString()).apply();
-            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
-                BH_VER = newValue.toString();
-            }
-            Logger.d(TAG, "new bh version:" + BH_VER);
+            findPreference("icon_pos").setVisible((Boolean) newValue);
             return true;
         });
 
@@ -87,6 +130,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
             return true;
         });
+
+        findPreference("pure_black_theme").setOnPreferenceChangeListener(((preference, newValue) -> {
+            ActivityManager.getInstance().getTopActivity().recreate();
+            return true;
+        }));
+
         findPreference("server_type").setOnPreferenceChangeListener((preference, newValue) -> {
             switch (newValue.toString()) {
                 case "Official":
@@ -159,6 +208,118 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             default:
                 findPreference("server_type").setSummary("DEBUG -- SERVER ERROR");
         }
+
+        findPreference("mi_adv_mode").setOnPreferenceChangeListener(((preference, newValue) -> {
+            MI_ADV_MODE = (boolean) newValue;
+            return true;
+        }));
+
+
+        findPreference("adv_group").setVisible(app_pref.getBoolean("adv_setting", false));
+
+        findPreference("adv_setting").setOnPreferenceChangeListener(((preference, newValue) -> {
+            findPreference("adv_group").setVisible((boolean) newValue);
+            return true;
+        }));
+
+        findPreference("custom_bh_ver").setVisible(app_pref.getBoolean("bh_ver_overwrite", false));
+        findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("确认启用自定义版本号？", "通常只在官方接口下线时启用\n一般无需开启此选项\n\n开启后将不自动获取崩坏3版本号\n必须每次手动设置");
+                dialogData.setPositiveButtonData("启用自定义版本号");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("bh_ver_overwrite", false).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
+            } else {
+                BH_VER = app_pref.getString("bh_ver", BH_VER);
+            }
+            findPreference("custom_bh_ver").setVisible((Boolean) newValue);
+            Logger.d(TAG, "new bh version:" + BH_VER);
+            return true;
+        });
+
+        findPreference("beta_update").setOnPreferenceChangeListener((preference, newValue) -> {
+            if (VERSION_NAME.contains("snapshot")) {
+                return false;
+            }
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("确认启用测试版更新检测？", "测试版使用须知：\n" +
+                        "测试版可能会存在一些影响使用的问题 请及时反馈\n" +
+                        "反馈问题请详细描述 或使用扫码器内置的bug反馈 日志查看功能\n" +
+                        "测试版更新通常为强制更新 即无法关闭更新提示窗口");
+                dialogData.setPositiveButtonData("启用测试版更新检测");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("beta_update", false).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+            }
+            return true;
+        });
+
+
+        findPreference("keep_capture_no_cooling_down").setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("确认启用持续扫码无冷却？", "可能会占用大量CPU资源而使得扫码器被系统杀死");
+                dialogData.setPositiveButtonData("启用持续扫码无冷却");
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("keep_capture_no_cooling_down", false).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+            }
+            return true;
+        });
+
+        findPreference("debug_mode").setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                DialogData dialogData = new DialogData("确认启用调试模式？", "该选项应该只在扫码器作者要求启用时打开\n\n需要重启扫码器才能生效\n确认启用将同时关闭扫码器");
+                dialogData.setPositiveButtonData(new ButtonData("启用调试模式") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        ActivityManager.getInstance().clearActivity();
+                    }
+                });
+                dialogData.setNegativeButtonData(new ButtonData("取消") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                        app_pref.edit().putBoolean("debug_mode", false).apply();
+                        preference.performClick();
+                    }
+                });
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+            }
+            return true;
+        });
+
+
+        findPreference("custom_bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
+            Logger.d(TAG, newValue.toString());
+            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
+                BH_VER = newValue.toString();
+            }
+            Logger.d(TAG, "new bh version:" + BH_VER);
+            return true;
+        });
+
+
     }
 
     @Override

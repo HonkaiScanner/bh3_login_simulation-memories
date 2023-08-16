@@ -10,6 +10,6 @@
         android:scaleY="0.46"
         android:translateX="29.16"
         android:translateY="29.16">
-        <group android:translateY="103.5"></group>
+        <group android:translateY="103.5" />
     </group>
 </vector>

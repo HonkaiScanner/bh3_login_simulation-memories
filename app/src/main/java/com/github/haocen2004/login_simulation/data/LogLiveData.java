@@ -1,6 +1,6 @@
 package com.github.haocen2004.login_simulation.data;
 
-import static com.github.haocen2004.login_simulation.util.Constant.DEBUG_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.DEBUG_MODE;
 
 import androidx.lifecycle.LiveData;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class LogLiveData extends LiveData<List<LogData>> {
     private final List<LogData> logDataList;
     private final List<LogData> fullLogDataList;
-    private static LogLiveData INSTANCE;
+    private volatile static LogLiveData INSTANCE;
 
     public LogLiveData() {
         logDataList = new ArrayList<>();
@@ -22,7 +22,11 @@ public class LogLiveData extends LiveData<List<LogData>> {
 
     public static LogLiveData getINSTANCE() {
         if (INSTANCE == null) {
-            INSTANCE = new LogLiveData();
+            synchronized (LogLiveData.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new LogLiveData();
+                }
+            }
         }
         return INSTANCE;
     }

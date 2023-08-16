@@ -15,6 +15,7 @@
     <string name="settings_fast_login">Automatic confirmation</string>
     <string name="settings_bh_ver">Honkai Impact Version</string>
     <string name="settings_update">Check Update</string>
+    <string name="settings_pure_black_theme">Pure black dark theme</string>
 
     <string name="toolbar_icon_description">Icon PlaceHolder</string>
     <string name="nav_header_pid" translatable="false">Pixiv:89418903</string>
@@ -30,7 +31,7 @@
     <string name="feedback_holder">Thanks for your report</string>
     <string name="support_holder">Thanks for your donation</string>
     <string name="types_uc">UC Server</string>
-    <string name="types_xiaomi">Xiao Mi Server</string>
+    <string name="types_xiaomi">XiaoMi Server</string>
     <string name="boolean_true">ON</string>
     <string name="boolean_false">OFF</string>
     <string name="confirm_prefix">Auto Confirm:</string>
@@ -69,7 +70,7 @@
     <string name="reg_scanner_key">Sponsor Key</string>
     <string name="error_email">Wrong Email Address</string>
     <string name="error_key">Wrong Sponsor Key</string>
-    <string name="error_ver_outdate">Scanner is OUTDATED</string>
+    <string name="error_ver_outdated">Scanner is OUTDATED</string>
     <string name="error_network">Network Error</string>
     <string name="reg_succ">Registered successfully</string>
     <string name="error_key_used">This Key is USED</string>
@@ -81,6 +82,7 @@
     <string name="reg_new">Register</string>
     <string name="btn_get_key">Get Sponsor Key</string>
     <string name="btn_pic">Select from album</string>
+    <string name="btn_tip">Custom Scanner Tips</string>
     <string name="btn_cancel">Cancel</string>
     <string name="login_cancel">Login Cancelled</string>
     <string name="btn_close_update">Close Update</string>
@@ -107,12 +109,33 @@
     <string name="types_yyb">YYB Server(QQ only)</string>
     <string name="types_qihoo">360 Server</string>
     <string name="overwrite_bh_ver">Overwrite Honkai Version</string>
+    <string name="overwrite_bh_ver_sum">Set version in the option below</string>
     <string name="keep_capture">Keep FabScanner</string>
     <string name="quit_on_success">Exit after successful scanning</string>
     <string name="debug_mode">Debug Mode</string>
+    <string name="capture_continue_before_result">None QRCode auto retry</string>
+    <string name="fab_header">Fab Setting</string>
+    <string name="fab_save_img">Save Screenshot</string>
+    <string name="keep_capture_no_cooling_down">Keep Capture No Cooling Down</string>
+    <string name="keep_capture_no_cooling_down_sum">As fast as you can</string>
+    <string name="enable_adv_setting">Enable Advance Setting</string>
+    <string name="no_server_tip">Disable Server Tips</string>
+    <string name="no_server_tip_sum">below scanner username</string>
+    <string name="beta_update">Allow Snapshot update</string>
+    <string name="beta_update_sum">Cannot disable when already in BETA</string>
+    <string name="use_token_sum">Hoyolab protocol Only for Official Channel</string>
+    <string name="mi_adv_mode">XiaoMi Channel Test Mode</string>
+    <string name="mi_adv_mode_sum">Allow Mi SDK access Service Module</string>
+    <string name="icon_type">Select Extra Launcher Icon</string>
+    <string name="enable_icon_pos">Enable Extra Launcher Icon</string>
+    <string name="btn_hwacccenter">Huawei Account Center</string>
+    <string name="hint_set_custom_remark">Custom Remark</string>
 
+    <string name="disable_tips">The scanner is temporarily out of service for some reason.\n Please go to Bilibili\'s dynamic page or QQ group to check the specific reason.</string>
 
+    <string name="tips_tips">Only used as an auxiliary prompt when scanning the QR code</string>
     <string name="crash_hint">Detected a recent crash happened.\nPlease bring a crash-report to get feedback from the developer in time!</string>
     <string name="crash_btn">Open CrashReport</string>
-    <string name="crash_hint2">Press the back button / full screen return gesture \n to return to the home page\nFor more crash logs, please go to \n/Android/data/{packageName}/files/crash-report/</string>
+    <string name="crash_hint2">Press the back button / full screen return gesture \n to return to the home page\n\nDO NOT JUST POST SCREENSHOT FOR REPORT!\nDO NOT JUST POST SCREENSHOT FOR REPORT!\nDO NOT JUST POST SCREENSHOT FOR REPORT!\n\nFor more crash logs, please go to \n/Android/data/{packageName}/files/crash-report/</string>
+    <string name="btn_get_sms">get verification code</string>
 </resources>

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.haocen2004.login_simulation.adapter.LoggerAdapter;
 import com.github.haocen2004.login_simulation.data.LogLiveData;
 import com.github.haocen2004.login_simulation.databinding.FragmentLogBinding;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.utils.Logger;
 
 import org.jetbrains.annotations.NotNull;
 

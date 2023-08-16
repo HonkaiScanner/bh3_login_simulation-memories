@@ -10,20 +10,31 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.paging.PagingDataAdapter;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.data.database.sponsor.SponsorData;
-import com.github.haocen2004.login_simulation.util.Logger;
+import com.github.haocen2004.login_simulation.data.sponsor.database.SponsorData;
 
-import java.util.List;
+import java.net.URL;
 
-public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.SponsorViewHolder> {
-    private List<SponsorData> allSponsors;
+public class SponsorAdapter extends PagingDataAdapter<SponsorData, SponsorAdapter.SponsorViewHolder> {
     private final Activity activity;
 
     public SponsorAdapter(Activity activity) {
+        super(new DiffUtil.ItemCallback<>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull SponsorData oldItem, @NonNull SponsorData newItem) {
+                return oldItem.getId() == newItem.getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull SponsorData oldItem, @NonNull SponsorData newItem) {
+                return oldItem.getScannerKey().equals(newItem.getScannerKey());
+            }
+        });
         this.activity = activity;
     }
 
@@ -35,40 +46,36 @@ public class SponsorAdapter extends RecyclerView.Adapter<SponsorAdapter.SponsorV
         return new SponsorViewHolder(itemView);
     }
 
-    public void setAllSponsors(List<SponsorData> allSponsors) {
-        this.allSponsors = allSponsors;
-    }
 
     @Override
     public void onBindViewHolder(@NonNull final SponsorViewHolder holder, final int position) {
-        SponsorData sponsorData;
-        try {
-            sponsorData = allSponsors.get(position);
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            Logger.getLogger(null).makeToast("Sponsor display IndexOutOfBoundsException");
-            Logger.d("IndexOutOfBoundsException", "size:" + allSponsors.size());
-            return;
-        }
-        holder.textViewName.setText(sponsorData.getName());
-        holder.textViewDesc.setText(sponsorData.getDesc());
-        holder.imageViewAvatar.setImageURI(Uri.parse(sponsorData.getAvatarImgUrl()));
-        Glide.with(activity).load(sponsorData.getAvatarImgUrl()).circleCrop().into(holder.imageViewAvatar);
-        SponsorData finalSponsorData = sponsorData;
-        holder.itemView.setOnClickListener(v -> {
+        SponsorData sponsorData = getItem(position);
+        if (sponsorData == null) {
+            holder.textViewName.setText(R.string.bsgamesdk_loadingTips);
+        } else {
+            holder.textViewName.setText(sponsorData.getName());
+            holder.textViewDesc.setText(sponsorData.getDesc());
+//            holder.imageViewAvatar.setImageURI(Uri.parse(sponsorData.getAvatarImgUrl()));
             try {
-                Uri uri = Uri.parse(finalSponsorData.getPersonalPageUrl());
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(uri);
-                holder.itemView.getContext().startActivity(intent);
-            } catch (Exception ignore) {
+                URL url = new URL(sponsorData.getAvatarImgUrl());
+                if (url.getProtocol().contains("http")) {
+                    Glide.with(activity.getApplicationContext()).load(sponsorData.getAvatarImgUrl()).circleCrop().into(holder.imageViewAvatar);
+                } else {
+                    Glide.with(activity.getApplicationContext()).load("https://i0.hdslb.com/bfs/face/member/noface.jpg").circleCrop().into(holder.imageViewAvatar);
+                }
+            } catch (Exception e) {
+                Glide.with(activity.getApplicationContext()).load("https://i0.hdslb.com/bfs/face/member/noface.jpg").circleCrop().into(holder.imageViewAvatar);
             }
-        });
-    }
-
-    @Override
-    public int getItemCount() {
-        return allSponsors.size();
+            holder.itemView.setOnClickListener(v -> {
+                try {
+                    Uri uri = Uri.parse(sponsorData.getPersonalPageUrl());
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(uri);
+                    holder.itemView.getContext().startActivity(intent);
+                } catch (Exception ignore) {
+                }
+            });
+        }
     }
 
     static class SponsorViewHolder extends RecyclerView.ViewHolder {

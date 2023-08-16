@@ -1,9 +1,8 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
-import static com.github.haocen2004.login_simulation.util.Constant.AFD_URL;
-import static com.github.haocen2004.login_simulation.util.Constant.HAS_ACCOUNT;
+import static com.github.haocen2004.login_simulation.data.Constant.AFD_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.HAS_ACCOUNT;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -18,13 +17,13 @@ import android.view.View;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityLoginBinding;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Network;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Network;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +41,7 @@ import cn.leancloud.LCUser;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
     private final String TAG = "SponsorManager";
     private final String emailPattern = "^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
     private final String scKeyPattern = "^scanner_key_+[a-zA-Z0-9_-]{16}";
@@ -241,7 +240,7 @@ public class LoginActivity extends AppCompatActivity {
 
             } else if (retCode == -2) {
                 Looper.prepare();
-                makeToast(getString(R.string.error_ver_outdate));
+                makeToast(getString(R.string.error_ver_outdated));
                 Message msg = new Message();
                 Bundle data = new Bundle();
                 data.putBoolean("type", false);
@@ -302,7 +301,8 @@ public class LoginActivity extends AppCompatActivity {
         try {
             this.user = user;
             LCUser.changeCurrentUser(user, true);
-            getDefaultSharedPreferences(this).edit()
+            PreferenceManager.getDefaultSharedPreferences(this).edit()
+//            getDefaultSharedPreferences(this).edit()
                     .putBoolean("has_account", true)
                     .putString("account_token", user.getSessionToken())
                     .putString("custom_username", user.getString("custom_username"))

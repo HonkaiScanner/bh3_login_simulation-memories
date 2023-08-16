@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.login;
 
-import static com.github.haocen2004.login_simulation.util.Constant.MI_INIT;
+import static com.github.haocen2004.login_simulation.data.Constant.MI_ADV_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.MI_INIT;
 
 import android.app.Application;
 
@@ -8,8 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.data.RoleData;
-import com.github.haocen2004.login_simulation.util.Logger;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogData;
+import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
+import com.github.haocen2004.login_simulation.utils.DialogHelper;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Tools;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.xiaomi.gamecenter.sdk.MiCommplatform;
 import com.xiaomi.gamecenter.sdk.MiErrorCode;
@@ -25,13 +30,13 @@ public class Xiaomi extends Application implements LoginImpl {
 
 
     private final AppCompatActivity activity;
-    private final String TAG = "MiLogin";
+    private final String TAG = "Mi Login";
+    private final LoginCallback callback;
     private boolean isLogin;
     private String uid;
     private String username;
     private String session;
     private RoleData roleData;
-    private final LoginCallback callback;
 
     public Xiaomi(AppCompatActivity activity, LoginCallback loginCallback) {
         this.activity = activity;
@@ -39,6 +44,23 @@ public class Xiaomi extends Application implements LoginImpl {
     }
 
     private void xiaomiLogin() {
+        xiaomiLogin(true);
+    }
+
+    private void xiaomiLogin(boolean tempShowDialog) {
+
+        if ((tempShowDialog && !Tools.getBoolean(activity, "last_mi_login_succ", false)) && !MI_ADV_MODE) {
+            DialogData dialogData = new DialogData("小米服使用提示", "目前默认只支持小米账号登陆\n如有其他方式登录需求请绑定一个小米账号\n或在设置内启用 小米渠道测试方案\n每次登陆新账号时该提示都会出现");
+            dialogData.setPositiveButtonData(new ButtonData("确认") {
+                @Override
+                public void callback(DialogHelper dialogHelper) {
+                    super.callback(dialogHelper);
+                    xiaomiLogin(false);
+                }
+            });
+            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+            return;
+        }
 
         MiCommplatform.getInstance().onUserAgreed(activity);
         MiCommplatform.getInstance().miLogin(activity,
@@ -63,6 +85,7 @@ public class Xiaomi extends Application implements LoginImpl {
                         default:
                             Logger.d(TAG, "err:" + code);
                             callback.onLoginFailed();
+                            Tools.saveBoolean(activity, "last_mi_login_succ", false);
                             // 登录失败
                             break;
                     }
@@ -127,6 +150,7 @@ public class Xiaomi extends Application implements LoginImpl {
                 roleData = new RoleData(open_id, "", combo_id, combo_token, "11", account_type, "xiaomi", 5, callback);
                 isLogin = true;
                 makeToast(activity.getString(R.string.login_succeed));
+                Tools.saveBoolean(activity, "last_mi_login_succ", true);
             }
         } catch (JSONException e) {
             CrashReport.postCatchedException(e);
@@ -136,17 +160,24 @@ public class Xiaomi extends Application implements LoginImpl {
     }
 
     @Override
-    public void logout() {
+    public boolean logout() {
         MiCommplatform.getInstance().miAppExit(activity, code -> {
             if (code == MiErrorCode.MI_XIAOMI_EXIT) {
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
+        return true;
     }
 
     @Override
     public RoleData getRole() {
         return roleData;
+    }
+
+    @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
     }
 
     private void makeToast(String result) {
@@ -161,12 +192,6 @@ public class Xiaomi extends Application implements LoginImpl {
     @Override
     public String getUsername() {
         return username;
-    }
-
-    @Override
-    public void setRole(RoleData roleData) {
-        this.roleData = roleData;
-        isLogin = true;
     }
 
 

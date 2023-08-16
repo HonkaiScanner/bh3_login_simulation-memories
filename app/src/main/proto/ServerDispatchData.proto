@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.github.haocen2004.login_simulation.data.proto";
+
+message ServerDispatchData {
+  string name = 1;
+  string display_name = 5;
+  string env_type = 4;
+  string dispatch_url = 3;
+}
+message region_list
+{
+  ServerDispatchData regionInfo = 4;
+}
+
+// .\tools\protoc.exe --java_out=./app/src/main/java .\app\src\main\proto\ServerDispatchData.proto

@@ -1,28 +1,68 @@
 package com.github.haocen2004.login_simulation.activity;
 
-import static com.github.haocen2004.login_simulation.util.Constant.QQ_GROUP_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.QQ_GROUP_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.VISITOR_COUNT;
 
+import android.content.SharedPreferences;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
-import com.drakeet.about.AbsAboutActivity;
 import com.drakeet.about.Card;
 import com.drakeet.about.Category;
 import com.drakeet.about.Contributor;
 import com.drakeet.about.License;
 import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
-import com.github.haocen2004.login_simulation.util.Tools;
+import com.github.haocen2004.login_simulation.utils.Logger;
+import com.github.haocen2004.login_simulation.utils.Tools;
 
 import java.util.List;
 
-public class AboutActivity extends AbsAboutActivity {
+public class AboutActivity extends BaseAbsActivity {
+
+    private int counter = 0;
+
     @Override
     protected void onCreateHeader(@NonNull ImageView icon, @NonNull TextView slogan, @NonNull TextView version) {
         icon.setImageResource(R.mipmap.ic_launcher);
+        icon.setOnClickListener(v -> {
+            SharedPreferences app_pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+            if (!app_pref.getBoolean("no_crash_page", false)) {
+                if (counter < 20) {
+                    if (counter >= 10) {
+                        Logger.getLogger(this).makeToast("还需点击 " + (20 - counter) + " 下");
+                    }
+                    counter++;
+                } else {
+                    app_pref.edit().putBoolean("no_crash_page", true).apply();
+                    Logger.getLogger(this).makeToast("已关闭崩溃界面显示");
+                }
+            } else {
+                Logger.getLogger(this).makeToast("您已关闭崩溃界面显示！");
+            }
+        });
         slogan.setText(getApplicationInfo().loadLabel(getPackageManager()));
+        version.setOnClickListener(v -> {
+            SharedPreferences app_pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+            if (!app_pref.getBoolean("adv_setting", false)) {
+                if (counter < 7) {
+                    if (counter >= 3) {
+                        Logger.getLogger(this).makeToast("还需点击 " + (7 - counter) + " 下");
+                    }
+                    counter++;
+                } else {
+                    app_pref.edit().putBoolean("adv_setting", true).apply();
+                    Logger.getLogger(this).makeToast("已启用高级设置");
+                }
+            } else {
+                Logger.getLogger(this).makeToast("您已经启用高级设置了！");
+            }
+        });
         version.setText(BuildConfig.VERSION_NAME);
     }
 
@@ -51,12 +91,14 @@ public class AboutActivity extends AbsAboutActivity {
         items.add(new License("XToast", "getActivity", License.APACHE_2, "https://github.com/getActivity/XToast"));
         items.add(new License("sensebot", "Geetest", License.APACHE_2, "https://github.com/GeeTeam/gt3-android-sdk"));
         items.add(new License("glide", "Google", License.APACHE_2, "https://github.com/bumptech/glide"));
+        items.add(new License("RikkaX", "Rikka", License.MIT, "https://github.com/RikkaApps/RikkaX"));
         items.add(new License("Gson", "Google", License.APACHE_2, "https://github.com/google/gson"));
         items.add(new License("okhttp", "square", License.APACHE_2, "https://github.com/square/okhttp"));
         items.add(new License("AndroidX", "Google", License.APACHE_2, "https://github.com/androidx-releases"));
 
         items.add(new Category("您已使用扫码器成功登陆 " + Tools.getInt(this, "succ_count") + " 次"));
         items.add(new Category(Tools.getUUID(this)));
+        items.add(new Category(Tools.getString(this, "installationId")));
+        items.add(new Category("累计有 " + VISITOR_COUNT + " 台设备使用过扫码器"));
     }
-
 }

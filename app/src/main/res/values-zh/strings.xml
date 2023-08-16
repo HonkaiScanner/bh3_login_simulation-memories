@@ -11,6 +11,7 @@
 
     <string name="basic_header">基础设置</string>
     <string name="settings_fast_login">自动确认扫码结果</string>
+    <string name="settings_pure_black_theme">纯黑主题</string>
 
     <string name="types_official">官服</string>
     <string name="types_prefix">当前选择：</string>
@@ -58,7 +59,7 @@
     <string name="report_github">Github</string>
     <string name="report_bili">B站主页</string>
     <string name="report_qq">QQ群</string>
-    <string name="settings_update">检查更新</string>
+    <string name="settings_update">更新提示</string>
     <string name="adv_header">高级设置</string>
     <string name="report_hand">强制发送错误数据</string>
     <string name="btn_register">注册</string>
@@ -70,7 +71,7 @@
     <string name="reg_scanner_key">赞助者身份码</string>
     <string name="error_email">请输入正确的邮箱</string>
     <string name="error_key">请输入正确的赞助者身份码</string>
-    <string name="error_ver_outdate">该版本不支持此操作</string>
+    <string name="error_ver_outdated">该版本不支持此操作</string>
     <string name="error_network">网络错误</string>
     <string name="reg_succ">注册成功</string>
     <string name="error_key_used">该身份码已被使用</string>
@@ -82,6 +83,7 @@
     <string name="reg_new">新用户注册</string>
     <string name="btn_get_key">获取赞助者身份码</string>
     <string name="btn_pic">从相册选择</string>
+    <string name="btn_tip">扫码额外信息</string>
     <string name="btn_cancel">取消</string>
     <string name="login_cancel">已取消登录</string>
     <string name="btn_close_update">关闭更新检查</string>
@@ -106,14 +108,35 @@
     <string name="feedback_way">反馈途径</string>
     <string name="list_about">关于</string>
     <string name="overwrite_bh_ver">使用自定义崩坏3版本号</string>
-    <string name="keep_capture">悬浮窗扫码成功不退出</string>
+    <string name="overwrite_bh_ver_sum">在下方的选项中设置版本</string>
+    <string name="keep_capture">识别成功不退出悬浮窗</string>
     <string name="quit_on_success">扫码成功后退出扫码器</string>
     <string name="debug_mode">调试模式</string>
+    <string name="capture_continue_before_result">未找到二维码时自动重试</string>
+    <string name="fab_header">悬浮窗设置</string>
+    <string name="fab_save_img">保存截图</string>
+    <string name="keep_capture_no_cooling_down">持续扫码无冷却</string>
+    <string name="keep_capture_no_cooling_down_sum">全速扫码！</string>
+    <string name="enable_adv_setting">启用高级设置</string>
+    <string name="no_server_tip">关闭服务器显示</string>
+    <string name="no_server_tip_sum">扫码时不添加服务器来源</string>
+    <string name="beta_update">启用测试版更新检测</string>
+    <string name="beta_update_sum">已在测试版时无法关闭</string>
+    <string name="use_token_sum">米游社扫码协议 仅官服</string>
+    <string name="mi_adv_mode">小米渠道测试方案</string>
+    <string name="mi_adv_mode_sum">允许小米SDK与游戏服务通信来进行QQ登录</string>
+    <string name="icon_type">选择额外扫码器图标</string>
+    <string name="enable_icon_pos">启用额外扫码器图标</string>
+    <string name="btn_hwacccenter">华为账号中心</string>
+    <string name="hint_set_custom_remark">自定义备注</string>
+    <string name="btn_get_sms">获取验证码</string>
 
+    <string name="disable_tips">扫码器因为某些原因暂时停用\n请前往Bilibili动态或群内查看详情</string>
 
+    <string name="tips_tips">仅扫码时辅助提示使用\n实际邦邦项目需要详细沟通</string>
     <string name="crash_hint">检测到扫码器最近发生了崩溃\n请带好崩溃报告及时找开发者反馈!</string>
     <string name="crash_btn">发送崩溃日志</string>
-    <string name="crash_hint2">按返回键/全面屏返回手势\n即可返回扫码器主页\n\n\n更多崩溃日志请前往\n/Android/data/{packageName}/files/crash-report/\n查看</string>
+    <string name="crash_hint2">按返回键/全面屏返回手势\n即可返回扫码器主页\n请不要只发送本页面截图！\n请不要只发送本页面截图！\n请不要只发送本页面截图！\n\n更多崩溃日志请前往\n/Android/data/{packageName}/files/crash-report/\n查看</string>
 
 
 </resources>
