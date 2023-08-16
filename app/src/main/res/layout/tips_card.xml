@@ -21,7 +21,6 @@
             app:singleLine="true">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip"
                 style="@style/Widget.Material3.Chip.Assist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -50,7 +49,6 @@
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <HorizontalScrollView
-        android:id="@+id/chipGroupView2"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -69,7 +67,6 @@
             app:singleSelection="true">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip2"
                 style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -89,7 +86,6 @@
         app:layout_constraintTop_toBottomOf="@+id/chipVoid" />
 
     <HorizontalScrollView
-        android:id="@+id/chipGroupView3"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -106,7 +102,6 @@
             app:singleSelection="true">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip3"
                 style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -126,7 +121,6 @@
         app:layout_constraintTop_toBottomOf="@+id/chipBattle" />
 
     <HorizontalScrollView
-        android:id="@+id/chipGroupView4"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -143,7 +137,6 @@
             app:singleSelection="true">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip4"
                 style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -153,7 +146,6 @@
     </HorizontalScrollView>
 
     <TextView
-        android:id="@+id/tipText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

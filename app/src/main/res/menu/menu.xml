@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group
-        android:id="@+id/g1"
-        android:checkableBehavior="single">
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/mainFragment"
             android:title="@string/list_main" />
@@ -10,17 +8,13 @@
             android:id="@+id/settingsFragment"
             android:title="@string/list_settings" />
     </group>
-    <group
-        android:id="@+id/g2"
-        android:checkableBehavior="single">
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/supportFragment"
             android:title="@string/list_pay" />
         <item
             android:id="@+id/reportFragment"
             android:title="@string/list_report" />
-        <item
-            android:id="@+id/aboutActivity"
-            android:title="@string/list_about" />
+        <item android:title="@string/list_about" />
     </group>
 </menu>
