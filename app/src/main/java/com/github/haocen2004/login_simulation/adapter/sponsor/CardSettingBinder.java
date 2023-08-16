@@ -45,11 +45,9 @@ public class CardSettingBinder extends ItemViewBinder<CardSetting, CardSettingBi
         public TextView content;
         public ICallback onClickCallback = null;
         public ICallback onLongClickCallback = null;
-        public AbsAboutActivity activity;
 
         public ViewHolder(View itemView, AbsAboutActivity activity) {
             super(itemView);
-            this.activity = activity;
             content = itemView.findViewById(com.drakeet.about.R.id.content);
             itemView.getRootView().setOnClickListener(this);
             itemView.getRootView().setOnLongClickListener(this);

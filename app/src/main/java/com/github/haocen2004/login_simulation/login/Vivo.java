@@ -32,7 +32,7 @@ public class Vivo implements LoginImpl {
     private String token;
     private RoleData roleData;
     @SuppressLint("HandlerLeak")
-    Handler login_handler = new Handler() {
+    Handler login_handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);

@@ -63,14 +63,6 @@ public class DialogHelper {
         return INSTANCE;
     }
 
-    public void ref() {
-        if (currClose) return;
-        try {
-            showDialog(dialogLiveData.getValue().get(currPos));
-        } catch (Exception ignore) {
-        }
-    }
-
     public void next() {
         List<DialogData> dialogData = dialogLiveData.getValue();
 
@@ -120,18 +112,6 @@ public class DialogHelper {
         dialogLiveData.insertEulaDialog(dialogData);
 
         Logger.i(TAG, "show eula");
-    }
-
-    public int getCurrPos() {
-        return currPos;
-    }
-
-    public void setCurrPos(int newPos) {
-        currPos = newPos;
-    }
-
-    public void setCurrShow(boolean currShow) {
-        this.currShow = currShow;
     }
 
     public DialogInterface getCurrDialog() {

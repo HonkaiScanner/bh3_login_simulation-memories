@@ -46,8 +46,8 @@ import com.github.haocen2004.login_simulation.activity.MainActivity;
 import com.github.haocen2004.login_simulation.data.dialog.ButtonData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogData;
 import com.github.haocen2004.login_simulation.data.dialog.DialogLiveData;
-import com.hjq.xtoast.XToast;
-import com.hjq.xtoast.draggable.SpringDraggable;
+import com.hjq.window.EasyWindow;
+import com.hjq.window.draggable.SpringDraggable;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
 import java.io.File;
@@ -60,7 +60,7 @@ import java.util.Objects;
 public class FabScanner extends Service {
     private volatile static FabScanner INSTANCE;
     private final String TAG = "FabScanner";
-    private final List<XToast<?>> toastInst = new ArrayList<>();
+    private final List<EasyWindow<?>> toastInst = new ArrayList<>();
     boolean isScreenCaptureStarted;
     private MediaProjectionManager mProjectionManager = null;
     private MediaProjection sMediaProjection;
@@ -197,8 +197,8 @@ public class FabScanner extends Service {
 
     private void setActiveDisplay(boolean isActive) {
 
-        for (XToast<?> xToast2 : toastInst) {
-            ImageView imageView = xToast2.getContentView().findViewById(R.id.fab_scanner_image);
+        for (EasyWindow<?> EasyWindow2 : toastInst) {
+            ImageView imageView = EasyWindow2.getContentView().findViewById(R.id.fab_scanner_image);
 //            Logger.d(TAG,imageView.getColorFilter().toString());
             if (isActive) {
 
@@ -211,19 +211,19 @@ public class FabScanner extends Service {
         }
     }
 
-    private XToast<?> createNewToast() {
+    private EasyWindow<?> createNewToast() {
 
-        @SuppressLint("WrongConstant") XToast<?> xToast = new XToast<>(activity.getApplication())
+        @SuppressLint("WrongConstant") EasyWindow<?> EasyWindow = new EasyWindow<>(activity.getApplication())
                 .setContentView(R.layout.fab_scanner)
                 .setGravity(Gravity.END | Gravity.BOTTOM)
                 .setYOffset(200)
                 .setDraggable(new SpringDraggable())
                 .setOnClickListener((toast, view1) -> {
                     if (needStop) {
-                        for (XToast<?> xToast1 : toastInst) {
-                            xToast1.cancel();
-                            xToast1.recycle();
-                            toastInst.remove(xToast1);
+                        for (EasyWindow<?> EasyWindow1 : toastInst) {
+                            EasyWindow1.cancel();
+                            EasyWindow1.recycle();
+                            toastInst.remove(EasyWindow1);
                         }
                         stopProjection();
                         needStop = false;
@@ -256,10 +256,10 @@ public class FabScanner extends Service {
                         try {
                             e.printStackTrace();
                             Log.makeToast("悬浮窗进程异常！");
-                            for (XToast<?> xToast1 : toastInst) {
-                                xToast1.cancel();
-                                xToast1.recycle();
-                                toastInst.remove(xToast1);
+                            for (EasyWindow<?> EasyWindow1 : toastInst) {
+                                EasyWindow1.cancel();
+                                EasyWindow1.recycle();
+                                toastInst.remove(EasyWindow1);
                             }
                             setActiveDisplay(false);
                             needStop = true;
@@ -327,15 +327,15 @@ public class FabScanner extends Service {
                                     Logger.d(TAG + failedCount, urls.toString());
                                     if (qrScanner.parseUrl(url)) {
                                         Toast.makeText(activity, "扫码成功\n处理中....", Toast.LENGTH_SHORT).show();
-                                        Logger.setFabMode(true);
+//                                        Logger.setFabMode(true);
                                         qrScanner.start();
                                         if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("keep_capture", false)) {
                                             stopProjection();
                                             needStop = true;
-                                            for (XToast<?> xToast1 : toastInst) {
-                                                xToast1.cancel();
-                                                xToast1.recycle();
-                                                toastInst.remove(xToast1);
+                                            for (EasyWindow<?> EasyWindow1 : toastInst) {
+                                                EasyWindow1.cancel();
+                                                EasyWindow1.recycle();
+                                                toastInst.remove(EasyWindow1);
                                             }
                                         } else {
                                             Logger.d(TAG, "keep capture is true,continue.");
@@ -372,8 +372,8 @@ public class FabScanner extends Service {
                         sMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
                     }
                 });
-        xToast.show();
-        return xToast;
+        EasyWindow.show();
+        return EasyWindow;
     }
 
     public void stopProjection() {
@@ -390,11 +390,11 @@ public class FabScanner extends Service {
                 sMediaProjection = null;
             }
             if (toastInst.size() > 0) {
-                for (XToast<?> xToast : toastInst) {
-                    while (xToast.isShowing()) {
-                        xToast.cancel();
-                        Logger.d(TAG, xToast.toString());
-                        xToast.recycle();
+                for (EasyWindow<?> EasyWindow : toastInst) {
+                    while (EasyWindow.isShowing()) {
+                        EasyWindow.cancel();
+                        Logger.d(TAG, EasyWindow.toString());
+                        EasyWindow.recycle();
                         Logger.d(TAG, "cancelled");
                     }
                     Logger.d(TAG, "Toast stopped");
@@ -457,9 +457,9 @@ public class FabScanner extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (toastInst.size() > 0) {
-            for (XToast<?> xToast : toastInst) {
-                xToast.cancel();
-                xToast.recycle();
+            for (EasyWindow<?> EasyWindow : toastInst) {
+                EasyWindow.cancel();
+                EasyWindow.recycle();
             }
         }
         stopForeground(true);
@@ -477,9 +477,9 @@ public class FabScanner extends Service {
                 }
                 sMediaProjection.unregisterCallback(MediaProjectionStopCallback.this);
                 if (toastInst.size() > 0) {
-                    for (XToast<?> xToast : toastInst) {
-                        xToast.cancel();
-                        xToast.recycle();
+                    for (EasyWindow<?> EasyWindow : toastInst) {
+                        EasyWindow.cancel();
+                        EasyWindow.recycle();
                     }
                 }
             });

@@ -144,10 +144,6 @@ public class Network {
         return sendPost(url, param, null, autoRetry);
     }
 
-    public static String sendPost(String url, Boolean autoRetry) {
-        return sendPost(url, "", null, autoRetry);
-    }
-
     public static String sendPost(String url, String param, Map<String, String> map) {
         return sendPost(url, param, map, true);
     }

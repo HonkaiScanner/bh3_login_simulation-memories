@@ -318,12 +318,7 @@ public final class SubtitleCollapsingTextHelper {
         if (collapsedTitleFontCallback != null) {
             collapsedTitleFontCallback.cancel();
         }
-        collapsedTitleFontCallback = new CancelableFontCallback(new CancelableFontCallback.ApplyFont() {
-            @Override
-            public void apply(Typeface font) {
-                setCollapsedTitleTypeface(font);
-            }
-        }, textAppearance.getFallbackFont());
+        collapsedTitleFontCallback = new CancelableFontCallback(font -> setCollapsedTitleTypeface(font), textAppearance.getFallbackFont());
         textAppearance.getFontAsync(view.getContext(), collapsedTitleFontCallback);
 
         recalculate();
@@ -348,12 +343,7 @@ public final class SubtitleCollapsingTextHelper {
         if (expandedTitleFontCallback != null) {
             expandedTitleFontCallback.cancel();
         }
-        expandedTitleFontCallback = new CancelableFontCallback(new CancelableFontCallback.ApplyFont() {
-            @Override
-            public void apply(Typeface font) {
-                setExpandedTitleTypeface(font);
-            }
-        }, textAppearance.getFallbackFont());
+        expandedTitleFontCallback = new CancelableFontCallback(font -> setExpandedTitleTypeface(font), textAppearance.getFallbackFont());
         textAppearance.getFontAsync(view.getContext(), expandedTitleFontCallback);
 
         recalculate();
@@ -379,12 +369,7 @@ public final class SubtitleCollapsingTextHelper {
         if (collapsedSubtitleFontCallback != null) {
             collapsedSubtitleFontCallback.cancel();
         }
-        collapsedSubtitleFontCallback = new CancelableFontCallback(new CancelableFontCallback.ApplyFont() {
-            @Override
-            public void apply(Typeface font) {
-                setCollapsedSubtitleTypeface(font);
-            }
-        }, textAppearance.getFallbackFont());
+        collapsedSubtitleFontCallback = new CancelableFontCallback(font -> setCollapsedSubtitleTypeface(font), textAppearance.getFallbackFont());
         textAppearance.getFontAsync(view.getContext(), collapsedSubtitleFontCallback);
 
         recalculate();
@@ -409,11 +394,8 @@ public final class SubtitleCollapsingTextHelper {
         if (expandedSubtitleFontCallback != null) {
             expandedSubtitleFontCallback.cancel();
         }
-        expandedSubtitleFontCallback = new CancelableFontCallback(new CancelableFontCallback.ApplyFont() {
-            @Override
-            public void apply(Typeface font) {
-                if (font != null) setExpandedSubtitleTypeface(font);
-            }
+        expandedSubtitleFontCallback = new CancelableFontCallback(font -> {
+            if (font != null) setExpandedSubtitleTypeface(font);
         }, null);
         textAppearance.getFontAsync(view.getContext(), expandedSubtitleFontCallback);
 

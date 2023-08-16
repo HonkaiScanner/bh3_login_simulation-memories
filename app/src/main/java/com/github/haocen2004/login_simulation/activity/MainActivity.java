@@ -332,9 +332,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                     dialog.dismiss();
                     super.callback(dialogHelper);
                 });
-                normalDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
-                    dialog.dismiss();
-                });
+                normalDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> dialog.dismiss());
 
             }
         });

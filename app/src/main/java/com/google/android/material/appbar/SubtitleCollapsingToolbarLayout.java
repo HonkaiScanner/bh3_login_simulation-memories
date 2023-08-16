@@ -554,12 +554,7 @@ public class SubtitleCollapsingToolbarLayout extends FrameLayout {
             scrimAnimator.setInterpolator(targetAlpha > scrimAlpha
                     ? AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR
                     : AnimationUtils.LINEAR_OUT_SLOW_IN_INTERPOLATOR);
-            scrimAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animator) {
-                    setScrimAlpha((int) animator.getAnimatedValue());
-                }
-            });
+            scrimAnimator.addUpdateListener(animator -> setScrimAlpha((int) animator.getAnimatedValue()));
         } else if (scrimAnimator.isRunning()) {
             scrimAnimator.cancel();
         }
