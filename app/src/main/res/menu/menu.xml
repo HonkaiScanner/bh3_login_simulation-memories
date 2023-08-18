@@ -15,8 +15,6 @@
         <item
             android:id="@+id/reportFragment"
             android:title="@string/list_report" />
-        <item
-            android:id="@+id/aboutActivity"
-            android:title="@string/list_about" />
+        <item android:title="@string/list_about" />
     </group>
 </menu>
