@@ -153,7 +153,7 @@ public class Oppo implements LoginImpl {
 
         OPPO_OFFICIAL_PACK_INSTALLED = Tools.verifyOfficialPack(activity, "com.miHoYo.bh3.nearme.gamecenter");
         if (!OPPO_OFFICIAL_PACK_INSTALLED) {
-            DialogData dialogData = new DialogData("Oppo特殊操作提示", "Oppo服需要同时安装官方客户端\n\n在您的手机上未检测到官方客户端存在或没有获取手机安装应用列表权限\n\n请授予扫码器获取手机应用列表权限\n并正确安装任意版本官方客户端\n\n无需下载任何资源\n无需下载任何资源\n无需下载任何资源", "我已知晓");
+            DialogData dialogData = new DialogData("Oppo特殊操作提示", "Oppo服高级方案需要同时安装Oppo渠道的游戏本体\n\n在您的手机上未检测到游戏本体存在或没有获取手机安装应用列表权限\n\n请授予扫码器获取手机应用列表权限\n并正确安装任意版本Oppo渠道游戏本体\n\n仅需安装游戏，无需在游戏内下载资源文件", "我已知晓");
             DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             callback.onLoginFailed();
         } else if (!OPPO_INIT) {

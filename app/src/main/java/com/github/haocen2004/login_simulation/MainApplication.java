@@ -10,6 +10,7 @@ import static com.github.haocen2004.login_simulation.data.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.DEBUG_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.MDK_VERSION;
 import static com.github.haocen2004.login_simulation.data.Constant.MI_ADV_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.OPPO_ADV_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.SAVE_ALL_LOGS;
 import static com.github.haocen2004.login_simulation.data.Constant.SP_APP_KEY;
 import static com.github.haocen2004.login_simulation.data.Constant.SP_URL;
@@ -234,6 +235,7 @@ public class MainApplication extends Application implements LifecycleOwner {
             SP_URL = app_pref.getString("sp_url", SP_URL);
         }
         MI_ADV_MODE = app_pref.getBoolean("mi_adv_mode", MI_ADV_MODE);
+        OPPO_ADV_MODE = app_pref.getBoolean("oppo_adv_mode", OPPO_ADV_MODE);
         try {
             LeanCloud.initializeSecurely(getApplicationContext(), SP_APP_KEY, SP_URL);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !Tools.getDeviceModel().toLowerCase(Locale.ROOT).contains("mumu")) {

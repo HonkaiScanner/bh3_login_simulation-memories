@@ -51,13 +51,21 @@
             android:key="use_token"
             android:summary="@string/use_token_sum"
             android:title="@string/use_token_true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/adv_mode_header">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="oppo_adv_mode"
+            android:summary="@string/oppo_adv_mode_sum"
+            android:title="@string/oppo_adv_mode" />
         <SwitchPreference
             android:defaultValue="true"
             android:key="mi_adv_mode"
             android:summary="@string/mi_adv_mode_sum"
             android:title="@string/mi_adv_mode" />
     </PreferenceCategory>
-
 
     <PreferenceCategory android:title="@string/fab_header">
         <SwitchPreference

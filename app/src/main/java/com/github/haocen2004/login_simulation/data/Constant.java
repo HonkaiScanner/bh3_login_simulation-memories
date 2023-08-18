@@ -41,6 +41,7 @@ public class Constant {
 
     public static boolean FLYME_OFFICIAL_PACK_INSTALLED = false;
     public static boolean OPPO_OFFICIAL_PACK_INSTALLED = false;
+    public static boolean OPPO_ADV_MODE = false;
 
     public static boolean DEBUG_MODE = false;
     public static boolean SAVE_ALL_LOGS = false;

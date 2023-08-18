@@ -108,8 +108,11 @@
     <string name="beta_update">启用测试版更新检测</string>
     <string name="beta_update_sum">已在测试版时无法关闭</string>
     <string name="use_token_sum">米游社扫码协议 仅官服</string>
+    <string name="adv_mode_header">渠道高级设置</string>
     <string name="mi_adv_mode">小米渠道测试方案</string>
     <string name="mi_adv_mode_sum">允许小米SDK与游戏服务通信来进行QQ登录</string>
+    <string name="oppo_adv_mode">Oppo渠道高级方案</string>
+    <string name="oppo_adv_mode_sum">更好的伪装扫码器为Oppo服客户端\n需同时安装Oppo服官方客户端</string>
     <string name="icon_type">选择额外扫码器图标</string>
     <string name="enable_icon_pos">启用额外扫码器图标</string>
     <string name="btn_hwacccenter">华为账号中心</string>

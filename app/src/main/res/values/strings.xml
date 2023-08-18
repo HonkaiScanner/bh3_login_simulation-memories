@@ -109,8 +109,11 @@
     <string name="beta_update">Allow Snapshot update</string>
     <string name="beta_update_sum">Cannot disable when already in BETA</string>
     <string name="use_token_sum">Hoyolab protocol Only for Official Channel</string>
+    <string name="adv_mode_header">Advance Channel Setting</string>
     <string name="mi_adv_mode">XiaoMi Channel Test Mode</string>
     <string name="mi_adv_mode_sum">Allow Mi SDK access Service Module</string>
+    <string name="oppo_adv_mode">Oppo Channel Test Mode</string>
+    <string name="oppo_adv_mode_sum">Allow Oppo SDK access Service Module</string>
     <string name="icon_type">Select Extra Launcher Icon</string>
     <string name="enable_icon_pos">Enable Extra Launcher Icon</string>
     <string name="btn_hwacccenter">Huawei Account Center</string>

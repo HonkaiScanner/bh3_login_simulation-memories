@@ -4,6 +4,7 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static com.github.haocen2004.login_simulation.data.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.MI_ADV_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.OPPO_ADV_MODE;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
@@ -211,6 +212,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         findPreference("mi_adv_mode").setOnPreferenceChangeListener(((preference, newValue) -> {
             MI_ADV_MODE = (boolean) newValue;
+            return true;
+        }));
+
+        findPreference("oppo_adv_mode").setOnPreferenceChangeListener(((preference, newValue) -> {
+            OPPO_ADV_MODE = (boolean) newValue;
             return true;
         }));
 

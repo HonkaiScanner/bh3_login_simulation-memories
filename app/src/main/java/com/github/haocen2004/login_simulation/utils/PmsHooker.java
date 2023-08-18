@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.utils;
 
+import static com.github.haocen2004.login_simulation.data.Constant.OPPO_ADV_MODE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -90,7 +92,7 @@ public class PmsHooker implements InvocationHandler {
             }
         }
         if (!forceKeep) {
-            if (oppoChange) {
+            if (oppoChange && OPPO_ADV_MODE) {
                 return "com.miHoYo.bh3.nearme.gamecenter";
             }
             if (flymeChange) {
@@ -157,7 +159,7 @@ public class PmsHooker implements InvocationHandler {
             }
         }
         if (!forceKeep) {
-            if (oppoChange) {
+            if (oppoChange && OPPO_ADV_MODE) {
                 if ("getApplicationInfo".equals(method.getName())) {
                     if (args != null && args[0].equals("com.miHoYo.bh3.nearme.gamecenter")) {
                         args[0] = "com.github.haocen2004.bh3_login_simulation";

@@ -2,6 +2,7 @@ package com.github.haocen2004.login_simulation.utils;
 
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static com.github.haocen2004.login_simulation.data.Constant.OPPO_ADV_MODE;
 import static com.github.haocen2004.login_simulation.utils.Network.sendGet;
 import static java.lang.Integer.parseInt;
 
@@ -305,12 +306,13 @@ public class Tools {
 
     @Keep
     public static boolean verifyOfficialPack(Context context, String packageName) {
+        if (packageName.equals("com.miHoYo.bh3.nearme.gamecenter") && OPPO_ADV_MODE) return true;
         try {
             List<ApplicationInfo> allApps = context.getPackageManager().getInstalledApplications(0);
             for (ApplicationInfo ai : allApps) {
                 if (ai.packageName.equals(packageName)) {
                     PackageInfo info = context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
-                    if (info.versionCode > 500) {
+                    if (info.versionCode > 5) {
                         return true;
                     } else {
                         Logger.d("verifyOfficialPack", info.toString());
