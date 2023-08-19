@@ -133,6 +133,7 @@ public class RoleData {
         combo_token = map.get("combo_token");
         channel_id = map.get("channel_id");
         str_oaserver = map.get("str_oaserver");
+        enc_oaserver = map.get("enc_oaserver");
         account_type = map.get("account_type");
         accountType = map.get("accountType");
         oa_req_key = map.get("oa_req_key");
