@@ -26,3 +26,11 @@ pluginManagement {
 
 include(":app", ":mi_sdk")//, ':360_sdk'
 rootProject.name = "bh3_login_simulation"
+
+val isCiServer = System.getenv().containsKey("CI")
+// Cache build artifacts, so expensive operations do not need to be re-computed
+buildCache {
+    local {
+        isEnabled = !isCiServer
+    }
+}
