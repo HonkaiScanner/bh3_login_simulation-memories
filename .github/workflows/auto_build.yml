@@ -45,7 +45,6 @@ jobs:
 
       - name: Build APK with Gradle (DEV)
         if: ${{ github.ref == 'refs/heads/dev' }}
-        uses: burrunan/gradle-cache-action@v1
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
