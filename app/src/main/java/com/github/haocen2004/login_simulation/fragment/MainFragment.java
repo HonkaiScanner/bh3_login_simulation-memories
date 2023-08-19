@@ -15,6 +15,7 @@ import static java.lang.Integer.parseInt;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -439,7 +440,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 break;
             case "Huawei":
                 server_type = activity.getString(R.string.types_huawei);
-                binding.btnHwAccountCenter.setVisibility(View.VISIBLE);
+                if (Tools.verifyOfficialPack(requireContext(), "com.huawei.hwid"))
+                    binding.btnHwAccountCenter.setVisibility(View.VISIBLE);
                 break;
             case "Qihoo":
                 server_type = activity.getString(R.string.types_qihoo);
@@ -744,17 +746,21 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         });
         binding.btnHwAccountCenter.setOnClickListener(view -> {
-            Intent hwSwitchAccountIntent = new Intent(Intent.ACTION_VIEW);
-            hwSwitchAccountIntent.setPackage("com.huawei.hwid");
-            hwSwitchAccountIntent.setAction("com.huawei.hwid.ACTION_INNER_CENTER_ACTIVITY");
+            try {
+                Intent hwSwitchAccountIntent = new Intent(Intent.ACTION_VIEW);
+                hwSwitchAccountIntent.setPackage("com.huawei.hwid");
+                hwSwitchAccountIntent.setAction("com.huawei.hwid.ACTION_INNER_CENTER_ACTIVITY");
 //            hwSwitchAccountIntent.setClassName("com.huawei.hwid","com.huawei.hms.runtimekit.stubexplicit.HwIDCenterActivity");
-            startActivity(hwSwitchAccountIntent);
+                startActivity(hwSwitchAccountIntent);
+            } catch (ActivityNotFoundException exception) {
+                Log.makeToast("你还没有安装华为移动服务！");
+            }
         });
         binding.btnSelpic.setOnClickListener(view1 -> {
             try {
                 if (loginImpl.isLogin()) {
 
-                    Intent pickIntent = null;
+                    Intent pickIntent;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                         pickIntent = new Intent(MediaStore.ACTION_PICK_IMAGES);
                         pickIntent.setType("image/*");
@@ -1019,11 +1025,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         }
                     }
                     Log.makeToast("华为服切换账号请在华为账号中心操作！");
-                    Intent hwSwitchAccountIntent = new Intent(Intent.ACTION_VIEW);
-                    hwSwitchAccountIntent.setPackage("com.huawei.hwid");
-                    hwSwitchAccountIntent.setAction("com.huawei.hwid.ACTION_INNER_CENTER_ACTIVITY");
+                    try {
+                        Intent hwSwitchAccountIntent = new Intent(Intent.ACTION_VIEW);
+                        hwSwitchAccountIntent.setPackage("com.huawei.hwid");
+                        hwSwitchAccountIntent.setAction("com.huawei.hwid.ACTION_INNER_CENTER_ACTIVITY");
 //                    hwSwitchAccountIntent.setClassName("com.huawei.hwid","com.huawei.hms.runtimekit.stubexplicit.HwIDCenterActivity");
-                    startActivity(hwSwitchAccountIntent);
+                        startActivity(hwSwitchAccountIntent);
+                    } catch (ActivityNotFoundException ignored) {
+                    }
                 } else if (loginImpl.isLogin()) {
                     if (loginImpl.logout()) {
                         onLoginFailed();
