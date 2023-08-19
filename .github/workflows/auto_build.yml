@@ -27,6 +27,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
+            app/build
+            buildSrc/build
+            mi_sdk/build
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -48,22 +51,10 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           NAME_SUFFIX: '.dev'
-        with:
-          job-id: jdk11
-          arguments: build --no-daemon
-          gradle-version: wrapper
+        run: |
+          chmod +x gradlew
+          ./gradlew build
 
-      #      - name: Build APK with Gradle (DEV)
-      #        if: ${{ github.ref == 'refs/heads/dev' }}
-      #        run: |
-      #          chmod +x gradlew
-      #          ./gradlew build
-      #
-      #        env:
-      #          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      #          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-      #          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      #          NAME_SUFFIX: '.dev'
 
       - name: Build APK with Gradle (MAIN)
         if: ${{ github.ref != 'refs/heads/dev' }}
