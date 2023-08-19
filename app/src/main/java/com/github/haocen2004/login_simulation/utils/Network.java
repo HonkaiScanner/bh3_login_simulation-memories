@@ -137,18 +137,18 @@ public class Network {
     }
 
     public static String sendPost(String url, String param) {
-        return sendPost(url, param, null, true);
+        return sendPost(url, param, null, true, true);
     }
 
     public static String sendPost(String url, String param, Boolean autoRetry) {
-        return sendPost(url, param, null, autoRetry);
+        return sendPost(url, param, null, autoRetry, true);
     }
 
     public static String sendPost(String url, String param, Map<String, String> map) {
-        return sendPost(url, param, map, true);
+        return sendPost(url, param, map, true, true);
     }
 
-    public static String sendPost(String url, String param, Map<String, String> map, Boolean autoRetry) {
+    public static String sendPost(String url, String param, Map<String, String> map, Boolean autoRetry, Boolean sendToast) {
         String ret;
         while (true) {
             ret = realSendPost(url, param, map);
@@ -158,7 +158,9 @@ public class Network {
             if (!autoRetry) {
                 return "";
             }
-            Logger.getLogger(null).makeToast("网络请求错误\n2s后自动重试");
+            if (sendToast) {
+                Logger.getLogger(null).makeToast("网络请求错误\n2s后自动重试");
+            }
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
