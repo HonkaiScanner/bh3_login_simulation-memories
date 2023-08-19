@@ -1,6 +1,6 @@
 # 崩坏3扫码器 / bh3_login_simulation
 
-[![Auto Build Scanner](https://github.com/Haocen2004/bh3_login_simulation/actions/workflows/auto_build.yml/badge.svg?branch=dev)](https://github.com/Haocen2004/bh3_login_simulation/actions/workflows/auto_build.yml)  
+[![Auto Build Scanner](https://github.com/HonkaiScanner/bh3_login_simulation/actions/workflows/auto_build.yml/badge.svg?event=create)](https://github.com/HonkaiScanner/bh3_login_simulation/actions/workflows/auto_build.yml)  
 轻巧的崩坏3渠道服桌面端扫码登陆解决方案
 
 ## 支持协议 / Supported protocol
