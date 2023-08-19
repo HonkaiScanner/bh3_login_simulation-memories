@@ -625,12 +625,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     private void onCheckedStateChange(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
 
-        while (loginProgress) {
-            try {
-                Thread.sleep(500);
-                Logger.d("onCheckedStateChange", "waiting loginProgress finished.");
-            } catch (Exception ignore) {
-            }
+        if (loginProgress) {
+            Log.makeToast("请先等待当前登录操作完成！");
+            return;
         }
 
         for (int pos = 0; pos < group.getChildCount(); pos++) {
