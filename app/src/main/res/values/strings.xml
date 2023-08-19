@@ -124,6 +124,7 @@
     <string name="tips_tips">Only used as an auxiliary prompt when scanning the QR code</string>
     <string name="crash_hint">Detected a recent crash happened.\nPlease bring a crash-report to get feedback from the developer in time!</string>
     <string name="crash_btn">Open CrashReport</string>
+    <string name="crash_btn_url">Copy CrashReport URL</string>
     <string name="crash_hint2">Press the back button / full screen return gesture \n to return to the home page\n\nDO NOT JUST POST SCREENSHOT FOR REPORT!\nDO NOT JUST POST SCREENSHOT FOR REPORT!\nDO NOT JUST POST SCREENSHOT FOR REPORT!\n\nFor more crash logs, please go to \n/Android/data/{packageName}/files/crash-report/</string>
     <string name="btn_get_sms">get verification code</string>
 </resources>
