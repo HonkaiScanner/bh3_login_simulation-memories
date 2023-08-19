@@ -20,15 +20,15 @@ jobs:
           java-version: 11
           distribution: temurin
 
-      - name: Gradle Cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      #      - name: Gradle Cache
+      #        uses: actions/cache@v3
+      #        with:
+      #          path: |
+      #            ~/.gradle/caches
+      #            ~/.gradle/wrapper
+      #          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+      #          restore-keys: |
+      #            ${{ runner.os }}-gradle-
 
       - name: gen JKS File
         run: echo $ENCODED_KEYSTORE | base64 -di > app/keystore.jks
@@ -41,15 +41,28 @@ jobs:
 
       - name: Build APK with Gradle (DEV)
         if: ${{ github.ref == 'refs/heads/dev' }}
-        run: |
-          chmod +x gradlew
-          ./gradlew build
-
+        uses: burrunan/gradle-cache-action@v1
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           NAME_SUFFIX: '.dev'
+        with:
+          job-id: jdk11
+          arguments: build
+          gradle-version: wrapper
+
+      #      - name: Build APK with Gradle (DEV)
+      #        if: ${{ github.ref == 'refs/heads/dev' }}
+      #        run: |
+      #          chmod +x gradlew
+      #          ./gradlew build
+      #
+      #        env:
+      #          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      #          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      #          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      #          NAME_SUFFIX: '.dev'
 
       - name: Build APK with Gradle (MAIN)
         if: ${{ github.ref != 'refs/heads/dev' }}
