@@ -75,6 +75,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
                     super.callback(dialogHelper);
                 }
             });
+            dialogData.setCancelable(true);
             DialogLiveData.getINSTANCE().addNewDialog(dialogData);
         } else {
             Log.makeToast("Wrong Button");
