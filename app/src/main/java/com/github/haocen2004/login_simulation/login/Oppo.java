@@ -27,6 +27,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+
 public class Oppo implements LoginImpl {
     private static final String TAG = "Oppo Login";
     private final Activity activity;
@@ -191,6 +193,11 @@ public class Oppo implements LoginImpl {
                     makeToast("error:" + s + "\ncode:" + i);
                     Logger.d(TAG, "onFailure: s:" + s);
                     Logger.d(TAG, "onFailure: i:" + i);
+                    File sharedPrefs = new File(activity.getFilesDir().getParent(), "shared_prefs");
+                    File sdkCache = new File(sharedPrefs, "plugin_framework.xml");
+                    if (sdkCache.exists()) {
+                        sdkCache.delete();
+                    }
                     callback.onLoginFailed();
                 }
             });
