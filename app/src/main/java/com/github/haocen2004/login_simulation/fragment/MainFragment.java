@@ -725,7 +725,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void setupListener() {
         //        binding.btnLogin.setOnClickListener(this);
         binding.btnScan.setOnClickListener(this);
-        binding.btnScan.setOnLongClickListener(this);
+//        binding.btnScan.setOnLongClickListener(this); // 临时禁用悬浮窗
 //        binding.btnLogout.setOnClickListener(this);
         binding.cardViewMain.cardView2.setOnClickListener(this);
         binding.cardViewMain.cardView2.setOnLongClickListener(this);
