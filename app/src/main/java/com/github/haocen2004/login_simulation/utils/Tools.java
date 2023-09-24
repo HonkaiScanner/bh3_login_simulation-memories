@@ -118,8 +118,8 @@ public class Tools {
         //            if (ENC_DISPATCH) {
         Map<String, String> headerMap = new HashMap<>();
         Map<String, Object> oaMap = new HashMap<>();
-        oaMap.put("x-req-open_id", roleData.getOpen_id());
-        headerMap.put("x-req-open_id", roleData.getOpen_id());
+        oaMap.put("x-req-openid", roleData.getOpen_id());
+        headerMap.put("x-req-openid", roleData.getOpen_id());
         oaMap.put("x-req-name", VERSION_NAME + ":" + VERSION_CODE);
         oaMap.put("x-req-code", VERSION_CODE);
         headerMap.put("x-req-name", VERSION_NAME + ":" + VERSION_CODE);
@@ -130,11 +130,12 @@ public class Tools {
 //        String getOAUrl = "http://192.168.1.133:8088/v3/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
         String getOAUrl = "https://dispatch.scanner.hellocraft.xyz/v3/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
         String feedback = sendGet(getOAUrl, headerMap, false);
+        Logger.d("GetOAServer", feedback);
 //                Logger.getLogger(null).makeToast(json1.getString("msg"));
         try {
             JSONObject json1 = new JSONObject(feedback);
             if (json1.getInt("retcode") != 0) {
-                Logger.getLogger(null).makeToast(json1.getString("msg"));
+                Logger.getLogger(null).makeToast(json1.getString("message"));
                 return null;
             }
         } catch (Exception ignore) {
