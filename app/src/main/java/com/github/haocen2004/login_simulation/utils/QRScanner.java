@@ -106,6 +106,7 @@ public class QRScanner {
                 if (feedback_json.getInt("retcode") == 0) {
                     makeToast(app_name + "\n" + activity.getString(R.string.login_succeed));
                     Tools.saveInt(activity, "succ_count", Tools.getInt(activity, "succ_count") + 1);
+                    Tools.saveLong(activity, "last_time", System.currentTimeMillis());
                     Intent shortcutIntent = new Intent(activity, MainActivity.class);
                     shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     shortcutIntent.setAction(Intent.ACTION_MAIN);
@@ -338,7 +339,10 @@ public class QRScanner {
                 return;
             }
         }
-
+        if (System.currentTimeMillis() - Tools.getLong(activity, "last_time") < 3 * 60 * 1000) {
+            Log.makeToast("扫码速度限制\n为了防止扫码器被滥用\n现在每三分钟可以进行一次扫码操作");
+            return;
+        }
 
         qr_check_map.put("device", device_id);
         qr_check_map.put("app_id", app_id);

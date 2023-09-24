@@ -226,6 +226,14 @@ public class Tools {
         return paramContext.getApplicationContext().getSharedPreferences(name, 0).getInt(key, 0);
     }
 
+    public static Long getLong(Context paramContext, String key) {
+        return paramContext.getApplicationContext().getSharedPreferences(name, 0).getLong(key, 0L);
+    }
+
+    public static boolean saveLong(Context paramContext, String key, Long value) {
+        return paramContext.getApplicationContext().getSharedPreferences(name, 0).edit().putLong(key, value).commit();
+    }
+
     public static boolean saveString(Context paramContext, String paramString1, String paramString2) {
         return paramContext.getApplicationContext().getSharedPreferences(name, 0).edit().putString(paramString1, paramString2).commit();
     }
