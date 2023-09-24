@@ -1256,7 +1256,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             } else {
                 cacheRoleData = loginImpl.getRole();
             }
-            Tools.saveBoolean(requireContext(), "last_login_succeed", true);
+            Tools.saveBoolean(activity.getApplicationContext(), "last_login_succeed", true);
             if (isOfficial) {
                 qrScanner = new QRScanner(activity, true);
             } else {
