@@ -127,8 +127,8 @@ public class Tools {
         oaMap.put("x-req-version", roleData.getOa_req_key());
         headerMap.put("x-req-version", roleData.getOa_req_key());
         headerMap.put("x-req-sign", Encrypt.bh3Sign(oaMap));
-//        String getOAUrl = "http://192.168.1.133:8088/v2/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
-        String getOAUrl = "https://dispatch.scanner.hellocraft.xyz/v2/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
+//        String getOAUrl = "http://192.168.1.133:8088/v3/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
+        String getOAUrl = "https://dispatch.scanner.hellocraft.xyz/v3/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
         String feedback = sendGet(getOAUrl, headerMap, false);
 //                Logger.getLogger(null).makeToast(json1.getString("msg"));
         try {

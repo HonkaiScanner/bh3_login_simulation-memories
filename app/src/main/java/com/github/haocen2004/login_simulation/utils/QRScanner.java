@@ -29,6 +29,7 @@ import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.activity.ActivityManager;
 import com.github.haocen2004.login_simulation.activity.MainActivity;
@@ -448,7 +449,7 @@ public class QRScanner {
                         server_type = "获取服务器错误";
                 }
 
-                custom_name.append("\n").append(server_type).append("\n");
+                custom_name.append("\n").append(server_type).append("\n").append(BuildConfig.VERSION_NAME).append("\n");
             }
 
             raw_json.put("heartbeat", false)

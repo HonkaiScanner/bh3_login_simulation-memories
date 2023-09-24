@@ -264,7 +264,8 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         if (HAS_UPDATE_THREAD) return;
         HAS_UPDATE_THREAD = true;
         scannerCheckerHandle.postDelayed(this::delayScannerChecker, 1500);
-        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update");
+        String feedback = Network.sendGet("https://dispatch.scanner.hellocraft.xyz/v3/update");
+//        String feedback = Network.sendGet("http://192.168.1.133:8088/v2/update");
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);
@@ -274,18 +275,24 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
 
     private void delayScannerChecker() {
-        String ret = Network.sendGet("https://api.scanner.hellocraft.xyz/update");
-        if (ret != null) {
-            try {
-                JSONObject json = new JSONObject(ret);
-                if (json.has("disable_scanner") && json.getBoolean("disable_scanner")) {
-                    Intent disableIntent = new Intent(getApplicationContext(), DisableActivity.class);
-                    startActivity(disableIntent);
-                    return;
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                String ret = Network.sendGet("https://dispatch.scanner.hellocraft.xyz/v3/update");
+//                String ret = Network.sendGet("http://192.168.1.133:8088/v2/update");
+                if (ret != null) {
+                    try {
+                        JSONObject json = new JSONObject(ret);
+                        if (json.has("disable_scanner") && json.getBoolean("disable_scanner")) {
+                            Intent disableIntent = new Intent(getApplicationContext(), DisableActivity.class);
+                            startActivity(disableIntent);
+                        }
+                    } catch (Exception ignore) {
+                    }
                 }
-            } catch (Exception ignore) {
             }
-        }
+        }.start();
         scannerCheckerHandle.postDelayed(this::delayScannerChecker, 30000);
     }
 //    @Override
