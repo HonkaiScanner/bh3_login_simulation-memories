@@ -110,6 +110,12 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
     private boolean catchBackAction = false;
     private boolean closeOnBackground = false;
     private Activity activity;
+    private final Handler scannerCheckerHandle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+        }
+    };
     @SuppressLint("HandlerLeak")
     Handler update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
         @Override
@@ -257,6 +263,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
     Runnable update_rb = () -> {
         if (HAS_UPDATE_THREAD) return;
         HAS_UPDATE_THREAD = true;
+        scannerCheckerHandle.postDelayed(this::delayScannerChecker, 1500);
         String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/update");
         Message msg = new Message();
         Bundle data = new Bundle();
@@ -265,6 +272,22 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         update_check_hd.sendMessage(msg);
     };
 
+
+    private void delayScannerChecker() {
+        String ret = Network.sendGet("https://api.scanner.hellocraft.xyz/update");
+        if (ret != null) {
+            try {
+                JSONObject json = new JSONObject(ret);
+                if (json.has("disable_scanner") && json.getBoolean("disable_scanner")) {
+                    Intent disableIntent = new Intent(getApplicationContext(), DisableActivity.class);
+                    startActivity(disableIntent);
+                    return;
+                }
+            } catch (Exception ignore) {
+            }
+        }
+        scannerCheckerHandle.postDelayed(this::delayScannerChecker, 30000);
+    }
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
