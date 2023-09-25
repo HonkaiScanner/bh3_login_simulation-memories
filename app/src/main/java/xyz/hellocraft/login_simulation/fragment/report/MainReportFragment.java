@@ -54,6 +54,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
         binding.reportGithub.setOnClickListener(this);
         binding.reportBili.setOnClickListener(this);
         binding.reportQq.setOnClickListener(this);
+        binding.reportClear.setOnClickListener(this);
         binding.reportHand.setOnClickListener(this);
         Log = getLogger(getContext());
         super.onViewCreated(view, savedInstanceState);
