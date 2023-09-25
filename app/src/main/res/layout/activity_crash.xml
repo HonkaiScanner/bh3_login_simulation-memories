@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.CrashActivity">
+    tools:context="xyz.hellocraft.login_simulation.activity.CrashActivity">
 
     <TextView
         android:id="@+id/textView"

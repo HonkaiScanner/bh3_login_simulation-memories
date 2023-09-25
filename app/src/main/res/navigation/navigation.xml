@@ -6,25 +6,25 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.github.haocen2004.login_simulation.fragment.MainFragment"
+        android:name="xyz.hellocraft.login_simulation.fragment.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.github.haocen2004.login_simulation.fragment.SettingsFragment"
+        android:name="xyz.hellocraft.login_simulation.fragment.SettingsFragment"
         android:label="SettingsFragment" />
     <fragment
         android:id="@+id/reportFragment"
-        android:name="com.github.haocen2004.login_simulation.fragment.ReportFragment"
+        android:name="xyz.hellocraft.login_simulation.fragment.ReportFragment"
         android:label="fragment_report"
         tools:layout="@layout/fragment_report" />
     <fragment
         android:id="@+id/supportFragment"
-        android:name="com.github.haocen2004.login_simulation.fragment.SupportFragment"
+        android:name="xyz.hellocraft.login_simulation.fragment.SupportFragment"
         android:label="fragment_support"
         tools:layout="@layout/fragment_support" />
     <activity
         android:id="@+id/aboutActivity"
-        android:name="com.github.haocen2004.login_simulation.activity.AboutActivity"
+        android:name="xyz.hellocraft.login_simulation.activity.AboutActivity"
         android:label="activity_about" />
 </navigation>

@@ -1,0 +1,172 @@
+package xyz.hellocraft.login_simulation.login;
+
+import static xyz.hellocraft.login_simulation.data.Constant.VIVO_APP_KEY;
+import static xyz.hellocraft.login_simulation.utils.Tools.verifyAccount;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+
+import androidx.annotation.NonNull;
+
+import com.github.haocen2004.login_simulation.BuildConfig;
+import com.github.haocen2004.login_simulation.R;
+import com.vivo.unionsdk.open.VivoAccountCallback;
+import com.vivo.unionsdk.open.VivoUnionSDK;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import xyz.hellocraft.login_simulation.data.RoleData;
+import xyz.hellocraft.login_simulation.utils.Logger;
+
+public class Vivo implements LoginImpl {
+    private static final String TAG = "Vivo Login";
+    private final Activity activity;
+    private final Logger Log;
+    private final LoginCallback loginCallback;
+    private boolean isLogin;
+    private String uid;
+    private String token;
+    private RoleData roleData;
+    @SuppressLint("HandlerLeak")
+    Handler login_handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+//            Logger.debug(feedback);
+            Logger.d(TAG, "handleMessage: " + feedback);
+            JSONObject feedback_json = null;
+            try {
+                feedback_json = new JSONObject(feedback);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                loginCallback.onLoginFailed();
+            }
+//            Logger.info(feedback);
+            Logger.i(TAG, "handleMessage: " + feedback);
+            try {
+                if (feedback_json.getInt("retcode") == 0) {
+
+                    JSONObject data_json2 = feedback_json.getJSONObject("data");
+                    String combo_id = data_json2.getString("combo_id");
+                    String open_id = data_json2.getString("open_id");
+                    String combo_token = data_json2.getString("combo_token");
+                    String account_type = data_json2.getString("account_type");
+                    Logger.addBlacklist(combo_token);
+
+                    roleData = new RoleData(open_id, "", combo_id, combo_token, "19", account_type, "vivo", 2, loginCallback);
+
+                    isLogin = true;
+//                    makeToast(activity.getString(R.string.login_succeed));
+
+                } else {
+
+                    makeToast(feedback_json.getString("message"));
+                    isLogin = false;
+                    loginCallback.onLoginFailed();
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                loginCallback.onLoginFailed();
+            }
+        }
+    };
+    Runnable login_runnable = new Runnable() {
+        @Override
+        public void run() {
+            String data_json = "{\"authtoken\":\"" + token + "\"}";
+            Message msg = new Message();
+            Bundle data = new Bundle();
+            data.putString("value", verifyAccount(activity, "19", data_json));
+            msg.setData(data);
+            login_handler.sendMessage(msg);
+        }
+
+    };
+    private final VivoAccountCallback callback = new VivoAccountCallback() {
+        @Override
+        public void onVivoAccountLogin(String s, String s1, String s2) {
+            uid = s1;
+            token = s2;
+            Logger.addBlacklist(token);
+            doBHLogin();
+//            roleData = new RoleData()
+        }
+
+        @Override
+        public void onVivoAccountLogout(int i) {
+            makeToast(activity.getString(R.string.logout));
+            isLogin = false;
+        }
+
+        @Override
+        public void onVivoAccountLoginCancel() {
+            makeToast(activity.getString(R.string.login_cancel));
+            isLogin = false;
+        }
+    };
+
+    public Vivo(Activity activity, LoginCallback callback) {
+        loginCallback = callback;
+        this.activity = activity;
+        VivoUnionSDK.initSdk(activity, VIVO_APP_KEY, BuildConfig.DEBUG);
+        VivoUnionSDK.registerAccountCallback(activity, this.callback);
+        Log = Logger.getLogger(activity);
+    }
+
+    @Override
+    public void login() {
+        VivoUnionSDK.login(activity);
+    }
+
+    @Override
+    public boolean logout() {
+        Log.makeToast("Vivo渠道未提供主动切换账号功能！");
+        return false;
+    }
+
+    @Override
+    public RoleData getRole() {
+        return roleData;
+    }
+
+    @Override
+    public void setRole(RoleData roleData) {
+        this.roleData = roleData;
+        isLogin = true;
+    }
+
+    @Override
+    public boolean isLogin() {
+        return isLogin;
+    }
+
+    public void doBHLogin() {
+        new Thread(login_runnable).start();
+    }
+
+    @SuppressLint("ShowToast")
+    private void makeToast(String result) {
+        try {
+            Log.makeToast(result);
+//            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Looper.prepare();
+            Log.makeToast(result);
+//            Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+            Looper.loop();
+        }
+    }
+
+    @Override
+    public String getUsername() {
+        return uid;
+    }
+}

@@ -35,8 +35,8 @@ abstract class ASMPlugin : Plugin<Project> {
             ) {
                 it.ignoreOwner.set(
                     listOf(
-                        "com/github/haocen2004/login_simulation/utils/ASMHelper",
-                        "com/github/haocen2004/login_simulation/utils/Logger",
+                        "xyz/hellocraft/login_simulation/utils/ASMHelper",
+                        "xyz/hellocraft/login_simulation/utils/Logger",
                         "com/tencent/bugly"
                     )
                 )
@@ -48,7 +48,7 @@ abstract class ASMPlugin : Plugin<Project> {
                             "e",
                             "(Ljava/lang/String;Ljava/lang/String;)I",
                             Opcodes.INVOKESTATIC,
-                            "com/github/haocen2004/login_simulation/utils/Logger",
+                            "xyz/hellocraft/login_simulation/utils/Logger",
                             "fakeE",
                             "(Ljava/lang/String;Ljava/lang/String;)I"
                         ),
@@ -57,7 +57,7 @@ abstract class ASMPlugin : Plugin<Project> {
                             "d",
                             "(Ljava/lang/String;Ljava/lang/String;)I",
                             Opcodes.INVOKESTATIC,
-                            "com/github/haocen2004/login_simulation/utils/Logger",
+                            "xyz/hellocraft/login_simulation/utils/Logger",
                             "fakeD",
                             "(Ljava/lang/String;Ljava/lang/String;)I"
                         ),
@@ -66,7 +66,7 @@ abstract class ASMPlugin : Plugin<Project> {
                             "i",
                             "(Ljava/lang/String;Ljava/lang/String;)I",
                             Opcodes.INVOKESTATIC,
-                            "com/github/haocen2004/login_simulation/utils/Logger",
+                            "xyz/hellocraft/login_simulation/utils/Logger",
                             "fakeI",
                             "(Ljava/lang/String;Ljava/lang/String;)I"
                         ),
@@ -75,7 +75,7 @@ abstract class ASMPlugin : Plugin<Project> {
                             "w",
                             "(Ljava/lang/String;Ljava/lang/String;)I",
                             Opcodes.INVOKESTATIC,
-                            "com/github/haocen2004/login_simulation/utils/Logger",
+                            "xyz/hellocraft/login_simulation/utils/Logger",
                             "fakeW",
                             "(Ljava/lang/String;Ljava/lang/String;)I"
                         ),
@@ -84,7 +84,7 @@ abstract class ASMPlugin : Plugin<Project> {
                             "LDC",
                             "com.xiaomi.gamecenter.sdk.service.ban",
                             Opcodes.INVOKESTATIC,
-                            "com/github/haocen2004/login_simulation/utils/ASMHelper",
+                            "xyz/hellocraft/login_simulation/utils/ASMHelper",
                             "getMiPackageName",
                             "()Ljava/lang/String;"
                         ),
@@ -93,7 +93,7 @@ abstract class ASMPlugin : Plugin<Project> {
                             "LDC",
                             "com.xiaomi.gamecenter.sdk.service",
                             Opcodes.INVOKESTATIC,
-                            "com/github/haocen2004/login_simulation/utils/ASMHelper",
+                            "xyz/hellocraft/login_simulation/utils/ASMHelper",
                             "getMiPackageName",
                             "()Ljava/lang/String;"
                         )
