@@ -2,6 +2,7 @@ package com.github.haocen2004.login_simulation.utils;
 
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static com.github.haocen2004.login_simulation.data.Constant.API_ENDPOINT;
 import static com.github.haocen2004.login_simulation.data.Constant.OPPO_ADV_MODE;
 import static com.github.haocen2004.login_simulation.utils.Network.sendGet;
 import static java.lang.Integer.parseInt;
@@ -127,8 +128,7 @@ public class Tools {
         oaMap.put("x-req-version", roleData.getOa_req_key());
         headerMap.put("x-req-version", roleData.getOa_req_key());
         headerMap.put("x-req-sign", Encrypt.bh3Sign(oaMap));
-//        String getOAUrl = "http://192.168.1.133:8088/v3/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
-        String getOAUrl = "https://dispatch.scanner.hellocraft.xyz/v3/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
+        String getOAUrl = API_ENDPOINT + "/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
         String feedback = sendGet(getOAUrl, headerMap, false);
         Logger.d("GetOAServer", feedback);
 //                Logger.getLogger(null).makeToast(json1.getString("msg"));

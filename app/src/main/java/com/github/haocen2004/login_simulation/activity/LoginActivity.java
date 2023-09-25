@@ -2,6 +2,7 @@ package com.github.haocen2004.login_simulation.activity;
 
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.data.Constant.AFD_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.API_ENDPOINT;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_ACCOUNT;
 
 import android.annotation.SuppressLint;
@@ -200,7 +201,7 @@ public class LoginActivity extends BaseActivity {
 
     private void startCodeCheck(String content, String postParam, String sc_key) {
         // 请求云端查询身份码是否有绑定用户  Tencent Cloud
-        String feedback = Network.sendGet("https://api.scanner.hellocraft.xyz/sp_check?" + postParam, true);
+        String feedback = Network.sendGet(API_ENDPOINT + "/sp_check?" + postParam, true);
         Logger.d(TAG, feedback);
         try {
             JSONObject feedback_json = new JSONObject(feedback);

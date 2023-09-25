@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.activity;
 
+import static com.github.haocen2004.login_simulation.data.Constant.DISABLE_TIPS;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +24,9 @@ public class DisableActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ActivityDisableBinding binding = ActivityDisableBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        if (DISABLE_TIPS.length() >= 1) {
+            binding.customTips.setText(DISABLE_TIPS);
+        }
         disableDelay.postDelayed(() -> ActivityManager.getInstance().clearActivity(), 30000);
     }
 

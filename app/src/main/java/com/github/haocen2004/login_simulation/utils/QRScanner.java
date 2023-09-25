@@ -1,6 +1,7 @@
 package com.github.haocen2004.login_simulation.utils;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.github.haocen2004.login_simulation.data.Constant.API_ENDPOINT;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_TIPS;
 import static com.github.haocen2004.login_simulation.data.Constant.QUICK_MODE;
 import static com.github.haocen2004.login_simulation.data.Constant.TIPS;
@@ -73,12 +74,24 @@ public class QRScanner {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
-            Message msg = new Message();
-            Bundle data = new Bundle();
-            data.putString("value", feedback);
-            msg.setData(data);
-            handler.sendMessage(msg);
+            String spCheck = Network.sendGet(API_ENDPOINT + "/qr_check?ticket=" + ticket + "&open_id=" + open_id + "&device=" + Tools.getDeviceID(activity), true);
+            try {
+                JSONObject checkJson = new JSONObject(spCheck);
+                if (checkJson.has("retcode") && checkJson.getInt("retcode") == 0) {
+                    String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
+                    Message msg = new Message();
+                    Bundle data = new Bundle();
+                    data.putString("value", feedback);
+                    msg.setData(data);
+                    handler.sendMessage(msg);
+                    return;
+                } else if (checkJson.has("message")) {
+                    makeToast(checkJson.getString("message"));
+                    return;
+                }
+            } catch (Exception ignore) {
+            }
+            makeToast("二维码识别失败");
         }
     };
     private RoleData roleData;
@@ -121,7 +134,14 @@ public class QRScanner {
                             .build();
                     ShortcutManagerCompat.pushDynamicShortcut(activity, shortcut);
                     genRequest(false);
-                    new Thread(() -> Network.sendPost("https://api.scanner.hellocraft.xyz/scan_succ_upload", confirm_json.toString(), false)).start();
+                    new Thread(() -> {
+                        try {
+                            Map<String, String> header = new HashMap<>();
+                            header.put("Content-Type", "application/json");
+                            Network.sendPost(API_ENDPOINT + "/scan_succ_upload", confirm_json.toString(), header, false, false);
+                        } catch (Exception ignore) {
+                        }
+                    }).start();
                     if (QUICK_MODE) {
                         makeToast("快速模式\n" + app_name + " : " + activity.getString(R.string.login_succeed));
 //                        Toast.makeText(activity, "快速模式\n" + app_name + " : " + activity.getString(R.string.login_succeed), Toast.LENGTH_LONG).show();
@@ -340,8 +360,8 @@ public class QRScanner {
                 return;
             }
         }
-        if (System.currentTimeMillis() - Tools.getLong(activity, "last_time") < 3 * 60 * 1000) {
-            Log.makeToast("扫码速度限制\n为了防止扫码器被滥用\n现在每三分钟可以进行一次扫码操作");
+        if (System.currentTimeMillis() - Tools.getLong(activity, "last_time") < 60 * 1000) {
+            Log.makeToast("扫码速度限制\n为了防止扫码器被滥用\n现在每分钟只能进行一次扫码操作");
             return;
         }
 
@@ -506,9 +526,14 @@ public class QRScanner {
 
             ext_json.put("data", data_json);
 
-            payload_json.put("raw", raw_json.toString())
-                    .put("proto", "Combo")
-                    .put("ext", ext_json.toString().replace("\\", ""));
+            if (showKeyData) {
+                payload_json.put("raw", raw_json.toString())
+                        .put("proto", "Combo")
+                        .put("ext", ext_json.toString().replace("\\", ""));
+            } else {
+                payload_json.put("raw", raw_json.toString())
+                        .put("proto", "Combo");
+            }
             confirm_json.put("device", device_id)
                     .put("app_id", parseInt(app_id))
                     .put("ts", System.currentTimeMillis())

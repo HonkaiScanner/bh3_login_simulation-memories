@@ -5,10 +5,12 @@ import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static com.github.haocen2004.login_simulation.data.Constant.AFD_URL;
+import static com.github.haocen2004.login_simulation.data.Constant.API_ENDPOINT;
 import static com.github.haocen2004.login_simulation.data.Constant.BETA_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.BH_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.CHECK_VER;
 import static com.github.haocen2004.login_simulation.data.Constant.DEBUG_MODE;
+import static com.github.haocen2004.login_simulation.data.Constant.DISABLE_TIPS;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_ACCOUNT;
 import static com.github.haocen2004.login_simulation.data.Constant.HAS_UPDATE_THREAD;
 import static com.github.haocen2004.login_simulation.data.Constant.MDK_VERSION;
@@ -260,12 +262,12 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             }
         }
     };
+    private int lossCount = 0;
     Runnable update_rb = () -> {
         if (HAS_UPDATE_THREAD) return;
         HAS_UPDATE_THREAD = true;
         scannerCheckerHandle.postDelayed(this::delayScannerChecker, 1500);
-        String feedback = Network.sendGet("https://dispatch.scanner.hellocraft.xyz/v3/update");
-//        String feedback = Network.sendGet("http://192.168.1.133:8088/v2/update");
+        String feedback = Network.sendGet(API_ENDPOINT + "/update");
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);
@@ -273,27 +275,37 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         update_check_hd.sendMessage(msg);
     };
 
-
     private void delayScannerChecker() {
         new Thread() {
             @Override
             public void run() {
                 super.run();
-                String ret = Network.sendGet("https://dispatch.scanner.hellocraft.xyz/v3/update");
-//                String ret = Network.sendGet("http://192.168.1.133:8088/v2/update");
+                String ret = Network.sendGet(API_ENDPOINT + "/update", false);
                 if (ret != null) {
                     try {
                         JSONObject json = new JSONObject(ret);
-                        if (json.has("disable_scanner") && json.getBoolean("disable_scanner")) {
+                        lossCount = 0;
+                        if ((json.has("disable_scanner") && json.getBoolean("disable_scanner")) || (json.has("disable_version") && json.getInt("disable_version") > VERSION_CODE)) {
                             Intent disableIntent = new Intent(getApplicationContext(), DisableActivity.class);
                             startActivity(disableIntent);
+                            lossCount = 5;
                         }
+                        return;
                     } catch (Exception ignore) {
                     }
                 }
+                lossCount++;
+                if (lossCount >= 3) {
+                    DISABLE_TIPS = "无法链接验证服务\n扫码器已暂停使用\n请检查网络后重试";
+                    Intent disableIntent = new Intent(getApplicationContext(), DisableActivity.class);
+                    startActivity(disableIntent);
+                }
+                Logger.d("verifyCheck", String.valueOf(lossCount));
             }
         }.start();
-        scannerCheckerHandle.postDelayed(this::delayScannerChecker, 30000);
+        if (lossCount < 3) {
+            scannerCheckerHandle.postDelayed(this::delayScannerChecker, 30000);
+        }
     }
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
