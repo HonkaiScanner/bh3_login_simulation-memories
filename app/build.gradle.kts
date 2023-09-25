@@ -22,7 +22,7 @@ android {
         abi {
             isEnable = true
             reset()
-            include("arm64-v8a", "x86")
+            include("arm64-v8a", "armeabi-v7a", "x86")
             isUniversalApk = true
         }
     }
@@ -63,8 +63,8 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 80
-        versionName = "1.8.6"
+        versionCode = 81
+        versionName = "1.8.7"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
