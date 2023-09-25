@@ -36,7 +36,7 @@
         android:smallScreens="true" />
 
     <application
-        android:name=".MainApplication"
+        android:name="xyz.hellocraft.login_simulation.MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -47,7 +47,7 @@
         tools:targetApi="s">
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name="xyz.hellocraft.login_simulation.activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true">
             <intent-filter>
@@ -57,16 +57,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.AboutActivity" />
-        <activity android:name=".activity.CrashActivity" />
-        <activity android:name=".activity.DisableActivity" />
-        <activity android:name=".activity.HistoryLogsActivity" />
-        <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.NotificationActivity" />
-        <activity android:name=".activity.SponsorInfoActivity" />
-        <activity android:name=".activity.ScannerActivity" />
-        <activity android:name=".activity.TencentLoginActivity" />
-        <activity android:name=".wxapi.WXPayEntryActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.AboutActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.CrashActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.DisableActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.HistoryLogsActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.LoginActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.NotificationActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.SponsorInfoActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.ScannerActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.TencentLoginActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.wxapi.WXPayEntryActivity" />
 
         <activity-alias
             android:name=".activity.icon.main1"
@@ -75,7 +75,7 @@
             android:icon="@mipmap/ic_launcher_2"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_2_round"
-            android:targetActivity=".activity.MainActivity">
+            android:targetActivity="xyz.hellocraft.login_simulation.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -123,7 +123,7 @@
             android:exported="true"
             tools:ignore="ExportedService" />
         <service
-            android:name=".utils.FabScanner"
+            android:name="xyz.hellocraft.login_simulation.utils.FabScanner"
             android:enabled="true"
             android:foregroundServiceType="mediaProjection"
             tools:ignore="Instantiatable" />

@@ -5,10 +5,21 @@ plugins {
     id("com.android.application")
     id("com.huawei.agconnect")
     id("kotlin-kapt")
+    id("stringfog")
     kotlin("android")
     kotlin("plugin.serialization")
 }
 apply<ASMPlugin>()
+apply(plugin = "stringfog")
+
+configure<com.github.megatronking.stringfog.plugin.StringFogExtension> {
+    implementation =
+        "com.github.megatronking.stringfog.xor.StringFogImpl"// 必要：加解密库的实现类路径，需和上面配置的加解密算法库一致。
+    enable = true// 可选：加密开关，默认开启。
+    setFogPackages("com.github.haocen2004", "xyz.hellocraft")
+    kg = com.github.megatronking.stringfog.plugin.kg.RandomKeyGenerator()
+    mode = com.github.megatronking.stringfog.plugin.StringFogMode.bytes//base64或者bytes
+}
 
 //tasks {
 //    withType<JavaCompile> {
@@ -22,7 +33,7 @@ android {
         abi {
             isEnable = true
             reset()
-            include("arm64-v8a", "x86")
+            include("arm64-v8a", "armeabi-v7a", "x86")
             isUniversalApk = true
         }
     }
@@ -63,8 +74,8 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 80
-        versionName = "1.8.6"
+        versionCode = 81
+        versionName = "1.8.7"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
@@ -82,7 +93,7 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-23w37a.dev"
+                "-snapshot-23w40a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -192,6 +203,7 @@ dependencies {
 //    implementation("com.huawei.agconnect:agconnect-core:1.7.1.300")
     implementation("com.huawei.hms:hwid:6.8.0.300")
     implementation("com.huawei.hms:game:6.8.0.300")
+    implementation("com.github.megatronking.stringfog:xor:4.0.1")
     implementation("androidx.paging:paging-runtime:3.2.0")
 
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")

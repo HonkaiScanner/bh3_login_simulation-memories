@@ -5,7 +5,7 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.MainActivity"
+    tools:context="xyz.hellocraft.login_simulation.activity.MainActivity"
     tools:openDrawer="start">
 
     <include
