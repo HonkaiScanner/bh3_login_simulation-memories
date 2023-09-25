@@ -361,8 +361,8 @@ public class QRScanner {
                 return;
             }
         }
-        if (System.currentTimeMillis() - Tools.getLong(activity, "last_time") < 60 * 1000) {
-            Log.makeToast("扫码速度限制\n为了防止扫码器被滥用\n现在每分钟只能进行一次扫码操作");
+        if (System.currentTimeMillis() - Tools.getLong(activity, "last_time") < 2 * 60 * 1000) {
+            Log.makeToast("扫码速度限制\n为了防止扫码器被滥用\n现在每两分钟只能进行一次扫码操作");
             return;
         }
 
