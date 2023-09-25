@@ -5,6 +5,8 @@ import static com.github.haocen2004.login_simulation.utils.Logger.getLogger;
 import static com.github.haocen2004.login_simulation.utils.Tools.openUrl;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,10 +51,12 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
         super.onViewCreated(view, savedInstanceState);
     }
 
+    private final Handler crashHandle = new Handler(Looper.getMainLooper());
+
     @Override
     public void onClick(View view) {
         if (binding.reportGithub.equals(view)) {
-            openUrl("https://github.com/HonkaiScanner/bh3_login_simulation/issues", requireActivity());
+            openUrl("https://github.com/HonkaiScanner/bh3_login_simulation-memories/issues", requireActivity());
         } else if (binding.reportBili.equals(view)) {
             openUrl("https://space.bilibili.com/269140934", requireActivity());
         } else if (binding.reportQq.equals(view)) {
@@ -67,7 +71,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
             DialogLiveData.getINSTANCE().addNewDialog(dialogData);
         } else if (binding.reportHand.equals(view)) {
             DialogData dialogData = new DialogData("反馈须知", "该按钮为遇到错误时未发生崩溃使用\n请完整执行完会产生错误的操作后再点击\n请优先切换至日志窗口查看日志后再判断是否需要上报完整日志\n\n请再次确认是否上报");
-            dialogData.setPositiveButtonData(new ButtonData("确认开始上报") {
+            dialogData.setPositiveButtonData(new ButtonData("立即上报") {
                 @Override
                 public void callback(DialogHelper dialogHelper) {
                     CrashReport.testJavaCrash();
@@ -75,6 +79,15 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
                     super.callback(dialogHelper);
                 }
             });
+            dialogData.setNeutralButtonData(new ButtonData("延迟3分钟上报") {
+                @Override
+                public void callback(DialogHelper dialogHelper) {
+                    super.callback(dialogHelper);
+                    crashHandle.postDelayed(CrashReport::testJavaCrash, 3 * 60 * 1000);
+                    Log.makeToast("你选择了3分钟后上报\n现在请开始复现会出现错误的操作");
+                }
+            });
+            dialogData.setNegativeButtonData("取消");
             dialogData.setCancelable(true);
             DialogLiveData.getINSTANCE().addNewDialog(dialogData);
         } else {
