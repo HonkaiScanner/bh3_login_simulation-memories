@@ -1,5 +1,7 @@
 package com.github.haocen2004.login_simulation.activity;
 
+import static com.github.haocen2004.login_simulation.utils.Tools.traverseFilesAndDelete;
+
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -20,11 +22,9 @@ import com.github.haocen2004.login_simulation.utils.Tools;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.List;
 import java.util.Objects;
 
 public class CrashActivity extends BaseActivity {
-    private final List<String> WHITELIST_FILES = List.of("sponsors_db", "shared_prefs", "VMh6lRyyinstallation");
     ActivityCrashBinding binding;
 
     @Override
@@ -106,21 +106,6 @@ public class CrashActivity extends BaseActivity {
         }
     }
 
-    private void traverseFilesAndDelete(File dir) {
-        File[] files = dir.listFiles(); // 获取目录中的所有文件和文件夹
-        if (files != null) {
-            for (File file : files) {
-                if (!WHITELIST_FILES.contains(file.getName()) && !file.getName().contains("bugly")) {
-                    if (file.isDirectory()) {
-                        Logger.d("delCache", "find directory: " + file.getPath());
-                        traverseFilesAndDelete(file); // 递归遍历子目录
-                    }
-                    Logger.d("delCache", "delete file [" + file.getName() + "]: " + file.delete());
-
-                }
-            }
-        }
-    }
 
     private void openAssignFolder(String path) {
         File file = new File(path);

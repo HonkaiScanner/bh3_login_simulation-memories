@@ -36,6 +36,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.QRCodeEncoder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -113,6 +114,24 @@ public class Tools {
         dialogData.setNegativeButtonData("取消");
         DialogLiveData.getINSTANCE().addNewDialog(dialogData);
 
+    }
+
+    private static final List<String> WHITELIST_FILES = List.of("sponsors_db", "shared_prefs", "VMh6lRyyinstallation");
+
+    public static void traverseFilesAndDelete(File dir) {
+        File[] files = dir.listFiles(); // 获取目录中的所有文件和文件夹
+        if (files != null) {
+            for (File file : files) {
+                if (!WHITELIST_FILES.contains(file.getName()) && !file.getName().contains("bugly")) {
+                    if (file.isDirectory()) {
+                        Logger.d("delCache", "find directory: " + file.getPath());
+                        traverseFilesAndDelete(file); // 递归遍历子目录
+                    }
+                    Logger.d("delCache", "delete file [" + file.getName() + "]: " + file.delete());
+
+                }
+            }
+        }
     }
 
     public static String getOAServer(RoleData roleData) {
