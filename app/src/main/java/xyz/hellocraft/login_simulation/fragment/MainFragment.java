@@ -375,7 +375,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         chipsHelper = new ChipsHelper(context, this.getLayoutInflater());
         return binding.getRoot();
     }
-
+    private String cacheServerType = "";
     @SuppressLint("SetTextI18n")
     private void refreshView() {
         Logger.d("MainFragment", "reloading View");
@@ -467,6 +467,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.cardViewMain.sponsorStateText.setText(activity.getString(R.string.sp_login_pref) + (HAS_ACCOUNT ? "已登录" : "未登录"));
         binding.cardViewMain.progressBar.setVisibility(View.INVISIBLE);
 
+        if (!Objects.equals(cacheServerType, "") && !Objects.equals(cacheServerType, server_type)) {
+            if ((loginImpl != null && loginImpl.isLogin()) || SDKInit) {
+                Log.makeToast(R.string.logged_and_restart);
+                needRestart = true;
+            }
+        }
+        cacheServerType = server_type;
 
         if (needRestart) {
             binding.cardViewMain.serverText.setText(R.string.logged_and_restart);
