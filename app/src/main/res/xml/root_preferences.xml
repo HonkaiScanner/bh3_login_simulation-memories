@@ -98,30 +98,30 @@
             android:key="beta_update"
             android:summary="@string/beta_update_sum"
             android:title="@string/beta_update" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:dependency="adv_setting"
-            android:key="bh_ver_overwrite"
-            android:summary="@string/overwrite_bh_ver_sum"
-            android:title="@string/overwrite_bh_ver" />
-        <EditTextPreference
-            app:isPreferenceVisible="false"
-            android:dependency="bh_ver_overwrite"
-            android:key="custom_bh_ver"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/settings_bh_ver" />
-        <SwitchPreference
-            android:dependency="adv_setting"
-            android:defaultValue="false"
-            android:key="keep_capture_no_cooling_down"
-            android:title="@string/keep_capture_no_cooling_down" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:dependency="adv_setting"
-            android:key="no_server_tip"
-            android:summary="@string/no_server_tip_sum"
-            android:title="@string/no_server_tip" />
+        <!--        <SwitchPreference-->
+        <!--            android:defaultValue="false"-->
+        <!--            android:dependency="adv_setting"-->
+        <!--            android:key="bh_ver_overwrite"-->
+        <!--            android:summary="@string/overwrite_bh_ver_sum"-->
+        <!--            android:title="@string/overwrite_bh_ver" />-->
+        <!--        <EditTextPreference-->
+        <!--            app:isPreferenceVisible="false"-->
+        <!--            android:dependency="bh_ver_overwrite"-->
+        <!--            android:key="custom_bh_ver"-->
+        <!--            android:selectAllOnFocus="true"-->
+        <!--            android:singleLine="true"-->
+        <!--            android:title="@string/settings_bh_ver" />-->
+        <!--        <SwitchPreference-->
+        <!--            android:dependency="adv_setting"-->
+        <!--            android:defaultValue="false"-->
+        <!--            android:key="keep_capture_no_cooling_down"-->
+        <!--            android:title="@string/keep_capture_no_cooling_down" />-->
+        <!--        <SwitchPreference-->
+        <!--            android:defaultValue="false"-->
+        <!--            android:dependency="adv_setting"-->
+        <!--            android:key="no_server_tip"-->
+        <!--            android:summary="@string/no_server_tip_sum"-->
+        <!--            android:title="@string/no_server_tip" />-->
         <SwitchPreference
             android:defaultValue="false"
             android:key="debug_mode"
