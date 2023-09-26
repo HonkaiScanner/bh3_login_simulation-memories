@@ -1,14 +1,6 @@
 name: Auto Build Scanner -- Self Hosted
 on:
-  create:
   workflow_dispatch:
-  push:
-    paths-ignore:
-      - '.github/*'
-      - '*.md'
-      - '*.yml'
-    branches:
-      - dev
 jobs:
   build:
     runs-on: self-hosted

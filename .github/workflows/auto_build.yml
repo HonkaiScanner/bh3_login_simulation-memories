@@ -1,7 +1,14 @@
 name: Auto Build Scanner
 on:
+  create:
   workflow_dispatch:
-
+  push:
+    paths-ignore:
+      - '.github/*'
+      - '*.md'
+      - '*.yml'
+    branches:
+      - dev
 jobs:
   build:
     runs-on: ubuntu-latest
