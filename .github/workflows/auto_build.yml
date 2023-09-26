@@ -1,12 +1,7 @@
 name: Auto Build Scanner
 on:
-  create:
   workflow_dispatch:
-  push:
-    paths-ignore:
-      - '*.md'
-    branches:
-      - dev
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -67,7 +62,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           NAME_SUFFIX: ''
         #          NAME_SUFFIX: ${{ steps.get_commit_sha.outputs.VERSION }}
-      
+
       # - name: Build File Check
       #   run: |
       #     cd app/build/outputs/apk/release/
