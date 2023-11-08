@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                 } catch (Exception ignore) {
                 }
             }
-            BH_VER = app_pref.getString("cloud_bh_ver", BH_VER);
+            BH_VER = app_pref.getString("bh_ver", BH_VER);
         }
     };
     Runnable bh_update_rb = () -> {
@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                         startActivity(disableIntent);
                         return;
                     }
-                    app_pref.edit().putString("cloud_bh_ver", json.getString("bh_ver"))
+                    app_pref.edit()
                             .putString("mdk_ver", json.getString("mdk_ver"))
                             .putString("sp_url", json.getString("sp_url"))
                             .putString("afd_url", json.getString("afd_url"))
@@ -184,7 +184,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             if (app_pref.getBoolean("bh_ver_overwrite", false)) {
                 BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
             } else {
-                BH_VER = app_pref.getString("cloud_bh_ver", BH_VER);
+                BH_VER = app_pref.getString("bh_ver", BH_VER);
             }
             MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
             SP_URL = app_pref.getString("sp_url", SP_URL);

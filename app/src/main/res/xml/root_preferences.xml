@@ -46,11 +46,6 @@
             android:defaultValue="false"
             android:key="socket_helper"
             android:title="@string/use_socket" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="use_token"
-            android:summary="@string/use_token_sum"
-            android:title="@string/use_token_true" />
 
     </PreferenceCategory>
 
@@ -65,6 +60,11 @@
             android:key="mi_adv_mode"
             android:summary="@string/mi_adv_mode_sum"
             android:title="@string/mi_adv_mode" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="use_token"
+            android:summary="@string/use_token_sum"
+            android:title="@string/use_token_true" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/fab_header">
