@@ -53,15 +53,16 @@ public class HistoryLogsActivity extends BaseActivity {
                                 continue;
                             }
                             if (readLog) {
+                                String timeString = nextLine.substring(0, 20);
                                 nextLine = nextLine.substring(20);
                                 String level = nextLine.substring(0, nextLine.indexOf("/"));
                                 String tag = nextLine.substring(nextLine.indexOf("/") + 1, nextLine.indexOf(":"));
                                 String message = nextLine.substring(nextLine.indexOf(":") + 2).replace("{%&n%}", "\\n").replace("{%&t%}", "\\t").replace("{%&r%}", "\\r");
-                                logData.add(new LogData(level, tag, message));
+                                logData.add(new LogData(level, tag, message, timeString));
                             }
                         }
                     } catch (IOException e) {
-                        logData.add(new LogData("未找到日志！", "", ""));
+                        logData.add(new LogData("未找到日志！", "", "", ""));
                     }
                     LoggerAdapter loggerAdapter = new LoggerAdapter(this);
                     loggerAdapter.setAllLogs(logData);
@@ -100,9 +101,9 @@ public class HistoryLogsActivity extends BaseActivity {
                 }
             }
             if (lineCount != 0) {
-                logData.add(new LogData(cacheName, "", String.valueOf(lineCount)));
+                logData.add(new LogData(cacheName, "", String.valueOf(lineCount), ""));
             } else if (logData.size() == 0) {
-                logData.add(new LogData("未找到日志！", "", ""));
+                logData.add(new LogData("未找到日志！", "", "", ""));
             }
             return logData;
         } catch (IOException e) {
@@ -120,12 +121,12 @@ public class HistoryLogsActivity extends BaseActivity {
                 for (File log : logs) {
                     if (log.getName().contains(".saveAllLogs")) continue;
                     String logName = log.getName().replace("logs-", "").replace(".log", "");
-                    logData.add(new LogData(logName, String.valueOf(processLogFile(log).size()), getAutoFileOrFilesSize(log)));
+                    logData.add(new LogData(logName, String.valueOf(processLogFile(log).size()), getAutoFileOrFilesSize(log), ""));
                 }
             }
         }
         if (logData.size() == 0) {
-            logData.add(new LogData("未找到日志！", "", ""));
+            logData.add(new LogData("未找到日志！", "", "", ""));
         }
         return logData;
     }

@@ -9,7 +9,7 @@
         <item>Oppo</item>
         <item>Huawei</item>
         <item>Tencent-QQ</item>
-        <item>Qihoo</item>
+<!--        <item>Qihoo</item>-->
     </string-array>
     <string-array name="server_types_value">
         <item>Official</item>
@@ -21,7 +21,7 @@
         <item>Oppo</item>
         <item>Huawei</item>
         <item>YYB</item>
-        <item>Qihoo</item>
+        <!--        <item>Qihoo</item>-->
     </string-array>
     <string-array name="server_types_xp">
         <item>Official</item>
@@ -33,7 +33,7 @@
         <item>Oppo</item>
         <item>Huawei</item>
         <item>YYB</item>
-        <item>Qihoo</item>
+        <!--        <item>Qihoo</item>-->
     </string-array>
     <string-array name="server_types_value_xp">
         <item>Official</item>
@@ -43,7 +43,7 @@
         <item>Vivo</item>
         <item>Flyme</item>
         <item>Oppo</item>
-        <item>Qihoo</item>
+        <!--        <item>Qihoo</item>-->
         <item>YYB</item>
     </string-array>
     <!-- Reply Preference -->

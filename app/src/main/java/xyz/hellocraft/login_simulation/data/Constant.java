@@ -17,10 +17,10 @@ public class Constant {
     public static String SP_URL = "https://scanner.hellocraft.xyz";
     public static String AFD_URL = "https://afdian.net/@Haocen2004";
     public static String QQ_GROUP_URL = "https://jq.qq.com/?_wv=1027&k=yym6JCqT";
-    public static String API_ENDPOINT = "https://dispatch.scanner.hellocraft.xyz/v3";
+    public static String API_ENDPOINT = "https://api-v2.scanner.hellocraft.xyz/v4";
     //    public static String API_ENDPOINT = "http://192.168.1.133:8088/v3";
     public static String BH_VER = "7.0.0";
-    public static String MDK_VERSION = "1.25.1";
+    public static String MDK_VERSION = "2.22.0.0";
     public static String OFFICIAL_TYPE = "android01";
     public static String TIPS = "";
     public static String DISABLE_TIPS = "";

@@ -87,6 +87,8 @@ public class QRScanner {
                     handler.sendMessage(msg);
                     return;
                 } else if (checkJson.has("message")) {
+                    DialogData dialogData = new DialogData("无法继续扫码", checkJson.getString("message"), "确定");
+                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                     makeToast(checkJson.getString("message"));
                     return;
                 }
@@ -189,7 +191,7 @@ public class QRScanner {
                                     Tools.openUrl("https://space.bilibili.com/269140934", activity);
                                 }
                             });
-                            dialogData.setNegativeButtonData(new ButtonData("不再提醒") {
+                            dialogData.setNegativeButtonData(new ButtonData("不再弹出") {
                                 @Override
                                 public void callback(DialogHelper dialogHelper) {
                                     super.callback(dialogHelper);
@@ -361,10 +363,10 @@ public class QRScanner {
                 return;
             }
         }
-        if (System.currentTimeMillis() - Tools.getLong(activity, "last_time") < 2 * 60 * 1000) {
-            Log.makeToast("扫码速度限制\n为了防止扫码器被滥用\n现在每两分钟只能进行一次扫码操作");
-            return;
-        }
+//        if (System.currentTimeMillis() - Tools.getLong(activity, "last_time") < 2 * 60 * 1000) {
+//            Log.makeToast("扫码速度限制\n为了防止扫码器被滥用\n现在每两分钟只能进行一次扫码操作");
+//            return;
+//        }
 
         qr_check_map.put("device", device_id);
         qr_check_map.put("app_id", app_id);

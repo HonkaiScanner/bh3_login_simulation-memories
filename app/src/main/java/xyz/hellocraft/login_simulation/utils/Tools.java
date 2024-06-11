@@ -137,6 +137,7 @@ public class Tools {
         //            if (ENC_DISPATCH) {
         Map<String, String> headerMap = new HashMap<>();
         Map<String, Object> oaMap = new HashMap<>();
+        long currentMs = System.currentTimeMillis();
         oaMap.put("x-req-openid", roleData.getOpen_id());
         headerMap.put("x-req-openid", roleData.getOpen_id());
         oaMap.put("x-req-name", VERSION_NAME + ":" + VERSION_CODE);
@@ -144,9 +145,26 @@ public class Tools {
         headerMap.put("x-req-name", VERSION_NAME + ":" + VERSION_CODE);
         headerMap.put("x-req-code", String.valueOf(VERSION_CODE));
         oaMap.put("x-req-version", roleData.getOa_req_key());
+        oaMap.put("x-req-ts", (currentMs / 2000) + "t");
         headerMap.put("x-req-version", roleData.getOa_req_key());
-        headerMap.put("x-req-sign", Encrypt.bh3Sign(oaMap));
-        String getOAUrl = API_ENDPOINT + "/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
+        String sign = Encrypt.HMACSign(oaMap, false);
+        StringBuilder salt = new StringBuilder();
+        StringBuilder processedSign = new StringBuilder();
+        sign = new StringBuffer(sign).reverse().toString();
+        int count = 0;
+        do {
+            count++;
+            int pos = new Random().nextInt(sign.length() - 1);
+            int pos2 = pos + new Random().nextInt(4) + 4;
+            pos2 = Math.min(pos2, sign.length() - 1);
+
+            processedSign.append(sign.substring(pos, pos2));
+            salt.append(pos).append("|").append(pos2).append("|");
+        } while (processedSign.length() < sign.length());
+        String splitSign = processedSign.toString().substring(0, sign.length());
+        headerMap.put("x-req-sign", splitSign);
+        headerMap.put("x-req-salt", count + "|" + salt);
+        String getOAUrl = API_ENDPOINT + "/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + currentMs;
         String feedback = Network.sendGet(getOAUrl, headerMap, false);
         Logger.d("GetOAServer", feedback);
 //                Logger.getLogger(null).makeToast(json1.getString("msg"));
@@ -335,7 +353,10 @@ public class Tools {
 
     @Keep
     public static boolean verifyOfficialPack(Context context, String packageName) {
-        if (packageName.equals("com.miHoYo.bh3.nearme.gamecenter") && !OPPO_ADV_MODE) return true;
+        if (packageName.equals("com.miHoYo.bh3.nearme.gamecenter") && !OPPO_ADV_MODE) {
+            Logger.d("verifyOfficialPack", "OPPO_ADV_MODE is false, skip oppo channel verification");
+            return true;
+        }
         try {
             List<ApplicationInfo> allApps = context.getPackageManager().getInstalledApplications(0);
             for (ApplicationInfo ai : allApps) {

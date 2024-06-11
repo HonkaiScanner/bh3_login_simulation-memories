@@ -86,7 +86,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                 try {
                     JSONObject feedback_json = new JSONObject(feedback);
                     if (feedback_json.getInt("retcode") == 0) {
-                        String new_bh_ver = feedback_json.getJSONObject("data").getJSONObject("game").getJSONObject("latest").getString("version");
+                        String new_bh_ver = feedback_json.getString("version");
                         Logger.d("VersionCheck", "cloud bh ver: " + new_bh_ver);
                         app_pref.edit().putString("bh_ver", new_bh_ver).apply();
                         BH_VER = new_bh_ver;
@@ -101,7 +101,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         }
     };
     Runnable bh_update_rb = () -> {
-        String feedback = Network.sendGet("https://bh3-launcher-static.mihoyo.com/bh3_cn/mdk/launcher/api/resource?launcher_id=4", false);
+        String feedback = Network.sendGet(API_ENDPOINT + "/hi3_version", false);
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putString("value", feedback);

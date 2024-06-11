@@ -14,7 +14,6 @@ import xyz.hellocraft.login_simulation.login.LoginCallback;
 import xyz.hellocraft.login_simulation.login.LoginImpl;
 import xyz.hellocraft.login_simulation.login.Official;
 import xyz.hellocraft.login_simulation.login.Oppo;
-import xyz.hellocraft.login_simulation.login.Qihoo;
 import xyz.hellocraft.login_simulation.login.Tencent;
 import xyz.hellocraft.login_simulation.login.UC;
 import xyz.hellocraft.login_simulation.login.Vivo;
@@ -108,9 +107,9 @@ public class LoginInstanceManager {
                 case "Huawei":
                     mLoginImpl = new Huawei(mContext, mCallback);
                     break;
-                case "Qihoo":
-                    mLoginImpl = new Qihoo(mContext, mCallback);
-                    break;
+//                case "Qihoo":
+//                    mLoginImpl = new Qihoo(mContext, mCallback);
+//                    break;
                 default:
                     Logger.d(TAG, "wrong server: " + pref.getString("server_type", ""));
                     Logger.getLogger(mContext).makeToast(R.string.error_wrong_server);

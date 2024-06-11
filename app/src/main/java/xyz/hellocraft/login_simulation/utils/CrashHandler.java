@@ -127,6 +127,8 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
         try {
             for (LogData logData : LogLiveData.getINSTANCE().getDebugLogList()) {
                 if (logData.getTAG().equals("复制日志")) continue;
+                pw.print(logData.getTime());
+                pw.print(" ");
                 pw.print(logData.getLevel());
                 pw.print("/");
                 pw.print(logData.getTAG());

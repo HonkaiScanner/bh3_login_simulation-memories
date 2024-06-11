@@ -15,8 +15,8 @@ public class LogLiveData extends LiveData<List<LogData>> {
     public LogLiveData() {
         logDataList = new ArrayList<>();
         fullLogDataList = new ArrayList<>();
-        logDataList.add(new LogData("长按", "复制日志", "长按该条复制所有"));
-        fullLogDataList.add(new LogData("长按", "复制日志", "长按该条复制所有"));
+        logDataList.add(new LogData("长按", "复制日志", "长按该条复制所有", ""));
+        fullLogDataList.add(new LogData("长按", "复制日志", "长按该条复制所有", ""));
         postValue(logDataList);
     }
 
@@ -35,8 +35,8 @@ public class LogLiveData extends LiveData<List<LogData>> {
         return fullLogDataList;
     }
 
-    public void addNewLog(String level, String TAG, String msg) {
-        LogData newLogData = new LogData(level, TAG, msg);
+    public void addNewLog(String level, String TAG, String msg, String time) {
+        LogData newLogData = new LogData(level, TAG, msg, time);
         fullLogDataList.add(newLogData);
         if (!level.equalsIgnoreCase("debug")) {
             logDataList.add(newLogData);

@@ -16,6 +16,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -55,6 +57,7 @@ import com.king.wechat.qrcode.WeChatQRCodeDetector;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -123,22 +126,47 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     //Constant.REQ_QR_CODE
     private final ActivityResultLauncher<Intent> reqQRCodeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
         if (callback.getResultCode() == RESULT_OK) {
-
+            Logger.d(TAG, "get scan result");
             Bundle bundle = null;
             if (callback.getData() != null) {
                 bundle = callback.getData().getExtras();
             }
             if (bundle != null) {
                 String[] result = bundle.getStringArray(Constant.INTENT_EXTRA_KEY_QR_SCAN);
+                DialogData dialogData = new DialogData("扫描结果", Arrays.toString(result));
+                dialogData.setPositiveButtonData(new ButtonData("关闭") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        super.callback(dialogHelper);
+                    }
+                });
+                dialogData.setNeutralButtonData(new ButtonData("复制到剪贴板") {
+                    @Override
+                    public void callback(DialogHelper dialogHelper) {
+                        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("scan_result", Arrays.toString(result));
+                        clipboard.setPrimaryClip(clip);
+                        makeToast("已复制到剪贴板");
+                        super.callback(dialogHelper);
+                    }
+                });
                 if (result != null) {
                     QRScanner qrScanner;
-                    if (isOfficial) {
-                        qrScanner = new QRScanner(activity, true);
+                    if (loginImpl != null && loginImpl.isLogin()) {
+                        if (isOfficial) {
+                            qrScanner = new QRScanner(activity, true);
+                        } else {
+                            qrScanner = new QRScanner(activity, loginImpl.getRole());
+                        }
+                        if (!qrScanner.parseUrl(result)) {
+                            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                            makeToast(Arrays.toString(result));
+                            return;
+                        }
+                        qrScanner.start();
                     } else {
-                        qrScanner = new QRScanner(activity, loginImpl.getRole());
+                        DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                     }
-                    if (!qrScanner.parseUrl(result)) return;
-                    qrScanner.start();
                 } else {
                     makeToast(R.string.error_scan);
                 }
@@ -444,9 +472,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 if (Tools.verifyOfficialPack(requireContext(), "com.huawei.hwid"))
                     binding.btnHwAccountCenter.setVisibility(View.VISIBLE);
                 break;
-            case "Qihoo":
-                server_type = activity.getString(R.string.types_qihoo);
-                break;
+//            case "Qihoo":
+//                server_type = activity.getString(R.string.types_qihoo);
+//                break;
             default:
                 server_type = "DEBUG -- SERVER ERROR";
         }
@@ -733,7 +761,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void setupListener() {
         //        binding.btnLogin.setOnClickListener(this);
         binding.btnScan.setOnClickListener(this);
-//        binding.btnScan.setOnLongClickListener(this); // 临时禁用悬浮窗
+        binding.btnScan.setOnLongClickListener(this);
 //        binding.btnLogout.setOnClickListener(this);
         binding.cardViewMain.cardView2.setOnClickListener(this);
         binding.cardViewMain.cardView2.setOnLongClickListener(this);
@@ -862,6 +890,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void doLogin() {
+        Logger.d(TAG, "doLogin");
         if (needRestart) {
             makeToast(R.string.logged_and_restart);
             return;
@@ -890,6 +919,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void genLoginImpl() {
+        Logger.d(TAG, "genLoginImpl");
         loginInstanceManager.setCallback(this);
         loginImpl = loginInstanceManager.getLoginImpl();
     }
@@ -977,10 +1007,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
             try {
                 if (loginImpl.isLogin()) {
-                    if (loginImpl.getRole().is_setup()) {
-                        startQrCode();
-                    } else {
+                    if (!loginImpl.getRole().is_setup()) {
                         makeToast(R.string.error_oa_process);
+                        return;
                     }
                 } else {
                     makeToast(R.string.error_not_login);
@@ -989,6 +1018,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //                    e.printStackTrace();
                 makeToast(R.string.error_not_login);
             }
+            startQrCode();
         } else if (binding.cardViewMain.cardView2.equals(view)) {
             doLogin();
         }
@@ -1250,6 +1280,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onLoginSucceed(RoleData roleData) {
+        Logger.d("onLoginSucceed", "GET RESULT");
         int delay = 500;
         if (QUICK_MODE) {
             delay = 100;

@@ -39,6 +39,7 @@ public class Logger implements Serializable {
     private static BufferedWriter bufferedWriter;
     private static File logFile;
     private static boolean logToFile = true;
+    private static final SimpleDateFormat logFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
 //    private static String blackListString;
 
     public Logger(Context context) {
@@ -99,7 +100,7 @@ public class Logger implements Serializable {
     public static void e(String TAG, String msg) {
         msg = processWithBlackList(msg);
         BuglyLog.e(TAG, msg);
-        logLiveData.addNewLog("ERROR", TAG, msg);
+        logLiveData.addNewLog("ERROR", TAG, msg, getCurrentTimeStr());
         logToFile("ERROR", TAG, msg);
     }
 
@@ -111,7 +112,7 @@ public class Logger implements Serializable {
             if (msg.length() > 200) {
                 msg = msg.substring(0, 200) + "...";
             }
-            logLiveData.addNewLog("ERROR", TAG, msg);
+            logLiveData.addNewLog("ERROR", TAG, msg, getCurrentTimeStr());
             logToFile("ERROR", TAG, msg);
         } else {
             return Log.e(TAG, msg);
@@ -122,7 +123,7 @@ public class Logger implements Serializable {
     public static void d(String TAG, String msg) {
         msg = processWithBlackList(msg);
         BuglyLog.d(TAG, msg);
-        logLiveData.addNewLog("DEBUG", TAG, msg);
+        logLiveData.addNewLog("DEBUG", TAG, msg, getCurrentTimeStr());
         logToFile("DEBUG", TAG, msg);
     }
 
@@ -134,7 +135,7 @@ public class Logger implements Serializable {
             if (msg.length() > 200) {
                 msg = msg.substring(0, 200) + "...";
             }
-            logLiveData.addNewLog("DEBUG", TAG, msg);
+            logLiveData.addNewLog("DEBUG", TAG, msg, getCurrentTimeStr());
             logToFile("DEBUG", TAG, msg);
         } else {
             return Log.d(TAG, msg);
@@ -145,7 +146,7 @@ public class Logger implements Serializable {
     public static void i(String TAG, String msg) {
         msg = processWithBlackList(msg);
         BuglyLog.i(TAG, msg);
-        logLiveData.addNewLog("INFO", TAG, msg);
+        logLiveData.addNewLog("INFO", TAG, msg, getCurrentTimeStr());
         logToFile("INFO", TAG, msg);
     }
 
@@ -157,7 +158,7 @@ public class Logger implements Serializable {
             if (msg.length() > 200) {
                 msg = msg.substring(0, 200) + "...";
             }
-            logLiveData.addNewLog("INFO", TAG, msg);
+            logLiveData.addNewLog("INFO", TAG, msg, getCurrentTimeStr());
             logToFile("INFO", TAG, msg);
         } else {
             return Log.i(TAG, msg);
@@ -168,7 +169,7 @@ public class Logger implements Serializable {
     public static void w(String TAG, String msg) {
         msg = processWithBlackList(msg);
         BuglyLog.w(TAG, msg);
-        logLiveData.addNewLog("WARNING", TAG, msg);
+        logLiveData.addNewLog("WARNING", TAG, msg, getCurrentTimeStr());
         logToFile("WARNING", TAG, msg);
     }
 
@@ -180,7 +181,7 @@ public class Logger implements Serializable {
             if (msg.length() > 200) {
                 msg = msg.substring(0, 200) + "...";
             }
-            logLiveData.addNewLog("WARNING", TAG, msg);
+            logLiveData.addNewLog("WARNING", TAG, msg, getCurrentTimeStr());
             logToFile("WARNING", TAG, msg);
         } else {
             return Log.w(TAG, msg);
@@ -212,15 +213,21 @@ public class Logger implements Serializable {
         }
     }
 
+    private static String getTimeStr(long timeMillis) {
+        return logFormat.format(new Date(timeMillis));
+    }
+
+    private static String getCurrentTimeStr() {
+        return getTimeStr(System.currentTimeMillis());
+    }
+
     private static void logToFile(String level, String TAG, String msg) {
         try {
             if (bufferedWriter == null) {
                 createOutputStream();
             }
             if (logToFile) {
-                long current = System.currentTimeMillis();
-                SimpleDateFormat logFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                String outputLog = logFormat.format(new Date(current)) + " " + level + "/" + TAG + ": " + msg.replaceAll("\\t", "{%&t%}").replaceAll("\\n", "{%&n%}").replaceAll("\\r", "{%&r%}");
+                String outputLog = getCurrentTimeStr() + " " + level + "/" + TAG + ": " + msg.replaceAll("\\t", "{%&t%}").replaceAll("\\n", "{%&n%}").replaceAll("\\r", "{%&r%}");
                 try {
                     bufferedWriter.write(outputLog);
                     bufferedWriter.newLine();

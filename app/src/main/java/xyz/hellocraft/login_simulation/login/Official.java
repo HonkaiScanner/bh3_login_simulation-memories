@@ -335,7 +335,6 @@ public class Official implements LoginImpl {
                 }
                 if (feedback.contains("\"geetest\":null")) {
                     Logger.d(TAG, "无需极验校验，直接开始登陆");
-
                     login_map.put("x-rpc-device_id", getDeviceID(activity));
                     login_map.put("x-rpc-client_type", "2");
                     login_map.put("x-rpc-mdk_version", MDK_VERSION);
@@ -559,7 +558,24 @@ public class Official implements LoginImpl {
             public void run() {
                 showPendingDialog = true;
                 qrLogin = true;
-                String qrCodeResult = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/fetch", "{\"app_id\":\"1\",\"device\":\"" + getDeviceID(activity) + "\"}");
+                Map<String, String> qrReqMap = new HashMap<>();
+                String tempDeviceId = "af4a5b3ef6c81e318ce9bcfbb45f9d4d84bde3c31642309735055";
+                qrReqMap.put("x-rpc-device_fp", "38d7ed153506e");
+                qrReqMap.put("x-rpc-device_model", "System%20Product%20Name%20%28ASUS%29");
+                qrReqMap.put("x-rpc-device_name", "HAOCEN");
+                qrReqMap.put("x-rpc-sys_version", "Windows%2010%20%20%2810.0.0%29%2064bit");
+                qrReqMap.put("X-Unity-Version", "2017.4.18f1");
+                qrReqMap.put("x-rpc-device_id", tempDeviceId);
+                qrReqMap.put("x-rpc-client_type", "3");
+                qrReqMap.put("x-rpc-mdk_version", MDK_VERSION);
+                qrReqMap.put("x-rpc-game_biz", "bh3_cn");
+                qrReqMap.put("x-rpc-language", "zh-cn");
+                qrReqMap.put("x-rpc-channel_version", MDK_VERSION);
+                qrReqMap.put("x-rpc-combo_version", MDK_VERSION);
+                qrReqMap.put("x-rpc-payment_version", MDK_VERSION);
+                qrReqMap.put("x-rpc-channel_id", "1");
+                qrReqMap.put("User-Agent", "okhttp/3.10.0");
+                String qrCodeResult = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/fetch", "{\"app_id\":\"1\",\"device\":\"" + tempDeviceId + "\"}", qrReqMap);
                 try {
                     JSONObject jsonObject = new JSONObject(qrCodeResult);
                     if (jsonObject.getInt("retcode") == 0) {
@@ -594,7 +610,7 @@ public class Official implements LoginImpl {
                                     Thread.sleep(2000);
                                 } catch (Exception ignore) {
                                 }
-                                String qrCodeScanResult = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/query", "{\"app_id\":\"1\",\"ticket\":\"" + ticket + "\",\"device\":\"" + getDeviceID(null) + "\"}");
+                                String qrCodeScanResult = Network.sendPost("https://api-sdk.mihoyo.com/bh3_cn/combo/panda/qrcode/query", "{\"app_id\":\"1\",\"ticket\":\"" + ticket + "\",\"device\":\"" + tempDeviceId + "\"}", qrReqMap);
                                 if (qrCodeScanResult.contains("ExpiredCode")) {
                                     stopQrcode = true;
                                     Logger.d(TAG, qrCodeScanResult);

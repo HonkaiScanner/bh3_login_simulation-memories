@@ -47,10 +47,14 @@ public class Encrypt {
         for (String str2 : treeMap.keySet()) {
             sb.append(map.get(str2));
         }
-        return sha256HMAC(sb.toString(), key);
+        return sha256HMAC(sb.toString(), key, true);
     }
 
     public static String bh3Sign(Map<String, Object> paramMap) {
+        return HMACSign(paramMap, true);
+    }
+
+    public static String HMACSign(Map<String, Object> paramMap, boolean b1) {
         TreeMap<String, Object> treeMap = new TreeMap<>(paramMap);
         StringBuilder stringBuilder = new StringBuilder();
         for (String str : treeMap.keySet()) {
@@ -59,7 +63,7 @@ public class Encrypt {
             stringBuilder.append(paramMap.get(str));
             stringBuilder.append("&");
         }
-        return sha256HMAC(stringBuilder.substring(0, stringBuilder.length() - 1), BH_APP_KEY);
+        return sha256HMAC(stringBuilder.substring(0, stringBuilder.length() - 1), BH_APP_KEY, b1);
     }
 
     public static String byteArrayToHexString(byte[] paramArrayOfByte) {
@@ -73,12 +77,12 @@ public class Encrypt {
         return stringBuilder.toString().toLowerCase();
     }
 
-    public static String sha256HMAC(String paramString1, String paramString2) {
+    public static String sha256HMAC(String paramString1, String paramString2, boolean b1) {
         String stringBuilder = "sha256HMAC:" +
                 paramString1 +
                 " secret " +
                 paramString2;
-        Logger.d(TAG, stringBuilder);
+        if (b1) Logger.d(TAG, stringBuilder);
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(paramString2.getBytes(), "HmacSHA256"));
