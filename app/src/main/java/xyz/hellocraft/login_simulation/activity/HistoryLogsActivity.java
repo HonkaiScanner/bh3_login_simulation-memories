@@ -92,7 +92,7 @@ public class HistoryLogsActivity extends BaseActivity {
             while ((nextLine = bufferedReader.readLine()) != null) {
                 if (nextLine.startsWith("===")) {
                     if (lineCount != 0) {
-                        logData.add(new LogData(cacheName, "", String.valueOf(lineCount)));
+                        logData.add(new LogData(cacheName, "", String.valueOf(lineCount), ""));
                     }
                     cacheName = nextLine.replace("=", "").strip();
                     lineCount = 0;
