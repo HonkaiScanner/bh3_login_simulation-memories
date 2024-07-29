@@ -1,9 +1,13 @@
 package xyz.hellocraft.login_simulation.login;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_ADV_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_INIT;
 
 import android.app.Application;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.os.Build;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -96,6 +100,42 @@ public class Xiaomi extends Application implements LoginImpl {
 
     @Override
     public void login() {
+
+        boolean needFallback = false;
+        String fallbackReason = "";
+        String serviceName = "com.xiaomi.gamecenter.sdk.service";
+        if (MI_ADV_MODE) {
+            try {
+                PackageInfo packageInfo = activity.getPackageManager().getPackageInfo(serviceName, 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    if (packageInfo.getLongVersionCode() > 8700100) {
+                        needFallback = true;
+                        fallbackReason = "小米游戏服务版本过高";
+                    }
+                } else {
+                    if (packageInfo.versionCode > 8700100) {
+                        needFallback = true;
+                        fallbackReason = "小米游戏服务版本过高";
+                    }
+                }
+                ApplicationInfo applicationInfo = activity.getPackageManager().getApplicationInfo(serviceName, 0);
+                if (!applicationInfo.enabled) {
+                    needFallback = true;
+                    fallbackReason = "小米游戏服务已被冻结";
+                }
+            } catch (Exception ignore) {
+                needFallback = true;
+                fallbackReason = "未安装小米游戏服务";
+            }
+            if (needFallback) {
+                MI_ADV_MODE = false;
+                fallbackReason = fallbackReason + "\n已自动关闭小米服测试方案\n如有需要请正确配置游戏服务后\n前往设置页面再次开启\n\n如果为提示版本号过高\n可点击下方按钮下载较低版本\n目前测试最后兼容版本为8.7.0"
+                getDefaultSharedPreferences(activity).edit().putBoolean("mi_adv_mode", false).apply();
+                DialogData dialogData = getDialogData(fallbackReason);
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                return;
+            }
+        }
         if (MI_INIT) {
             xiaomiLogin();
             return;
@@ -122,6 +162,25 @@ public class Xiaomi extends Application implements LoginImpl {
 
     }
 
+    private DialogData getDialogData(String fallbackReason) {
+        DialogData dialogData = new DialogData("小米测试方案关闭提示", fallbackReason);
+        dialogData.setPositiveButtonData(new ButtonData("确认") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+                login();
+            }
+        });
+        dialogData.setNeutralButtonData(new ButtonData("下载游戏服务") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+                Tools.openUrl("https://fga1.market.xiaomi.com/download/AppStore/0bb83c3e48a49488592cd525a5109fb09d7dd8f00/com.xiaomi.gamecenter.sdk.service.apk", activity);
+            }
+        });
+        return dialogData;
+    }
+
     public void doBHLogin() {
         String data_json = "{\"session\":\"" +
                 session +
@@ -131,8 +190,7 @@ public class Xiaomi extends Application implements LoginImpl {
         JSONObject feedback_json = null;
         try {
             feedback_json = new JSONObject(Tools.verifyAccount(activity, "11", data_json));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (JSONException ignore) {
         }
         try {
 

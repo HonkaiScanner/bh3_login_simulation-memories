@@ -103,6 +103,7 @@ public class PmsHooker implements InvocationHandler {
                 return "com.miHoYo.bh3.qihoo";
             }
             if (xiaomiChange) {
+//                printStackTrace();
                 return "com.miHoYo.bh3.mi";
             }
         }
@@ -110,7 +111,7 @@ public class PmsHooker implements InvocationHandler {
         return rawPackageName;
     }
 
-    private static void printStackTrace() {
+    public static void printStackTrace() {
         Log.d("printStack", "--------------->");
         StackTraceElement[] arr = Thread.currentThread().getStackTrace();
         for (StackTraceElement el : arr) {
