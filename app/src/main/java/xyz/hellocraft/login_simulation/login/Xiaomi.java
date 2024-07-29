@@ -129,7 +129,7 @@ public class Xiaomi extends Application implements LoginImpl {
             }
             if (needFallback) {
                 MI_ADV_MODE = false;
-                fallbackReason = fallbackReason + "\n已自动关闭小米服测试方案\n如有需要请正确配置游戏服务后\n前往设置页面再次开启\n\n如果为提示版本号过高\n可点击下方按钮下载较低版本\n目前测试最后兼容版本为8.7.0"
+                fallbackReason = fallbackReason + "\n已自动关闭小米服测试方案\n如有需要请正确配置游戏服务后\n前往设置页面再次开启\n\n如果为提示版本号过高\n可点击下方按钮下载较低版本\n目前测试最后兼容版本为8.7.0";
                 getDefaultSharedPreferences(activity).edit().putBoolean("mi_adv_mode", false).apply();
                 DialogData dialogData = getDialogData(fallbackReason);
                 DialogLiveData.getINSTANCE().addNewDialog(dialogData);
