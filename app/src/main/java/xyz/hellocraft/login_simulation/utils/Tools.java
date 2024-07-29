@@ -1,5 +1,6 @@
 package xyz.hellocraft.login_simulation.utils;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static java.lang.Integer.parseInt;
@@ -289,6 +290,9 @@ public class Tools {
         return paramContext.getApplicationContext().getSharedPreferences(name, 0).getBoolean(key, defaultRet);
     }
 
+    public static void saveBooleanAtDefault(Context paramContext, String key, boolean value) {
+        getDefaultSharedPreferences(paramContext).edit().putBoolean(key, value).apply();
+    }
 
     public static String verifyAccount(Activity activity, String channel_id, String data_json) {
 

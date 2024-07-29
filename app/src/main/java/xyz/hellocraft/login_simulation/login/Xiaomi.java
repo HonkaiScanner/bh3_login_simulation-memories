@@ -1,6 +1,5 @@
 package xyz.hellocraft.login_simulation.login;
 
-import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_ADV_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_INIT;
 
@@ -130,7 +129,7 @@ public class Xiaomi extends Application implements LoginImpl {
             if (needFallback) {
                 MI_ADV_MODE = false;
                 fallbackReason = fallbackReason + "\n已自动关闭小米服测试方案\n如有需要请正确配置游戏服务后\n前往设置页面再次开启\n\n如果为提示版本号过高\n可点击下方按钮下载较低版本\n目前测试最后兼容版本为8.7.0";
-                getDefaultSharedPreferences(activity).edit().putBoolean("mi_adv_mode", false).apply();
+                Tools.saveBooleanAtDefault(activity, "mi_adv_mode", false);
                 DialogData dialogData = getDialogData(fallbackReason);
                 DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                 return;
