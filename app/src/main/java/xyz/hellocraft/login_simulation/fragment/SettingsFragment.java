@@ -3,6 +3,7 @@ package xyz.hellocraft.login_simulation.fragment;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static xyz.hellocraft.login_simulation.data.Constant.BH_VER;
+import static xyz.hellocraft.login_simulation.data.Constant.FOLLOW_SYSTEM_ACCENT;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_ADV_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.OPPO_ADV_MODE;
 
@@ -81,6 +82,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }));
 
         findPreference("fab_save_img").setSummary(getContext().getExternalFilesDir(null) + "/screenshot/");
+
+        findPreference("follow_system_accent").setOnPreferenceChangeListener(((preference, newValue) -> {
+            FOLLOW_SYSTEM_ACCENT = (boolean) newValue;
+            ActivityManager.getInstance().getTopActivity().recreate();
+            return true;
+        }));
 
         findPreference("check_update").setOnPreferenceChangeListener((preference, newValue) -> {
             if (!((Boolean) newValue)) {

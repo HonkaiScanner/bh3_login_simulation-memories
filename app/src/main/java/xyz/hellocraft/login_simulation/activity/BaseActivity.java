@@ -75,6 +75,9 @@ public class BaseActivity extends MaterialActivity {
     @Override
     public void onApplyUserThemeResource(@NonNull Resources.Theme theme, boolean isDecorView) {
         super.onApplyUserThemeResource(theme, isDecorView);
+        if (!ThemeUtils.isSystemAccent()) {
+            theme.applyStyle(ThemeUtils.getColorThemeStyleRes(), true);
+        }
         theme.applyStyle(ThemeUtils.getNightThemeStyleRes(this), true);
     }
 

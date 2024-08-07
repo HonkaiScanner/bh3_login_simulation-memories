@@ -14,6 +14,10 @@
             android:defaultValue="true"
             android:key="check_update"
             android:title="@string/settings_update" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="follow_system_accent"
+            android:title="@string/follow_system_accent" />
         <rikka.preference.SimpleMenuPreference
             android:defaultValue="-1"
             android:entries="@array/dark_type"
