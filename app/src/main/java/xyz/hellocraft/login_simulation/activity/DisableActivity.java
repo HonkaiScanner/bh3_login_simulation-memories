@@ -24,8 +24,9 @@ public class DisableActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ActivityDisableBinding binding = ActivityDisableBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        if (DISABLE_TIPS.length() >= 1) {
-            binding.customTips.setText(DISABLE_TIPS);
+        if (!DISABLE_TIPS.isEmpty()) {
+            binding.disableTips.setText(DISABLE_TIPS);
+//            binding.customTips.setText(DISABLE_TIPS);
         }
         disableDelay.postDelayed(() -> ActivityManager.getInstance().clearActivity(), 30000);
     }

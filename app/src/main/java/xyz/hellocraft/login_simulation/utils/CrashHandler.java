@@ -53,7 +53,7 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
             Log.d(TAG, "DUMP TO SDCARD SUCCEED");
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.e(TAG, "WRITE CRASH-REPORT FAILED");
         }
 
         Log.d(TAG, "CRASH DETAIL");

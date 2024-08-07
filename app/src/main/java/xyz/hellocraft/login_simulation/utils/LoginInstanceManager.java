@@ -51,6 +51,10 @@ public class LoginInstanceManager {
 
     }
 
+    public boolean isInit() {
+        return mLoginImpl != null;
+    }
+
     public LoginImpl getLoginImpl() {
         if (mLoginImpl == null || tempServerType.equals("none")) {
             genLoginImpl();

@@ -166,6 +166,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                         Logger.i("Update", "Open Update Window");
                         showUpdateDialog(
                                 json.getString("ver_name"),
+                                json.getString("apk_url"),
                                 json.getString("update_url"),
                                 json.getString("logs").replaceAll("&n", "\n")
                         );
@@ -347,20 +348,20 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         //super.onBackPressed();
     }
 
-    private void showUpdateDialog(String ver, String url, String logs) {
+    private void showUpdateDialog(String ver, String url, String lzUrl, String logs) {
         DialogData dialogData = new DialogData("获取到新版本: " + ver, "更新日志：\n" + logs);
         dialogData.setPositiveButtonData(new ButtonData("打开更新链接") {
             @Override
             public void callback(DialogHelper dialogHelper) {
                 super.callback(dialogHelper);
-                openUrl("https://www.coolapk.com/apk/com.github.haocen2004.bh3_login_simulation", getApplicationContext());
+                openUrl(url, getApplicationContext());
             }
         });
         dialogData.setNegativeButtonData(new ButtonData("蓝奏云") {
             @Override
             public void callback(DialogHelper dialogHelper) {
                 super.callback(dialogHelper);
-                openUrl(url, getApplicationContext());
+                openUrl(lzUrl, getApplicationContext());
             }
         });
         dialogData.setNeutralButtonData(new ButtonData(getString(R.string.btn_cancel)) {
@@ -448,10 +449,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
         if (!HAS_UPDATE_THREAD) {
             new Thread(update_rb).start();
-
-            if (!app_pref.getBoolean("bh_ver_overwrite", false)) {
-                new Thread(bh_update_rb).start();
-            }
+            new Thread(bh_update_rb).start();
         }
 
         if (Tools.getBoolean(this, "has_crash") && !app_pref.getBoolean("no_crash_page", false)) {
@@ -490,7 +488,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
     private void showBetaInfoDialog() {
 
-        DialogData dialogData = new DialogData("自动构建使用须知", "你现在使用的是自动构建版本\n请及时通过左边侧滑栏反馈bug\n每次启动该消息都会显示");
+        DialogData dialogData = new DialogData("自动构建使用须知", "你现在使用的是自动构建版本\n可能会存在一些影响使用的bug或其他问题\n如遇到请及时带上崩溃日志进行反馈\n\n每次启动该消息都会显示");
         dialogData.setPositiveButtonData("我已知晓");
         DialogLiveData.getINSTANCE().addNewDialog(dialogData);
     }
