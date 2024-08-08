@@ -182,11 +182,11 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                 Log.makeToast("检查更新失败...");
                 //app_pref.edit().putString("bh_ver", BH_VER).apply();
             }
-            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
-                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
-            } else {
+//            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
+//                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
+//            } else {
                 BH_VER = app_pref.getString("bh_ver", BH_VER);
-            }
+//            }
             MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
             SP_URL = app_pref.getString("sp_url", SP_URL);
             AFD_URL = app_pref.getString("afd_url", AFD_URL);
@@ -444,7 +444,8 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
 
         // 优先读取本地数据
-        BH_VER = app_pref.getBoolean("bh_ver_overwrite", false) ? app_pref.getString("custom_bh_ver", BH_VER) : app_pref.getString("bh_ver", BH_VER);
+//        BH_VER = app_pref.getBoolean("bh_ver_overwrite", false) ? app_pref.getString("custom_bh_ver", BH_VER) : app_pref.getString("bh_ver", BH_VER);
+        BH_VER = app_pref.getString("bh_ver", BH_VER);
         MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
 
         if (!HAS_UPDATE_THREAD) {

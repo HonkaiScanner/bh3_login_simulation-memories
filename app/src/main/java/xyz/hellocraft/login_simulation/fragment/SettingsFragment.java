@@ -2,7 +2,6 @@ package xyz.hellocraft.login_simulation.fragment;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
-import static xyz.hellocraft.login_simulation.data.Constant.BH_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.FOLLOW_SYSTEM_ACCENT;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_ADV_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.OPPO_ADV_MODE;
@@ -28,7 +27,6 @@ import xyz.hellocraft.login_simulation.data.dialog.ButtonData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
-import xyz.hellocraft.login_simulation.utils.Logger;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     private final String TAG = "Settings";
@@ -236,28 +234,28 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         }));
 
-        findPreference("custom_bh_ver").setVisible(app_pref.getBoolean("bh_ver_overwrite", false));
-        findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
-            if ((Boolean) newValue) {
-                DialogData dialogData = new DialogData("确认启用自定义版本号？", "通常只在官方接口下线时启用\n一般无需开启此选项\n\n开启后将不自动获取崩坏3版本号\n必须每次手动设置");
-                dialogData.setPositiveButtonData("启用自定义版本号");
-                dialogData.setNegativeButtonData(new ButtonData("取消") {
-                    @Override
-                    public void callback(DialogHelper dialogHelper) {
-                        super.callback(dialogHelper);
-                        app_pref.edit().putBoolean("bh_ver_overwrite", false).apply();
-                        preference.performClick();
-                    }
-                });
-                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
-                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
-            } else {
-                BH_VER = app_pref.getString("bh_ver", BH_VER);
-            }
-            findPreference("custom_bh_ver").setVisible((Boolean) newValue);
-            Logger.d(TAG, "new bh version:" + BH_VER);
-            return true;
-        });
+//        findPreference("custom_bh_ver").setVisible(app_pref.getBoolean("bh_ver_overwrite", false));
+//        findPreference("bh_ver_overwrite").setOnPreferenceChangeListener((preference, newValue) -> {
+//            if ((Boolean) newValue) {
+//                DialogData dialogData = new DialogData("确认启用自定义版本号？", "通常只在官方接口下线时启用\n一般无需开启此选项\n\n开启后将不自动获取崩坏3版本号\n必须每次手动设置");
+//                dialogData.setPositiveButtonData("启用自定义版本号");
+//                dialogData.setNegativeButtonData(new ButtonData("取消") {
+//                    @Override
+//                    public void callback(DialogHelper dialogHelper) {
+//                        super.callback(dialogHelper);
+//                        app_pref.edit().putBoolean("bh_ver_overwrite", false).apply();
+//                        preference.performClick();
+//                    }
+//                });
+//                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+//                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
+//            } else {
+//                BH_VER = app_pref.getString("bh_ver", BH_VER);
+//            }
+//            findPreference("custom_bh_ver").setVisible((Boolean) newValue);
+//            Logger.d(TAG, "new bh version:" + BH_VER);
+//            return true;
+//        });
 
         findPreference("beta_update").setOnPreferenceChangeListener((preference, newValue) -> {
             if (VERSION_NAME.contains("snapshot")) {
@@ -324,14 +322,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
 
 
-        findPreference("custom_bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
-            Logger.d(TAG, newValue.toString());
-            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
-                BH_VER = newValue.toString();
-            }
-            Logger.d(TAG, "new bh version:" + BH_VER);
-            return true;
-        });
+//        findPreference("custom_bh_ver").setOnPreferenceChangeListener((preference, newValue) -> {
+//            Logger.d(TAG, newValue.toString());
+//            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
+//                BH_VER = newValue.toString();
+//            }
+//            Logger.d(TAG, "new bh version:" + BH_VER);
+//            return true;
+//        });
 
 
     }

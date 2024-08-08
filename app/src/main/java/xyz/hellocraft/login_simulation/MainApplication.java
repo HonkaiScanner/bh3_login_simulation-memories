@@ -8,6 +8,7 @@ import static xyz.hellocraft.login_simulation.data.Constant.BETA_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.BH_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.CHECK_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.DEBUG_MODE;
+import static xyz.hellocraft.login_simulation.data.Constant.FOLLOW_SYSTEM_ACCENT;
 import static xyz.hellocraft.login_simulation.data.Constant.MDK_VERSION;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_ADV_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.OPPO_ADV_MODE;
@@ -132,6 +133,10 @@ public class MainApplication extends Application implements LifecycleOwner {
         } else {
             saveAllLogs.delete();
             SAVE_ALL_LOGS = false;
+
+            app_pref.edit()
+                    .putBoolean("no_crash_page", false)
+                    .apply();
         }
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             Logger.d("prefSetup", "first run or version update detect.");
@@ -215,16 +220,11 @@ public class MainApplication extends Application implements LifecycleOwner {
                         .putBoolean("capture_continue_before_result", false)
                         .apply();
             }
-            if (!DEBUG_MODE) {
-                app_pref.edit()
-                        .putBoolean("no_crash_page", false)
-                        .apply();
-            }
+
             if (!app_pref.contains("adv_setting")) {
                 app_pref.edit()
                         .putBoolean("adv_setting", false)
                         .putBoolean("beta_update", false)
-                        .putBoolean("bh_ver_overwrite", false)
                         .putBoolean("keep_capture_no_cooling_down", false)
                         .putBoolean("no_server_tip", false)
                         .apply();
@@ -236,6 +236,7 @@ public class MainApplication extends Application implements LifecycleOwner {
         }
         MI_ADV_MODE = app_pref.getBoolean("mi_adv_mode", MI_ADV_MODE);
         OPPO_ADV_MODE = app_pref.getBoolean("oppo_adv_mode", OPPO_ADV_MODE);
+        FOLLOW_SYSTEM_ACCENT = app_pref.getBoolean("follow_system_accent", FOLLOW_SYSTEM_ACCENT);
         try {
             LeanCloud.initializeSecurely(getApplicationContext(), SP_APP_KEY, SP_URL);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !Tools.getDeviceModel().toLowerCase(Locale.ROOT).contains("mumu")) {
