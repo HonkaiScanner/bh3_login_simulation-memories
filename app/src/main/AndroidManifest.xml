@@ -70,6 +70,7 @@
         <activity android:name="xyz.hellocraft.login_simulation.activity.SponsorInfoActivity" />
         <activity android:name="xyz.hellocraft.login_simulation.activity.ScannerActivity" />
         <activity android:name="xyz.hellocraft.login_simulation.activity.TencentLoginActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.WeGameLoginActivity" />
         <activity android:name="xyz.hellocraft.login_simulation.wxapi.WXPayEntryActivity" />
 
         <activity-alias

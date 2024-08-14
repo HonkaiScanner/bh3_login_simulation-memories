@@ -468,6 +468,9 @@ public class QRScanner {
                     case "Qihoo":
                         server_type = activity.getString(R.string.types_qihoo);
                         break;
+                    case "Wegame":
+                        server_type = "Wegame";
+                        break;
                     default:
                         server_type = "获取服务器错误";
                 }

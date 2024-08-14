@@ -472,6 +472,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 if (Tools.verifyOfficialPack(requireContext(), "com.huawei.hwid"))
                     binding.btnHwAccountCenter.setVisibility(View.VISIBLE);
                 break;
+            case "Wegame":
+                server_type = "Wegame";
+                break;
 //            case "Qihoo":
 //                server_type = activity.getString(R.string.types_qihoo);
 //                break;

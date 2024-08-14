@@ -523,7 +523,18 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         }
 
         if (closeOnBackground) {
-            activityManager.clearActivity();
+            new Thread() {
+                @Override
+                public void run() {
+                    super.run();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    activityManager.clearActivity();
+                }
+            }.start();
         }
     }
 

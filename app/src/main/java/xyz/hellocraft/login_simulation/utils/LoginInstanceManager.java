@@ -17,6 +17,7 @@ import xyz.hellocraft.login_simulation.login.Oppo;
 import xyz.hellocraft.login_simulation.login.Tencent;
 import xyz.hellocraft.login_simulation.login.UC;
 import xyz.hellocraft.login_simulation.login.Vivo;
+import xyz.hellocraft.login_simulation.login.Wegame;
 import xyz.hellocraft.login_simulation.login.Xiaomi;
 
 public class LoginInstanceManager {
@@ -110,6 +111,9 @@ public class LoginInstanceManager {
                     break;
                 case "Huawei":
                     mLoginImpl = new Huawei(mContext, mCallback);
+                    break;
+                case "Wegame":
+                    mLoginImpl = new Wegame(mContext, mCallback);
                     break;
 //                case "Qihoo":
 //                    mLoginImpl = new Qihoo(mContext, mCallback);

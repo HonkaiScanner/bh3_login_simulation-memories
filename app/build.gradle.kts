@@ -74,7 +74,7 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 95
+        versionCode = 96
         versionName = "1.9.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -93,7 +93,7 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-24w32b.dev"
+                "-snapshot-24w33a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

@@ -10,6 +10,7 @@
         <item>Oppo服</item>
         <item>华为服</item>
         <item>应用宝-QQ</item>
+        <item>Wegame-QQ</item>
 <!--        <item>360服</item>-->
     </string-array>
     <string-array name="server_types_xp">

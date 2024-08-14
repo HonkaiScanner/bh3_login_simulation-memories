@@ -9,6 +9,7 @@
         <item>Oppo</item>
         <item>Huawei</item>
         <item>Tencent-QQ</item>
+        <item>Wegame-QQ</item>
 <!--        <item>Qihoo</item>-->
     </string-array>
     <string-array name="server_types_value">
@@ -21,6 +22,7 @@
         <item>Oppo</item>
         <item>Huawei</item>
         <item>YYB</item>
+        <item>Wegame</item>
         <!--        <item>Qihoo</item>-->
     </string-array>
     <string-array name="server_types_xp">
