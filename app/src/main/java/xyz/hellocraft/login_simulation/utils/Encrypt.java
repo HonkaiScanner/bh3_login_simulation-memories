@@ -1,5 +1,6 @@
 package xyz.hellocraft.login_simulation.utils;
 
+import static com.bilibili.deviceutils.utils.MD5Utils.md5;
 import static xyz.hellocraft.login_simulation.data.Constant.BH_APP_KEY;
 
 import android.os.Build;
@@ -40,6 +41,18 @@ public class Encrypt {
             'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
             'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9', '+', '/'};
+
+    public static String ds2PRODSign(String jsonBody) {
+        String salt = "JwYDpKvLj6MrMqqYU6jTKF17KNO2PXoS";
+        try {
+            String valueOf = String.valueOf(System.currentTimeMillis() / 1000);
+            String sb2 = Tools.genRandomString(6);
+            return valueOf + "," + sb2 + "," + md5("salt=" + salt + "&t=" + valueOf + "&r=" + sb2 + "&b=" + jsonBody + "&q=");
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
 
     public static String paySign(Map<String, Object> map, String key) {
         TreeMap<String, Object> treeMap = new TreeMap<>(map);

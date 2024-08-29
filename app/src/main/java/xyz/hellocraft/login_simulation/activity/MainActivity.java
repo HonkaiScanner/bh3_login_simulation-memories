@@ -64,6 +64,7 @@ import xyz.hellocraft.login_simulation.data.dialog.ButtonData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
 import xyz.hellocraft.login_simulation.data.sponsor.database.SponsorRepo;
+import xyz.hellocraft.login_simulation.utils.DeviceFpManager;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
 import xyz.hellocraft.login_simulation.utils.ForegroundCallbacks;
 import xyz.hellocraft.login_simulation.utils.Logger;
@@ -76,6 +77,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
     private ActivityMainBinding binding;
     private SharedPreferences app_pref;
     private Logger Log;
+    Runnable device_fp_refresh_runnable = () -> DeviceFpManager.getInstance().getDeviceFp(getApplicationContext());
     Handler bh_update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -451,6 +453,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         if (!HAS_UPDATE_THREAD) {
             new Thread(update_rb).start();
             new Thread(bh_update_rb).start();
+            new Thread(device_fp_refresh_runnable).start();
         }
 
         if (Tools.getBoolean(this, "has_crash") && !app_pref.getBoolean("no_crash_page", false)) {
@@ -473,7 +476,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                 }
             }
             Logger.d("Shortcut", "pre login check failed");
-            DialogData dialogData = new DialogData("快速扫码失败", "由于某些原因 快速扫码初始化失败\n\n快速扫码快捷方式：" + (ShortcutManagerCompat.getDynamicShortcuts(this).size() > 0) + "\n自动登陆：" + autoLogin + "\n上次登陆情况：" + lastLoginState);
+            DialogData dialogData = new DialogData("快速扫码失败", "由于某些原因 快速扫码初始化失败\n\n快速扫码快捷方式：" + (!ShortcutManagerCompat.getDynamicShortcuts(this).isEmpty()) + "\n自动登陆：" + autoLogin + "\n上次登陆情况：" + lastLoginState);
             dialogData.setPositiveButtonData("确认");
             DialogLiveData.getINSTANCE().addNewDialog(dialogData);
             ShortcutManagerCompat.removeAllDynamicShortcuts(this);

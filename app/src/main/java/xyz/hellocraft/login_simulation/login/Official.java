@@ -1,8 +1,10 @@
 package xyz.hellocraft.login_simulation.login;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static java.lang.Integer.parseInt;
 import static xyz.hellocraft.login_simulation.data.Constant.BH_PUBLIC_KEY;
 import static xyz.hellocraft.login_simulation.data.Constant.MDK_VERSION;
+import static xyz.hellocraft.login_simulation.data.Constant.V2_OFFICIAL_TOKEN;
 import static xyz.hellocraft.login_simulation.utils.Tools.getDeviceID;
 import static xyz.hellocraft.login_simulation.utils.Tools.verifyAccount;
 
@@ -41,6 +43,7 @@ import java.util.regex.Pattern;
 
 import xyz.hellocraft.login_simulation.activity.ActivityManager;
 import xyz.hellocraft.login_simulation.data.RoleData;
+import xyz.hellocraft.login_simulation.utils.DeviceFpManager;
 import xyz.hellocraft.login_simulation.utils.Encrypt;
 import xyz.hellocraft.login_simulation.utils.Logger;
 import xyz.hellocraft.login_simulation.utils.Network;
@@ -222,6 +225,48 @@ public class Official implements LoginImpl {
             }
         }
     };
+    Handler v2TokenHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+//            Logger.debug(feedback);
+//            Logger.d(TAG, "login_handler: " + feedback);
+
+            try {
+                JSONObject feedback_json = new JSONObject(feedback);
+                if (feedback_json.getInt("retcode") == 0) {
+                    JSONObject data_json = feedback_json.getJSONObject("data");
+                    preferences.edit()
+                            .putString("stoken", data_json.getJSONObject("token").getString("token"))
+                            .putString("mid", data_json.getJSONObject("user_info").getString("mid"))
+                            .apply();
+                    V2_OFFICIAL_TOKEN = true;
+                }
+            } catch (Exception ignore) {
+            }
+        }
+    };
+    Runnable v2TokenRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            JSONObject data_json = new JSONObject();
+            try {
+                data_json.put("account_id", parseInt(uid)).put("game_token", token);
+                Message msg = Message.obtain();
+                Bundle data = new Bundle();
+                Map<String, String> header = DeviceFpManager.getDSPRODHeader(activity, data_json.toString());
+                data.putString("value", Network.sendPost("https://passport-api.mihoyo.com/account/ma-cn-session/app/getTokenByGameToken", data_json.toString(), header));
+                msg.setData(data);
+                v2TokenHandler.sendMessage(msg);
+
+            } catch (JSONException e) {
+                Logger.w(TAG, "run: JSON WRONG\n" + e);
+                loginCallback.onLoginFailed();
+            }
+        }
+    };
     @SuppressLint("HandlerLeak")
     Handler login_handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -251,6 +296,7 @@ public class Official implements LoginImpl {
                             .putBoolean("has_token", true)
                             .apply();
                     Logger.addBlacklist(token);
+                    new Thread(v2TokenRefreshRunnable).start();
                     new Thread(login_runnable2).start();
                 } else {
 //                    Logger.warning("登录失败");

@@ -6,6 +6,7 @@ import static xyz.hellocraft.login_simulation.data.Constant.API_ENDPOINT;
 import static xyz.hellocraft.login_simulation.data.Constant.HAS_TIPS;
 import static xyz.hellocraft.login_simulation.data.Constant.QUICK_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.TIPS;
+import static xyz.hellocraft.login_simulation.data.Constant.V2_OFFICIAL_TOKEN;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -72,40 +73,6 @@ public class QRScanner {
     private String biz_key;
     private final Boolean is_official;
     private Logger Log;
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            String spCheck = Network.sendGet(API_ENDPOINT + "/qr_check?ticket=" + ticket + "&open_id=" + open_id + "&device=" + Tools.getDeviceID(activity), true);
-            try {
-                JSONObject checkJson = new JSONObject(spCheck);
-                if (checkJson.has("retcode") && checkJson.getInt("retcode") == 0) {
-                    String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
-                    Message msg = new Message();
-                    Bundle data = new Bundle();
-                    data.putString("value", feedback);
-                    msg.setData(data);
-                    handler.sendMessage(msg);
-                    return;
-                } else if (checkJson.has("message")) {
-                    DialogData dialogData = new DialogData("无法继续扫码", checkJson.getString("message"), "确定");
-                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
-                    makeToast(checkJson.getString("message"));
-                    return;
-                }
-            } catch (Exception ignore) {
-            }
-            makeToast("二维码识别失败");
-        }
-    };
-    private RoleData roleData;
-    private final AppCompatActivity activity;
-    @SuppressLint("HandlerLeak")
-    private final Handler defaultHandle = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-        }
-    };
     @SuppressLint("HandlerLeak")
     Handler handler2 = new Handler(Looper.getMainLooper()) {
         @Override
@@ -207,31 +174,140 @@ public class QRScanner {
                 } else {
 
                     Logger.w(TAG, "handleMessage: 扫码登录失败 pos:2");
-                    makeToast("登录失败 code: " + feedback_json.getInt("retcode") + "\n" + feedback_json.getString("msg"));
+                    String failedMsg = "登录失败 code: " + feedback_json.getInt("retcode") + "\n";
+                    if (feedback_json.has("msg")) failedMsg += feedback_json.getString("msg");
+                    if (feedback_json.has("message"))
+                        failedMsg += feedback_json.getString("message");
+                    makeToast(failedMsg);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     };
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            String spCheck = Network.sendGet(API_ENDPOINT + "/qr_check?ticket=" + ticket + "&open_id=" + open_id + "&device=" + Tools.getDeviceID(activity), true);
+            try {
+                JSONObject checkJson = new JSONObject(spCheck);
+                if (checkJson.has("retcode") && checkJson.getInt("retcode") == 0) {
+                    String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/scan", qr_check_json.toString());
+                    Message msg = new Message();
+                    Bundle data = new Bundle();
+                    data.putString("value", feedback);
+                    msg.setData(data);
+                    handler.sendMessage(msg);
+                    return;
+                } else if (checkJson.has("message")) {
+                    DialogData dialogData = new DialogData("无法继续扫码", checkJson.getString("message"), "确定");
+                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                    makeToast(checkJson.getString("message"));
+                    return;
+                }
+            } catch (Exception ignore) {
+            }
+            makeToast("二维码识别失败");
+        }
+    };
+    private RoleData roleData;
+    private final AppCompatActivity activity;
+    @SuppressLint("HandlerLeak")
+    private final Handler defaultHandle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+        }
+    };
+    private boolean newOfficialQRMethod = false;
     private JSONObject confirm_json, qr_check_json, oaserver;
     private final Map<String, Object> qr_check_map;
     Runnable runnable2 = new Runnable() {
         @Override
         public void run() {
             Looper.prepare();
+            if (newOfficialQRMethod) {
+                genRequest();
+
+                Logger.d("Network", "biz_key: " + biz_key);
+                String body = "{\"ticket\":\"" + ticket + "\",\"token_types\":[\"1\"]}";
+                Map<String, String> baseHeader = DeviceFpManager.getDSPRODHeader(activity, body);
+                baseHeader.put("Cookie", getOfficialCK());
+                String feedback = Network.sendPost("https://passport-api.mihoyo.com/account/ma-cn-passport/app/confirmQRLogin", body, baseHeader);
+
+                Logger.d("Network", "feedback: " + feedback);
+
+                Message msg = new Message();
+                Bundle data = new Bundle();
+                data.putString("value", feedback);
+                msg.setData(data);
+                handler2.sendMessage(msg);
+
+            } else {
+                genRequest();
+
+                Logger.d("Network", "biz_key: " + biz_key);
+                String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString().replace("\\/", "/"));
+
+                Logger.d("Network", "feedback: " + feedback);
+
+                Message msg = new Message();
+                Bundle data = new Bundle();
+                data.putString("value", feedback);
+                msg.setData(data);
+                handler2.sendMessage(msg);
+            }
+        }
+    };
+    Handler newOfficialQRHandle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String feedback = data.getString("value");
+//            Logger.debug(feedback);
+
+            Logger.d(TAG, "handleMessage: " + feedback);
+            try {
+                JSONObject feedback_json = new JSONObject(feedback);
+                if (feedback_json.getInt("retcode") == 0) {
+                    if (getDefaultSharedPreferences(activity).getBoolean("auto_confirm", false)) {
+                        new Thread(runnable2).start();
+                    } else {
+                        JSONObject data_json = feedback_json.getJSONObject("data");
+                        showNormalDialog(data_json.getString("risk_note") + "\n当前游戏: " + data_json.getString("app_name"));
+                    }
+                } else {
+                    makeToast(activity.getString(R.string.outdate_qr));
+//                    Logger.warning("二维码已过期");
+
+                    Logger.w(TAG, "handleMessage: 二维码已过期");
+                }
+            } catch (JSONException e) {
+                makeToast("网络请求错误！");
+                CrashReport.postCatchedException(e);
+                e.printStackTrace();
+            }
+        }
+    };
+    Runnable newOfficialQRRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Looper.prepare();
             genRequest();
 
             Logger.d("Network", "biz_key: " + biz_key);
-            String feedback = Network.sendPost("https://api-sdk.mihoyo.com/" + biz_key + "/combo/panda/qrcode/confirm", confirm_json.toString().replace("\\/", "/"));
-
+            String body = "{\"ticket\":\"" + ticket + "\",\"token_types\":[\"1\"]}";
+            Map<String, String> baseHeader = DeviceFpManager.getDSPRODHeader(activity, body);
+            baseHeader.put("Cookie", getOfficialCK());
+            String feedback = Network.sendPost("https://passport-api.mihoyo.com/account/ma-cn-passport/app/scanQRLogin", body, baseHeader);
             Logger.d("Network", "feedback: " + feedback);
 
             Message msg = new Message();
             Bundle data = new Bundle();
             data.putString("value", feedback);
             msg.setData(data);
-            handler2.sendMessage(msg);
+            newOfficialQRHandle.sendMessage(msg);
         }
     };
     @SuppressLint("HandlerLeak")
@@ -247,6 +323,13 @@ public class QRScanner {
             try {
                 JSONObject feedback_json = new JSONObject(feedback);
                 if (feedback_json.getInt("retcode") == 0) {
+                    String passportQRUrl = feedback_json.getJSONObject("data").getString("passport_qr_url");
+                    if (passportQRUrl.length() > 20) {
+                        if (parseUrl(passportQRUrl)) {
+                            new Thread(newOfficialQRRunnable).start();
+                            return;
+                        }
+                    }
                     if (getDefaultSharedPreferences(activity).getBoolean("auto_confirm", false)) {
                         new Thread(runnable2).start();
                     } else {
@@ -265,6 +348,12 @@ public class QRScanner {
             }
         }
     };
+
+    private String getOfficialCK() {
+        SharedPreferences app_pref = getDefaultSharedPreferences(activity);
+        SharedPreferences preferences = activity.getSharedPreferences("official_user_" + app_pref.getInt("official_slot", 1), Context.MODE_PRIVATE);
+        return "stoken=" + preferences.getString("stoken", "") + ";mid=" + preferences.getString("mid", "");
+    }
 
     public QRScanner(AppCompatActivity activity, RoleData roleData) {
 
@@ -305,6 +394,10 @@ public class QRScanner {
         qr_check_map = new HashMap<>();
     }
 
+    public boolean parseUrl(String url) {
+        return parseUrl(new String[]{url});
+    }
+
     public boolean parseUrl(String[] urls) {
         for (String paramResult : urls) {
             if (paramResult.contains("qr_code_in_game.html")) {
@@ -343,6 +436,20 @@ public class QRScanner {
 
                 return true;
 
+            } else if (paramResult.contains("mobile.html")) {
+
+                String[] split = paramResult.split("\\?");
+                String[] param = split[1].split("&");
+                for (String key : param) {
+
+                    if (key.startsWith("tk")) {
+                        ticket = key.split("=")[1];
+
+                        newOfficialQRMethod = true;
+                        Logger.i("Parse QRCode", "new ticket: " + ticket);
+                        return true;
+                    }
+                }
             } else {
 
                 Logger.w("Parse QRCode", "Wrong QRCode,result: " + paramResult);
@@ -372,7 +479,6 @@ public class QRScanner {
         qr_check_map.put("app_id", app_id);
         qr_check_map.put("ts", System.currentTimeMillis());
         qr_check_map.put("ticket", ticket);
-        String sign = Encrypt.bh3Sign(qr_check_map);
         qr_check_json = new JSONObject();
         ArrayList<String> arrayList = new ArrayList<>(qr_check_map.keySet());
         Collections.sort(arrayList);
@@ -380,7 +486,13 @@ public class QRScanner {
             for (String str : arrayList) {
                 qr_check_json.put(str, qr_check_map.get(str));
             }
-            qr_check_json.put("sign", sign);
+
+            if (V2_OFFICIAL_TOKEN) {
+                qr_check_json.put("passport_app_id", "bll8iq97cem8"); // com.miHoYo.hyperion
+            } else {
+                String sign = Encrypt.bh3Sign(qr_check_map);
+                qr_check_json.put("sign", sign);
+            }
 
             Logger.d(TAG, "getScanRequest: " + qr_check_json.toString());
             new Thread(runnable).start();
@@ -559,10 +671,14 @@ public class QRScanner {
     }
 
     private void showNormalDialog() {
+        showNormalDialog("等待确认是否登录\n当前游戏：" + app_name);
+    }
+
+    private void showNormalDialog(String risk_note) {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(activity);
         normalDialog.setTitle("扫码成功");
-        normalDialog.setMessage("等待确认是否登录\n当前游戏：" + app_name);
+        normalDialog.setMessage(risk_note);
         normalDialog.setPositiveButton("确定",
                 (dialog, which) -> new Thread(runnable2).start());
         normalDialog.setNegativeButton("取消",

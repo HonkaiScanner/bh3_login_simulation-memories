@@ -45,4 +45,5 @@ public class Constant {
     public static boolean SAVE_ALL_LOGS = false;
     public static boolean HAS_UPDATE_THREAD = false;
     public static boolean FOLLOW_SYSTEM_ACCENT = false;
+    public static boolean V2_OFFICIAL_TOKEN = false;
 }

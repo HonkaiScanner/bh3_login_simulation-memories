@@ -74,7 +74,7 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 96
+        versionCode = 97
         versionName = "1.9.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -93,7 +93,7 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-24w33a.dev"
+                "-snapshot-24w35a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -208,6 +208,19 @@ dependencies {
 
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     annotationProcessor("androidx.room:room-compiler:2.5.2")
+
+    implementation("com.github.gzu-liyujiang:Android_CN_OAID:4.2.9")
+    {
+        // 如果使用了移动安全联盟SDK，共存的话需排除掉本项目依赖的华为/荣耀官方广告标识服务SDK，因为移动安全联盟SDK也依赖了华为/荣耀的SDK
+        // 如果华为官方广告标识服务SDK下载失败或编译报错的话，可考虑在 build.gradle 中增加以下配置：
+        // repositories { maven { url 'https://developer.huawei.com/repo' } }
+        // runtimeOnly "com.huawei.hms:ads-identifier:3.4.62.300"
+        exclude("com.huawei.hms", "ads-identifier")
+        // 荣耀官方广告标识服务SDK同理：
+        // repositories { maven { url 'https://developer.hihonor.com/repo' } }
+        // runtimeOnly "com.hihonor.mcs:ads-identifier:1.0.2.301"
+        exclude("com.hihonor.mcs", "ads-identifier")
+    }
 //    testImplementation 'junit:junit:4.13.2'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'

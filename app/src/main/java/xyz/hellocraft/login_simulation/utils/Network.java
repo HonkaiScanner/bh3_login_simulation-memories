@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -136,8 +137,14 @@ public class Network {
         return sendGet(url, null, autoRetry);
     }
 
+    public static Map<String, String> getBaseHeader() {
+        Map<String, String> defaultMap = new HashMap<>();
+        defaultMap.put("Content-Type", "application/json");
+        return defaultMap;
+    }
+
     public static String sendPost(String url, String param) {
-        return sendPost(url, param, null, true, true);
+        return sendPost(url, param, getBaseHeader(), true, true);
     }
 
     public static String sendPost(String url, String param, Boolean autoRetry) {

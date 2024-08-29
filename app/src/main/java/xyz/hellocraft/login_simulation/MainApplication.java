@@ -33,6 +33,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 
+import com.github.gzuliyujiang.oaid.DeviceIdentifier;
 import com.hjq.toast.Toaster;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -114,6 +115,7 @@ public class MainApplication extends Application implements LifecycleOwner {
         strategy.setCrashHandleCallback(crashHandler);
         CrashReport.setIsDevelopmentDevice(getApplicationContext(), DEBUG);
         CrashReport.initCrashReport(getApplicationContext(), "4bfa7b722e", DEBUG, strategy);
+        DeviceIdentifier.register(this);
         DEBUG_MODE = app_pref.getBoolean("debug_mode", false) || DEBUG;
         String dirPath = getExternalFilesDir(null) + "/logs/";
         File dir = new File(dirPath);
