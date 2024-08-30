@@ -1,3 +1,4 @@
+import com.github.megatronking.stringfog.plugin.StringFogExtension
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -12,7 +13,7 @@ plugins {
 apply<ASMPlugin>()
 apply(plugin = "stringfog")
 
-configure<com.github.megatronking.stringfog.plugin.StringFogExtension> {
+configure<StringFogExtension> {
     implementation =
         "com.github.megatronking.stringfog.xor.StringFogImpl"// 必要：加解密库的实现类路径，需和上面配置的加解密算法库一致。
     enable = true// 可选：加密开关，默认开启。
@@ -74,7 +75,7 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 97
+        versionCode = 98
         versionName = "1.9.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -84,6 +85,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -93,7 +95,7 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-24w35a.dev"
+                "-snapshot-24w35b.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -215,7 +217,7 @@ dependencies {
         // 如果华为官方广告标识服务SDK下载失败或编译报错的话，可考虑在 build.gradle 中增加以下配置：
         // repositories { maven { url 'https://developer.huawei.com/repo' } }
         // runtimeOnly "com.huawei.hms:ads-identifier:3.4.62.300"
-        exclude("com.huawei.hms", "ads-identifier")
+//        exclude("com.huawei.hms", "ads-identifier")
         // 荣耀官方广告标识服务SDK同理：
         // repositories { maven { url 'https://developer.hihonor.com/repo' } }
         // runtimeOnly "com.hihonor.mcs:ads-identifier:1.0.2.301"
