@@ -124,6 +124,7 @@
             android:required="false" />
 
         <service
+            android:foregroundServiceType="dataSync"
             android:name="cn.leancloud.push.PushService"
             android:exported="true"
             tools:ignore="ExportedService" />

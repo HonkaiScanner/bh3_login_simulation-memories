@@ -7,10 +7,10 @@ buildscript {
     }
     dependencies {
         classpath(kotlin("gradle-plugin", version = "1.7.20"))
-        classpath("com.android.tools.build:gradle:7.4.2")
-        classpath("com.huawei.agconnect:agcp:1.7.3.300")
-        classpath("com.github.megatronking.stringfog:gradle-plugin:4.0.1")
-        classpath("com.github.megatronking.stringfog:xor:4.0.1")
+        classpath("com.android.tools.build:gradle:8.5.2")
+        classpath("com.huawei.agconnect:agcp:1.9.1.301")
+        classpath("com.github.megatronking.stringfog:gradle-plugin:5.2.0")
+        classpath("com.github.megatronking.stringfog:xor:5.0.0")
 // NOTE: Do not place your application dependencies here; they belong
 // in the individual module build.gradle files
     }
@@ -23,5 +23,5 @@ plugins {
 }
 
 tasks.register("clean", Delete::class.java) {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory)
 }
