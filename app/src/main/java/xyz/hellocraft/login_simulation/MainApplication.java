@@ -36,6 +36,10 @@ import androidx.lifecycle.LifecycleRegistry;
 import com.github.gzuliyujiang.oaid.DeviceIdentifier;
 import com.hjq.toast.Toaster;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.tencent.shiply.processor.DiffPkgHandler;
+import com.tencent.shiply.processor.OriginBasePkgFile;
+import com.tencent.upgrade.bean.UpgradeConfig;
+import com.tencent.upgrade.core.UpgradeManager;
 
 import org.json.JSONObject;
 
@@ -334,6 +338,11 @@ public class MainApplication extends Application implements LifecycleOwner {
 
         }).start();
 
+        UpgradeConfig.Builder builder = new UpgradeConfig.Builder();
+        builder.diffPkgHandler(new DiffPkgHandler());
+        builder.basePkgFileForDiffUpgrade(new OriginBasePkgFile());
+        UpgradeConfig config = builder.appId("22177a090c").appKey("316884b4-4e35-4f80-877c-4a7d411e7fce").printInternalLog(DEBUG_MODE).build();
+        UpgradeManager.getInstance().init(this, config);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);

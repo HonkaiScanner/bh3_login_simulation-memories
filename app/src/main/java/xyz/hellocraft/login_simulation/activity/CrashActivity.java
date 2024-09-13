@@ -1,5 +1,6 @@
 package xyz.hellocraft.login_simulation.activity;
 
+import static xyz.hellocraft.login_simulation.data.Constant.DEBUG_MODE;
 import static xyz.hellocraft.login_simulation.utils.Tools.traverseFilesAndDelete;
 
 import android.content.ActivityNotFoundException;
@@ -34,11 +35,22 @@ public class CrashActivity extends BaseActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(binding.getRoot());
         String crashReportName = Tools.getString(this, "crash-report-name");
+        String debugLogName = Tools.getString(this, "recent_debug_log");
         binding.textView5.setText(getString(R.string.crash_hint2).replace("{packageName}", getPackageName()));
         binding.textView6.setText(crashReportName);
         binding.textView7.setText(Tools.getUUID(this));
         binding.textView8.setText(Tools.getString(this, "installationId"));
         binding.button.setOnClickListener(view -> openAssignFolder(getExternalFilesDir(null) + "/crash-report/" + crashReportName));
+
+        if (DEBUG_MODE && !debugLogName.equals("NONE")) {
+            runOnUiThread(() -> {
+                try {
+                    binding.buttonDebugLog.setVisibility(View.VISIBLE);
+                } catch (Exception ignore) {
+                }
+            });
+            binding.buttonDebugLog.setOnClickListener(v -> openAssignFolder(getExternalFilesDir(null) + "/logs/" + debugLogName));
+        }
 
 
         try {

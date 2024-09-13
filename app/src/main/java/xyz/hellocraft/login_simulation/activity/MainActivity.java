@@ -44,6 +44,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
+import com.tencent.upgrade.core.DefaultUpgradeStrategyRequestCallback;
+import com.tencent.upgrade.core.UpgradeManager;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -454,6 +456,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             new Thread(update_rb).start();
             new Thread(bh_update_rb).start();
             new Thread(device_fp_refresh_runnable).start();
+            UpgradeManager.getInstance().checkUpgrade(false, null, new DefaultUpgradeStrategyRequestCallback());
         }
 
         if (Tools.getBoolean(this, "has_crash") && !app_pref.getBoolean("no_crash_page", false)) {

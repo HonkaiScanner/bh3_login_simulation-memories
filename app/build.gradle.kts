@@ -77,7 +77,7 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 99
+        versionCode = 102
         versionName = "1.9.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -97,7 +97,7 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-24w35c.dev"
+                "-snapshot-24w37c.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -158,6 +158,18 @@ android {
         }
 
 
+    }
+    packaging {
+        jniLibs {
+            pickFirsts.addAll(
+                setOf(
+                    "lib/x86/libc++_shared.so",
+                    "lib/x86_64/libc++_shared.so",
+                    "lib/arm64-v8a/libc++_shared.so",
+                    "lib/armeabi-v7a/libc++_shared.so"
+                )
+            )
+        }
     }
 
 }
@@ -225,6 +237,14 @@ dependencies {
         // runtimeOnly "com.hihonor.mcs:ads-identifier:1.0.2.301"
         exclude("com.hihonor.mcs", "ads-identifier")
     }
+
+
+    implementation("com.tencent.shiply:upgrade:2.2.0")
+    {
+        exclude("com.tencent", "mmkv")
+    }
+    implementation("com.tencent.shiply:upgrade-ui:2.2.0") // 弹框ui相关，业务方如果自己自定义弹框，可以不依赖这个库
+    implementation("com.tencent.shiply:upgrade-diff-pkg-patch:2.2.0")
 //    testImplementation 'junit:junit:4.13.2'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'

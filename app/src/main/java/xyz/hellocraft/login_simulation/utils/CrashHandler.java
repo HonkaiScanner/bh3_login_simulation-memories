@@ -45,6 +45,13 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
     public synchronized Map<String, String> onCrashHandleStart(int i, String s, String s1, String s2) {
 
         Log.e(TAG, "DETECT CRASH");
+
+        Log.d(TAG, "MARK CRASH ACTIVITY");
+
+        Tools.saveBoolean(mContext, "has_crash", true);
+        Tools.saveBoolean(mContext, "last_login_succeed", false);
+        Tools.saveString(mContext, "recent_debug_log", Logger.getDebugLogName());
+
         String crashInfo = convert2StackDump(s, s1, s2);
         try {
             Log.d(TAG, "DUMP TO SDCARD");
@@ -59,10 +66,6 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
         Log.d(TAG, "CRASH DETAIL");
         Log.d(TAG, crashInfo);
 
-        Log.d(TAG, "MARK CRASH ACTIVITY");
-
-        Tools.saveBoolean(mContext, "has_crash", true);
-        Tools.saveBoolean(mContext, "last_login_succeed", false);
 
         ActivityManager.getInstance().clearActivity();
 

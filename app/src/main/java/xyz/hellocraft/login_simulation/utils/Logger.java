@@ -14,10 +14,12 @@ import com.google.android.material.snackbar.Snackbar;
 import com.hjq.toast.Toaster;
 import com.tencent.bugly.crashreport.BuglyLog;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,9 +38,13 @@ public class Logger implements Serializable {
     private static ArrayList<String> logBlackList;
     private static LogLiveData logLiveData;
     private static FileWriter fileWriter;
+    private static FileWriter DEBUGLOGWRITER;
     private static BufferedWriter bufferedWriter;
+    private static BufferedWriter DEBUGLOGBUFFERWRITER;
     private static File logFile;
+    private static File DEBUGLOGFILE;
     private static boolean logToFile = true;
+    private static boolean DEBUGLOG2FILE = true;
     private static final SimpleDateFormat logFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
 //    private static String blackListString;
 
@@ -49,6 +55,48 @@ public class Logger implements Serializable {
         createOutputStream();
         logLiveData = LogLiveData.getINSTANCE();
         DialogLiveData.getINSTANCE();
+        if (SAVE_ALL_LOGS && DEBUGLOG2FILE) {
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Runtime.getRuntime().exec("logcat -c");
+                        Process process = Runtime.getRuntime().exec("logcat");
+                        BufferedReader bufferedReader = new BufferedReader(
+                                new InputStreamReader(process.getInputStream()));
+
+                        d("DEBUG_LOG_WRITER",
+                                "LOGCAT INSTANCE CREATED");
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            DEBUGLOGBUFFERWRITER.write(line);
+                            DEBUGLOGBUFFERWRITER.write("\n");
+                            DEBUGLOGBUFFERWRITER.flush();
+                        }
+                    } catch (Exception e) {
+                        d("DEBUG_LOG_WRITER",
+                                "read logcat process failed. message: "
+                                        + e.getMessage());
+                    } finally {
+                        if (null != DEBUGLOGBUFFERWRITER) {
+                            try {
+                                DEBUGLOGBUFFERWRITER.close();
+                                DEBUGLOGBUFFERWRITER = null;
+                            } catch (IOException e) {
+                                // Do nothing
+                            }
+                        }
+                        DEBUGLOG2FILE = false;
+                    }
+                }
+            }.start();
+
+        }
+    }
+
+    public static String getDebugLogName() {
+        if (DEBUGLOGFILE.exists()) return DEBUGLOGFILE.getName();
+        return "NONE";
     }
 
     public static Logger getLogger(Context context) {
@@ -264,7 +312,7 @@ public class Logger implements Serializable {
             File[] logs = dir.listFiles();
             if (logs != null) {
                 for (File log : logs) {
-                    String oldDate = log.getName().replace("logs-", "").replace(".log", "");
+                    String oldDate = log.getName().replace("logs-", "").replace("debug-", "").replace(".log", "");
                     if (daysBetween(nowDate, oldDate) > 14) {
                         log.delete();
                     }
@@ -292,6 +340,14 @@ public class Logger implements Serializable {
                 logToFile = false;
             }
         }
+        DEBUGLOGFILE = new File(dirPath + "logs-debug-" + time + ".log");
+        if (!DEBUGLOGFILE.exists()) {
+            try {
+                DEBUGLOGFILE.createNewFile();
+            } catch (Exception ignore) {
+                DEBUGLOG2FILE = false;
+            }
+        }
     }
 
     private static void createOutputStream() {
@@ -309,6 +365,20 @@ public class Logger implements Serializable {
             bufferedWriter.flush();
         } catch (IOException e) {
             logToFile = false;
+        }
+        try {
+            if (DEBUGLOGWRITER == null) {
+                if (!(DEBUGLOGFILE != null && DEBUGLOGFILE.exists())) {
+                    checkLogFile();
+                }
+                DEBUGLOGWRITER = new FileWriter(DEBUGLOGFILE, true);
+            }
+            DEBUGLOGBUFFERWRITER = new BufferedWriter(DEBUGLOGWRITER);
+            DEBUGLOGBUFFERWRITER.write("========== " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(new Date(System.currentTimeMillis())) + " ==========");
+            DEBUGLOGBUFFERWRITER.newLine();
+            DEBUGLOGBUFFERWRITER.flush();
+        } catch (Exception ignore) {
+            DEBUGLOG2FILE = false;
         }
     }
 
