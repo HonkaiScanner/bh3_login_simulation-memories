@@ -61,7 +61,7 @@ public class Logger implements Serializable {
                 public void run() {
                     try {
                         Runtime.getRuntime().exec("logcat -c");
-                        Process process = Runtime.getRuntime().exec("logcat");
+                        Process process = Runtime.getRuntime().exec("logcat --pid=" + android.os.Process.myPid());
                         BufferedReader bufferedReader = new BufferedReader(
                                 new InputStreamReader(process.getInputStream()));
 
