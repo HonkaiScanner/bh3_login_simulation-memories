@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.haocen2004.login_simulation.R;
+import com.tencent.upgrade.core.UpgradeManager;
+import com.tencent.upgrade.core.UpgradeReqCallbackForUserManualCheck;
 
 import java.util.Objects;
 
@@ -27,6 +29,7 @@ import xyz.hellocraft.login_simulation.data.dialog.ButtonData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
+import xyz.hellocraft.login_simulation.utils.Logger;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     private final String TAG = "Settings";
@@ -41,6 +44,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         SharedPreferences app_pref = getDefaultSharedPreferences(getContext());
+
+        findPreference("check_update_now").setOnPreferenceClickListener((preference -> {
+            Logger.d("check_update_now", "on_click");
+            UpgradeManager.getInstance().checkUpgrade(true, null, new UpgradeReqCallbackForUserManualCheck());
+            return false;
+        }));
 
         findPreference("fab_save_img").setOnPreferenceChangeListener(((preference, newValue) -> {
             if ((Boolean) newValue) {

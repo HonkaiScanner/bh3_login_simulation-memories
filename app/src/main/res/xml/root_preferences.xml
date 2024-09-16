@@ -14,6 +14,9 @@
             android:defaultValue="true"
             android:key="check_update"
             android:title="@string/settings_update" />
+        <DropDownPreference
+            android:key="check_update_now"
+            android:title="@string/check_update_now" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="follow_system_accent"

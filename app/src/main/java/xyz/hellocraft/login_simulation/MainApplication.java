@@ -45,7 +45,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import cn.leancloud.LCInstallation;
 import cn.leancloud.LCObject;
@@ -341,6 +343,14 @@ public class MainApplication extends Application implements LifecycleOwner {
         UpgradeConfig.Builder builder = new UpgradeConfig.Builder();
         builder.diffPkgHandler(new DiffPkgHandler());
         builder.basePkgFileForDiffUpgrade(new OriginBasePkgFile());
+        if (DEBUG_MODE) {
+            Map<String, String> hashMap = new HashMap<>();
+            hashMap.put("channel", "snapshot");
+            hashMap.put("versionName", VERSION_NAME);
+            hashMap.put("versionCode", VERSION_CODE + "");
+            builder.userId("snapshot-" + VERSION_CODE);
+            builder.customParams(hashMap);
+        }
         UpgradeConfig config = builder.appId("22177a090c").appKey("316884b4-4e35-4f80-877c-4a7d411e7fce").printInternalLog(DEBUG_MODE).build();
         UpgradeManager.getInstance().init(this, config);
 
