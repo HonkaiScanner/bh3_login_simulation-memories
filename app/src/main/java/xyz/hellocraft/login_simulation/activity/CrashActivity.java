@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,6 +20,8 @@ import com.github.haocen2004.login_simulation.databinding.ActivityCrashBinding;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import xyz.hellocraft.login_simulation.utils.Logger;
@@ -86,8 +89,14 @@ public class CrashActivity extends BaseActivity {
                         FileReader fileReader = new FileReader(file);
                         BufferedReader bufferedReader = new BufferedReader(fileReader);
                         String nextLine;
+                        StringBuilder crashInfo = new StringBuilder();
                         while ((nextLine = bufferedReader.readLine()) != null) {
-                            stringBuilder.append(nextLine).append("\n");
+                            crashInfo.append(nextLine).append("\n");
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            stringBuilder.append(URLEncoder.encode(crashInfo.toString(), StandardCharsets.UTF_8));
+                        } else {
+                            stringBuilder.append(URLEncoder.encode(crashInfo.toString(), "UTF-8"));
                         }
                         String ret = Network.sendPost("https://pastebin.com/api/api_post.php", stringBuilder.toString(), null, true, false);
                         Logger.d("pastebin", ret);
