@@ -8,7 +8,6 @@ import androidx.preference.PreferenceManager;
 import com.github.haocen2004.login_simulation.R;
 
 import xyz.hellocraft.login_simulation.login.Bilibili;
-import xyz.hellocraft.login_simulation.login.Flyme;
 import xyz.hellocraft.login_simulation.login.Huawei;
 import xyz.hellocraft.login_simulation.login.LoginCallback;
 import xyz.hellocraft.login_simulation.login.LoginImpl;
@@ -103,9 +102,9 @@ public class LoginInstanceManager {
                 case "Oppo":
                     mLoginImpl = new Oppo(mContext, mCallback);
                     break;
-                case "Flyme":
-                    mLoginImpl = new Flyme(mContext, mCallback);
-                    break;
+//                case "Flyme":
+//                    mLoginImpl = new Flyme(mContext, mCallback);
+//                    break;
                 case "YYB":
                     mLoginImpl = new Tencent(mContext, mCallback);
                     break;
