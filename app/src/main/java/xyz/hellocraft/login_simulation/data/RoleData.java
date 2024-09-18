@@ -45,21 +45,6 @@ public class RoleData {
                 if (feedback != null) {
                     JSONObject oaserver = new JSONObject(feedback);
                     Logger.i("GetOAServer", "handleMessage: " + oaserver);
-//                    if (!oaserver.getBoolean("is_data_ready")) {
-//                        String msg1 = oaserver.getString("msg");
-//                        if (msg1.contains("更新"))
-//                            msg1 = "崩坏3维护中或热更新服务器离线\n请等待维护完成\n或尝试在设置里手动更改崩坏3版本并重新启动";
-//                        callback.onLoginFailed();
-//                        Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
-//                        return;
-//                    } else if (oaserver.has("stop_end_time")) {
-//                        if (oaserver.getLong("server_cur_time") < oaserver.getLong("stop_end_time")) {
-//                            String msg1 = "崩坏3停服维护中\n请等待维护完成后再尝试登陆\n";
-//                            callback.onLoginFailed();
-//                            Logger.getLogger(null).makeToast("OA服务器获取错误\n" + msg1);
-//                            return;
-//                        }
-//                    }
                     if (oaserver.getInt("retcode") == 0) {
                         enc_oaserver = oaserver.getString("data");
                         is_setup = true;
@@ -140,9 +125,13 @@ public class RoleData {
         account_type = map.get("account_type");
         accountType = map.get("accountType");
         oa_req_key = map.get("oa_req_key");
-        is_setup = Boolean.parseBoolean(map.get("is_setup"));
         uc_sign = Boolean.parseBoolean(map.get("uc_sign"));
         this.callback = callback;
+        if (enc_oaserver == null) {
+            new Thread(getOA_runnable).start();
+        } else {
+            is_setup = true;
+        }
     }
 
     public String getOpen_id() {
@@ -207,10 +196,10 @@ public class RoleData {
         map.put("combo_token", combo_token);
         map.put("channel_id", channel_id);
         map.put("str_oaserver", str_oaserver);
+        map.put("enc_oaserver", enc_oaserver);
         map.put("account_type", account_type);
         map.put("accountType", accountType);
         map.put("oa_req_key", oa_req_key);
-        map.put("is_setup", Boolean.toString(is_setup));
         map.put("uc_sign", Boolean.toString(uc_sign));
         return map;
     }

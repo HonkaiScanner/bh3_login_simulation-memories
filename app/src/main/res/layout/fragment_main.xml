@@ -59,93 +59,95 @@
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/official_slot_select"
-            android:layout_width="wrap_content"
-            android:layout_height="56dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/slotSelectGroup"
-            app:selectionRequired="true"
-            app:singleSelection="true"
-            tools:visibility="gone">
+            <!--        <com.google.android.material.button.MaterialButtonToggleGroup-->
+            <!--            android:id="@+id/official_slot_select"-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="56dp"-->
+            <!--            android:layout_marginTop="16dp"-->
+            <!--            app:layout_constraintEnd_toEndOf="parent"-->
+            <!--            app:layout_constraintStart_toStartOf="parent"-->
+            <!--            app:layout_constraintTop_toBottomOf="@+id/slotSelectGroup"-->
+            <!--            app:selectionRequired="true"-->
+            <!--            app:singleSelection="true"-->
+            <!--            tools:visibility="gone">-->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/slot1"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/slot1"
-                app:strokeColor="@color/gray"
-                app:strokeWidth="1dp" />
+            <!--            <com.google.android.material.button.MaterialButton-->
+            <!--                android:id="@+id/slot1"-->
+            <!--                style="@style/Widget.Material3.Button.OutlinedButton"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:clickable="true"-->
+            <!--                android:focusable="true"-->
+            <!--                android:text="@string/slot1"-->
+            <!--                app:strokeColor="@color/gray"-->
+            <!--                app:strokeWidth="1dp" />-->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/slot2"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/slot2"
-                app:strokeColor="@color/gray"
-                app:strokeWidth="1dp" />
+            <!--            <com.google.android.material.button.MaterialButton-->
+            <!--                android:id="@+id/slot2"-->
+            <!--                style="@style/Widget.Material3.Button.OutlinedButton"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:clickable="true"-->
+            <!--                android:focusable="true"-->
+            <!--                android:text="@string/slot2"-->
+            <!--                app:strokeColor="@color/gray"-->
+            <!--                app:strokeWidth="1dp" />-->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/slot3"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/slot3"
-                app:strokeColor="@color/gray"
-                app:strokeWidth="1dp" />
+            <!--            <com.google.android.material.button.MaterialButton-->
+            <!--                android:id="@+id/slot3"-->
+            <!--                style="@style/Widget.Material3.Button.OutlinedButton"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:clickable="true"-->
+            <!--                android:focusable="true"-->
+            <!--                android:text="@string/slot3"-->
+            <!--                app:strokeColor="@color/gray"-->
+            <!--                app:strokeWidth="1dp" />-->
 
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+            <!--        </com.google.android.material.button.MaterialButtonToggleGroup>-->
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/official_type_sel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/official_slot_select"
-            app:selectionRequired="true"
-            app:singleSelection="true">
+            <!--            <com.google.android.material.button.MaterialButtonToggleGroup-->
+            <!--                android:id="@+id/official_type_sel"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginTop="8dp"-->
+            <!--                android:orientation="horizontal"-->
+            <!--                android:visibility="gone"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toBottomOf="@+id/official_slot_select"-->
+            <!--                app:selectionRequired="true"-->
+            <!--                app:singleSelection="true"-->
+            <!--                tools:visibility="gone">-->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/radioPc"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/sel_pc" />
+            <!--                <com.google.android.material.button.MaterialButton-->
+            <!--                    android:id="@+id/radioPc"-->
+            <!--                    style="@style/Widget.Material3.Button.OutlinedButton"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:clickable="true"-->
+            <!--                    android:focusable="true"-->
+            <!--                    android:text="@string/sel_pc" />-->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/radioAndroid"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/sel_android" />
+            <!--                <com.google.android.material.button.MaterialButton-->
+            <!--                    android:id="@+id/radioAndroid"-->
+            <!--                    style="@style/Widget.Material3.Button.OutlinedButton"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:clickable="true"-->
+            <!--                    android:focusable="true"-->
+            <!--                    android:text="@string/sel_android" />-->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/radioIOS"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/sel_ios" />
+            <!--                <com.google.android.material.button.MaterialButton-->
+            <!--                    android:id="@+id/radioIOS"-->
+            <!--                    style="@style/Widget.Material3.Button.OutlinedButton"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:clickable="true"-->
+            <!--                    android:focusable="true"-->
+            <!--                    android:text="@string/sel_ios" />-->
 
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+            <!--            </com.google.android.material.button.MaterialButtonToggleGroup>-->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_scan"
@@ -160,7 +162,7 @@
             app:iconGravity="textStart"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/official_type_sel" />
+            app:layout_constraintTop_toBottomOf="@+id/slotSelectGroup" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_selpic"

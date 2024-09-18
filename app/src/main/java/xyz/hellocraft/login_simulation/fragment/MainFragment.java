@@ -7,7 +7,6 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static java.lang.Integer.parseInt;
 import static xyz.hellocraft.login_simulation.data.Constant.CHECK_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.HAS_ACCOUNT;
-import static xyz.hellocraft.login_simulation.data.Constant.OFFICIAL_TYPE;
 import static xyz.hellocraft.login_simulation.data.Constant.QUICK_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.SP_CHECKED;
 import static xyz.hellocraft.login_simulation.utils.Tools.changeToWDJ;
@@ -48,7 +47,6 @@ import androidx.fragment.app.Fragment;
 
 import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.FragmentMainBinding;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -88,7 +86,7 @@ import xyz.hellocraft.login_simulation.utils.QRScanner;
 import xyz.hellocraft.login_simulation.utils.SocketHelper;
 import xyz.hellocraft.login_simulation.utils.Tools;
 
-public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MaterialButtonToggleGroup.OnButtonCheckedListener, LoginCallback {
+public class MainFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, LoginCallback {
 
     private final String TAG = "MainFragment";
     private final Map<String, Chip> chipMap = new HashMap<>();
@@ -133,23 +131,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
             if (bundle != null) {
                 String[] result = bundle.getStringArray(Constant.INTENT_EXTRA_KEY_QR_SCAN);
-                DialogData dialogData = new DialogData("扫描结果", Arrays.toString(result));
-                dialogData.setPositiveButtonData(new ButtonData("关闭") {
-                    @Override
-                    public void callback(DialogHelper dialogHelper) {
-                        super.callback(dialogHelper);
-                    }
-                });
-                dialogData.setNeutralButtonData(new ButtonData("复制到剪贴板") {
-                    @Override
-                    public void callback(DialogHelper dialogHelper) {
-                        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("scan_result", Arrays.toString(result));
-                        clipboard.setPrimaryClip(clip);
-                        makeToast("已复制到剪贴板");
-                        super.callback(dialogHelper);
-                    }
-                });
+
                 if (result != null) {
                     QRScanner qrScanner;
                     if (loginImpl != null && loginImpl.isLogin()) {
@@ -159,13 +141,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                             qrScanner = new QRScanner(activity, loginImpl.getRole());
                         }
                         if (!qrScanner.parseUrl(result)) {
-                            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                            DialogLiveData.getINSTANCE().addNewDialog(getClipBoardTextDialog(result));
                             makeToast(Arrays.toString(result));
                             return;
                         }
                         qrScanner.start();
                     } else {
-                        DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                        DialogLiveData.getINSTANCE().addNewDialog(getClipBoardTextDialog(result));
                     }
                 } else {
                     makeToast(R.string.error_scan);
@@ -188,17 +170,21 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 for (String s : result) {
                     Logger.d(TAG, "album result:" + s);
                 }
-                if (result.size() >= 1) {
+                if (!result.isEmpty()) {
                     String[] url = result.toArray(new String[0]);
-                    QRScanner qrScanner;
-                    if (isOfficial) {
-                        qrScanner = new QRScanner(activity, true);
-                    } else {
-                        qrScanner = new QRScanner(activity, loginImpl.getRole());
-                    }
+                    if (loginImpl != null && loginImpl.isLogin()) {
+                        QRScanner qrScanner;
+                        if (isOfficial) {
+                            qrScanner = new QRScanner(activity, true);
+                        } else {
+                            qrScanner = new QRScanner(activity, loginImpl.getRole());
+                        }
 
-                    if (!qrScanner.parseUrl(url)) return;
-                    qrScanner.start();
+                        if (!qrScanner.parseUrl(url)) return;
+                        qrScanner.start();
+                    } else {
+                        DialogLiveData.getINSTANCE().addNewDialog(getClipBoardTextDialog(url));
+                    }
 
                 } else {
                     Log.makeToast("未找到二维码");
@@ -208,6 +194,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         }
     });
+    //    private int currType = 999;
+    private boolean currLoginTry = false;
     private FabScanner fabScanner;
     //Constant.REQ_PERM_WINDOW
     private final ActivityResultLauncher<Intent> reqPermWindowLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
@@ -231,8 +219,27 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private SocketHelper socketHelper;
     private boolean loginProgress = false;
     private boolean SDKInit = false;
-    private int currType = 999;
-    private boolean currLoginTry = false;
+
+    private DialogData getClipBoardTextDialog(String[] result) {
+        DialogData dialogData = new DialogData("扫描结果", Arrays.toString(result));
+        dialogData.setPositiveButtonData(new ButtonData("关闭") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                super.callback(dialogHelper);
+            }
+        });
+        dialogData.setNeutralButtonData(new ButtonData("复制到剪贴板") {
+            @Override
+            public void callback(DialogHelper dialogHelper) {
+                ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("scan_result", Arrays.toString(result));
+                clipboard.setPrimaryClip(clip);
+                makeToast("已复制到剪贴板");
+                super.callback(dialogHelper);
+            }
+        });
+        return dialogData;
+    }
     private boolean needRestart = false;
     private boolean accSwitch = false;
     private LoginInstanceManager loginInstanceManager;
@@ -404,14 +411,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         return binding.getRoot();
     }
     private String cacheServerType = "";
+
     @SuppressLint("SetTextI18n")
     private void refreshView() {
         Logger.d("MainFragment", "reloading View");
         String server_type;
-        binding.officialSlotSelect.setVisibility(View.GONE);
+//        binding.officialSlotSelect.setVisibility(View.GONE);
         binding.slotSelectGroup.setVisibility(View.GONE);
 //        binding.tokenCheckBox.setVisibility(View.GONE);
-        binding.officialTypeSel.setVisibility(View.GONE);
+//        binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
         binding.btnHwAccountCenter.setVisibility(View.GONE);
         if (!HAS_ACCOUNT && !SP_CHECKED) {
@@ -424,19 +432,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //                binding.officialSlotSelect.setVisibility(View.VISIBLE);
                 binding.slotSelectGroup.setVisibility(View.VISIBLE);
 //                binding.tokenCheckBox.setVisibility(View.VISIBLE);
-                binding.officialTypeSel.setVisibility(View.VISIBLE);
+//                binding.officialTypeSel.setVisibility(View.VISIBLE);
                 initSlotSelectGroup("official_user_");
-                switch (pref.getInt("official_type", 0)) {
-                    case 1:
-                        binding.officialTypeSel.check(binding.radioPc.getId());
-                        break;
-                    case 2:
-                        binding.officialTypeSel.check(binding.radioIOS.getId());
-                        break;
-                    default:
-                        binding.officialTypeSel.check(binding.radioAndroid.getId());
-                        break;
-                }
+//                switch (pref.getInt("official_type", 0)) {
+//                    case 1:
+//                        binding.officialTypeSel.check(binding.radioPc.getId());
+//                        break;
+//                    case 2:
+//                        binding.officialTypeSel.check(binding.radioIOS.getId());
+//                        break;
+//                    default:
+//                        binding.officialTypeSel.check(binding.radioAndroid.getId());
+//                        break;
+//                }
 //                binding.tokenCheckBox.setChecked(pref.getBoolean("use_token", false));
                 break;
             case "Bilibili":
@@ -768,8 +776,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //        binding.btnLogout.setOnClickListener(this);
         binding.cardViewMain.cardView2.setOnClickListener(this);
         binding.cardViewMain.cardView2.setOnLongClickListener(this);
-        binding.officialSlotSelect.addOnButtonCheckedListener(this);
-        binding.officialTypeSel.addOnButtonCheckedListener(this);
+//        binding.officialSlotSelect.addOnButtonCheckedListener(this);
+//        binding.officialTypeSel.addOnButtonCheckedListener(this);
 //        binding.tokenCheckBox.setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
         binding.checkBoxWDJ.setOnCheckedChangeListener((compoundButton, b) -> {
             SharedPreferences ucSharedPref = activity.getSharedPreferences("cn.uc.gamesdk.pref", 0);
@@ -794,7 +802,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         });
         binding.btnSelpic.setOnClickListener(view1 -> {
             try {
-                if (loginImpl.isLogin()) {
+//                if (loginImpl.isLogin()) {
 
                     Intent pickIntent;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
@@ -808,9 +816,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     reqGalleryScanLauncher.launch(pickIntent);
 
 
-                } else {
-                    makeToast(R.string.error_not_login);
-                }
+//                } else {
+//                    makeToast(R.string.error_not_login);
+//                }
             } catch (Exception e) {
                 makeToast(R.string.error_not_login);
             }
@@ -929,12 +937,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     private void switchButtonState(boolean newState) {
         binding.cardViewMain.cardView2.setEnabled(newState);
-        binding.slot1.setEnabled(newState);
-        binding.slot2.setEnabled(newState);
-        binding.slot3.setEnabled(newState);
-        binding.radioIOS.setEnabled(newState);
-        binding.radioAndroid.setEnabled(newState);
-        binding.radioPc.setEnabled(newState);
         binding.checkBoxWDJ.setEnabled(newState);
 //        binding.tokenCheckBox.setEnabled(newState);
         binding.btnScan.setEnabled(newState);
@@ -1190,84 +1192,84 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
 
-    private void resetOfficialServerType() {
-        int i = getDefaultSharedPreferences(activity).getInt("official_type", 0);
-        Logger.d(TAG, "resetOfficialServerType: " + i);
-        switch (i) {
-            case 1:
-                OFFICIAL_TYPE = "pc01";
-                break;
-            case 2:
-                OFFICIAL_TYPE = "ios01";
-                break;
-            default:
-                OFFICIAL_TYPE = "android01";
-                break;
-        }
-        Logger.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
-    }
+//    private void resetOfficialServerType() {
+//        int i = getDefaultSharedPreferences(activity).getInt("official_type", 0);
+//        Logger.d(TAG, "resetOfficialServerType: " + i);
+//        switch (i) {
+//            case 1:
+//                OFFICIAL_TYPE = "pc01";
+//                break;
+//            case 2:
+//                OFFICIAL_TYPE = "ios01";
+//                break;
+//            default:
+//                OFFICIAL_TYPE = "android01";
+//                break;
+//        }
+//        Logger.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
+//    }
 
-    @Override
-    public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-        if (!isChecked) return;
-        if (loginProgress) {
-            Log.makeToast("当前正在登陆进程中，无法切换此项目");
-            Logger.d(TAG, "登陆中 已阻止切换服务器或账户槽位");
-            return;
-        }
-        if (group.equals(binding.officialTypeSel)) {
-            if (checkedId == currType) {
-                return;
-            } else if (currType == 999) {
-                currType = checkedId;
-                return;
-            }
-        }
-
-        SharedPreferences app_pref = getDefaultSharedPreferences(activity);
-        View viewById = activity.findViewById(checkedId);
-//        if (binding.slot1.equals(viewById)) {
-//            app_pref.edit().putInt("official_slot", 1).apply();
-//            Logger.d(TAG, "onCheckedChanged: Switch To Slot 1");
-//            currSlot = checkedId;
-//        } else if (binding.slot2.equals(viewById)) {
-//            app_pref.edit().putInt("official_slot", 2).apply();
-//            Logger.d(TAG, "onCheckedChanged: Switch To Slot 2");
-//            currSlot = checkedId;
-//        } else if (binding.slot3.equals(viewById)) {
-//            app_pref.edit().putInt("official_slot", 3).apply();
-//            Logger.d(TAG, "onCheckedChanged: Switch To Slot 3");
-//            currSlot = checkedId;
-//        } else
-        if (binding.radioPc.equals(viewById)) {
-            app_pref.edit().putInt("official_type", 1).apply();
-            Logger.d(TAG, "onCheckedChanged: Switch To PC");
-            resetOfficialServerType();
-            currType = checkedId;
-        } else if (binding.radioAndroid.equals(viewById)) {
-            app_pref.edit().putInt("official_type", 0).apply();
-            Logger.d(TAG, "onCheckedChanged: Switch To Android");
-            resetOfficialServerType();
-            currType = checkedId;
-        } else if (binding.radioIOS.equals(viewById)) {
-            app_pref.edit().putInt("official_type", 2).apply();
-            Logger.d(TAG, "onCheckedChanged: Switch To IOS");
-            resetOfficialServerType();
-            currType = checkedId;
-        }
-        try {
-            if (loginImpl.isLogin() || accSwitch) {
-                accSwitch = true;
-                if (loginImpl instanceof Official || loginImpl instanceof Bilibili) {
-                    loginImpl = loginInstanceManager.getLoginImpl(true);
-                }
-                refreshView();
-                makeToast("切换后需重新登录");
-            }
-        } catch (Exception ignore) {
-        }
-//        Toast.makeText(getContext(), i+"", Toast.LENGTH_SHORT).show();
-    }
+//    @Override
+//    public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+//        if (!isChecked) return;
+//        if (loginProgress) {
+//            Log.makeToast("当前正在登陆进程中，无法切换此项目");
+//            Logger.d(TAG, "登陆中 已阻止切换服务器或账户槽位");
+//            return;
+//        }
+////        if (group.equals(binding.officialTypeSel)) {
+////            if (checkedId == currType) {
+////                return;
+////            } else if (currType == 999) {
+////                currType = checkedId;
+////                return;
+////            }
+////        }
+//
+////        SharedPreferences app_pref = getDefaultSharedPreferences(activity);
+////        View viewById = activity.findViewById(checkedId);
+////        if (binding.slot1.equals(viewById)) {
+////            app_pref.edit().putInt("official_slot", 1).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To Slot 1");
+////            currSlot = checkedId;
+////        } else if (binding.slot2.equals(viewById)) {
+////            app_pref.edit().putInt("official_slot", 2).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To Slot 2");
+////            currSlot = checkedId;
+////        } else if (binding.slot3.equals(viewById)) {
+////            app_pref.edit().putInt("official_slot", 3).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To Slot 3");
+////            currSlot = checkedId;
+////        } else
+////        if (binding.radioPc.equals(viewById)) {
+////            app_pref.edit().putInt("official_type", 1).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To PC");
+////            resetOfficialServerType();
+////            currType = checkedId;
+////        } else if (binding.radioAndroid.equals(viewById)) {
+////            app_pref.edit().putInt("official_type", 0).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To Android");
+////            resetOfficialServerType();
+////            currType = checkedId;
+////        } else if (binding.radioIOS.equals(viewById)) {
+////            app_pref.edit().putInt("official_type", 2).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To IOS");
+////            resetOfficialServerType();
+////            currType = checkedId;
+////        }
+//        try {
+//            if (loginImpl.isLogin() || accSwitch) {
+//                accSwitch = true;
+//                if (loginImpl instanceof Official || loginImpl instanceof Bilibili) {
+//                    loginImpl = loginInstanceManager.getLoginImpl(true);
+//                }
+//                refreshView();
+//                makeToast("切换后需重新登录");
+//            }
+//        } catch (Exception ignore) {
+//        }
+////        Toast.makeText(getContext(), i+"", Toast.LENGTH_SHORT).show();
+//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
