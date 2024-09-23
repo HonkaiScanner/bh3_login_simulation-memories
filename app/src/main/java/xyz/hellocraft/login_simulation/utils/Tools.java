@@ -139,8 +139,20 @@ public class Tools {
         Map<String, String> headerMap = new HashMap<>();
         Map<String, Object> oaMap = new HashMap<>();
         long currentMs = System.currentTimeMillis();
-        oaMap.put("x-req-openid", roleData.getOpen_id());
-        headerMap.put("x-req-openid", roleData.getOpen_id());
+        String open_id = roleData.getOpen_id();
+        if (open_id.isEmpty()) {
+            open_id = roleData.getOa_req_key() + "_" + (deviceId == null ? deviceId : "null");
+        }
+        oaMap.put("x-req-openid", open_id);
+        headerMap.put("x-req-openid", open_id);
+        try {
+            String deviceFp = DeviceFpManager.getInstance().getDeviceFp(null);
+            headerMap.put("x-req-fp", deviceFp);
+            oaMap.put("x-req-fp", deviceFp);
+        } catch (Exception ignore) {
+            headerMap.put("x-req-fp", "deviceFp");
+            oaMap.put("x-req-fp", "deviceFp");
+        }
         oaMap.put("x-req-name", VERSION_NAME + ":" + VERSION_CODE);
         oaMap.put("x-req-code", VERSION_CODE);
         headerMap.put("x-req-name", VERSION_NAME + ":" + VERSION_CODE);
@@ -153,6 +165,7 @@ public class Tools {
         StringBuilder processedSign = new StringBuilder();
         sign = new StringBuffer(sign).reverse().toString();
         int count = 0;
+        int offset = 0;
         do {
             count++;
             int pos = new Random().nextInt(sign.length() - 1);
@@ -161,11 +174,16 @@ public class Tools {
 
             processedSign.append(sign.substring(pos, pos2));
             salt.append(pos).append("|").append(pos2).append("|");
+            offset += pos;
+            offset += pos2;
         } while (processedSign.length() < sign.length());
         String splitSign = processedSign.toString().substring(0, sign.length());
-        headerMap.put("x-req-sign", splitSign);
+        oaMap.put("x-req-sign", splitSign);
+        String sign2 = Encrypt.HMACSign(oaMap, false);
+        headerMap.put("x-req-sign", splitSign.substring(0, 16) + sign2.substring(16));
         headerMap.put("x-req-salt", count + "|" + salt);
-        String getOAUrl = API_ENDPOINT + "/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + currentMs;
+        if (offset % 2 == 0) offset = offset * -1;
+        String getOAUrl = API_ENDPOINT + "/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + (currentMs + offset);
         String feedback = Network.sendGet(getOAUrl, headerMap, false);
         Logger.d("GetOAServer", feedback);
 //                Logger.getLogger(null).makeToast(json1.getString("msg"));

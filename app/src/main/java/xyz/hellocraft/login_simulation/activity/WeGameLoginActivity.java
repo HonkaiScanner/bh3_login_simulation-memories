@@ -69,8 +69,13 @@ public class WeGameLoginActivity extends BaseActivity {
                         URL url1 = new URL(url);
                         for (String s : url1.getQuery().split("&")) {
                             if (s.contains("uin")) {
-                                uin = s.split("=")[1];
-                                Logger.d(TAG, "find qq: " + uin);
+                                try {
+                                    uin = s.split("=")[1];
+                                    Logger.d(TAG, "find qq: " + uin);
+                                } catch (ArrayIndexOutOfBoundsException ignore) {
+                                    uin = "get uin err";
+                                    // get uin failed
+                                }
                             }
                         }
                     } catch (MalformedURLException e) {

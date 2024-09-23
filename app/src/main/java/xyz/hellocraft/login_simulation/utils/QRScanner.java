@@ -188,7 +188,7 @@ public class QRScanner {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            String spCheck = Network.sendGet(API_ENDPOINT + "/qr_check?ticket=" + ticket + "&open_id=" + open_id + "&device=" + Tools.getDeviceID(activity), true);
+            String spCheck = Network.sendGet(API_ENDPOINT + "/qr_check?ticket=" + ticket + "&open_id=" + open_id + "&device=" + Tools.getDeviceID(activity) + "&fp=" + DeviceFpManager.getInstance().getDeviceFp(activity), true);
             try {
                 JSONObject checkJson = new JSONObject(spCheck);
                 if (checkJson.has("retcode") && checkJson.getInt("retcode") == 0) {
@@ -278,10 +278,15 @@ public class QRScanner {
                         showNormalDialog(data_json.getString("risk_note") + "\n当前游戏: " + data_json.getString("app_name"));
                     }
                 } else {
-                    makeToast(activity.getString(R.string.outdate_qr));
+                    if (feedback_json.has("message")) {
+                        makeToast(feedback_json.getString("message"));
+                        Logger.w(TAG, "handleMessage: " + feedback_json.getString("message"));
+                    } else {
+                        makeToast(activity.getString(R.string.outdate_qr));
+                        Logger.w(TAG, "handleMessage: 二维码已过期");
+                    }
 //                    Logger.warning("二维码已过期");
 
-                    Logger.w(TAG, "handleMessage: 二维码已过期");
                 }
             } catch (JSONException e) {
                 makeToast("网络请求错误！");

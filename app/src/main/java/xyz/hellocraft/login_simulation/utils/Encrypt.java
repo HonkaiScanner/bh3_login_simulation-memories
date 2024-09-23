@@ -11,6 +11,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.crypto.Cipher;
@@ -70,13 +71,21 @@ public class Encrypt {
     public static String HMACSign(Map<String, Object> paramMap, boolean b1) {
         TreeMap<String, Object> treeMap = new TreeMap<>(paramMap);
         StringBuilder stringBuilder = new StringBuilder();
+        String key = BH_APP_KEY;
         for (String str : treeMap.keySet()) {
-            stringBuilder.append(str);
-            stringBuilder.append("=");
-            stringBuilder.append(paramMap.get(str));
-            stringBuilder.append("&");
+            if ("x-req-sign".equals(str)) {
+                try {
+                    key = Objects.requireNonNull(paramMap.get(str)).toString();
+                } catch (Exception ignore) {
+                }
+            } else {
+                stringBuilder.append(str);
+                stringBuilder.append("=");
+                stringBuilder.append(paramMap.get(str));
+                stringBuilder.append("&");
+            }
         }
-        return sha256HMAC(stringBuilder.substring(0, stringBuilder.length() - 1), BH_APP_KEY, b1);
+        return sha256HMAC(stringBuilder.substring(0, stringBuilder.length() - 1), key, b1);
     }
 
     public static String byteArrayToHexString(byte[] paramArrayOfByte) {

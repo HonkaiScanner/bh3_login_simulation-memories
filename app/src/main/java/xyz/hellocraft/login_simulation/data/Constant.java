@@ -21,7 +21,6 @@ public class Constant {
     //    public static String API_ENDPOINT = "http://192.168.1.133:8088/v3";
     public static String BH_VER = "7.0.0";
     public static String MDK_VERSION = "2.22.0.0";
-    public static String OFFICIAL_TYPE = "android01";
     public static String TIPS = "";
     public static String DISABLE_TIPS = "";
     public static int VISITOR_COUNT = 0;
@@ -35,10 +34,8 @@ public class Constant {
     public static boolean MI_ADV_MODE = true;
     public static boolean YYB_INIT = false;
     public static boolean HUAWEI_INIT = false;
-    public static boolean FLYME_INIT = false;
     public static boolean OPPO_INIT = false;
     public static boolean QUICK_MODE = false;
-    public static boolean FLYME_OFFICIAL_PACK_INSTALLED = false;
     public static boolean OPPO_OFFICIAL_PACK_INSTALLED = false;
     public static boolean OPPO_ADV_MODE = false;
     public static boolean DEBUG_MODE = false;

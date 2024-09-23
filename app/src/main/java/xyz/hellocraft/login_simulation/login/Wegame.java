@@ -48,7 +48,6 @@ public class Wegame implements LoginImpl {
     private RoleData roleData;
     private String verify_data;
     private String wegame_verify_data;
-    private boolean first_auto_login = false;
     private SharedPreferences preferences;
     @SuppressLint("HandlerLeak")
     Handler login_handler = new Handler(Looper.getMainLooper()) {
@@ -162,7 +161,6 @@ public class Wegame implements LoginImpl {
         if (YYB_INIT) return;
 //        YSDKApi.init();
 //        YSDKApi.setUserListener(this);
-        first_auto_login = true;
     }
 
     @Override

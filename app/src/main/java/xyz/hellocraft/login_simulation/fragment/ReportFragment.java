@@ -14,7 +14,6 @@ import com.github.haocen2004.login_simulation.R;
 import com.github.haocen2004.login_simulation.databinding.FragmentReportBinding;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import xyz.hellocraft.login_simulation.fragment.report.LogFragment;
 import xyz.hellocraft.login_simulation.fragment.report.MainReportFragment;
 
 public class ReportFragment extends Fragment {
@@ -40,12 +39,13 @@ public class ReportFragment extends Fragment {
             @NonNull
             @Override
             public Fragment createFragment(int position) {
-                return position == 0 ? new MainReportFragment() : new LogFragment();
+//                return position == 0 ? new MainReportFragment() : new LogFragment();
+                return new MainReportFragment();
             }
 
             @Override
             public int getItemCount() {
-                return 2;
+                return 1;
             }
         });
         new TabLayoutMediator(binding.tabLayout, binding.viewPager, (tab, position) -> {
