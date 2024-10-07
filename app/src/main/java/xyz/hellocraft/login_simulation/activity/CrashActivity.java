@@ -92,9 +92,9 @@ public class CrashActivity extends BaseActivity {
                         }
                         stringBuilder.append(crashInfo.toString().replaceAll("&", "%26"));
 //                        Logger.d("pastebin",stringBuilder.toString());
-                        String ret = Network.sendPost("https://pastebin.com/api/api_post.php", stringBuilder.toString(), null, true, false);
+                        String ret = Network.sendPost("https://pastebin.com/api/api_post.php", stringBuilder.toString(), null, 5, false);
                         Logger.d("pastebin", ret);
-                        if (ret.contains("https://pastebin.com/")) {
+                        if (ret != null && ret.contains("https://pastebin.com/")) {
                             Tools.saveString(getApplicationContext(), crashReportName + "-url", ret);
                             try {
                                 binding.buttonUrl.setOnClickListener(v -> {

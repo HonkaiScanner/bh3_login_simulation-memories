@@ -29,9 +29,9 @@ import xyz.hellocraft.login_simulation.activity.ActivityManager;
 import xyz.hellocraft.login_simulation.data.dialog.ButtonData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
+import xyz.hellocraft.login_simulation.login.LoginInstanceManager;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
 import xyz.hellocraft.login_simulation.utils.Logger;
-import xyz.hellocraft.login_simulation.utils.LoginInstanceManager;
 
 public class MainReportFragment extends Fragment implements View.OnClickListener {
     private FragmentReportMainBinding binding;

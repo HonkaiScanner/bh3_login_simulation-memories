@@ -108,7 +108,7 @@ public class QRScanner {
                         try {
                             Map<String, String> header = new HashMap<>();
                             header.put("Content-Type", "application/json");
-                            Network.sendPost(API_ENDPOINT + "/scan_succ_upload", confirm_json.toString(), header, false, false);
+                            Network.sendPost(API_ENDPOINT + "/scan_succ_upload", confirm_json.toString(), header, 0, false);
                         } catch (Exception ignore) {
                         }
                     }).start();

@@ -1,6 +1,7 @@
 <resources>
     <string-array name="server_types">
         <item>Official</item>
+        <item>OfficialNew</item>
         <item>Bilibili</item>
         <item>Xiaomi</item>
         <item>UC</item>
@@ -14,6 +15,7 @@
     </string-array>
     <string-array name="server_types_value">
         <item>Official</item>
+        <item>OfficialNew</item>
         <item>Bilibili</item>
         <item>Xiaomi</item>
         <item>UC</item>
@@ -27,6 +29,7 @@
     </string-array>
     <string-array name="server_types_xp">
         <item>Official</item>
+        <item>OfficialNew</item>
         <item>Bilibili</item>
         <item>Xiaomi</item>
         <item>UC</item>
@@ -39,6 +42,7 @@
     </string-array>
     <string-array name="server_types_value_xp">
         <item>Official</item>
+        <item>OfficialNew</item>
         <item>Bilibili</item>
         <item>Xiaomi</item>
         <item>UC</item>

@@ -1,4 +1,4 @@
-package xyz.hellocraft.login_simulation.utils;
+package xyz.hellocraft.login_simulation.login;
 
 import android.content.SharedPreferences;
 
@@ -7,17 +7,8 @@ import androidx.preference.PreferenceManager;
 
 import com.github.haocen2004.login_simulation.R;
 
-import xyz.hellocraft.login_simulation.login.Bilibili;
-import xyz.hellocraft.login_simulation.login.Huawei;
-import xyz.hellocraft.login_simulation.login.LoginCallback;
-import xyz.hellocraft.login_simulation.login.LoginImpl;
-import xyz.hellocraft.login_simulation.login.Official;
-import xyz.hellocraft.login_simulation.login.Oppo;
-import xyz.hellocraft.login_simulation.login.Tencent;
-import xyz.hellocraft.login_simulation.login.UC;
-import xyz.hellocraft.login_simulation.login.Vivo;
-import xyz.hellocraft.login_simulation.login.Wegame;
-import xyz.hellocraft.login_simulation.login.Xiaomi;
+import xyz.hellocraft.login_simulation.utils.Logger;
+import xyz.hellocraft.login_simulation.utils.Tools;
 
 public class LoginInstanceManager {
 
@@ -80,6 +71,9 @@ public class LoginInstanceManager {
             switch (pref.getString("server_type", "")) {
                 case "Official":
                     mLoginImpl = new Official(mContext, mCallback);
+                    break;
+                case "OfficialNew":
+                    mLoginImpl = new OfficialNew(mContext, mCallback);
                     break;
                 case "Xiaomi":
                     mLoginImpl = new Xiaomi(mContext, mCallback);

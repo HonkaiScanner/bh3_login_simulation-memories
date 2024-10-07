@@ -10,5 +10,7 @@ public interface LoginCallback {
 
     void onLoginFailed();
 
+    void onLoginFailed(String message);
+
     void launchActivityForResult(Intent intent, LaunchActivityCallback callback);
 }

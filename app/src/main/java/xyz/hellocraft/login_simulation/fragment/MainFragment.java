@@ -75,13 +75,13 @@ import xyz.hellocraft.login_simulation.login.Bilibili;
 import xyz.hellocraft.login_simulation.login.Huawei;
 import xyz.hellocraft.login_simulation.login.LoginCallback;
 import xyz.hellocraft.login_simulation.login.LoginImpl;
+import xyz.hellocraft.login_simulation.login.LoginInstanceManager;
 import xyz.hellocraft.login_simulation.login.Official;
 import xyz.hellocraft.login_simulation.login.Tencent;
 import xyz.hellocraft.login_simulation.utils.ChipsHelper;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
 import xyz.hellocraft.login_simulation.utils.FabScanner;
 import xyz.hellocraft.login_simulation.utils.Logger;
-import xyz.hellocraft.login_simulation.utils.LoginInstanceManager;
 import xyz.hellocraft.login_simulation.utils.QRScanner;
 import xyz.hellocraft.login_simulation.utils.SocketHelper;
 import xyz.hellocraft.login_simulation.utils.Tools;
@@ -427,6 +427,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         }
 //        binding.cardViewMain.sponsorStateText.setVisibility(View.INVISIBLE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
+            case "OfficialNew":
+                server_type = "OfficialNew";
+                binding.slotSelectGroup.setVisibility(View.VISIBLE);
+                initSlotSelectGroup("official_user_");
+                break;
             case "Official":
                 server_type = activity.getString(R.string.types_official);
 //                binding.officialSlotSelect.setVisibility(View.VISIBLE);
@@ -1359,7 +1364,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             ShortcutManagerCompat.removeAllDynamicShortcuts(activity);
 //            Log.makeToast("登陆失败");
         });
-//        makeToast(R);
+    }
+
+    @Override
+    public void onLoginFailed(String message) {
+        Log.makeToast(message);
+        onLoginFailed();
     }
 
     @Override
