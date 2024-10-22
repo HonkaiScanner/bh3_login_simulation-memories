@@ -3,16 +3,26 @@ package xyz.hellocraft.login_simulation.login
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
+import com.geetest.sdk.GT3ConfigBean
+import com.geetest.sdk.GT3ErrorBean
+import com.geetest.sdk.GT3GeetestUtils
+import com.geetest.sdk.GT3Listener
+import com.geetest.sdk.utils.GT3ServiceNode
 import com.github.haocen2004.login_simulation.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import xyz.hellocraft.login_simulation.data.Constant.BH_PUBLIC_KEY
@@ -24,6 +34,8 @@ import xyz.hellocraft.login_simulation.utils.Encrypt
 import xyz.hellocraft.login_simulation.utils.Logger
 import xyz.hellocraft.login_simulation.utils.Network
 import xyz.hellocraft.login_simulation.utils.Tools
+import java.util.regex.Pattern
+
 
 class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
     Official(activity, callback) {
@@ -33,6 +45,7 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
     private var roleData: RoleData? = null
     private var username: String = "Unknown"
     private var password: String = "Unknown"
+    private var mobile: String = "Unknown"
     private var callback: LoginCallback? = null
     private var activity: AppCompatActivity? = null
     private var preferences: SharedPreferences? = null
@@ -41,7 +54,10 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
     private var uid: String? = null
     private var stoken: String? = null
     private var mid: String? = null
-
+    private var smsJob: Job? = null
+    private var getSmsButton: Button? = null
+    private var smsActionType: String = "login_by_mobile_captcha"
+    private var geetestSessionId: String = ""
 
     init {
         this.activity = activity
@@ -197,12 +213,19 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
             map,
             true
         )
-        val feedbackJsonObject = JSONObject(feedback)
-        if (feedbackJsonObject.has("retcode") && feedbackJsonObject.get("retcode") == 0) {
-            val dataJson: JSONObject = feedbackJsonObject.getJSONObject("data")
-            gameToken = dataJson.getString("token")
-            Logger.addBlacklist(gameToken)
-        } else {
+        try {
+            val feedbackJsonObject = JSONObject(feedback)
+            if (feedbackJsonObject.has("retcode") && feedbackJsonObject.get("retcode") == 0) {
+                val dataJson: JSONObject = feedbackJsonObject.getJSONObject("data")
+                gameToken = dataJson.getString("game_token")
+                Logger.addBlacklist(gameToken)
+            } else {
+                Logger.d(tag, "getGameToken: $feedback")
+                preferences?.edit()!!.putBoolean("has_token", false).apply()
+                callback?.onLoginFailed("getGameToken unexpected failure")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
             Logger.d(tag, "getGameToken: $feedback")
             preferences?.edit()!!.putBoolean("has_token", false).apply()
             callback?.onLoginFailed("getGameToken unexpected failure")
@@ -211,7 +234,7 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
     }
 
     private fun verifyAccount() {
-        if (gameToken == null) {
+        if (gameToken == null || gameToken!!.isEmpty() || gameToken!!.length < 10) {
             getGameToken()
         }
         Logger.addBlacklist(gameToken)
@@ -232,7 +255,7 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
         }
     }
 
-    private fun loginByPassword() {
+    private fun loginByPassword(aigis: String = "") {
         val jsonObject = JsonObject()
         jsonObject.addProperty("account", Encrypt.encryptByPublicKey(username, BH_PUBLIC_KEY))
         jsonObject.addProperty("password", Encrypt.encryptByPublicKey(password, BH_PUBLIC_KEY))
@@ -241,13 +264,14 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
         Logger.d(tag, "loginByAccount: $requestBody")
 
         val header = DeviceFpManager.getDSPRODHeader(activity, requestBody)
+        header["x-rpc-aigis"] = aigis
 
-        val feedback = Network.sendPost(
+        val feedback = Network.sendPostRaw(
             "https://passport-api.mihoyo.com/account/ma-cn-passport/app/loginByPassword",
             requestBody,
             header
         )
-        val feedbackJsonObject = JSONObject(feedback)
+        val feedbackJsonObject = JSONObject(feedback.body)
         if (feedbackJsonObject.has("retcode") && feedbackJsonObject.get("retcode") == 0) {
             val dataJsonObject = feedbackJsonObject.getJSONObject("data")
             val tokenJsonObject = dataJsonObject.getJSONObject("token")
@@ -262,20 +286,257 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
                 callback?.onLoginFailed(verifyToken.message)
             }
         } else {
-            Logger.d(tag, "loginByAccount: $feedback")
+            if (feedback.headers.containsKey("x-rpc-aigis")) {
+                val aigisResp = feedback.headers["x-rpc-aigis"]
+                Logger.d(tag, "loginByAccount: $aigisResp")
+                val aigisJson = JSONObject(aigisResp?.get(0)!!)
+                geetestSessionId = aigisJson.getString("session_id")
+                try {
+                    val data = aigisJson.getJSONObject("data")
+                    checkGeetest(aigis = data, type = "password")
+                } catch (e: Exception) {
+                    Logger.d(tag, "loginByAccount: aigis using string")
+                    val dataStr = aigisJson.getString("data")
+                    checkGeetest(aigis = JSONObject(dataStr), type = "password")
+                    return
+                }
+
+            } else {
+                Logger.d(tag, "loginByAccount: $feedback")
+                if (feedbackJsonObject.has("message")) {
+                    preferences?.edit()!!.putBoolean("has_token", false).apply()
+                    callback?.onLoginFailed(feedbackJsonObject.getString("message"))
+                } else {
+                    preferences?.edit()!!.putBoolean("has_token", false).apply()
+                    callback?.onLoginFailed("loginByAccount unexpected failure")
+                }
+            }
+        }
+    }
+
+    private fun checkGeetest(aigis: JSONObject, type: String) {
+        val gt3GeetestUtils = GT3GeetestUtils(activity)
+        val gT3ConfigBean = GT3ConfigBean()
+        gT3ConfigBean.pattern = 1
+        gT3ConfigBean.isCanceledOnTouchOutside = false
+        gT3ConfigBean.lang = null
+        gT3ConfigBean.timeout = 10000
+        gT3ConfigBean.webviewTimeout = 10000
+        gT3ConfigBean.gt3ServiceNode = GT3ServiceNode.NODE_IPV6
+        gT3ConfigBean.listener = object : GT3Listener() {
+
+            override fun onButtonClick() {
+                gT3ConfigBean.api1Json = aigis
+                gt3GeetestUtils.getGeetest()
+            }
+
+            override fun onDialogResult(result: String) {
+                gt3GeetestUtils.dismissGeetestDialog()
+                gt3GeetestUtils.destory()
+                CoroutineScope(Dispatchers.IO).launch {
+                    val aigisResult = "$geetestSessionId;${
+                        Base64.encodeToString(
+                            result.toByteArray(),
+                            Base64.NO_WRAP
+                        )
+                    }"
+                    if (type == "password") {
+                        loginByPassword(aigisResult)
+                    } else {
+                        createLoginCaptcha(type, aigisResult)
+                    }
+                }
+            }
+
+            override fun onStatistics(s: String) {
+            }
+
+            override fun onSuccess(s: String) {
+            }
+
+            override fun onFailed(gt3ErrorBean: GT3ErrorBean) {
+            }
+
+            override fun onClosed(i: Int) {
+            }
+
+            override fun onReceiveCaptchaCode(p0: Int) {
+            }
+        }
+        gt3GeetestUtils.init(gT3ConfigBean)
+        activity?.runOnUiThread {
+            gt3GeetestUtils.startCustomFlow()
+        }
+//        gt3GeetestUtils.startCustomFlow()
+
+    }
+
+    private fun createLoginCaptcha(mobile: String, aigis: String = "") {
+        val jsonObject = JsonObject()
+        jsonObject.addProperty("mobile", Encrypt.encryptByPublicKey(mobile, BH_PUBLIC_KEY))
+        jsonObject.addProperty("area_code", Encrypt.encryptByPublicKey("+86", BH_PUBLIC_KEY))
+
+        val requestBody = jsonObject.toString()
+        Logger.d(tag, "createLoginCaptcha: $requestBody")
+
+        val header = DeviceFpManager.getDSPRODHeader(activity, requestBody)
+        header["x-rpc-aigis"] = aigis
+
+        val feedback = Network.sendPostRaw(
+            "https://passport-api.mihoyo.com/account/ma-cn-verifier/verifier/createLoginCaptcha",
+            requestBody,
+            header
+        )
+        val feedbackJsonObject = JSONObject(feedback.body)
+        if (feedbackJsonObject.has("retcode") && feedbackJsonObject.get("retcode") == 0) {
+            val dataJsonObject = feedbackJsonObject.getJSONObject("data")
+            val countDown = dataJsonObject.getInt("countdown")
+
+            this.mobile = mobile
+            smsJob = CoroutineScope(Dispatchers.IO).launch {
+                delay(countDown * 1000L)
+                try {
+                    getSmsButton?.isEnabled = true
+                } catch (ignore: Exception) {
+                }
+                smsJob = null
+            }
+            smsActionType = dataJsonObject.getString("action_type")
+            logger?.makeToast("验证码已发送，请注意查收！")
+
+        } else {
+            if (feedback.headers.containsKey("x-rpc-aigis")) {
+                val aigisResp = feedback.headers["x-rpc-aigis"]
+                Logger.d(tag, "createLoginCaptcha: $aigisResp")
+                val aigisJson = JSONObject(aigisResp?.get(0)!!)
+                geetestSessionId = aigisJson.getString("session_id")
+                try {
+                    val data = aigisJson.getJSONObject("data")
+                    checkGeetest(aigis = data, type = mobile)
+                } catch (e: Exception) {
+                    Logger.d(tag, "createLoginCaptcha: aigis using string")
+                    val dataStr = aigisJson.getString("data")
+                    checkGeetest(aigis = JSONObject(dataStr), type = mobile)
+                    return
+                }
+            } else {
+                Logger.d(tag, "createLoginCaptcha: ${feedback.body}")
+                if (feedbackJsonObject.has("message")) {
+                    preferences?.edit()!!.putBoolean("has_token", false).apply()
+                    callback?.onLoginFailed(feedbackJsonObject.getString("message"))
+                } else {
+                    preferences?.edit()!!.putBoolean("has_token", false).apply()
+                    callback?.onLoginFailed("createLoginCaptcha unexpected failure")
+                }
+            }
+
+        }
+
+    }
+
+    private fun loginByMobileCaptcha(captcha: String, alertDialog: AlertDialog) {
+        val jsonObject = JsonObject()
+        jsonObject.addProperty("mobile", Encrypt.encryptByPublicKey(mobile, BH_PUBLIC_KEY))
+        jsonObject.addProperty("area_code", Encrypt.encryptByPublicKey("+86", BH_PUBLIC_KEY))
+        jsonObject.addProperty("action_type", smsActionType)
+        jsonObject.addProperty("captcha", captcha)
+
+        val requestBody = jsonObject.toString()
+        Logger.d(tag, "loginByMobileCaptcha: $requestBody")
+
+        val header = DeviceFpManager.getDSPRODHeader(activity, requestBody)
+
+        val feedback = Network.sendPost(
+            "https://passport-api.mihoyo.com/account/ma-cn-passport/app/loginByMobileCaptcha",
+            requestBody,
+            header
+        )
+        val feedbackJsonObject = JSONObject(feedback)
+        if (feedbackJsonObject.has("retcode") && feedbackJsonObject.get("retcode") == 0) {
+            val dataJsonObject = feedbackJsonObject.getJSONObject("data")
+            val tokenJsonObject = dataJsonObject.getJSONObject("token")
+            val userInfo = dataJsonObject.getJSONObject("user_info")
+            stoken = tokenJsonObject.getString("token")
+            mid = userInfo.getString("mid")
+            activity?.runOnUiThread {
+                alertDialog.dismiss()
+            }
+            val verifyToken = verifyToken()
+            if (verifyToken.success) {
+                verifyAccount()
+            } else {
+                preferences?.edit()!!.putBoolean("has_token", false).apply()
+                callback?.onLoginFailed(verifyToken.message)
+            }
+        } else {
+            Logger.d(tag, "loginByMobileCaptcha: $feedback")
             if (feedbackJsonObject.has("message")) {
                 preferences?.edit()!!.putBoolean("has_token", false).apply()
                 callback?.onLoginFailed(feedbackJsonObject.getString("message"))
             } else {
                 preferences?.edit()!!.putBoolean("has_token", false).apply()
-                callback?.onLoginFailed("loginByAccount unexpected failure")
+                callback?.onLoginFailed("loginByMobileCaptcha unexpected failure")
             }
 
         }
+
     }
 
     private fun smsLogin() {
-        callback?.onLoginFailed("新方案暂未支持短信登陆")
+
+        val phonePattern =
+            "^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$"
+        val smsDialog =
+            MaterialAlertDialogBuilder(activity!!)
+        val smsDialogView = LayoutInflater.from(activity)
+            .inflate(R.layout.offical_sms_login_layout, null)
+        smsDialog.setTitle(R.string.types_official)
+        smsDialog.setView(smsDialogView)
+        smsDialog.setPositiveButton(R.string.btn_login, null)
+        smsDialog.setNegativeButton(R.string.btn_cancel) { _, _ ->
+//            logger?.makeToast(R.string.login_cancel)
+            callback?.onLoginFailed(activity?.getString(R.string.login_cancel))
+        }
+        smsDialog.setCancelable(false)
+        val alertDialog = smsDialog.create()
+        alertDialog.setOnShowListener { _: DialogInterface? ->
+            val editText = smsDialogView.findViewById<EditText>(R.id.phoneNumber)
+            getSmsButton = smsDialogView.findViewById(R.id.btn_sms)
+            getSmsButton?.setOnClickListener { v: View ->
+                username = editText.text.toString()
+                Logger.d(
+                    tag,
+                    "try get sms code for $username"
+                )
+                if (Pattern.matches(phonePattern, username)) {
+                    v.isEnabled = false
+                    CoroutineScope(Dispatchers.IO).launch {
+                        createLoginCaptcha(username)
+                    }
+                } else {
+                    logger?.makeToast("手机号格式不正确！")
+                }
+            }
+            val button =
+                alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+            button.setOnClickListener { _: View? ->
+                val captchaText = smsDialogView.findViewById<EditText>(R.id.sms)
+                username = editText.text.toString()
+                val captcha = captchaText.text.toString().trim()
+                if (captcha.length != 6) {
+                    logger?.makeToast("验证码格式不正确！")
+                } else {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        loginByMobileCaptcha(captcha, alertDialog)
+                    }
+//                    alertDialog.dismiss()
+                }
+            }
+        }
+        alertDialog.setOnDismissListener { _: DialogInterface? ->
+            smsJob?.cancel()
+        }
+        alertDialog.show()
     }
 
     private fun qrLogin() {

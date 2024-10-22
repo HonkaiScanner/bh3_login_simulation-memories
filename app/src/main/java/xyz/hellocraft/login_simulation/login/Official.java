@@ -285,7 +285,7 @@ public class Official implements LoginImpl {
                     token = account_json.getString("token");
                     uid = account_json.getString("uid");
                     email = account_json.getString("mobile");
-                    if (email.equals("")) {
+                    if (email.isEmpty()) {
                         email = account_json.getString("email");
                     }
                     preferences.edit()
@@ -296,7 +296,7 @@ public class Official implements LoginImpl {
                             .putBoolean("has_token", true)
                             .apply();
                     Logger.addBlacklist(token);
-                    new Thread(v2TokenRefreshRunnable).start();
+//                    new Thread(v2TokenRefreshRunnable).start();
                     new Thread(login_runnable2).start();
                 } else {
 //                    Logger.warning("登录失败");

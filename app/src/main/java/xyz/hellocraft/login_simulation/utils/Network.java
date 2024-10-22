@@ -9,12 +9,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class Network {
 
-    private static String realSendPost(String url, String param, Map<String, String> map) {
+    private static Response realSendPost(String url, String param, Map<String, String> map) {
+
+        Response response = new Response();
 
         PrintWriter out = null;
         BufferedReader in = null;
@@ -38,6 +41,8 @@ public class Network {
             out = new PrintWriter(conn.getOutputStream());
             out.print(param);
             out.flush();
+            response.setCode(conn.getResponseCode());
+            response.setHeaders(conn.getHeaderFields());
             String encoding = conn.getContentEncoding();
             InputStream ism = conn.getInputStream();
             if (encoding != null && encoding.contains("gzip")) {
@@ -65,7 +70,8 @@ public class Network {
                 ex.printStackTrace();
             }
         }
-        return result.toString();
+        response.setBody(result.toString());
+        return response;
     }
 
     private static String realSendGet(String url, Map<String, String> map) {
@@ -144,22 +150,34 @@ public class Network {
     }
 
     public static String sendPost(String url, String param) {
+        return sendPost(url, param, getBaseHeader(), 5, true).body;
+    }
+
+    public static Response sendPostRaw(String url, String param) {
         return sendPost(url, param, getBaseHeader(), 5, true);
     }
 
     public static String sendPost(String url, String param, int maxRetry) {
+        return sendPost(url, param, null, maxRetry, true).body;
+    }
+
+    public static Response sendPostRaw(String url, String param, int maxRetry) {
         return sendPost(url, param, null, maxRetry, true);
     }
 
     public static String sendPost(String url, String param, Map<String, String> map) {
+        return sendPost(url, param, map, 5, true).body;
+    }
+
+    public static Response sendPostRaw(String url, String param, Map<String, String> map) {
         return sendPost(url, param, map, 5, true);
     }
 
-    public static String sendPost(String url, String param, Map<String, String> map, int maxRetry, Boolean sendToast) {
-        String ret = "";
+    public static Response sendPost(String url, String param, Map<String, String> map, int maxRetry, Boolean sendToast) {
+        Response ret = new Response();
         while (maxRetry-- >= -1) {
             ret = realSendPost(url, param, map);
-            if (ret != null && !ret.equals("null")) {
+            if (ret != null && !ret.body.equals("null")) {
                 break;
             }
             if (sendToast) {
@@ -172,5 +190,41 @@ public class Network {
             }
         }
         return ret;
+    }
+
+    public static class Response {
+        public int code;
+        public String body;
+        public Map<String, List<String>> headers;
+
+        public Response() {
+            this.code = 404;
+            this.body = "";
+            this.headers = new HashMap<>();
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getBody() {
+            return body;
+        }
+
+        public void setBody(String body) {
+            this.body = body;
+        }
+
+        public Map<String, List<String>> getHeaders() {
+            return headers;
+        }
+
+        public void setHeaders(Map<String, List<String>> headers) {
+            this.headers = headers;
+        }
     }
 }
