@@ -12,6 +12,7 @@
     <string name="settings_pure_black_theme">纯黑主题</string>
 
     <string name="types_official">官服</string>
+    <string name="types_official_new">官服V2</string>
     <string name="types_prefix">当前选择：</string>
     <string name="types_bilibili">B服</string>
     <string name="types_uc">九游服</string>
@@ -22,6 +23,7 @@
     <string name="types_qihoo">360服</string>
     <string name="types_yyb">应用宝-QQ</string>
     <string name="types_huawei">华为服</string>
+    <string name="types_wegame">Wegame服</string>
 
     <string name="toolbar_icon_description">占位符</string>
     <string name="request_permission_failed">请求权限失败</string>
@@ -130,6 +132,7 @@
     <string name="crash_hint2">按返回键/全面屏返回手势\n即可返回扫码器主页\n请不要只发送本页面截图！\n请不要只发送本页面截图！\n请不要只发送本页面截图！\n\n更多崩溃日志请前往\n/Android/data/{packageName}/files/crash-report/\n查看</string>
     <string name="btn_send_debug_log">发送调试日志</string>
     <string name="check_update_now">立即检查更新</string>
+    <string name="pending_scanner">初始化扫码器中</string>
 
 
 </resources>

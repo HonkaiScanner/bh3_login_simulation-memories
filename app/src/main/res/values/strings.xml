@@ -19,6 +19,8 @@
     <string name="nav_header_pid" translatable="false">Pixiv:89418903</string>
     <string name="request_permission_failed">Request permission FAILED</string>
     <string name="types_official">Official Server</string>
+    <string name="types_wegame">Wegame Server</string>
+    <string name="types_official_new">Official V2</string>
     <string name="types_prefix">"Selected : "</string>
     <string name="types_bilibili">BiliBili Server</string>
     <string name="types_huawei">Huawei Server</string>
@@ -131,4 +133,5 @@
     <string name="btn_get_sms">get verification code</string>
     <string name="btn_send_debug_log">Send DEBUG LOG</string>
     <string name="check_update_now">Check Update Now</string>
+    <string name="pending_scanner">SCANNER INITIALIZING</string>
 </resources>

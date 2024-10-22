@@ -49,7 +49,6 @@
         android:theme="@style/ScannerAppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="s">
-
         <activity
             android:name="xyz.hellocraft.login_simulation.activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -60,18 +59,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="xyz.hellocraft.login_simulation.activity.AboutActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.activity.CrashActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.activity.DisableActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.activity.HistoryLogsActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.activity.LoginActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.activity.NotificationActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.activity.SponsorInfoActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.activity.ScannerActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.activity.TencentLoginActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.activity.WeGameLoginActivity" />
-        <activity android:name="xyz.hellocraft.login_simulation.wxapi.WXPayEntryActivity" />
+        <activity
+            android:name="xyz.hellocraft.login_simulation.activity.SplashActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"></activity>
 
         <activity-alias
             android:name=".activity.icon.main1"
@@ -83,50 +74,57 @@
             android:targetActivity="xyz.hellocraft.login_simulation.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
 
-        <!--        <activity-->
-        <!--            android:name="com.qihoo.sdkplugging.host.activity.HostProxyActivity"-->
-        <!--            android:configChanges="fontScale|orientation|keyboardHidden|locale|navigation|screenSize|uiMode|layoutDirection"-->
-        <!--            android:exported="true"-->
-        <!--            android:label="360SDK"-->
-        <!--            android:theme="@android:style/Theme.Translucent.NoTitleBar"-->
-        <!--            android:windowSoftInputMode="adjustPan">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="com.qihoo.sdkplugging.host.proxy.activity.VIEW" />-->
-
-        <!--                <category android:name="android.intent.category.DEFAULT" />-->
-        <!--            </intent-filter>-->
-        <!--        </activity>-->
-
-        <!--        <service-->
-        <!--            android:name="com.qihoo.sdkplugging.host.service.CommonHostProxyService"-->
-        <!--            android:exported="true"-->
-        <!--            android:persistent="true"-->
-        <!--            android:process=":gcpasremote">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="com.qihoo.sdkplugging.host.service.CommonHostProxyService" />-->
-        <!--            </intent-filter>-->
-        <!--        </service>-->
-
-        <!--        <receiver-->
-        <!--            android:name="com.qihoo.pushsdk.keepalive.PushWakeUpReceiver"-->
-        <!--            android:exported="true">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.SIG_STR" />-->
-        <!--            </intent-filter>-->
-        <!--        </receiver>-->
-
+        <activity android:name="xyz.hellocraft.login_simulation.activity.AboutActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.CrashActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.DisableActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.HistoryLogsActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.LoginActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.NotificationActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.SponsorInfoActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.ScannerActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.TencentLoginActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.activity.WeGameLoginActivity" />
+        <activity android:name="xyz.hellocraft.login_simulation.wxapi.WXPayEntryActivity" /> <!-- <activity -->
+        <!-- android:name="com.qihoo.sdkplugging.host.activity.HostProxyActivity" -->
+        <!-- android:configChanges="fontScale|orientation|keyboardHidden|locale|navigation|screenSize|uiMode|layoutDirection" -->
+        <!-- android:exported="true" -->
+        <!-- android:label="360SDK" -->
+        <!-- android:theme="@android:style/Theme.Translucent.NoTitleBar" -->
+        <!-- android:windowSoftInputMode="adjustPan"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.qihoo.sdkplugging.host.proxy.activity.VIEW" /> -->
+        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
+        <!-- <service -->
+        <!-- android:name="com.qihoo.sdkplugging.host.service.CommonHostProxyService" -->
+        <!-- android:exported="true" -->
+        <!-- android:persistent="true" -->
+        <!-- android:process=":gcpasremote"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.qihoo.sdkplugging.host.service.CommonHostProxyService" /> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
+        <!-- <receiver -->
+        <!-- android:name="com.qihoo.pushsdk.keepalive.PushWakeUpReceiver" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.SIG_STR" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
         <service
-            android:foregroundServiceType="dataSync"
             android:name="cn.leancloud.push.PushService"
             android:exported="true"
+            android:foregroundServiceType="dataSync"
             tools:ignore="ExportedService" />
         <service
             android:name="xyz.hellocraft.login_simulation.utils.FabScanner"
@@ -144,23 +142,21 @@
                     android:name="android.net.conn.CONNECTIVITY_CHANGE"
                     tools:ignore="BatteryLife" />
             </intent-filter>
-        </receiver>
-
-        <!--        <meta-data-->
-        <!--            android:name="QHOPENSDK_APPID"-->
-        <!--            android:value="203186051" /> &lt;!&ndash; 添加360SDK必需的meta-data：QHOPENSDK_APPKEY。此处value为APPKEY。请在360应用开放平台注册申请 &ndash;&gt;-->
-        <!--        <meta-data-->
-        <!--            android:name="QHOPENSDK_APPKEY"-->
-        <!--            android:value="08623c9d94abaabf60a19ef468e20c7c" /> &lt;!&ndash; 必需的meta-data：QHOPENSDK_PRIVATEKEY。此处value为PRIVATEKEY不是APPSECRET，而是md5(app_secret +”#”+ app_key)，全小写，APPSECRET不允许保存在客户端！详见1.4 PrivateKey计算方法 &ndash;&gt;-->
-        <!--        <meta-data-->
-        <!--            android:name="QHOPENSDK_PRIVATEKEY"-->
-        <!--            android:value="d34a1f0004b494c6e4b89fab99fc3987" />-->
-        <!--        <meta-data-->
-        <!--            android:name="QHOPENSDK_WEIXIN_APPID"-->
-        <!--            android:value="wx38c06d349170365c" />-->
-        <!--        <meta-data-->
-        <!--            android:name="QHOPENSDK_QQAPPID"-->
-        <!--            android:value="101434511" /> &lt;!&ndash; 默认参数，不需要修改，直接复制就行 &ndash;&gt;-->
+        </receiver> <!-- <meta-data -->
+        <!-- android:name="QHOPENSDK_APPID" -->
+        <!-- android:value="203186051" /> &lt;!&ndash; 添加360SDK必需的meta-data：QHOPENSDK_APPKEY。此处value为APPKEY。请在360应用开放平台注册申请 &ndash;&gt; -->
+        <!-- <meta-data -->
+        <!-- android:name="QHOPENSDK_APPKEY" -->
+        <!-- android:value="08623c9d94abaabf60a19ef468e20c7c" /> &lt;!&ndash; 必需的meta-data：QHOPENSDK_PRIVATEKEY。此处value为PRIVATEKEY不是APPSECRET，而是md5(app_secret +”#”+ app_key)，全小写，APPSECRET不允许保存在客户端！详见1.4 PrivateKey计算方法 &ndash;&gt; -->
+        <!-- <meta-data -->
+        <!-- android:name="QHOPENSDK_PRIVATEKEY" -->
+        <!-- android:value="d34a1f0004b494c6e4b89fab99fc3987" /> -->
+        <!-- <meta-data -->
+        <!-- android:name="QHOPENSDK_WEIXIN_APPID" -->
+        <!-- android:value="wx38c06d349170365c" /> -->
+        <!-- <meta-data -->
+        <!-- android:name="QHOPENSDK_QQAPPID" -->
+        <!-- android:value="101434511" /> &lt;!&ndash; 默认参数，不需要修改，直接复制就行 &ndash;&gt; -->
         <meta-data
             android:name="DC_APPKEY"
             android:value="02522a2b2726fb0a03bb19f2d8d9524d" />

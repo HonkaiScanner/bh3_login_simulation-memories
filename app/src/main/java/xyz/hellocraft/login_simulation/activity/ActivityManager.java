@@ -9,9 +9,10 @@ import android.os.PowerManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.hellocraft.login_simulation.utils.ForegroundCallbacks;
 import xyz.hellocraft.login_simulation.utils.Logger;
 
-public class ActivityManager extends BroadcastReceiver {
+public class ActivityManager extends BroadcastReceiver implements ForegroundCallbacks.Listener {
 
     private volatile static ActivityManager INSTANCE;
 
@@ -23,8 +24,11 @@ public class ActivityManager extends BroadcastReceiver {
 
     private boolean receiverLocked = false;
 
+    private boolean closeOnBackground = false;
+
     public ActivityManager() {
         arrayStack = new ArrayList<>();
+        ForegroundCallbacks.get().addListener(this);
     }
 
     public static ActivityManager getInstance() {
@@ -51,7 +55,7 @@ public class ActivityManager extends BroadcastReceiver {
 
     public Activity getTopActivity() {
         if (topPos == -1) {
-            if (arrayStack.size() > 0) {
+            if (!arrayStack.isEmpty()) {
                 topPos = arrayStack.size() - 1;
             } else {
                 return null;
@@ -91,11 +95,42 @@ public class ActivityManager extends BroadcastReceiver {
         }
     }
 
+    public void clearActivity(boolean onBackground) {
+        if (onBackground) {
+            closeOnBackground = true;
+        } else {
+            clearActivity();
+        }
+    }
+
     private void exit() {
         for (Activity activity : arrayStack) {
             activity.finish();
         }
         Logger.d("activityManager", "all exit.");
         System.exit(0);
+    }
+
+    @Override
+    public void onBecameForeground() {
+        if (closeOnBackground) {
+            new Thread() {
+                @Override
+                public void run() {
+                    super.run();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    clearActivity();
+                }
+            }.start();
+        }
+    }
+
+    @Override
+    public void onBecameBackground() {
+
     }
 }

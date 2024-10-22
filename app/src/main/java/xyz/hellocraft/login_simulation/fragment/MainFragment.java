@@ -8,6 +8,7 @@ import static java.lang.Integer.parseInt;
 import static xyz.hellocraft.login_simulation.data.Constant.CHECK_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.HAS_ACCOUNT;
 import static xyz.hellocraft.login_simulation.data.Constant.QUICK_MODE;
+import static xyz.hellocraft.login_simulation.data.Constant.SCANNER_INIT;
 import static xyz.hellocraft.login_simulation.data.Constant.SP_CHECKED;
 import static xyz.hellocraft.login_simulation.utils.Tools.changeToWDJ;
 
@@ -302,6 +303,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
     @SuppressLint("SetTextI18n") // 离谱检测 明明已经i18n了
     private void delaySPCheck() {
+        if (!SCANNER_INIT) {
+            spCheckHandle.postDelayed(this::delaySPCheck, 1500);
+            return;
+        }
         Logger.d("SPCheck", "检查赞助者账号及自动登陆信息中...");
         if (Tools.getBoolean(activity, "last_login_succeed", false) && pref.getBoolean("auto_login", false) && !loginProgress) {
             String server = pref.getString("server_type", "").toLowerCase(Locale.ROOT);
@@ -422,14 +427,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //        binding.officialTypeSel.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
         binding.btnHwAccountCenter.setVisibility(View.GONE);
+        binding.btnSeltip.setVisibility(View.VISIBLE);
         if (!HAS_ACCOUNT && !SP_CHECKED) {
             binding.cardViewMain.sponsorStateText.setVisibility(View.INVISIBLE);
         }
 //        binding.cardViewMain.sponsorStateText.setVisibility(View.INVISIBLE);
         switch (Objects.requireNonNull(pref.getString("server_type", ""))) {
             case "OfficialNew":
-                server_type = "OfficialNew";
+                server_type = activity.getString(R.string.types_official_new);
                 binding.slotSelectGroup.setVisibility(View.VISIBLE);
+                binding.btnSeltip.setVisibility(View.GONE);
                 initSlotSelectGroup("official_user_");
                 break;
             case "Official":
@@ -486,7 +493,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                     binding.btnHwAccountCenter.setVisibility(View.VISIBLE);
                 break;
             case "Wegame":
-                server_type = "Wegame";
+                server_type = activity.getString(R.string.types_wegame);
                 break;
 //            case "Qihoo":
 //                server_type = activity.getString(R.string.types_qihoo);

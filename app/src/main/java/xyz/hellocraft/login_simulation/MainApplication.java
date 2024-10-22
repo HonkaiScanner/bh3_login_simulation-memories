@@ -15,7 +15,6 @@ import static xyz.hellocraft.login_simulation.data.Constant.OPPO_ADV_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.SAVE_ALL_LOGS;
 import static xyz.hellocraft.login_simulation.data.Constant.SP_APP_KEY;
 import static xyz.hellocraft.login_simulation.data.Constant.SP_URL;
-import static xyz.hellocraft.login_simulation.data.Constant.VISITOR_COUNT;
 
 import android.app.Application;
 import android.app.NotificationChannel;
@@ -41,8 +40,6 @@ import com.tencent.shiply.processor.OriginBasePkgFile;
 import com.tencent.upgrade.bean.UpgradeConfig;
 import com.tencent.upgrade.core.UpgradeManager;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -65,7 +62,6 @@ import xyz.hellocraft.login_simulation.data.sponsor.database.SponsorRepo;
 import xyz.hellocraft.login_simulation.utils.CrashHandler;
 import xyz.hellocraft.login_simulation.utils.ForegroundCallbacks;
 import xyz.hellocraft.login_simulation.utils.Logger;
-import xyz.hellocraft.login_simulation.utils.Network;
 import xyz.hellocraft.login_simulation.utils.PmsHooker;
 import xyz.hellocraft.login_simulation.utils.Tools;
 //import com.tencent.ysdk.api.YSDKApi;
@@ -112,9 +108,10 @@ public class MainApplication extends Application implements LifecycleOwner {
             String appChannel = app_pref.getString("server_type", "noLogin");
             strategy.setAppChannel(appChannel);
             CrashReport.setAppChannel(this, appChannel);
+        } else {
+            strategy.setAppChannel("noLogin");
+            CrashReport.setAppChannel(this, "noLogin");
         }
-        strategy.setAppChannel("noLogin");
-        CrashReport.setAppChannel(this, "noLogin");
         strategy.setDeviceID(Tools.getUUID(this));
         CrashReport.setDeviceId(this, Tools.getUUID(this));
         strategy.setDeviceModel(Tools.getDeviceModel());
@@ -323,22 +320,6 @@ public class MainApplication extends Application implements LifecycleOwner {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 break;
         }
-
-        new Thread(() -> {
-
-            String feedback = Network.sendGet("https://api.z-notify.zxlee.cn/v1/public/statistics/8316326835763216384?tag=" + (BETA_VER ? "snapshot" : "release") + "&from=" + VERSION_NAME, false);
-            try {
-                JSONObject object = new JSONObject(feedback);
-                if (object.has("data")) {
-                    JSONObject data = object.getJSONObject("data");
-                    VISITOR_COUNT = data.getInt("visitor_count");
-                    Logger.d("z-notify", "get statistics succ");
-                }
-            } catch (Exception ignore) {
-                Logger.d("z-notify", "get statistics failed");
-            }
-
-        }).start();
 
         UpgradeConfig.Builder builder = new UpgradeConfig.Builder();
         builder.diffPkgHandler(new DiffPkgHandler());

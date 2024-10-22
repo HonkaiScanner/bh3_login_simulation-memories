@@ -157,6 +157,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 case "Official":
                     preference.setSummary(getString(R.string.types_official));
                     break;
+                case "OfficialNew":
+                    preference.setSummary(getString(R.string.types_official_new));
+                    break;
                 case "Bilibili":
                     preference.setSummary(getString(R.string.types_bilibili));
                     break;
@@ -183,6 +186,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     break;
                 case "Huawei":
                     preference.setSummary(R.string.types_huawei);
+                    break;
+                case "Wegame":
+                    preference.setSummary(R.string.types_wegame);
                     break;
                 default:
                     preference.setSummary("DEBUG -- SERVER ERROR");

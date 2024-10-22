@@ -194,7 +194,7 @@ public class DeviceFpManager {
             getFpParam.put("app_name", "bh3_cn");
             getFpParam.put("ext_fields", new JSONObject(paramMap).toString());
 
-            String feedback = Network.sendPost("https://public-data-api.mihoyo.com/device-fp/api/getFp", getFpParam.toString());
+            String feedback = Network.sendPost("https://public-data-api.mihoyo.com/device-fp/api/getFp", getFpParam.toString(), 2);
             JSONObject feedbackJSON = new JSONObject(feedback);
             if (feedbackJSON.getInt("retcode") == 0) {
                 deviceFp = feedbackJSON.getJSONObject("data").getString("device_fp");
