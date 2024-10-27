@@ -20,7 +20,6 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.haocen2004.login_simulation.R;
 import com.tencent.upgrade.core.UpgradeManager;
-import com.tencent.upgrade.core.UpgradeReqCallbackForUserManualCheck;
 
 import java.util.Objects;
 
@@ -30,6 +29,7 @@ import xyz.hellocraft.login_simulation.data.dialog.DialogData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
 import xyz.hellocraft.login_simulation.utils.Logger;
+import xyz.hellocraft.login_simulation.utils.UpgradeCallback;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     private final String TAG = "Settings";
@@ -47,7 +47,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         findPreference("check_update_now").setOnPreferenceClickListener((preference -> {
             Logger.d("check_update_now", "on_click");
-            UpgradeManager.getInstance().checkUpgrade(true, null, new UpgradeReqCallbackForUserManualCheck());
+            UpgradeManager.getInstance()
+                    .checkUpgrade(true, null, new UpgradeCallback());
+//            UpgradeManager.getInstance().checkUpgrade(true, null, new UpgradeReqCallbackForUserManualCheck());
             return false;
         }));
 

@@ -20,7 +20,6 @@ public class DialogHelper {
     private final Context context;
     private final String TAG = "dialogHelper";
     private int currPos = 0;
-    private boolean currClose = false;
     private boolean currShow = false;
     private DialogInterface dialogInterface;
 //    private static String blackListString;
@@ -66,12 +65,10 @@ public class DialogHelper {
         List<DialogData> dialogData = dialogLiveData.getValue();
 
         currPos++;
-        if (dialogData.size() > currPos) {
+        if (dialogData != null && dialogData.size() > currPos) {
             currShow = true;
 
             showDialog(dialogData.get(currPos));
-        } else {
-            currShow = false;
         }
     }
 
@@ -154,11 +151,6 @@ public class DialogHelper {
         normalDialog.setCancelable(dialogData.isCancelable());
         normalDialog.show();
         currShow = true;
-        currClose = false;
         Logger.d(TAG, "dialog displayed.");
-    }
-
-    public void setCurrClose(boolean currClose) {
-        this.currClose = currClose;
     }
 }

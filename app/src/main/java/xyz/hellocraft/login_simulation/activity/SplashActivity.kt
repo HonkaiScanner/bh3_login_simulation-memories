@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,7 +21,6 @@ import com.github.haocen2004.login_simulation.BuildConfig
 import com.github.haocen2004.login_simulation.R
 import com.github.haocen2004.login_simulation.databinding.ActivitySplashBinding
 import com.king.wechat.qrcode.WeChatQRCodeDetector
-import com.tencent.upgrade.core.DefaultUpgradeStrategyRequestCallback
 import com.tencent.upgrade.core.UpgradeManager
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
@@ -44,6 +44,7 @@ import xyz.hellocraft.login_simulation.utils.ForegroundCallbacks
 import xyz.hellocraft.login_simulation.utils.Logger
 import xyz.hellocraft.login_simulation.utils.Network
 import xyz.hellocraft.login_simulation.utils.Tools
+import xyz.hellocraft.login_simulation.utils.UpgradeCallback
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
@@ -52,6 +53,7 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
     private var needBoot = false
     private lateinit var appPref: SharedPreferences
     private lateinit var binding: ActivitySplashBinding
+    private var backTime: Long = 0
 
     override fun onPause() {
         super.onPause()
@@ -68,6 +70,16 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        onBackPressedDispatcher.addCallback {
+            val currTime = System.currentTimeMillis()
+            if (System.currentTimeMillis() - backTime < 2000) {
+                activityManager.clearActivity()
+                onBackPressedDispatcher.onBackPressed()
+            } else {
+                Logger.getLogger(this@SplashActivity).makeToast("再次返回来退出扫码器")
+                backTime = currTime
+            }
+        }
         appPref = PreferenceManager.getDefaultSharedPreferences(this)
 
         if (BuildConfig.VERSION_NAME.contains("dev") || BuildConfig.DEBUG) {
@@ -75,11 +87,13 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
             LeanCloud.setLogLevel(LCLogger.Level.DEBUG)
         }
         try {
-            if (!Constant.HAS_UPDATE_THREAD) {
-                OpenCV.initAsync(this)
-                WeChatQRCodeDetector.init(this)
-            }
+//            if (!Constant.HAS_UPDATE_THREAD) {
+            OpenCV.initAsync(this)
+            WeChatQRCodeDetector.init(this)
+            appendText("OpenCV Initialized")
+//            }
         } catch (e: UnsatisfiedLinkError) {
+            appendText("[Failed] OpenCV Initialization")
             Logger.e("ABI", "Wrong ABI")
             e.printStackTrace()
 
@@ -100,7 +114,14 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
         lifecycleScope.launch(Dispatchers.IO) {
             val sponsorChecker = async {
                 if (CHECK_VER) {
-                    SponsorRepo(applicationContext).refreshSponsors()
+                    val lastUpdate = appPref.getLong("last_sponsor_update", 0)
+                    if (System.currentTimeMillis() - lastUpdate < 86400000 * 2) {
+                        appendText("[Skip] Sponsor Check")
+                    } else {
+                        appPref.edit().putLong("last_sponsor_update", System.currentTimeMillis())
+                            .apply()
+                        SponsorRepo(applicationContext).refreshSponsors()
+                    }
                     if (appPref.getBoolean("has_account", false)) {
 
                         Logger.d("sponsor login check", "Start.")
@@ -294,7 +315,7 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
             }
 
             UpgradeManager.getInstance()
-                .checkUpgrade(false, null, DefaultUpgradeStrategyRequestCallback())
+                .checkUpgrade(false, null, UpgradeCallback())
 
 
             awaitAll(fpTask, updateChecker, hi3VerTask, sponsorChecker)

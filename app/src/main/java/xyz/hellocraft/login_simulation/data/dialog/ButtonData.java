@@ -13,7 +13,6 @@ public class ButtonData {
     public void callback(DialogHelper dialogHelper) {
         dialogHelper.getCurrDialog().dismiss();
         Logger.d("dialog", "default close.");
-        dialogHelper.setCurrClose(true);
         dialogHelper.next();
     }
 

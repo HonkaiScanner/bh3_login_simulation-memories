@@ -77,7 +77,7 @@ android {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
         targetSdk = 33
-        versionCode = 110
+        versionCode = 111
         versionName = "1.9.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -97,7 +97,7 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-24w43a.dev"
+                "-snapshot-24w43b.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -243,7 +243,7 @@ dependencies {
     {
         exclude("com.tencent", "mmkv")
     }
-    implementation("com.tencent.shiply:upgrade-ui:2.2.0") // 弹框ui相关，业务方如果自己自定义弹框，可以不依赖这个库
+//    implementation("com.tencent.shiply:upgrade-ui:2.2.0") // 弹框ui相关，业务方如果自己自定义弹框，可以不依赖这个库
     implementation("com.tencent.shiply:upgrade-diff-pkg-patch:2.2.0")
 //    testImplementation 'junit:junit:4.13.2'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
