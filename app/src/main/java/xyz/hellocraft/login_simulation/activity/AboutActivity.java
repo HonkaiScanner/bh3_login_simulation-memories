@@ -4,6 +4,8 @@ import static xyz.hellocraft.login_simulation.data.Constant.QQ_GROUP_URL;
 import static xyz.hellocraft.login_simulation.data.Constant.VISITOR_COUNT;
 
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +19,10 @@ import com.drakeet.about.License;
 import com.github.haocen2004.login_simulation.BuildConfig;
 import com.github.haocen2004.login_simulation.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import xyz.hellocraft.login_simulation.utils.Logger;
 import xyz.hellocraft.login_simulation.utils.Tools;
@@ -86,6 +91,7 @@ public class AboutActivity extends BaseAbsActivity {
         items.add(new License("WeChatQRCode", "jenly1314", License.APACHE_2, "https://github.com/jenly1314/WeChatQRCode"));
         items.add(new License("opencv", "opencv", License.APACHE_2, "https://github.com/opencv/opencv"));
         items.add(new License("Bugly", "Tencent", "UNKNOWN", "https://github.com/BuglyDevTeam/Bugly-Android"));
+        items.add(new License("BuglyBetaUploader", "Tencent", License.APACHE_2, "https://github.com/BuglyDevTeam/BuglyBetaUploader"));
         items.add(new License("java-unified-sdk", "leancloud", License.APACHE_2, "https://github.com/leancloud/java-unified-sdk"));
         items.add(new License("RxJava", "ReactiveX", License.APACHE_2, "https://github.com/ReactiveX/RxJava"));
         items.add(new License("Toaster", "getActivity", License.APACHE_2, "https://github.com/getActivity/Toaster"));
@@ -93,13 +99,27 @@ public class AboutActivity extends BaseAbsActivity {
         items.add(new License("sensebot", "Geetest", License.APACHE_2, "https://github.com/GeeTeam/gt3-android-sdk"));
         items.add(new License("glide", "Google", License.APACHE_2, "https://github.com/bumptech/glide"));
         items.add(new License("RikkaX", "Rikka", License.MIT, "https://github.com/RikkaApps/RikkaX"));
+        items.add(new License("StringFog", "MegatronKing", License.APACHE_2, "https://github.com/MegatronKing/StringFog"));
+        items.add(new License("Android_CN_OAID", "gzu-liyujiang", "http://license.coscl.org.cn/MulanPSL2", "https://github.com/MegatronKing/StringFog"));
         items.add(new License("Gson", "Google", License.APACHE_2, "https://github.com/google/gson"));
         items.add(new License("okhttp", "square", License.APACHE_2, "https://github.com/square/okhttp"));
         items.add(new License("AndroidX", "Google", License.APACHE_2, "https://github.com/androidx-releases"));
 
+        try {
+            PackageManager packageManager = getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            long installedTime = System.currentTimeMillis() - packageInfo.firstInstallTime;
+            int installedDay = (int) (installedTime / 1000 / 60 / 60 / 24);
+            items.add(new Category("扫码器已经陪伴了您 " + installedDay + " 天"));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+            items.add(new Category("初次安装时间: " + dateFormat.format(new Date(packageInfo.firstInstallTime))));
+        } catch (PackageManager.NameNotFoundException ignore) {
+        }
         items.add(new Category("您已使用扫码器成功登陆 " + Tools.getInt(this, "succ_count") + " 次"));
         items.add(new Category(Tools.getUUID(this)));
         items.add(new Category(Tools.getString(this, "installationId")));
-        items.add(new Category("累计有 " + VISITOR_COUNT + " 台设备使用过扫码器 (统计访问更新服务的IP)"));
+        if (VISITOR_COUNT != 0) {
+            items.add(new Category("累计有 " + VISITOR_COUNT + " 台设备使用过扫码器 (统计访问更新服务的IP)"));
+        }
     }
 }
