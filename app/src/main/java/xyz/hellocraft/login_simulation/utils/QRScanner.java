@@ -14,6 +14,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -149,24 +150,7 @@ public class QRScanner {
                         int succCount = Tools.getInt(activity, "succ_count");
                         if (succCount > 20 && !Tools.getBoolean(activity, "showFollowDialog", false) && new Random().nextBoolean()) {
 
-                            DialogData dialogData = new DialogData("感谢使用", "您已经使用扫码器成功登录了 " + succCount + " 次\n\n感谢您对扫码器的认可与支持\n\n能否关注一下作者的B站账号呢\n(◍•ᴗ•◍)❤\n\nHao_cen\n269140934");
-                            dialogData.setPositiveButtonData(new ButtonData("前往关注") {
-                                @Override
-                                public void callback(DialogHelper dialogHelper) {
-                                    super.callback(dialogHelper);
-                                    Tools.saveBoolean(activity, "showFollowDialog", true);
-                                    Tools.openUrl("https://space.bilibili.com/269140934", activity);
-                                }
-                            });
-                            dialogData.setNegativeButtonData(new ButtonData("不再弹出") {
-                                @Override
-                                public void callback(DialogHelper dialogHelper) {
-                                    super.callback(dialogHelper);
-                                    Tools.saveBoolean(activity, "showFollowDialog", true);
-                                    Log.makeToast("很抱歉打扰到您\n该弹窗将不再显示");
-                                }
-                            });
-                            dialogData.setNeutralButtonData("下次再说");
+                            DialogData dialogData = getDialogData(succCount);
                             DialogLiveData.getINSTANCE().addNewDialog(dialogData);
                         }
 
@@ -183,6 +167,37 @@ public class QRScanner {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+
+        private DialogData getDialogData(int succCount) {
+            String dayString = "";
+            try {
+                PackageManager packageManager = activity.getPackageManager();
+                PackageInfo packageInfo = packageManager.getPackageInfo(activity.getPackageName(), 0);
+                long installedTime = System.currentTimeMillis() - packageInfo.firstInstallTime;
+                int installedDay = (int) (installedTime / 1000 / 60 / 60 / 24);
+                dayString = "扫码器已经陪伴了您 " + installedDay + " 天";
+            } catch (Exception ignore) {
+            }
+            DialogData dialogData = new DialogData("感谢使用", "您已经使用扫码器成功登录了 " + succCount + " 次\n" + dayString + "\n\n感谢您对扫码器的认可与支持\n\n能否关注一下作者的B站账号呢\n(◍•ᴗ•◍)❤\n\nHao_cen\n269140934");
+            dialogData.setPositiveButtonData(new ButtonData("前往关注") {
+                @Override
+                public void callback(DialogHelper dialogHelper) {
+                    super.callback(dialogHelper);
+                    Tools.saveBoolean(activity, "showFollowDialog", true);
+                    Tools.openUrl("https://space.bilibili.com/269140934", activity);
+                }
+            });
+            dialogData.setNegativeButtonData(new ButtonData("不再弹出") {
+                @Override
+                public void callback(DialogHelper dialogHelper) {
+                    super.callback(dialogHelper);
+                    Tools.saveBoolean(activity, "showFollowDialog", true);
+                    Log.makeToast("很抱歉打扰到您\n该弹窗将不再显示");
+                }
+            });
+            dialogData.setNeutralButtonData("下次再说");
+            return dialogData;
         }
     };
     Runnable runnable = new Runnable() {
