@@ -1,6 +1,5 @@
 package xyz.hellocraft.login_simulation.activity;
 
-import static xyz.hellocraft.login_simulation.data.Constant.QQ_GROUP_URL;
 import static xyz.hellocraft.login_simulation.data.Constant.VISITOR_COUNT;
 
 import android.content.SharedPreferences;
@@ -38,14 +37,16 @@ public class AboutActivity extends BaseAbsActivity {
             SharedPreferences app_pref = PreferenceManager.getDefaultSharedPreferences(this);
 
             if (!app_pref.getBoolean("no_crash_page", false)) {
-                if (counter < 20) {
-                    if (counter >= 10) {
-                        Logger.getLogger(this).makeToast("还需点击 " + (20 - counter) + " 下");
+                if (app_pref.getBoolean("adv_setting", false)) {
+                    if (counter < 20) {
+                        if (counter >= 10) {
+                            Logger.getLogger(this).makeToast("还需点击 " + (20 - counter) + " 下");
+                        }
+                        counter++;
+                    } else {
+                        app_pref.edit().putBoolean("no_crash_page", true).apply();
+                        Logger.getLogger(this).makeToast("已关闭崩溃界面显示");
                     }
-                    counter++;
-                } else {
-                    app_pref.edit().putBoolean("no_crash_page", true).apply();
-                    Logger.getLogger(this).makeToast("已关闭崩溃界面显示");
                 }
             } else {
                 Logger.getLogger(this).makeToast("您已关闭崩溃界面显示！");
@@ -83,7 +84,7 @@ public class AboutActivity extends BaseAbsActivity {
         items.add(new Category(getString(R.string.about_repo)));
         items.add(new Card("Github\nhttps://github.com/HonkaiScanner/bh3_login_simulation-memories"));
         items.add(new Card("BiliBili\nhttps://space.bilibili.com/269140934"));
-        items.add(new Card("QQ Group\n" + QQ_GROUP_URL));
+//        items.add(new Card("QQ Group\n" + QQ_GROUP_URL));
 
         items.add(new Category(getString(R.string.about_open_source)));
         items.add(new License("MultiType", "drakeet", License.APACHE_2, "https://github.com/drakeet/MultiType"));
