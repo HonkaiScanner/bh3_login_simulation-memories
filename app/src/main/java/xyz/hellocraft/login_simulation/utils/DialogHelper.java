@@ -69,6 +69,8 @@ public class DialogHelper {
             currShow = true;
 
             showDialog(dialogData.get(currPos));
+        } else {
+            currShow = false;
         }
     }
 
