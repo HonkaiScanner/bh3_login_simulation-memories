@@ -3,6 +3,7 @@ package xyz.hellocraft.login_simulation.login
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
+import android.text.TextUtils
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
@@ -171,7 +172,7 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
             mid = userInfo.getString("mid")
             val mobile = userInfo.getString("mobile")
             username = mobile
-            if (username.isEmpty()) {
+            if (TextUtils.isEmpty(username)) {
                 username = userInfo.getString("email")
             }
             preferences?.edit()!!
@@ -234,7 +235,7 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
     }
 
     private fun verifyAccount() {
-        if (gameToken == null || gameToken!!.isEmpty() || gameToken!!.length < 10) {
+        if (TextUtils.isEmpty(gameToken) || gameToken!!.length < 10) {
             getGameToken()
         }
         Logger.addBlacklist(gameToken)

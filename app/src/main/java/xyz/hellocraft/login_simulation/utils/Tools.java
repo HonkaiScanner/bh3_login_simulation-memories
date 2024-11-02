@@ -140,7 +140,7 @@ public class Tools {
         Map<String, Object> oaMap = new HashMap<>();
         long currentMs = System.currentTimeMillis();
         String open_id = roleData.getOpen_id();
-        if (open_id.isEmpty()) {
+        if (TextUtils.isEmpty(open_id)) {
             open_id = roleData.getOa_req_key() + "_" + (deviceId == null ? deviceId : "null");
         }
         oaMap.put("x-req-openid", open_id);

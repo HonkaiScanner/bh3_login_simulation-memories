@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 
@@ -59,10 +60,10 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void afterTextChanged(Editable editable) {
             boolean t1, t2, t3, t4;
-            t1 = binding.editTextName.getText().toString().isEmpty();
-            t2 = binding.editTextPassword.getText().toString().isEmpty();
-            t3 = binding.editTextRegEmail.getText().toString().isEmpty();
-            t4 = binding.editTextKey.getText().toString().isEmpty();
+            t1 = TextUtils.isEmpty(binding.editTextName.getText());
+            t2 = TextUtils.isEmpty(binding.editTextPassword.getText());
+            t3 = TextUtils.isEmpty(binding.editTextRegEmail.getText());
+            t4 = TextUtils.isEmpty(binding.editTextKey.getText());
             binding.buttonRegisterStep2.setEnabled(!t1 && !t2 && !t3 && !t4);
             binding.buttonLogin.setEnabled(!t2 && !t3);
         }

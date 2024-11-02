@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -22,19 +23,27 @@ import xyz.hellocraft.login_simulation.login.LoginCallback;
 import xyz.hellocraft.login_simulation.utils.Logger;
 
 public class RoleData {
-    private final String open_id;
-    private final String open_token;
-    private final String combo_id;
-    private final String combo_token;
-    private final String channel_id;
-    private final String account_type;
-    private final String oa_req_key;
+    private String open_id = "";
+    private String open_token = "";
+    ;
+    private String combo_id = "";
+    ;
+    private String combo_token = "";
+    ;
+    private String channel_id = "";
+    ;
+    private String account_type = "";
+    ;
+    private String oa_req_key = "";
+    ;
     //    private Activity activity;
     private final LoginCallback callback;
-    private String str_oaserver;
+    private String str_oaserver = "";
+    ;
     private String enc_oaserver = "dec_oaserver";
-    private String accountType;
-    private boolean is_setup;
+    private String accountType = "";
+    ;
+    private boolean is_setup = false;
     Handler getOA_handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -82,7 +91,7 @@ public class RoleData {
         this.channel_id = channel_id;
         this.account_type = account_type;
         this.accountType = account_type;
-        this.oa_req_key = BH_VER + "_gf_android" + (oa_req_key.isEmpty() ? "" : "_" + oa_req_key);
+        this.oa_req_key = BH_VER + "_gf_android" + (TextUtils.isEmpty(oa_req_key) ? "" : "_" + oa_req_key);
         if (special_tag == 1) {
             this.uc_sign = true;
             accountType = "3";

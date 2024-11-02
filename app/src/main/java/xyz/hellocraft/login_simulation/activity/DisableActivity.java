@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -24,7 +25,7 @@ public class DisableActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ActivityDisableBinding binding = ActivityDisableBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        if (!DISABLE_TIPS.isEmpty()) {
+        if (!TextUtils.isEmpty(DISABLE_TIPS)) {
             binding.disableTips.setText(DISABLE_TIPS);
 //            binding.customTips.setText(DISABLE_TIPS);
         }

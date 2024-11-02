@@ -340,7 +340,7 @@ public final class XDeviceUtils {
         } catch (Throwable th) {
             Log.w(TAG, ExceptionsKt.stackTraceToString(th));
         }
-        if (str != null && !str.isEmpty()) {
+        if (TextUtils.isEmpty(str)) {
             return id;
         }
         if (allowInvalid) {
@@ -697,7 +697,7 @@ public final class XDeviceUtils {
     public String getDeviceBrand() {
         String str = Build.BRAND;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -706,7 +706,7 @@ public final class XDeviceUtils {
     public String getDeviceManufacturer() {
         String str = Build.MANUFACTURER;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -715,7 +715,7 @@ public final class XDeviceUtils {
     public String getDeviceModel() {
         String str = Build.MODEL;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -724,7 +724,7 @@ public final class XDeviceUtils {
     public String getDeviceVersion() {
         String str = Build.VERSION.RELEASE;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -733,7 +733,7 @@ public final class XDeviceUtils {
     public String getDeviceBootLoaderVersion() {
         String str = Build.BOOTLOADER;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -742,7 +742,7 @@ public final class XDeviceUtils {
     public String getDeviceInternalVersion() {
         String str = Build.DISPLAY;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -755,7 +755,7 @@ public final class XDeviceUtils {
     public String getSerial() {
         @SuppressLint("HardwareIds") String str = Build.SERIAL;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -764,7 +764,7 @@ public final class XDeviceUtils {
     public String getBoard() {
         String str = Build.BOARD;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -773,7 +773,7 @@ public final class XDeviceUtils {
     public String getHardware() {
         String str = Build.HARDWARE;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -782,7 +782,7 @@ public final class XDeviceUtils {
     public String getCPUType() {
         String str = Build.CPU_ABI;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -791,7 +791,7 @@ public final class XDeviceUtils {
     public String getDeviceType() {
         String str = Build.DEVICE;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -800,7 +800,7 @@ public final class XDeviceUtils {
     public String getBuildHost() {
         String str = Build.HOST;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -809,7 +809,7 @@ public final class XDeviceUtils {
     public String getProductName() {
         String str = Build.PRODUCT;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -818,7 +818,7 @@ public final class XDeviceUtils {
     public String getVersionCodeName() {
         String str = Build.VERSION.CODENAME;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -827,7 +827,7 @@ public final class XDeviceUtils {
     public String getBuildTags() {
         String str = Build.TAGS;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -836,7 +836,7 @@ public final class XDeviceUtils {
     public String getBuildType() {
         String str = Build.TYPE;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;
@@ -845,7 +845,7 @@ public final class XDeviceUtils {
     public String getBuildUser() {
         String str = Build.USER;
         String str2 = str;
-        if (str2 == null || str2.isEmpty()) {
+        if (TextUtils.isEmpty(str2)) {
             str = null;
         }
         return str == null ? EnvironmentCompat.MEDIA_UNKNOWN : str;

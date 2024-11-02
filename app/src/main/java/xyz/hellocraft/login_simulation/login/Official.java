@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -285,7 +286,7 @@ public class Official implements LoginImpl {
                     token = account_json.getString("token");
                     uid = account_json.getString("uid");
                     email = account_json.getString("mobile");
-                    if (email.isEmpty()) {
+                    if (TextUtils.isEmpty(email)) {
                         email = account_json.getString("email");
                     }
                     preferences.edit()

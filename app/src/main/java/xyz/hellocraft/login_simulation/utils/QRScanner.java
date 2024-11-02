@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -626,7 +627,7 @@ public class QRScanner {
                 raw_json.put("is_wdj", app_pref.getBoolean("use_wdj", false));
             }
 
-            if (open_token != null && !open_token.isEmpty() && showKeyData) {
+            if (open_token != null && !TextUtils.isEmpty(open_token) && showKeyData) {
                 raw_json.put("open_token", open_token)
                         .put("guest", false);
             }
