@@ -245,13 +245,13 @@ public class QRScanner {
             if (newOfficialQRMethod) {
                 genRequest();
 
-                Logger.d("Network", "biz_key: " + biz_key);
+                Logger.d("Confirm", "biz_key: " + biz_key);
                 String body = "{\"ticket\":\"" + ticket + "\",\"token_types\":[\"1\"]}";
                 Map<String, String> baseHeader = DeviceFpManager.getDSPRODHeader(activity, body);
                 baseHeader.put("Cookie", getOfficialCK());
                 String feedback = Network.sendPost("https://passport-api.mihoyo.com/account/ma-cn-passport/app/confirmQRLogin", body, baseHeader);
 
-                Logger.d("Network", "feedback: " + feedback);
+                Logger.d("Confirm", "feedback: " + feedback);
 
                 Message msg = new Message();
                 Bundle data = new Bundle();
@@ -483,7 +483,11 @@ public class QRScanner {
     }
 
     public void start() {
-        if (!app_id.contains("1")) {
+        if (newOfficialQRMethod) {
+            new Thread(newOfficialQRRunnable).start();
+            return;
+        }
+        if (!TextUtils.isEmpty(app_id) && !app_id.contains("1")) {
             if (account_type == null || !account_type.equals("1")) {
 
                 makeToast("非 崩坏3 登录暂时只支持官服");
@@ -603,6 +607,9 @@ public class QRScanner {
                         break;
                     case "Wegame":
                         server_type = "Wegame";
+                        break;
+                    case "OfficialNew":
+                        server_type = "官服V2";
                         break;
                     default:
                         server_type = "获取服务器错误";

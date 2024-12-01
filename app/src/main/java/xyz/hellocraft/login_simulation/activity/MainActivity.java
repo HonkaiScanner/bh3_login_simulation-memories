@@ -35,8 +35,6 @@ import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 
 import org.json.JSONObject;
 
-import java.util.Objects;
-
 import xyz.hellocraft.login_simulation.data.dialog.DialogData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
@@ -58,30 +56,30 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
     private SharedPreferences app_pref;
     private Logger Log;
     //    Runnable device_fp_refresh_runnable = () -> DeviceFpManager.getInstance().getDeviceFp(getApplicationContext());
-    Handler bh_update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String feedback = data.getString("value");
-            if (feedback != null) {
-                try {
-                    JSONObject feedback_json = new JSONObject(feedback);
-                    if (feedback_json.getInt("retcode") == 0) {
-                        String new_bh_ver = feedback_json.getString("version");
-                        Logger.d("VersionCheck", "cloud bh ver: " + new_bh_ver);
-                        app_pref.edit().putString("bh_ver", new_bh_ver).apply();
-                        BH_VER = new_bh_ver;
-                        return;
-                    } else {
-                        Log.makeToast("崩坏3版本更新失败\n" + feedback_json.getString("message"));
-                    }
-                } catch (Exception ignore) {
-                }
-            }
-            BH_VER = app_pref.getString("bh_ver", BH_VER);
-        }
-    };
+//    Handler bh_update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
+//        @Override
+//        public void handleMessage(@NonNull Message msg) {
+//            super.handleMessage(msg);
+//            Bundle data = msg.getData();
+//            String feedback = data.getString("value");
+//            if (feedback != null) {
+//                try {
+//                    JSONObject feedback_json = new JSONObject(feedback);
+//                    if (feedback_json.getInt("retcode") == 0) {
+//                        String new_bh_ver = feedback_json.getString("version");
+//                        Logger.d("VersionCheck", "cloud bh ver: " + new_bh_ver);
+//                        app_pref.edit().putString("bh_ver", new_bh_ver).apply();
+//                        BH_VER = new_bh_ver;
+//                        return;
+//                    } else {
+//                        Log.makeToast("崩坏3版本更新失败\n" + feedback_json.getString("message"));
+//                    }
+//                } catch (Exception ignore) {
+//                }
+//            }
+//            BH_VER = app_pref.getString("bh_ver", BH_VER);
+//        }
+//    };
     //    Runnable bh_update_rb = () -> {
 //        String feedback = Network.sendGet(API_ENDPOINT + "/hi3_version", false);
 //        Message msg = new Message();
@@ -277,9 +275,13 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                         startActivity(disableIntent);
                     }
                     Logger.d("verifyCheck", String.valueOf(lossCount));
+                } else {
+                    Logger.d("verifyCheck", "background, stop check");
+                    scannerCheckerHandle.removeCallbacks(MainActivity.this::delayScannerChecker);
                 }
             }
         }.start();
+        scannerCheckerHandle.removeCallbacks(this::delayScannerChecker);
         if (lossCount < 3) {
             scannerCheckerHandle.postDelayed(this::delayScannerChecker, 30000);
         }
@@ -460,10 +462,15 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
     @Override
     public void onBecameForeground() {
+        Logger.d("verifyCheck", "foreground, force check");
+        scannerCheckerHandle.removeCallbacks(this::delayScannerChecker);
+        scannerCheckerHandle.postDelayed(this::delayScannerChecker, 0);
     }
 
     @Override
     public void onBecameBackground() {
+        Logger.d("verifyCheck", "background, stop check");
+        scannerCheckerHandle.removeCallbacks(this::delayScannerChecker);
         String iconPos = app_pref.getString("icon_pos", "0");
 
         PackageManager pm = getPackageManager();

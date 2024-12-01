@@ -92,6 +92,8 @@ public class RoleData {
         this.account_type = account_type;
         this.accountType = account_type;
         this.oa_req_key = BH_VER + "_gf_android" + (TextUtils.isEmpty(oa_req_key) ? "" : "_" + oa_req_key);
+        Logger.addBlacklist(combo_token);
+        Logger.addBlacklist(open_token);
         if (special_tag == 1) {
             this.uc_sign = true;
             accountType = "3";
@@ -114,9 +116,12 @@ public class RoleData {
             accountType = "7";
         } else if (special_tag == 11) {
             accountType = "21";
+        } else if (special_tag == 12) {
+            is_setup = true;
+            callback.onLoginSucceed(this);
+            enc_oaserver = "skip_req_oaserver";
+            return;
         }
-        Logger.addBlacklist(combo_token);
-        Logger.addBlacklist(open_token);
 
 
         new Thread(getOA_runnable).start();

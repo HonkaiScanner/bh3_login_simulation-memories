@@ -71,13 +71,15 @@ android {
             keyPassword = System.getenv("KEY_PASSWORD")
         }
     }
+    //noinspection GradleDependency
     compileSdk = 33
 
     defaultConfig {
         applicationId = "com.github.haocen2004.bh3_login_simulation"
         minSdk = 23
+        //noinspection OldTargetApi
         targetSdk = 33
-        versionCode = 111
+        versionCode = 113
         versionName = "1.9.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -97,7 +99,7 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-24w43b.dev"
+                "-snapshot-24w48a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

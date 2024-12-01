@@ -96,12 +96,14 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
             val accountJson = dataJson.getJSONObject("account")
             gameToken = accountJson.getString("token")
             uid = accountJson.getString("uid")
+            preferences?.edit()!!.putString("token", gameToken).apply()
             return TokenResult(true, "")
         } else if (feedbackJsonObject.has("message")) {
             Logger.d(tag, "verifyGameToken: $feedback")
+            preferences?.edit()!!.remove("token").apply()
             return TokenResult(false, feedbackJsonObject.getString("message"))
         }
-
+        preferences?.edit()!!.remove("token").apply()
         return TokenResult(false, "verifyGameToken unexpected failure")
 
     }
@@ -131,8 +133,7 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
                 val userInfo = dataJsonObject.getJSONObject("user_info")
                 stoken = tokenJsonObject.getString("token")
                 mid = userInfo.getString("mid")
-                verifyToken()
-                return TokenResult(true, "")
+                return verifyToken()
             } else if (feedbackJsonObject.has("message")) {
                 Logger.d(tag, "transferToken: $feedback")
                 return TokenResult(false, feedbackJsonObject.getString("message"))
@@ -186,16 +187,27 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
             if (data.has("new_token")) {
                 if (data.getString("new_token").isNotEmpty()) {
                     if (data.getString("new_token") != "null") {
-                        preferences?.edit()!!.putString("stoken", data.getString("new_token"))
+                        val newToken = JSONObject(data.getString("new_token"))
+                        preferences?.edit()!!.putString("stoken", newToken.getString("token"))
                             .apply()
-                        stoken = data.getString("new_token")
-                        return TokenResult(true, "")
+                        stoken = newToken.getString("token")
+                        Logger.addBlacklist(stoken)
+                        Logger.d(tag, "verifyToken: new_token found, verifying")
+                        return verifyToken()
                     }
                 }
             }
+            Logger.d(tag, "verifyToken: after new_token check")
+            V2_OFFICIAL_TOKEN = true
+            roleData = RoleData(uid, "", "", "", "1", "1", "", 12, callback)
+            isLogin = true
+            Logger.d(tag, "verifyToken: $feedback")
             return TokenResult(true, "")
         } else {
             Logger.d(tag, "verifyToken: $feedback")
+            if (!TextUtils.isEmpty(gameToken)) {
+                return transferToken()
+            }
             return if (feedbackJsonObject.has("message")) {
                 TokenResult(false, feedbackJsonObject.getString("message"))
             } else {
@@ -204,57 +216,57 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
         }
     }
 
-    private fun getGameToken() {
-        val cookie = "mid=$mid;stoken=$stoken"
-        val map: MutableMap<String, String> = HashMap()
-        map["Cookie"] = cookie
-
-        val feedback = Network.sendGet(
-            "https://api-takumi.mihoyo.com/auth/api/getGameToken",
-            map,
-            true
-        )
-        try {
-            val feedbackJsonObject = JSONObject(feedback)
-            if (feedbackJsonObject.has("retcode") && feedbackJsonObject.get("retcode") == 0) {
-                val dataJson: JSONObject = feedbackJsonObject.getJSONObject("data")
-                gameToken = dataJson.getString("game_token")
-                Logger.addBlacklist(gameToken)
-            } else {
-                Logger.d(tag, "getGameToken: $feedback")
-                preferences?.edit()!!.putBoolean("has_token", false).apply()
-                callback?.onLoginFailed("getGameToken unexpected failure")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Logger.d(tag, "getGameToken: $feedback")
-            preferences?.edit()!!.putBoolean("has_token", false).apply()
-            callback?.onLoginFailed("getGameToken unexpected failure")
-        }
-
-    }
-
-    private fun verifyAccount() {
-        if (TextUtils.isEmpty(gameToken) || gameToken!!.length < 10) {
-            getGameToken()
-        }
-        Logger.addBlacklist(gameToken)
-        val requestBody = "{\"uid\":\"$uid\",\"guest\":false,\"token\":\"$gameToken\"}"
-        val verifyAccount = Tools.verifyAccount(activity!!, "1", requestBody)
-        val verifyAccountJsonObject = JSONObject(verifyAccount)
-        if (verifyAccountJsonObject.has("retcode") && verifyAccountJsonObject.getInt("retcode") == 0) {
-            val data = verifyAccountJsonObject.getJSONObject("data")
-            val comboId = data.getString("combo_id")
-            val openId = data.getString("open_id")
-            val comboToken = data.getString("combo_token")
-            Logger.addBlacklist(comboToken)
-            roleData = RoleData(openId, "", comboId, comboToken, "1", "1", "", 0, callback)
-            isLogin = true
-        } else {
-            preferences?.edit()!!.putBoolean("has_token", false).apply()
-            callback?.onLoginFailed()
-        }
-    }
+//    private fun getGameToken() {
+//        val cookie = "mid=$mid;stoken=$stoken"
+//        val map: MutableMap<String, String> = HashMap()
+//        map["Cookie"] = cookie
+//
+//        val feedback = Network.sendGet(
+//            "https://api-takumi.mihoyo.com/auth/api/getGameToken",
+//            map,
+//            true
+//        )
+//        try {
+//            val feedbackJsonObject = JSONObject(feedback)
+//            if (feedbackJsonObject.has("retcode") && feedbackJsonObject.get("retcode") == 0) {
+//                val dataJson: JSONObject = feedbackJsonObject.getJSONObject("data")
+//                gameToken = dataJson.getString("game_token")
+//                Logger.addBlacklist(gameToken)
+//            } else {
+//                Logger.d(tag, "getGameToken: $feedback")
+//                preferences?.edit()!!.putBoolean("has_token", false).apply()
+//                callback?.onLoginFailed("getGameToken unexpected failure")
+//            }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            Logger.d(tag, "getGameToken: $feedback")
+//            preferences?.edit()!!.putBoolean("has_token", false).apply()
+//            callback?.onLoginFailed("getGameToken unexpected failure")
+//        }
+//
+//    }
+//
+//    private fun verifyAccount() {
+//        if (TextUtils.isEmpty(gameToken) || gameToken!!.length < 10) {
+//            getGameToken()
+//        }
+//        Logger.addBlacklist(gameToken)
+//        val requestBody = "{\"uid\":\"$uid\",\"guest\":false,\"token\":\"$gameToken\"}"
+//        val verifyAccount = Tools.verifyAccount(activity!!, "1", requestBody)
+//        val verifyAccountJsonObject = JSONObject(verifyAccount)
+//        if (verifyAccountJsonObject.has("retcode") && verifyAccountJsonObject.getInt("retcode") == 0) {
+//            val data = verifyAccountJsonObject.getJSONObject("data")
+//            val comboId = data.getString("combo_id")
+//            val openId = data.getString("open_id")
+//            val comboToken = data.getString("combo_token")
+//            Logger.addBlacklist(comboToken)
+//            roleData = RoleData(openId, "", comboId, comboToken, "1", "1", "", 0, callback)
+//            isLogin = true
+//        } else {
+//            preferences?.edit()!!.putBoolean("has_token", false).apply()
+//            callback?.onLoginFailed()
+//        }
+//    }
 
     private fun loginByPassword(aigis: String = "") {
         val jsonObject = JsonObject()
@@ -279,12 +291,11 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
             val userInfo = dataJsonObject.getJSONObject("user_info")
             stoken = tokenJsonObject.getString("token")
             mid = userInfo.getString("mid")
-            val verifyToken = verifyToken()
-            if (verifyToken.success) {
-                verifyAccount()
-            } else {
-                preferences?.edit()!!.putBoolean("has_token", false).apply()
-                callback?.onLoginFailed(verifyToken.message)
+            verifyToken().let {
+                if (!it.success) {
+                    preferences?.edit()!!.putBoolean("has_token", false).apply()
+                    callback?.onLoginFailed(it.message)
+                }
             }
         } else {
             if (feedback.headers.containsKey("x-rpc-aigis")) {
@@ -462,12 +473,11 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
             activity?.runOnUiThread {
                 alertDialog.dismiss()
             }
-            val verifyToken = verifyToken()
-            if (verifyToken.success) {
-                verifyAccount()
-            } else {
-                preferences?.edit()!!.putBoolean("has_token", false).apply()
-                callback?.onLoginFailed(verifyToken.message)
+            verifyToken().let {
+                if (!it.success) {
+                    preferences?.edit()!!.putBoolean("has_token", false).apply()
+                    callback?.onLoginFailed(it.message)
+                }
             }
         } else {
             Logger.d(tag, "loginByMobileCaptcha: $feedback")
@@ -554,29 +564,26 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
         if (preferences?.getBoolean("has_token", false) == true) {
             if (stoken?.startsWith("v2") == true) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val result = verifyToken()
-                    if (result.success) {
-                        V2_OFFICIAL_TOKEN = true
-                        verifyAccount()
-                    } else {
-                        preferences?.edit()!!.putBoolean("has_token", false).apply()
-                        callback?.onLoginFailed(result.message)
-                    }
-                }
-                return
-            } else if (gameToken?.isNotEmpty() == true) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val result = transferToken()
-                    if (result.success) {
-                        V2_OFFICIAL_TOKEN = true
-                        verifyAccount()
-                    } else {
-                        preferences?.edit()!!.putBoolean("has_token", false).apply()
-                        callback?.onLoginFailed(result.message)
+                    verifyToken().let {
+                        if (!it.success) {
+                            preferences?.edit()!!.putBoolean("has_token", false).apply()
+                            callback?.onLoginFailed(it.message)
+                        }
                     }
                 }
                 return
             }
+        }
+        if (gameToken?.isNotEmpty() == true) {
+            CoroutineScope(Dispatchers.IO).launch {
+                transferToken().let {
+                    if (!it.success) {
+                        preferences?.edit()!!.putBoolean("has_token", false).apply()
+                        callback?.onLoginFailed(it.message)
+                    }
+                }
+            }
+            return
         }
         MaterialAlertDialogBuilder(activity!!)
             .setTitle("点选一个登陆方式")
