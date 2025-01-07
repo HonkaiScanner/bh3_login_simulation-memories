@@ -3,6 +3,11 @@
 [![Auto Build Scanner](https://github.com/HonkaiScanner/bh3_login_simulation/actions/workflows/auto_build.yml/badge.svg?event=create)](https://github.com/HonkaiScanner/bh3_login_simulation/actions/workflows/auto_build.yml)  
 轻巧的崩坏3渠道服桌面端扫码登陆解决方案
 
+## 通知 / Notification
+Repo停止维护 程序不再有功能性更新 只会维护基本运行  
+如有问题反馈请前往B站先查阅置顶动态后b站私信提交反馈   
+https://space.bilibili.com/269140934
+
 ## 支持协议 / Supported protocol
 
 官服   
