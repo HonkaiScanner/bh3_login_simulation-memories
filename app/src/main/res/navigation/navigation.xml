@@ -27,4 +27,8 @@
         android:id="@+id/aboutActivity"
         android:name="xyz.hellocraft.login_simulation.activity.AboutActivity"
         android:label="activity_about" />
+    <activity
+        android:id="@+id/backupActivity"
+        android:name="xyz.hellocraft.login_simulation.activity.BackupActivity"
+        android:label="activity_backup" />
 </navigation>

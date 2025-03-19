@@ -134,5 +134,8 @@
     <string name="check_update_now">立即检查更新</string>
     <string name="pending_scanner">初始化扫码器中</string>
 
+    <string name="btn_backup">备份</string>
+    <string name="btn_restore">恢复</string>
+    <string name="restore_tips">备份与恢复功能将会备份您的数据到一个加密的 zip 文件中，您需要输入密钥来进行操作。\n请注意，备份与恢复功能仅备份您的数据，不包括应用的设置与状态。\n请确保您牢记您的密钥，否则您将无法恢复您的数据。\n\n备份操作仅在官服进行了测试，其他渠道不一定保证能正常恢复数据，对此造成的不便敬请谅解\n\n如有问题请联系开发者。</string>
 
 </resources>

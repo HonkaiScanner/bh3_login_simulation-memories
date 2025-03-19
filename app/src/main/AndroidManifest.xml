@@ -18,6 +18,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 悬浮窗扫码后台进程权限 -->
     <!-- android 13 相册扫码权限修正 -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -50,6 +52,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="s">
         <activity
+            android:name="xyz.hellocraft.login_simulation.activity.BackupActivity"
+            android:exported="false" />
+        <activity
             android:name="xyz.hellocraft.login_simulation.activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true">
@@ -59,10 +64,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="xyz.hellocraft.login_simulation.activity.SplashActivity"
-            android:excludeFromRecents="true"
-            android:noHistory="true"></activity>
 
         <activity-alias
             android:name=".activity.icon.main1"
@@ -79,6 +80,10 @@
             </intent-filter>
         </activity-alias>
 
+        <activity
+            android:name="xyz.hellocraft.login_simulation.activity.SplashActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true" />
         <activity android:name="xyz.hellocraft.login_simulation.activity.AboutActivity" />
         <activity android:name="xyz.hellocraft.login_simulation.activity.CrashActivity" />
         <activity android:name="xyz.hellocraft.login_simulation.activity.DisableActivity" />

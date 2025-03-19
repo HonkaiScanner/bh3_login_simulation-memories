@@ -3,6 +3,7 @@ package xyz.hellocraft.login_simulation.fragment;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static android.util.Log.getStackTraceString;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static java.lang.Integer.parseInt;
 import static xyz.hellocraft.login_simulation.data.Constant.CHECK_VER;
@@ -22,12 +23,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -37,6 +43,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -54,7 +61,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.king.wechat.qrcode.WeChatQRCodeDetector;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -105,6 +116,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             launchActivityCallbacks.remove(launchActivityCallback);
         }
     });
+    private final Map<String, Chip> currChipMap = new HashMap<>();
     private LoginImpl loginImpl;
     private AppCompatActivity activity;
     private Context context;
@@ -156,20 +168,80 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
         }
     });
-    //Constant.REQ_CODE_SCAN_GALLERY
+    private final ActivityResultLauncher<PickVisualMediaRequest> reqGalleryLauncher = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+        if (uri != null) {
+            Bitmap bitmap = processUri2Bitmap(uri);
+
+            if (bitmap == null) {
+                Log.makeToast("读取图片失败");
+                return;
+            }
+
+            if (bitmap.getConfig() != Bitmap.Config.ARGB_8888) {
+                bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+            }
+            Logger.d(TAG, "bitmap size: " + bitmap.getByteCount());
+            List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
+            for (String s : result) {
+                Logger.d(TAG, "bitmap result:" + s);
+            }
+            if (!result.isEmpty()) {
+                String[] url = result.toArray(new String[0]);
+                if (loginImpl != null && loginImpl.isLogin()) {
+                    QRScanner qrScanner;
+                    if (isOfficial) {
+                        qrScanner = new QRScanner(activity, true);
+                    } else {
+                        qrScanner = new QRScanner(activity, loginImpl.getRole());
+                    }
+
+                    if (!qrScanner.parseUrl(url)) return;
+                    qrScanner.start();
+                } else {
+                    DialogLiveData.getINSTANCE().addNewDialog(getClipBoardTextDialog(url));
+                }
+
+            } else {
+                Log.makeToast("未找到二维码");
+            }
+
+        } else {
+            Log.makeToast("未选择图片");
+        }
+    });
     private final ActivityResultLauncher<Intent> reqGalleryScanLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), callback -> {
+        Logger.d(TAG, "onReqGalleryResult: " + callback.getResultCode());
         if (callback.getResultCode() == RESULT_OK) {
-            Bitmap bitmap;
+            Bitmap bitmap = null;
             try {
                 if (callback.getData() != null) {
-                    bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), callback.getData().getData());
+                    Uri uri = callback.getData().getData();
+                    if (uri == null) {
+                        Logger.d(TAG, "wrong album result, " + callback.getData().getExtras());
+                        Log.makeToast("未找到图片, tag: uri");
+                        return;
+                    }
+                    Logger.d(TAG, "album result, " + uri);
+
+                    bitmap = processUri2Bitmap(uri);
+
+                    if (bitmap == null) {
+                        Log.makeToast("读取图片失败");
+                        return;
+                    }
+
                 } else {
-                    Logger.d(TAG, "wrong album result");
+                    Logger.d(TAG, "wrong album result, " + callback);
+                    Log.makeToast("未找到图片, tag: data");
                     return;
                 }
+                if (bitmap.getConfig() != Bitmap.Config.ARGB_8888) {
+                    bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                }
+                Logger.d(TAG, "bitmap size: " + bitmap.getByteCount());
                 List<String> result = WeChatQRCodeDetector.detectAndDecode(bitmap);
                 for (String s : result) {
-                    Logger.d(TAG, "album result:" + s);
+                    Logger.d(TAG, "bitmap result:" + s);
                 }
                 if (!result.isEmpty()) {
                     String[] url = result.toArray(new String[0]);
@@ -190,11 +262,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 } else {
                     Log.makeToast("未找到二维码");
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+                Logger.e(TAG, "read album failed, " + getStackTraceString(e));
+                Log.makeToast("读取图片失败\n" + e.getMessage());
             }
+        } else {
+            Log.makeToast("未选择图片, retcode:" + callback.getResultCode());
         }
     });
+    private boolean needRestart = false;
     //    private int currType = 999;
     private boolean currLoginTry = false;
     private FabScanner fabScanner;
@@ -220,6 +297,101 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private SocketHelper socketHelper;
     private boolean loginProgress = false;
     private boolean SDKInit = false;
+    private boolean accSwitch = false;
+    private LoginInstanceManager loginInstanceManager;
+    private ChipsHelper chipsHelper;
+    private int currOfficialSlot = 999;
+    private int currBiliSlot = 999;
+    private int currYYBSlot = 999;
+    private LayoutInflater mLayoutInflater;
+    private String cacheServerType = "";
+
+    //Constant.REQ_CODE_SCAN_GALLERY
+    private Bitmap processUri2Bitmap(Uri uri) {
+        Bitmap bitmap = null;
+        try {
+            requireActivity().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } catch (SecurityException e) {
+            Logger.d(TAG, "takePersistableUriPermission failed, " + getStackTraceString(e));
+        }
+
+        boolean success = false;
+
+        // 方法 1: 使用 openFileDescriptor
+        Logger.d(TAG, "try openFileDescriptor");
+        try (ParcelFileDescriptor inputPFD = requireActivity().getContentResolver().openFileDescriptor(uri, "r")) {
+            if (inputPFD != null) {
+                FileDescriptor fd = inputPFD.getFileDescriptor();
+                bitmap = BitmapFactory.decodeFileDescriptor(fd);
+                success = (bitmap != null);
+            }
+        } catch (Exception e) {
+            Logger.d(TAG, "read pfd failed, " + getStackTraceString(e));
+        }
+
+        // 方法 2: 使用 ImageDecoder（Android 9+）或 MediaStore
+        if (!success) {
+            Logger.d(TAG, "try ImageDecoder or MediaStore");
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireActivity().getContentResolver(), uri));
+                } else {
+                    bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
+                }
+                success = (bitmap != null);
+            } catch (Exception e) {
+                Logger.d(TAG, "read album failed, " + getStackTraceString(e));
+            }
+        }
+
+        // 方法 3: 直接使用 openInputStream
+        if (!success) {
+            Logger.d(TAG, "try openInputStream");
+            try (InputStream inputStream = requireActivity().getContentResolver().openInputStream(uri)) {
+                bitmap = BitmapFactory.decodeStream(inputStream);
+                success = (bitmap != null);
+            } catch (IOException e) {
+                Logger.d(TAG, "direct read album failed, " + getStackTraceString(e));
+            }
+        }
+
+        // 方法 4: 复制到缓存目录再读取
+        if (!success) {
+            Logger.d(TAG, "try cache copy");
+            File cacheFile = new File(requireActivity().getCacheDir(), "photo_picker_image.jpg");
+            try (InputStream inputStream = requireActivity().getContentResolver().openInputStream(uri); OutputStream outputStream = new FileOutputStream(cacheFile)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                outputStream.flush();
+                bitmap = BitmapFactory.decodeFile(cacheFile.getAbsolutePath());
+                success = (bitmap != null);
+            } catch (IOException e) {
+                Logger.d(TAG, "cache copy failed: " + getStackTraceString(e));
+            }
+        }
+
+        // 方法 5: 使用 MediaStore 转换为文件路径再读取
+        if (!success) {
+            String[] projection = {MediaStore.Images.Media.DATA};
+            Cursor cursor = requireActivity().getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                String filePath = cursor.getString(columnIndex);
+                cursor.close();
+                if (filePath != null) {
+                    Logger.d(TAG, "album file path: " + filePath);
+                    bitmap = BitmapFactory.decodeFile(filePath);
+                }
+//                        return filePath;
+            }
+        }
+
+        return bitmap;
+    }
 
     private DialogData getClipBoardTextDialog(String[] result) {
         DialogData dialogData = new DialogData("扫描结果", Arrays.toString(result));
@@ -241,15 +413,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         });
         return dialogData;
     }
-    private boolean needRestart = false;
-    private boolean accSwitch = false;
-    private LoginInstanceManager loginInstanceManager;
-    private ChipsHelper chipsHelper;
-    private final Map<String, Chip> currChipMap = new HashMap<>();
-    private int currOfficialSlot = 999;
-    private int currBiliSlot = 999;
-    private int currYYBSlot = 999;
-    private LayoutInflater mLayoutInflater;
 
     private void loadSavedData(Bundle savedInstanceState, String loadTag) {
         if (savedInstanceState.containsKey("scanner_data:combo_token")) {
@@ -399,8 +562,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         activity = (AppCompatActivity) getActivity();
         context = requireContext();
         pref = getDefaultSharedPreferences(context);
@@ -415,7 +577,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         chipsHelper = new ChipsHelper(context, this.getLayoutInflater());
         return binding.getRoot();
     }
-    private String cacheServerType = "";
 
     @SuppressLint("SetTextI18n")
     private void refreshView() {
@@ -539,12 +700,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 
         SharedPreferences toolsSp = activity.getSharedPreferences("scanner_pref", Context.MODE_PRIVATE);
         if (toolsSp.contains("tencent_openkey")) {
-            activity.getSharedPreferences("tencent_user_1", Context.MODE_PRIVATE).edit()
-                    .putString("openkey", toolsSp.getString("tencent_openkey", ""))
-                    .putString("openid", toolsSp.getString("tencent_openid", ""))
-                    .putString("username", "旧版本缓存账号")
-                    .putBoolean("need_rename", true)
-                    .commit();
+            activity.getSharedPreferences("tencent_user_1", Context.MODE_PRIVATE).edit().putString("openkey", toolsSp.getString("tencent_openkey", "")).putString("openid", toolsSp.getString("tencent_openid", "")).putString("username", "旧版本缓存账号").putBoolean("need_rename", true).commit();
             Logger.d("initSlot", "migration tencent data to slot 1");
         }
         if (toolsSp.contains("last_bili_login_succeed") && toolsSp.getBoolean("last_bili_login_succeed", false)) {
@@ -815,18 +971,22 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.btnSelpic.setOnClickListener(view1 -> {
             try {
 //                if (loginImpl.isLogin()) {
-
+                if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable()) {
+                    Logger.d(TAG, "isPhotoPickerAvailable");
+                    reqGalleryLauncher.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
+                } else {
+                    Logger.d(TAG, "use old method");
                     Intent pickIntent;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         pickIntent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+//                        pickIntent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX,1);
                         pickIntent.setType("image/*");
                     } else {
-                        pickIntent = new Intent(Intent.ACTION_PICK,
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                     }
                     reqGalleryScanLauncher.launch(pickIntent);
-
+                }
 
 //                } else {
 //                    makeToast(R.string.error_not_login);
@@ -857,29 +1017,23 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 }
                 itemSelected++;
             }
-            new MaterialAlertDialogBuilder(context)
-                    .setTitle(activity.getString(R.string.sel_server))
-                    .setSingleChoiceItems(singleChoiceItems, itemSelected, (dialogInterface, i) -> {
+            new MaterialAlertDialogBuilder(context).setTitle(activity.getString(R.string.sel_server)).setSingleChoiceItems(singleChoiceItems, itemSelected, (dialogInterface, i) -> {
 
-                        String originServerType = pref.getString("server_type", "");
-                        if (originServerType.equals(serverList[i])) {
-                            dialogInterface.dismiss();
-                            return;
-                        }
-                        Logger.d("selectServer ", serverList[i]);
-                        pref.edit().putString("server_type", serverList[i])
-                                .putBoolean("auto_login", autoLogin)
-                                .apply();
-                        Tools.saveBoolean(activity, "last_login_succeed", false);
-                        if ((loginImpl != null && loginImpl.isLogin()) || SDKInit) {
-                            Log.makeToast(R.string.logged_and_restart);
-                            needRestart = true;
-                        }
-                        refreshView();
-                        dialogInterface.dismiss();
-                    })
-                    .setNegativeButton(activity.getString(R.string.btn_cancel), (dialog, which) -> pref.edit().putBoolean("auto_login", autoLogin).apply())
-                    .show();
+                String originServerType = pref.getString("server_type", "");
+                if (originServerType.equals(serverList[i])) {
+                    dialogInterface.dismiss();
+                    return;
+                }
+                Logger.d("selectServer ", serverList[i]);
+                pref.edit().putString("server_type", serverList[i]).putBoolean("auto_login", autoLogin).apply();
+                Tools.saveBoolean(activity, "last_login_succeed", false);
+                if ((loginImpl != null && loginImpl.isLogin()) || SDKInit) {
+                    Log.makeToast(R.string.logged_and_restart);
+                    needRestart = true;
+                }
+                refreshView();
+                dialogInterface.dismiss();
+            }).setNegativeButton(activity.getString(R.string.btn_cancel), (dialog, which) -> pref.edit().putBoolean("auto_login", autoLogin).apply()).show();
         });
         binding.cardViewMain.btnCard1Action2.setOnClickListener(view1 -> {
             boolean newStatus = !pref.getBoolean("auto_login", false);
@@ -978,14 +1132,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         DialogLiveData.getINSTANCE().addNewDialog(dialogData);
     }
 
-    private final ActivityResultLauncher<String[]> qrCodeNoPermLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
-        if (isGranted.containsValue(false)) {
-            Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
-        } else {
-            startQrCode();
-        }
-    });
-
     private void checkPermissions() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -1001,8 +1147,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private void startQrCode() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // 申请权限
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission
-                    .CAMERA)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
                 Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
             }
             qrCodeNoPermLauncher.launch(new String[]{Manifest.permission.CAMERA});
@@ -1065,6 +1210,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             Looper.loop();
         }
     }
+
+    private final ActivityResultLauncher<String[]> qrCodeNoPermLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+        if (isGranted.containsValue(false)) {
+            Toast.makeText(context, R.string.request_permission_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            startQrCode();
+        }
+    });
 
     @Override
     public boolean onLongClick(View view) {
@@ -1203,86 +1356,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         return true;
     }
 
-
-//    private void resetOfficialServerType() {
-//        int i = getDefaultSharedPreferences(activity).getInt("official_type", 0);
-//        Logger.d(TAG, "resetOfficialServerType: " + i);
-//        switch (i) {
-//            case 1:
-//                OFFICIAL_TYPE = "pc01";
-//                break;
-//            case 2:
-//                OFFICIAL_TYPE = "ios01";
-//                break;
-//            default:
-//                OFFICIAL_TYPE = "android01";
-//                break;
-//        }
-//        Logger.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
-//    }
-
-//    @Override
-//    public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-//        if (!isChecked) return;
-//        if (loginProgress) {
-//            Log.makeToast("当前正在登陆进程中，无法切换此项目");
-//            Logger.d(TAG, "登陆中 已阻止切换服务器或账户槽位");
-//            return;
-//        }
-////        if (group.equals(binding.officialTypeSel)) {
-////            if (checkedId == currType) {
-////                return;
-////            } else if (currType == 999) {
-////                currType = checkedId;
-////                return;
-////            }
-////        }
-//
-////        SharedPreferences app_pref = getDefaultSharedPreferences(activity);
-////        View viewById = activity.findViewById(checkedId);
-////        if (binding.slot1.equals(viewById)) {
-////            app_pref.edit().putInt("official_slot", 1).apply();
-////            Logger.d(TAG, "onCheckedChanged: Switch To Slot 1");
-////            currSlot = checkedId;
-////        } else if (binding.slot2.equals(viewById)) {
-////            app_pref.edit().putInt("official_slot", 2).apply();
-////            Logger.d(TAG, "onCheckedChanged: Switch To Slot 2");
-////            currSlot = checkedId;
-////        } else if (binding.slot3.equals(viewById)) {
-////            app_pref.edit().putInt("official_slot", 3).apply();
-////            Logger.d(TAG, "onCheckedChanged: Switch To Slot 3");
-////            currSlot = checkedId;
-////        } else
-////        if (binding.radioPc.equals(viewById)) {
-////            app_pref.edit().putInt("official_type", 1).apply();
-////            Logger.d(TAG, "onCheckedChanged: Switch To PC");
-////            resetOfficialServerType();
-////            currType = checkedId;
-////        } else if (binding.radioAndroid.equals(viewById)) {
-////            app_pref.edit().putInt("official_type", 0).apply();
-////            Logger.d(TAG, "onCheckedChanged: Switch To Android");
-////            resetOfficialServerType();
-////            currType = checkedId;
-////        } else if (binding.radioIOS.equals(viewById)) {
-////            app_pref.edit().putInt("official_type", 2).apply();
-////            Logger.d(TAG, "onCheckedChanged: Switch To IOS");
-////            resetOfficialServerType();
-////            currType = checkedId;
-////        }
-//        try {
-//            if (loginImpl.isLogin() || accSwitch) {
-//                accSwitch = true;
-//                if (loginImpl instanceof Official || loginImpl instanceof Bilibili) {
-//                    loginImpl = loginInstanceManager.getLoginImpl(true);
-//                }
-//                refreshView();
-//                makeToast("切换后需重新登录");
-//            }
-//        } catch (Exception ignore) {
-//        }
-////        Toast.makeText(getContext(), i+"", Toast.LENGTH_SHORT).show();
-//    }
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (loginImpl != null && loginImpl.isLogin()) {
@@ -1384,6 +1457,88 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         launchActivityCallbacks.add(callback);
         tempLauncher.launch(intent);
     }
+
+
+//    private void resetOfficialServerType() {
+//        int i = getDefaultSharedPreferences(activity).getInt("official_type", 0);
+//        Logger.d(TAG, "resetOfficialServerType: " + i);
+//        switch (i) {
+//            case 1:
+//                OFFICIAL_TYPE = "pc01";
+//                break;
+//            case 2:
+//                OFFICIAL_TYPE = "ios01";
+//                break;
+//            default:
+//                OFFICIAL_TYPE = "android01";
+//                break;
+//        }
+//        Logger.d(TAG, "resetOfficialServerType: " + OFFICIAL_TYPE);
+//    }
+
+//    @Override
+//    public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+//        if (!isChecked) return;
+//        if (loginProgress) {
+//            Log.makeToast("当前正在登陆进程中，无法切换此项目");
+//            Logger.d(TAG, "登陆中 已阻止切换服务器或账户槽位");
+//            return;
+//        }
+////        if (group.equals(binding.officialTypeSel)) {
+////            if (checkedId == currType) {
+////                return;
+////            } else if (currType == 999) {
+////                currType = checkedId;
+////                return;
+////            }
+////        }
+//
+////        SharedPreferences app_pref = getDefaultSharedPreferences(activity);
+////        View viewById = activity.findViewById(checkedId);
+////        if (binding.slot1.equals(viewById)) {
+////            app_pref.edit().putInt("official_slot", 1).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To Slot 1");
+////            currSlot = checkedId;
+////        } else if (binding.slot2.equals(viewById)) {
+////            app_pref.edit().putInt("official_slot", 2).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To Slot 2");
+////            currSlot = checkedId;
+////        } else if (binding.slot3.equals(viewById)) {
+////            app_pref.edit().putInt("official_slot", 3).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To Slot 3");
+////            currSlot = checkedId;
+////        } else
+////        if (binding.radioPc.equals(viewById)) {
+////            app_pref.edit().putInt("official_type", 1).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To PC");
+////            resetOfficialServerType();
+////            currType = checkedId;
+////        } else if (binding.radioAndroid.equals(viewById)) {
+////            app_pref.edit().putInt("official_type", 0).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To Android");
+////            resetOfficialServerType();
+////            currType = checkedId;
+////        } else if (binding.radioIOS.equals(viewById)) {
+////            app_pref.edit().putInt("official_type", 2).apply();
+////            Logger.d(TAG, "onCheckedChanged: Switch To IOS");
+////            resetOfficialServerType();
+////            currType = checkedId;
+////        }
+//        try {
+//            if (loginImpl.isLogin() || accSwitch) {
+//                accSwitch = true;
+//                if (loginImpl instanceof Official || loginImpl instanceof Bilibili) {
+//                    loginImpl = loginInstanceManager.getLoginImpl(true);
+//                }
+//                refreshView();
+//                makeToast("切换后需重新登录");
+//            }
+//        } catch (Exception ignore) {
+//        }
+////        Toast.makeText(getContext(), i+"", Toast.LENGTH_SHORT).show();
+//    }
+
+
 
 
 }

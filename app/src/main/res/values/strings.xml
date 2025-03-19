@@ -134,4 +134,7 @@
     <string name="btn_send_debug_log">Send DEBUG LOG</string>
     <string name="check_update_now">Check Update Now</string>
     <string name="pending_scanner">SCANNER INITIALIZING</string>
+    <string name="btn_backup">Backup</string>
+    <string name="btn_restore">Restore</string>
+    <string name="restore_tips">The backup and restore function will back up your data to an encrypted zip file, and you will need to enter a key to perform the operation.\nPlease note that the backup and restore function only backs up your data and does not include the app\'s settings and state.\nPlease make sure to remember your key, as you will not be able to restore your data without it.\n\nThe backup operation has only been tested on the official server, and other channels may not guarantee that data restoration will work correctly. We apologize for any inconvenience this may cause.\n\nIf you have any issues, please contact the developer.</string>
 </resources>

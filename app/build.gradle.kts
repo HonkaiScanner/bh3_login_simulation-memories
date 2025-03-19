@@ -79,7 +79,7 @@ android {
         minSdk = 23
         //noinspection OldTargetApi
         targetSdk = 33
-        versionCode = 113
+        versionCode = 120
         versionName = "1.9.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -99,7 +99,7 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-24w48a.dev"
+                "-snapshot-25w06f.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

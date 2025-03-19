@@ -139,9 +139,9 @@ public class MainApplication extends Application implements LifecycleOwner {
             saveAllLogs.delete();
             SAVE_ALL_LOGS = false;
 
-            app_pref.edit()
-                    .putBoolean("no_crash_page", false)
-                    .apply();
+//            app_pref.edit()
+//                    .putBoolean("no_crash_page", false)
+//                    .apply();
         }
         if (app_pref.getBoolean("is_first_run", true) || app_pref.getInt("version", 1) < VERSION_CODE) {
             Logger.d("prefSetup", "first run or version update detect.");

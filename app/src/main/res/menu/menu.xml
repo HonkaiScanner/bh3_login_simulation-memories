@@ -18,5 +18,8 @@
         <item
             android:id="@+id/aboutActivity"
             android:title="@string/list_about" />
+        <item
+            android:id="@+id/backupActivity"
+            android:title="@string/btn_backup" />
     </group>
 </menu>
