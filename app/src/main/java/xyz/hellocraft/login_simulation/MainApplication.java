@@ -8,6 +8,7 @@ import static xyz.hellocraft.login_simulation.data.Constant.BETA_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.BH_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.CHECK_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.DEBUG_MODE;
+import static xyz.hellocraft.login_simulation.data.Constant.DFA;
 import static xyz.hellocraft.login_simulation.data.Constant.FOLLOW_SYSTEM_ACCENT;
 import static xyz.hellocraft.login_simulation.data.Constant.MDK_VERSION;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_ADV_MODE;
@@ -63,6 +64,7 @@ import xyz.hellocraft.login_simulation.utils.CrashHandler;
 import xyz.hellocraft.login_simulation.utils.ForegroundCallbacks;
 import xyz.hellocraft.login_simulation.utils.Logger;
 import xyz.hellocraft.login_simulation.utils.PmsHooker;
+import xyz.hellocraft.login_simulation.utils.SoundUtils;
 import xyz.hellocraft.login_simulation.utils.Tools;
 //import com.tencent.ysdk.api.YSDKApi;
 
@@ -242,6 +244,8 @@ public class MainApplication extends Application implements LifecycleOwner {
         MI_ADV_MODE = app_pref.getBoolean("mi_adv_mode", MI_ADV_MODE);
         OPPO_ADV_MODE = app_pref.getBoolean("oppo_adv_mode", OPPO_ADV_MODE);
         FOLLOW_SYSTEM_ACCENT = app_pref.getBoolean("follow_system_accent", FOLLOW_SYSTEM_ACCENT);
+        DFA = app_pref.getBoolean("disable_april_fool", false);
+        SoundUtils.getInstance(this);
         try {
             LeanCloud.initializeSecurely(getApplicationContext(), SP_APP_KEY, SP_URL);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !Tools.getDeviceModel().toLowerCase(Locale.ROOT).contains("mumu")) {

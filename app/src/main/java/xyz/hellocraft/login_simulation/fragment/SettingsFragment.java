@@ -2,6 +2,7 @@ package xyz.hellocraft.login_simulation.fragment;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static xyz.hellocraft.login_simulation.data.Constant.DFA;
 import static xyz.hellocraft.login_simulation.data.Constant.FA;
 import static xyz.hellocraft.login_simulation.data.Constant.FOLLOW_SYSTEM_ACCENT;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_ADV_MODE;
@@ -31,6 +32,7 @@ import xyz.hellocraft.login_simulation.data.dialog.DialogData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
 import xyz.hellocraft.login_simulation.utils.Logger;
+import xyz.hellocraft.login_simulation.utils.SoundUtils;
 import xyz.hellocraft.login_simulation.utils.UpgradeCallback;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -255,6 +257,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         }));
 
+        findPreference("disable_april_fool").setVisible(FA);
+        findPreference("disable_april_fool").setOnPreferenceChangeListener((preference, newValue) -> {
+            DFA = (boolean) newValue;
+            if (DFA) {
+                SoundUtils.getInstance(null).stop();
+            }
+            return true;
+        });
 
         findPreference("adv_group").setVisible(app_pref.getBoolean("adv_setting", false));
 

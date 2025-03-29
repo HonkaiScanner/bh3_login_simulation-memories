@@ -34,6 +34,7 @@ import org.opencv.OpenCV
 import xyz.hellocraft.login_simulation.data.Constant
 import xyz.hellocraft.login_simulation.data.Constant.BH_VER
 import xyz.hellocraft.login_simulation.data.Constant.CHECK_VER
+import xyz.hellocraft.login_simulation.data.Constant.DFA
 import xyz.hellocraft.login_simulation.data.Constant.FA
 import xyz.hellocraft.login_simulation.data.dialog.ButtonData
 import xyz.hellocraft.login_simulation.data.dialog.DialogData
@@ -44,6 +45,7 @@ import xyz.hellocraft.login_simulation.utils.DialogHelper
 import xyz.hellocraft.login_simulation.utils.ForegroundCallbacks
 import xyz.hellocraft.login_simulation.utils.Logger
 import xyz.hellocraft.login_simulation.utils.Network
+import xyz.hellocraft.login_simulation.utils.SoundUtils
 import xyz.hellocraft.login_simulation.utils.Tools
 import xyz.hellocraft.login_simulation.utils.UpgradeCallback
 
@@ -326,6 +328,10 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
             awaitAll(fpTask, updateChecker, hi3VerTask, sponsorChecker)
             delay(100L)
             appendText("All Tasks Done")
+            if (FA) {
+                if (!DFA) SoundUtils.getInstance(null).playSound("Loop")
+                appendText("sparrrrrrk")
+            }
             needBoot = true
             Constant.SCANNER_INIT = true
             if (continueBoot) {

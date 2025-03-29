@@ -53,6 +53,11 @@
             android:defaultValue="false"
             android:key="socket_helper"
             android:title="@string/use_socket" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="disable_april_fool"
+            android:title="@string/disable_april_fool"
+            app:isPreferenceVisible="false" />
 
     </PreferenceCategory>
 
