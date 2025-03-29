@@ -79,7 +79,7 @@ android {
         minSdk = 23
         //noinspection OldTargetApi
         targetSdk = 33
-        versionCode = 120
+        versionCode = 122
         versionName = "1.9.0"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -99,7 +99,7 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-25w06f.dev"
+                "-snapshot-25w12a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -193,13 +193,14 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment:2.6.0")
     implementation("androidx.navigation:navigation-ui:2.6.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta02")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv:1.3.0")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv-armv7a:1.3.0")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv-armv64:1.3.0")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv-x86:1.3.0")
-    implementation("com.github.jenly1314.WeChatQRCode:opencv-x86_64:1.3.0")
-    implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode:1.3.0")
-    implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode-scanning:1.3.0")
+    val qrcodeVer = "2.0.1"
+    implementation("com.github.jenly1314.WeChatQRCode:opencv:${qrcodeVer}")
+    implementation("com.github.jenly1314.WeChatQRCode:opencv-armv7a:${qrcodeVer}")
+    implementation("com.github.jenly1314.WeChatQRCode:opencv-armv64:${qrcodeVer}")
+    implementation("com.github.jenly1314.WeChatQRCode:opencv-x86:${qrcodeVer}")
+    implementation("com.github.jenly1314.WeChatQRCode:opencv-x86_64:${qrcodeVer}")
+    implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode:${qrcodeVer}")
+    implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode-scanning:${qrcodeVer}")
     implementation(project(":mi_sdk"))
 //    implementation(project(":360_sdk"))
     implementation("androidx.multidex:multidex:2.0.1")

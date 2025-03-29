@@ -1,5 +1,6 @@
 package xyz.hellocraft.login_simulation.data;
 
+import static android.util.Log.getStackTraceString;
 import static xyz.hellocraft.login_simulation.data.Constant.BH_VER;
 import static xyz.hellocraft.login_simulation.utils.Tools.getOAServer;
 
@@ -19,6 +20,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import xyz.hellocraft.login_simulation.data.dialog.DialogData;
+import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
 import xyz.hellocraft.login_simulation.login.LoginCallback;
 import xyz.hellocraft.login_simulation.utils.Logger;
 
@@ -54,19 +57,26 @@ public class RoleData {
                 if (feedback != null) {
                     JSONObject oaserver = new JSONObject(feedback);
                     Logger.i("GetOAServer", "handleMessage: " + oaserver);
-                    if (oaserver.getInt("retcode") == 0) {
-                        enc_oaserver = oaserver.getString("data");
-                        is_setup = true;
-                        callback.onLoginSucceed(RoleData.this);
-                    } else {
-                        Logger.getLogger(null).makeToast(oaserver.getString("message"));
-                        callback.onLoginFailed();
+                    if (oaserver.has("retcode")) {
+                        int retcode = oaserver.getInt("retcode");
+                        if (retcode == 0) {
+                            enc_oaserver = oaserver.getString("data");
+                            is_setup = true;
+                            callback.onLoginSucceed(RoleData.this);
+                        } else if (retcode > 100) {
+                            DialogData dialogData = new DialogData("OA服务器获取失败", oaserver.getString("message"), "确认");
+                            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                            callback.onLoginFailed();
+                        } else {
+                            Logger.getLogger(null).makeToast(oaserver.getString("message"));
+                            callback.onLoginFailed();
+                        }
                     }
                 } else {
                     callback.onLoginFailed();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.e("GetOAServer", "handleMessage: " + getStackTraceString(e));
                 callback.onLoginFailed();
             }
         }
@@ -176,7 +186,8 @@ public class RoleData {
         try {
             return new JSONObject(str_oaserver);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Logger.e("RoleData", "getOaserver: " + getStackTraceString(e));
+//            e.printStackTrace();
             return null;
         }
     }

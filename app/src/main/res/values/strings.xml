@@ -119,6 +119,7 @@
     <string name="icon_type">Select Extra Launcher Icon</string>
     <string name="enable_icon_pos">Enable Extra Launcher Icon</string>
     <string name="btn_hwacccenter">Huawei Account Center</string>
+    <string name="btn_ucClearModules">Clear UC Modules Cache</string>
     <string name="report_clear">Clear ALL Cache</string>
     <string name="hint_set_custom_remark">Custom Remark</string>
     <string name="follow_system_accent">System theme color</string>

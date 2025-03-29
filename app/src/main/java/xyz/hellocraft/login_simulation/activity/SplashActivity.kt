@@ -34,6 +34,7 @@ import org.opencv.OpenCV
 import xyz.hellocraft.login_simulation.data.Constant
 import xyz.hellocraft.login_simulation.data.Constant.BH_VER
 import xyz.hellocraft.login_simulation.data.Constant.CHECK_VER
+import xyz.hellocraft.login_simulation.data.Constant.FA
 import xyz.hellocraft.login_simulation.data.dialog.ButtonData
 import xyz.hellocraft.login_simulation.data.dialog.DialogData
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData
@@ -250,9 +251,13 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
                         appPref.edit().putString("mdk_ver", json.getString("mdk_ver"))
                             .putString("sp_url", json.getString("sp_url"))
                             .putString("afd_url", json.getString("afd_url"))
-                            .putString("qq_group_url", json.getString("qq_group_url")).putString(
-                                "custom_username", json.getString("default_name")
-                            ).apply()
+                            .putString("qq_group_url", json.getString("qq_group_url"))
+                            .putString("custom_username", json.getString("default_name"))
+                            .apply()
+                        if (json.has("af")) {
+                            FA = json.getBoolean("af");
+                            appPref.edit().putLong("ft", System.currentTimeMillis()).apply();
+                        }
                         Logger.d("Update", "cloud ver:" + json.getInt("ver"))
                         Logger.d("Update", "local ver:" + BuildConfig.VERSION_CODE)
                         if (Constant.BETA_VER && json.has("beta_ver") && BuildConfig.VERSION_CODE < json.getInt(

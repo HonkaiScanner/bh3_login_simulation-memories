@@ -2,7 +2,7 @@
     <!-- Reply Preference -->
     <string-array name="server_types">
         <item>官服</item>
-        <item>OfficialNew</item>
+        <item>官服V2</item>
         <item>B服</item>
         <item>小米服</item>
         <item>九游服</item>
@@ -16,7 +16,7 @@
     </string-array>
     <string-array name="server_types_xp">
         <item>官服</item>
-        <item>OfficialNew</item>
+        <item>官服V2</item>
         <item>B服</item>
         <item>小米服</item>
         <item>九游服</item>
@@ -35,6 +35,12 @@
     <string-array name="icon_type">
         <item>默认图标</item>
         <item>图标A</item>
+        <!--        <item>花火</item>-->
+    </string-array>
+    <string-array name="icon_type_hide">
+        <item>默认图标</item>
+        <item>图标A</item>
+        <item>花火</item>
     </string-array>
     <string-array name="official_login_type">
         <item>密码</item>

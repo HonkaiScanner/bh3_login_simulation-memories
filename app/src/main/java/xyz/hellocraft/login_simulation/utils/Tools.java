@@ -14,6 +14,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -396,6 +398,15 @@ public class Tools {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static Bitmap setBitmapAlpha(Bitmap source, int alpha) {
+        Bitmap result = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(result);
+        Paint paint = new Paint();
+        paint.setAlpha(alpha); // alpha: 0（完全透明）到 255（完全不透明）
+        canvas.drawBitmap(source, 0, 0, paint);
+        return result;
     }
 
 }

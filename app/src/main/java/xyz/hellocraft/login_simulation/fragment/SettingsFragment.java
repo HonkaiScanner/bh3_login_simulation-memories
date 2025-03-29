@@ -2,6 +2,7 @@ package xyz.hellocraft.login_simulation.fragment;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static xyz.hellocraft.login_simulation.data.Constant.FA;
 import static xyz.hellocraft.login_simulation.data.Constant.FOLLOW_SYSTEM_ACCENT;
 import static xyz.hellocraft.login_simulation.data.Constant.MI_ADV_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.OPPO_ADV_MODE;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.ListPreference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.haocen2004.login_simulation.R;
@@ -114,7 +116,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
             return true;
         });
-        findPreference("icon_pos").setVisible(app_pref.getBoolean("enable_icon_pos", false));
+        ListPreference iconPos = findPreference("icon_pos");
+        if (iconPos != null) {
+            iconPos.setVisible(app_pref.getBoolean("enable_icon_pos", false));
+            if (FA) {
+                iconPos.setEntries(getResources().getStringArray(R.array.icon_type_hide));
+                iconPos.setEntryValues(getResources().getStringArray(R.array.icon_type_values_hide));
+            }
+        }
         findPreference("enable_icon_pos").setOnPreferenceChangeListener((preference, newValue) -> {
             if ((Boolean) newValue) {
                 DialogData dialogData = new DialogData("是否启用额外扫码器图标？", "由于兼容性问题原有图标将不会自动隐藏\n\n设置后可能需要5-10秒才会看到新图标显示\n可能在部分机型上不生效");
@@ -201,6 +210,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switch (Objects.requireNonNull(app_pref.getString("server_type", "1"))) {
             case "Official":
                 findPreference("server_type").setSummary(getString(R.string.types_official));
+                break;
+            case "OfficialNew":
+                findPreference("server_type").setSummary(getString(R.string.types_official_new));
                 break;
             case "Bilibili":
                 findPreference("server_type").setSummary(getString(R.string.types_bilibili));

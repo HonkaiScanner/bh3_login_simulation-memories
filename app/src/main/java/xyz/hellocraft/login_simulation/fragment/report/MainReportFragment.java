@@ -1,6 +1,5 @@
 package xyz.hellocraft.login_simulation.fragment.report;
 
-import static xyz.hellocraft.login_simulation.data.Constant.DEBUG_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.QQ_GROUP_URL;
 import static xyz.hellocraft.login_simulation.utils.Logger.getLogger;
 import static xyz.hellocraft.login_simulation.utils.Tools.openUrl;
@@ -59,7 +58,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
         binding.reportBili.setOnClickListener(this);
         binding.reportQq.setOnClickListener(this);
         binding.reportClear.setOnClickListener(this);
-        if (DEBUG_MODE) binding.reportHand.setVisibility(View.VISIBLE);
+        binding.reportHand.setVisibility(View.VISIBLE);
         binding.reportHand.setOnClickListener(this);
         Log = getLogger(getContext());
         super.onViewCreated(view, savedInstanceState);
@@ -91,7 +90,7 @@ public class MainReportFragment extends Fragment implements View.OnClickListener
             DialogLiveData.getINSTANCE().addNewDialog(dialogData);
 
         } else if (binding.reportQq.equals(view)) {
-            DialogData dialogData = new DialogData("加群暗号", "Hao_cen");
+            DialogData dialogData = new DialogData("加群暗号", "269140934");
             dialogData.setPositiveButtonData(new ButtonData("打开加群界面") {
                 @Override
                 public void callback(DialogHelper dialogHelper) {

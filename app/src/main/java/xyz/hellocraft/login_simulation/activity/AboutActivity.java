@@ -106,6 +106,11 @@ public class AboutActivity extends BaseAbsActivity {
         items.add(new License("okhttp", "square", License.APACHE_2, "https://github.com/square/okhttp"));
         items.add(new License("AndroidX", "Google", License.APACHE_2, "https://github.com/androidx-releases"));
 
+        items.add(new Category(getString(R.string.about_assets)));
+        items.add(new License("主应用图标", "Peano", "Pixiv", "https://www.pixiv.net/artworks/77505884"));
+        items.add(new License("抽屉上方Banner", "艾晓萌", "Pixiv", "https://www.pixiv.net/artworks/89418903"));
+        items.add(new License("应用图标-A", "miHoYo", "游戏Pv截取", "https://www.bh3.com/"));
+
         try {
             PackageManager packageManager = getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(), 0);

@@ -12,6 +12,7 @@ import static xyz.hellocraft.login_simulation.data.Constant.QUICK_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.SCANNER_INIT;
 import static xyz.hellocraft.login_simulation.data.Constant.SP_CHECKED;
 import static xyz.hellocraft.login_simulation.utils.Tools.changeToWDJ;
+import static xyz.hellocraft.login_simulation.utils.Tools.traverseFilesAndDelete;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -551,7 +552,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 binding.cardViewMain.sponsorStateText.setVisibility(View.VISIBLE);
             }
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            Logger.e("SPCheck", "SPCheck failed: " + getStackTraceString(e));
             Logger.d(TAG, "未找到界面...");
         }
         if (currLoginTry) {
@@ -586,6 +588,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         binding.slotSelectGroup.setVisibility(View.GONE);
 //        binding.tokenCheckBox.setVisibility(View.GONE);
 //        binding.officialTypeSel.setVisibility(View.GONE);
+        binding.btnUcClearModules.setVisibility(View.GONE);
         binding.checkBoxWDJ.setVisibility(View.GONE);
         binding.btnHwAccountCenter.setVisibility(View.GONE);
         binding.btnSeltip.setVisibility(View.VISIBLE);
@@ -631,6 +634,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 break;
             case "UC":
                 server_type = activity.getString(R.string.types_uc);
+                binding.btnUcClearModules.setVisibility(View.VISIBLE);
                 binding.checkBoxWDJ.setVisibility(View.VISIBLE);
                 binding.checkBoxWDJ.setChecked(pref.getBoolean("use_wdj", false));
                 break;
@@ -791,6 +795,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 currChipMap.put(id, tempChip);
             }
         }
+
         String id = "add_chip";
         Chip tempChip;
         if (chipMap.containsKey(id)) {
@@ -947,6 +952,29 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //        binding.officialSlotSelect.addOnButtonCheckedListener(this);
 //        binding.officialTypeSel.addOnButtonCheckedListener(this);
 //        binding.tokenCheckBox.setOnCheckedChangeListener((compoundButton, b) -> pref.edit().putBoolean("use_token", b).apply());
+        binding.btnUcClearModules.setOnClickListener(view -> {
+            DialogData ucDeleteDialog = new DialogData("删除提示", "此功能仅为临时需要使用账号密码登录时恢复旧版SDK所用\n如果能正常登陆或者手机验证码登陆则无需使用此功能");
+            ucDeleteDialog.setPositiveButtonData(new ButtonData("确认删除") {
+                @Override
+                public void callback(DialogHelper dialogHelper) {
+                    super.callback(dialogHelper);
+                    File dir = new File(activity.getFilesDir().getParent() + "/ucgamesdk/modules/");
+                    if (dir.exists()) {
+                        traverseFilesAndDelete(dir);
+                        makeToast("已清除UC游戏SDK模块缓存");
+                    } else {
+                        makeToast("未找到UC游戏SDK模块缓存,无需清理");
+                    }
+                }
+            });
+            ucDeleteDialog.setNegativeButtonData(new ButtonData("取消") {
+                @Override
+                public void callback(DialogHelper dialogHelper) {
+                    super.callback(dialogHelper);
+                }
+            });
+            DialogLiveData.getINSTANCE().addNewDialog(ucDeleteDialog);
+        });
         binding.checkBoxWDJ.setOnCheckedChangeListener((compoundButton, b) -> {
             SharedPreferences ucSharedPref = activity.getSharedPreferences("cn.uc.gamesdk.pref", 0);
 //            activity.getSharedPreferences("cn.uc.gamesdk.pref.usr_simple_cache",0).edit().clear().apply();

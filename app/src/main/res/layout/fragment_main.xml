@@ -211,7 +211,24 @@
             app:layout_constraintTop_toBottomOf="@+id/btn_seltip"
             tools:visibility="visible" />
 
-        <com.google.android.material.checkbox.MaterialCheckBox
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_ucClearModules"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/btn_ucClearModules"
+                android:visibility="gone"
+                app:icon="@drawable/baseline_people_24"
+                app:iconGravity="textStart"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_hwAccountCenter"
+                tools:visibility="visible" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/token_checkBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -220,7 +237,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_hwAccountCenter" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_ucClearModules" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/checkBoxWDJ"

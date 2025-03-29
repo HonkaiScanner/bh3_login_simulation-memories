@@ -55,197 +55,15 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
     private ActivityMainBinding binding;
     private SharedPreferences app_pref;
     private Logger Log;
-    //    Runnable device_fp_refresh_runnable = () -> DeviceFpManager.getInstance().getDeviceFp(getApplicationContext());
-//    Handler bh_update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
-//        @Override
-//        public void handleMessage(@NonNull Message msg) {
-//            super.handleMessage(msg);
-//            Bundle data = msg.getData();
-//            String feedback = data.getString("value");
-//            if (feedback != null) {
-//                try {
-//                    JSONObject feedback_json = new JSONObject(feedback);
-//                    if (feedback_json.getInt("retcode") == 0) {
-//                        String new_bh_ver = feedback_json.getString("version");
-//                        Logger.d("VersionCheck", "cloud bh ver: " + new_bh_ver);
-//                        app_pref.edit().putString("bh_ver", new_bh_ver).apply();
-//                        BH_VER = new_bh_ver;
-//                        return;
-//                    } else {
-//                        Log.makeToast("崩坏3版本更新失败\n" + feedback_json.getString("message"));
-//                    }
-//                } catch (Exception ignore) {
-//                }
-//            }
-//            BH_VER = app_pref.getString("bh_ver", BH_VER);
-//        }
-//    };
-    //    Runnable bh_update_rb = () -> {
-//        String feedback = Network.sendGet(API_ENDPOINT + "/hi3_version", false);
-//        Message msg = new Message();
-//        Bundle data = new Bundle();
-//        data.putString("value", feedback);
-//        msg.setData(data);
-//        bh_update_check_hd.sendMessage(msg);
-//    };
     private long backTime = 0;
     private boolean catchBackAction = false;
     @SuppressLint("HandlerLeak")
-//    Handler update_check_hd = new Handler(Objects.requireNonNull(Looper.myLooper())) {
-//        @Override
-//        public void handleMessage(@NonNull Message msg) {
-//            super.handleMessage(msg);
-//            Bundle data = msg.getData();
-//            String feedback = data.getString("value");
-//            try {
-//                Logger.i("Update", "handleMessage: " + feedback);
-//                JSONObject json;
-//                if (feedback != null) {
-//                    json = new JSONObject(feedback);
-//                    if (json.has("disable_scanner") && json.getBoolean("disable_scanner")) {
-//                        Intent disableIntent = new Intent(getApplicationContext(), DisableActivity.class);
-//                        startActivity(disableIntent);
-//                        return;
-//                    }
-//                    app_pref.edit()
-//                            .putString("mdk_ver", json.getString("mdk_ver"))
-//                            .putString("sp_url", json.getString("sp_url"))
-//                            .putString("afd_url", json.getString("afd_url"))
-//                            .putString("qq_group_url", json.getString("qq_group_url"))
-//                            .putString("custom_username", json.getString("default_name"))
-////                            .putLong("update_time", json.getLong("update_time"))
-//                            .apply();
-//                    Logger.d("Update", "cloud ver:" + json.getInt("ver"));
-//                    Logger.d("Update", "local ver:" + VERSION_CODE);
-////                    Logger.d("Update", "pack name contains dev:" + getPackageName().contains("dev"));
-//                    if (BETA_VER && json.has("beta_ver") && VERSION_CODE < json.getInt("beta_ver")) {
-//                        Logger.i("Update", "Open Beta Update Window");
-//                        DialogData dialogData = new DialogData("获取到新测试版: " + json.getString("beta_ver_name"), "更新日志：\n" +
-//                                json.getString("beta_logs").replaceAll("&n", "\n"));
-//                        dialogData.setPositiveButtonData(new ButtonData("打开更新链接") {
-//                            @Override
-//                            public void callback(DialogHelper dialogHelper) {
-//                                try {
-//                                    openUrl(json.getString("beta_update_url"), getApplicationContext());
-//                                } catch (Exception ignore) {
-//                                }
-////                                closeOnBackground = true;
-//                            }
-//                        });
-//                        dialogData.setCancelable(false);
-//                        DialogLiveData.getINSTANCE().addNewDialog(dialogData);
-//                    } else if (!getPackageName().contains("dev") && (VERSION_CODE < json.getInt("ver")) && CHECK_VER && json.getInt("ver") > app_pref.getInt("ignore_ver", 0)) {
-//                        Logger.i("Update", "Open Update Window");
-//                        showUpdateDialog(
-//                                json.getString("ver_name"),
-//                                json.getString("apk_url"),
-//                                json.getString("update_url"),
-//                                json.getString("logs").replaceAll("&n", "\n")
-//                        );
-//                    }
-//
-//                } else {
-//                    Logger.d("Update", "Check Update Failed");
-//                    Log.makeToast("检查更新失败...");
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                Logger.d("Update", "Check Update Failed");
-//                Log.makeToast("检查更新失败...");
-//                //app_pref.edit().putString("bh_ver", BH_VER).apply();
-//            }
-////            if (app_pref.getBoolean("bh_ver_overwrite", false)) {
-////                BH_VER = app_pref.getString("custom_bh_ver", BH_VER);
-////            } else {
-//                BH_VER = app_pref.getString("bh_ver", BH_VER);
-////            }
-//            MDK_VERSION = app_pref.getString("mdk_ver", MDK_VERSION);
-//            SP_URL = app_pref.getString("sp_url", SP_URL);
-//            AFD_URL = app_pref.getString("afd_url", AFD_URL);
-//            QQ_GROUP_URL = app_pref.getString("qq_group_url", AFD_URL);
-////            UPDATE_TIME = app_pref.getLong("update_time", 0);
-//            if (CHECK_VER) {
-//                if (DEBUG_MODE) {
-//                    LeanCloud.setLogLevel(LCLogger.Level.DEBUG);
-//                }
-//
-//                Executors.newSingleThreadExecutor().execute(() -> {
-//                    new SponsorRepo(getApplicationContext()).refreshSponsors();
-//                    if (app_pref.getBoolean("has_account", false)) {
-//                        String TAG = "sponsor login check";
-//
-//                        Logger.d(TAG, "Start.");
-//                        LCUser.becomeWithSessionTokenInBackground(app_pref.getString("account_token", "")).subscribe(new Observer<LCUser>() {
-//                            public void onSubscribe(@NotNull Disposable disposable) {
-//                            }
-//
-//                            public void onNext(@NotNull LCUser user) {
-//                                LCUser.changeCurrentUser(user, true);
-//                                HAS_ACCOUNT = true;
-//                                if (user.getUsername().equals("Hao_cen")) {
-//                                    Logger.d("PUSH", "admin registering");
-//                                    PushService.subscribe(activity, "admin", NotificationActivity.class);
-//                                } else {
-//                                    PushService.unsubscribe(activity, "admin");
-//                                }
-//
-//                                LCInstallation.getCurrentInstallation().saveInBackground().subscribe(new Observer<LCObject>() {
-//                                    @Override
-//                                    public void onSubscribe(@NonNull Disposable d) {
-//                                    }
-//
-//                                    @Override
-//                                    public void onNext(@NonNull LCObject lcObject) {
-//                                        String installationId = LCInstallation.getCurrentInstallation().getInstallationId();
-//                                        Tools.saveString(getApplicationContext(), "installationId", installationId);
-//                                        Logger.d("PUSH", "admin registered");
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(@NonNull Throwable e) {
-//                                    }
-//
-//                                    @Override
-//                                    public void onComplete() {
-//                                    }
-//                                });
-//                                app_pref.edit().putBoolean("has_account", true).putString("custom_username", user.getString("custom_username")).apply();
-//                                Logger.d(TAG, "Succeed.");
-//                                SP_CHECKED = true;
-//
-//                            }
-//
-//                            public void onError(@NotNull Throwable throwable) {
-//                                LCUser.changeCurrentUser(null, true);
-//                                app_pref.edit().putBoolean("has_account", false)
-//                                        .putString("custom_username", "崩坏3扫码器用户").apply();
-//                                throwable.printStackTrace();
-//                                Logger.d(TAG, "Failed. Reset custom username");
-//                                Log.makeToast("赞助者身份验证已过期...");
-//                                SP_CHECKED = true;
-//                            }
-//
-//                            public void onComplete() {
-//                            }
-//                        });
-//
-//                    }
-//                });
-//
-//            }
-//        }
-//    };
+
     private int lossCount = 0;
     Runnable update_rb = () -> {
         if (HAS_UPDATE_THREAD) return;
         HAS_UPDATE_THREAD = true;
         scannerCheckerHandle.postDelayed(this::delayScannerChecker, 1500);
-//        String feedback = Network.sendGet(API_ENDPOINT + "/update");
-//        Message msg = new Message();
-//        Bundle data = new Bundle();
-//        data.putString("value", feedback);
-//        msg.setData(data);
-//        update_check_hd.sendMessage(msg);
     };
 
     private void delayScannerChecker() {
@@ -326,40 +144,6 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         //super.onBackPressed();
     }
 
-//    private void showUpdateDialog(String ver, String url, String lzUrl, String logs) {
-//        DialogData dialogData = new DialogData("获取到新版本: " + ver, "更新日志：\n" + logs);
-//        dialogData.setPositiveButtonData(new ButtonData("打开更新链接") {
-//            @Override
-//            public void callback(DialogHelper dialogHelper) {
-//                super.callback(dialogHelper);
-//                openUrl(url, getApplicationContext());
-//            }
-//        });
-//        dialogData.setNegativeButtonData(new ButtonData("蓝奏云") {
-//            @Override
-//            public void callback(DialogHelper dialogHelper) {
-//                super.callback(dialogHelper);
-//                openUrl(lzUrl, getApplicationContext());
-//            }
-//        });
-//        dialogData.setNeutralButtonData(new ButtonData(getString(R.string.btn_cancel)) {
-//            @Override
-//            public void callback(DialogHelper dialogHelper) {
-//                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getApplicationContext());
-//                normalDialog.setTitle("是否关闭更新提示？");
-//                normalDialog.setMessage("将无法获取扫码器最新更新\n\n赞助者相关功能将同时不可用\n\n崩坏3版本号将保持更新");
-//                normalDialog.setPositiveButton(R.string.btn_close_update, (dialog, which) -> {
-//                    app_pref.edit().putBoolean("check_update", false).apply();
-//                    dialog.dismiss();
-//                    super.callback(dialogHelper);
-//                });
-//                normalDialog.setNegativeButton(R.string.btn_cancel, (dialog, which) -> dialog.dismiss());
-//
-//            }
-//        });
-//
-//        DialogLiveData.getINSTANCE().addNewDialog(dialogData);
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -400,11 +184,6 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             showBetaInfoDialog();
         }
 
-        // 新版本功能介绍
-//        if (VERSION_CODE >= 24 && !app_pref.getBoolean("show150NewFeature", false)) {
-//            show15NewFeatureDialog();
-//        }
-
 
         // 优先读取本地数据
 //        BH_VER = app_pref.getBoolean("bh_ver_overwrite", false) ? app_pref.getString("custom_bh_ver", BH_VER) : app_pref.getString("bh_ver", BH_VER);
@@ -413,9 +192,6 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
         if (!HAS_UPDATE_THREAD) {
             new Thread(update_rb).start();
-//            new Thread(bh_update_rb).start();
-//            new Thread(device_fp_refresh_runnable).start();
-//            UpgradeManager.getInstance().checkUpgrade(false, null, new DefaultUpgradeStrategyRequestCallback());
         }
 
         if (Tools.getBoolean(this, "has_crash") && !app_pref.getBoolean("no_crash_page", false)) {
@@ -425,6 +201,18 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         }
 
         Intent dataIntent = getIntent();
+        ComponentName component = dataIntent.getComponent();
+        if (component != null) {
+            String aliasClassName = component.getClassName();
+            if (aliasClassName.contains("main2")) {
+                if (System.currentTimeMillis() - app_pref.getLong("ft", 0) < 1000 * 60 * 30) {
+                    Intent intent = new Intent(this, SbeamLoginActivity.class);
+                    intent.putExtra("youlookthecode", "whyskipit");
+                    startActivity(intent);
+                    return;
+                }
+            }
+        }
         if (dataIntent.hasExtra("scanner.quick")) {
             Logger.d("Shortcut", "start From ShortCut");
             boolean autoLogin = app_pref.getBoolean("auto_login", false);
@@ -474,8 +262,13 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
         String iconPos = app_pref.getString("icon_pos", "0");
 
         PackageManager pm = getPackageManager();
-        pm.setComponentEnabledSetting(new ComponentName(this, "com.github.haocen2004.login_simulation.activity.icon.main1"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        for (String s : getResources().getStringArray(R.array.icon_type_values_full)) {
+            if (s.equals(iconPos)) continue;
+            if (s.equals("0")) continue;
+            pm.setComponentEnabledSetting(new ComponentName(this, "com.github.haocen2004.login_simulation.activity.icon.main" + s), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        }
         if (!iconPos.equals("0") && app_pref.getBoolean("enable_icon_pos", false)) {
+            Logger.d("ICON", "Enable " + iconPos);
             pm.setComponentEnabledSetting(new ComponentName(this, "com.github.haocen2004.login_simulation.activity.icon.main" + iconPos), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
         }
     }

@@ -19,7 +19,6 @@
     <!-- android 13 相册扫码权限修正 -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
-
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -52,6 +51,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="s">
         <activity
+            android:name="xyz.hellocraft.login_simulation.activity.SbeamLoginActivity"
+            android:exported="false" />
+        <activity
             android:name="xyz.hellocraft.login_simulation.activity.BackupActivity"
             android:exported="false" />
         <activity
@@ -65,6 +67,20 @@
             </intent-filter>
         </activity>
 
+        <activity-alias
+            android:name=".activity.icon.main2"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_3"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_3_round"
+            android:targetActivity="xyz.hellocraft.login_simulation.activity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
         <activity-alias
             android:name=".activity.icon.main1"
             android:enabled="false"
