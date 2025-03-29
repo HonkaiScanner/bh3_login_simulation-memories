@@ -204,7 +204,7 @@ dependencies {
     implementation(project(":mi_sdk"))
 //    implementation(project(":360_sdk"))
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.tencent.bugly:crashreport:4.1.9")
+    implementation("com.tencent.bugly:crashreport:4.1.9.3")
     implementation("cn.leancloud:storage-android:8.2.18")
     implementation("cn.leancloud:realtime-android:8.2.18")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")

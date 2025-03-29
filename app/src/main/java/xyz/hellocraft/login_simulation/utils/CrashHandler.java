@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-import xyz.hellocraft.login_simulation.activity.ActivityManager;
 import xyz.hellocraft.login_simulation.data.LogData;
 import xyz.hellocraft.login_simulation.data.LogLiveData;
 
@@ -67,7 +66,7 @@ public class CrashHandler extends CrashReport.CrashHandleCallback {
         Log.d(TAG, crashInfo);
 
 
-        ActivityManager.getInstance().clearActivity();
+//        ActivityManager.getInstance().clearActivity();
 
         return super.onCrashHandleStart(i, s, s1, s2);
     }
