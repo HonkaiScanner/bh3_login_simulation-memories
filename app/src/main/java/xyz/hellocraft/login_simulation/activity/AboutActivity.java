@@ -1,5 +1,6 @@
 package xyz.hellocraft.login_simulation.activity;
 
+import static xyz.hellocraft.login_simulation.data.Constant.FA;
 import static xyz.hellocraft.login_simulation.data.Constant.VISITOR_COUNT;
 
 import android.content.SharedPreferences;
@@ -32,7 +33,11 @@ public class AboutActivity extends BaseAbsActivity {
 
     @Override
     protected void onCreateHeader(@NonNull ImageView icon, @NonNull TextView slogan, @NonNull TextView version) {
-        icon.setImageResource(R.mipmap.ic_launcher);
+        if (FA) {
+            icon.setImageResource(R.mipmap.ic_launcher_3);
+        } else {
+            icon.setImageResource(R.mipmap.ic_launcher);
+        }
         icon.setOnClickListener(v -> {
             SharedPreferences app_pref = PreferenceManager.getDefaultSharedPreferences(this);
 

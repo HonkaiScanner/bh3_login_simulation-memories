@@ -37,7 +37,7 @@ public class SoundUtils {
                 .build();
         if (loadingSoundMap.isEmpty() || loadingSoundMap.size() != soundMap.size())
             initRes(context);
-        if (chance > 8) {
+        if (chance > 5) {
             mediaPlayer = MediaPlayer.create(context, R.raw.loop3);
         } else {
             if (new Random().nextBoolean()) {

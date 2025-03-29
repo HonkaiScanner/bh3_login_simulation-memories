@@ -191,8 +191,14 @@ public class Tools {
 //                Logger.getLogger(null).makeToast(json1.getString("msg"));
         try {
             JSONObject json1 = new JSONObject(feedback);
-            if (json1.getInt("retcode") != 0) {
-                Logger.getLogger(null).makeToast(json1.getString("message"));
+            int retcode = json1.getInt("retcode");
+            if (retcode != 0) {
+                if (retcode > 100) {
+                    DialogData dialogData = new DialogData("OA服务器获取失败", json1.getString("message"), "确认");
+                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+                } else {
+                    Logger.getLogger(null).makeToast(json1.getString("message"));
+                }
                 return null;
             }
         } catch (Exception ignore) {

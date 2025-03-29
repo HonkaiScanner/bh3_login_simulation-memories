@@ -20,8 +20,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import xyz.hellocraft.login_simulation.data.dialog.DialogData;
-import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
 import xyz.hellocraft.login_simulation.login.LoginCallback;
 import xyz.hellocraft.login_simulation.utils.Logger;
 
@@ -63,10 +61,6 @@ public class RoleData {
                             enc_oaserver = oaserver.getString("data");
                             is_setup = true;
                             callback.onLoginSucceed(RoleData.this);
-                        } else if (retcode > 100) {
-                            DialogData dialogData = new DialogData("OA服务器获取失败", oaserver.getString("message"), "确认");
-                            DialogLiveData.getINSTANCE().addNewDialog(dialogData);
-                            callback.onLoginFailed();
                         } else {
                             Logger.getLogger(null).makeToast(oaserver.getString("message"));
                             callback.onLoginFailed();
