@@ -263,11 +263,11 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
 
         PackageManager pm = getPackageManager();
         for (String s : getResources().getStringArray(R.array.icon_type_values_full)) {
-            if (s.equals(iconPos)) continue;
+            if (s.equals(iconPos) && app_pref.getBoolean("enable_icon_pos", false)) continue;
             if (s.equals("0")) continue;
             pm.setComponentEnabledSetting(new ComponentName(this, "com.github.haocen2004.login_simulation.activity.icon.main" + s), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         }
-        if (!iconPos.equals("0") && app_pref.getBoolean("enable_icon_pos", false)) {
+        if (app_pref.getBoolean("enable_icon_pos", false) && !iconPos.equals("0")) {
             Logger.d("ICON", "Enable " + iconPos);
             pm.setComponentEnabledSetting(new ComponentName(this, "com.github.haocen2004.login_simulation.activity.icon.main" + iconPos), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
         }

@@ -79,8 +79,8 @@ android {
         minSdk = 23
         //noinspection OldTargetApi
         targetSdk = 33
-        versionCode = 123
-        versionName = "1.9.0"
+        versionCode = 125
+        versionName = "1.9.1"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
@@ -99,7 +99,8 @@ android {
             versionNameSuffix = if (System.getenv("CI").toBoolean()) {
                 System.getenv("NAME_SUFFIX")
             } else {
-                "-snapshot-25w13a.dev"
+                ""
+//                "-snapshot-25w13a.dev"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -238,7 +239,7 @@ dependencies {
         // 荣耀官方广告标识服务SDK同理：
         // repositories { maven { url 'https://developer.hihonor.com/repo' } }
         // runtimeOnly "com.hihonor.mcs:ads-identifier:1.0.2.301"
-        exclude("com.hihonor.mcs", "ads-identifier")
+//        exclude("com.hihonor.mcs", "ads-identifier")
     }
 
 

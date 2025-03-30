@@ -26,24 +26,16 @@ import xyz.hellocraft.login_simulation.utils.Logger;
 public class RoleData {
     private String open_id = "";
     private String open_token = "";
-    ;
     private String combo_id = "";
-    ;
     private String combo_token = "";
-    ;
     private String channel_id = "";
-    ;
     private String account_type = "";
-    ;
     private String oa_req_key = "";
-    ;
     //    private Activity activity;
     private final LoginCallback callback;
     private String str_oaserver = "";
-    ;
     private String enc_oaserver = "dec_oaserver";
     private String accountType = "";
-    ;
     private boolean is_setup = false;
     Handler getOA_handler = new Handler(Looper.getMainLooper()) {
         @Override
