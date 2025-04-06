@@ -4,6 +4,7 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
+import static xyz.hellocraft.login_simulation.data.Constant.ALLOW_NO_LOGIN_SCAN;
 import static xyz.hellocraft.login_simulation.data.Constant.BETA_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.BH_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.CHECK_VER;
@@ -245,6 +246,7 @@ public class MainApplication extends Application implements LifecycleOwner {
         OPPO_ADV_MODE = app_pref.getBoolean("oppo_adv_mode", OPPO_ADV_MODE);
         FOLLOW_SYSTEM_ACCENT = app_pref.getBoolean("follow_system_accent", FOLLOW_SYSTEM_ACCENT);
         DFA = app_pref.getBoolean("disable_april_fool", false);
+        ALLOW_NO_LOGIN_SCAN = app_pref.getBoolean("allow_no_login_scan", false);
         SoundUtils.getInstance(this);
         try {
             LeanCloud.initializeSecurely(getApplicationContext(), SP_APP_KEY, SP_URL);

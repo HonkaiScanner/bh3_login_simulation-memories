@@ -124,6 +124,7 @@
     <string name="hint_set_custom_remark">Custom Remark</string>
     <string name="follow_system_accent">System theme color</string>
     <string name="disable_april_fool">Disable April Fool Music</string>
+    <string name="allow_no_login_scan">Allow NoLogin State Open Scan Page</string>
 
     <string name="disable_tips">The scanner is temporarily out of service for some reason.\n Please go to Bilibili\'s dynamic page or QQ group to check the specific reason.</string>
 

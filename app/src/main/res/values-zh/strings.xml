@@ -124,6 +124,7 @@
     <string name="report_clear">清除所有缓存</string>
     <string name="follow_system_accent">系统主题色</string>
     <string name="disable_april_fool">禁用彩蛋音频</string>
+    <string name="allow_no_login_scan">允许未登录状态扫码</string>
 
     <string name="disable_tips">扫码器因为某些原因暂时停用\n请前往Bilibili动态或群内查看详情</string>
 

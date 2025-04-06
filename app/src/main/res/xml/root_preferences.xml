@@ -51,6 +51,10 @@
             android:title="@string/quit_on_success" />
         <SwitchPreference
             android:defaultValue="false"
+            android:key="allow_no_login_scan"
+            android:title="@string/allow_no_login_scan" />
+        <SwitchPreference
+            android:defaultValue="false"
             android:key="socket_helper"
             android:title="@string/use_socket" />
         <SwitchPreference

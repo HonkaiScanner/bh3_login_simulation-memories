@@ -46,4 +46,5 @@ public class Constant {
     public static boolean SCANNER_INIT = false;
     public static boolean FA = false;
     public static boolean DFA = false;
+    public static boolean ALLOW_NO_LOGIN_SCAN = false;
 }

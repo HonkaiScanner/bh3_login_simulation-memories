@@ -6,6 +6,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.util.Log.getStackTraceString;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static java.lang.Integer.parseInt;
+import static xyz.hellocraft.login_simulation.data.Constant.ALLOW_NO_LOGIN_SCAN;
 import static xyz.hellocraft.login_simulation.data.Constant.CHECK_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.HAS_ACCOUNT;
 import static xyz.hellocraft.login_simulation.data.Constant.QUICK_MODE;
@@ -998,27 +999,27 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
         });
         binding.btnSelpic.setOnClickListener(view1 -> {
             try {
-//                if (loginImpl.isLogin()) {
-                if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable()) {
-                    Logger.d(TAG, "isPhotoPickerAvailable");
-                    reqGalleryLauncher.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
-                } else {
-                    Logger.d(TAG, "use old method");
-                    Intent pickIntent;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        pickIntent = new Intent(MediaStore.ACTION_PICK_IMAGES);
-//                        pickIntent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX,1);
-                        pickIntent.setType("image/*");
+                if (ALLOW_NO_LOGIN_SCAN || loginImpl.isLogin()) {
+                    if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable()) {
+                        Logger.d(TAG, "isPhotoPickerAvailable");
+                        reqGalleryLauncher.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
                     } else {
-                        pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                        Logger.d(TAG, "use old method");
+                        Intent pickIntent;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            pickIntent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                            //                        pickIntent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX,1);
+                            pickIntent.setType("image/*");
+                        } else {
+                            pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                        }
+                        reqGalleryScanLauncher.launch(pickIntent);
                     }
-                    reqGalleryScanLauncher.launch(pickIntent);
-                }
 
-//                } else {
-//                    makeToast(R.string.error_not_login);
-//                }
+                } else {
+                    makeToast(R.string.error_not_login);
+                }
             } catch (Exception e) {
                 makeToast(R.string.error_not_login);
             }
@@ -1195,6 +1196,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 startQrCode();
                 return;
             }
+            if (ALLOW_NO_LOGIN_SCAN) {
+                startQrCode();
+                return;
+            }
             try {
                 if (loginImpl.isLogin()) {
                     if (!loginImpl.getRole().is_setup()) {
@@ -1208,7 +1213,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
 //                    e.printStackTrace();
                 makeToast(R.string.error_not_login);
             }
-            startQrCode();
         } else if (binding.cardViewMain.cardView2.equals(view)) {
             doLogin();
         }
@@ -1312,7 +1316,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         Log.makeToast(R.string.error_not_login);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.e(TAG, getStackTraceString(e));
+//                    e.printStackTrace();
                     Log.makeToast(R.string.error_not_login);
                 }
             } else {

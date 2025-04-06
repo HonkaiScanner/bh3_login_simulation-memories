@@ -36,12 +36,17 @@ public class ScannerActivity extends WeChatCameraScanActivity {
     }
 
     @Override
+    public int getLayoutId() {
+        return R.layout.scanner_view;
+    }
+
+
+    @Override
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityManager.addActivity(this);
         viewfinderView.setViewfinderStyle(ViewfinderView.ViewfinderStyle.POPULAR);
         viewfinderView.setLaserStyle(ViewfinderView.LaserStyle.NONE);
-
 
         if (Constant.FA) {
 

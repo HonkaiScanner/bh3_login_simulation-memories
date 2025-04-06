@@ -27,6 +27,7 @@ import com.tencent.upgrade.core.UpgradeManager;
 import java.util.Objects;
 
 import xyz.hellocraft.login_simulation.activity.ActivityManager;
+import xyz.hellocraft.login_simulation.data.Constant;
 import xyz.hellocraft.login_simulation.data.dialog.ButtonData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
@@ -126,6 +127,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 iconPos.setEntryValues(getResources().getStringArray(R.array.icon_type_values_hide));
             }
         }
+
+        findPreference("allow_no_login_scan").setOnPreferenceChangeListener((preference, newValue) -> {
+            Constant.ALLOW_NO_LOGIN_SCAN = (boolean) newValue;
+            return true;
+        });
+
         findPreference("enable_icon_pos").setOnPreferenceChangeListener((preference, newValue) -> {
             if ((Boolean) newValue) {
                 DialogData dialogData = new DialogData("是否启用额外扫码器图标？", "由于兼容性问题原有图标将不会自动隐藏\n\n设置后可能需要5-10秒才会看到新图标显示\n可能在部分机型上不生效");
