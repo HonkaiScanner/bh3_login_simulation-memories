@@ -35,7 +35,7 @@
     <string-array name="icon_type">
         <item>默认图标</item>
         <item>图标A</item>
-        <!--        <item>花火</item>-->
+        <item>花火</item>
     </string-array>
     <string-array name="icon_type_hide">
         <item>默认图标</item>

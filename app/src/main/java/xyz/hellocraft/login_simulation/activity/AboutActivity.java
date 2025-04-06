@@ -115,6 +115,7 @@ public class AboutActivity extends BaseAbsActivity {
         items.add(new License("主应用图标", "Peano", "Pixiv", "https://www.pixiv.net/artworks/77505884"));
         items.add(new License("抽屉上方Banner", "艾晓萌", "Pixiv", "https://www.pixiv.net/artworks/89418903"));
         items.add(new License("应用图标-A", "miHoYo", "游戏Pv截取", "https://www.bh3.com/"));
+        items.add(new License("应用图标-花火", "季影レオン", "Pixiv", "https://www.pixiv.net/artworks/116729969"));
 
         try {
             PackageManager packageManager = getPackageManager();

@@ -50,21 +50,27 @@ class SbeamLoginActivity : BaseActivity() {
                             val json = JSONObject(response)
                             if (json.has("data")) {
                                 checkSucc = true
+                                val hash = Encrypt.sha256HMAC(
+                                    json.getString("data"),
+                                    Constant.BH_APP_KEY,
+                                    false
+                                )
                                 val date = Date()
                                 val time = date.time
                                 val format = android.text.format.DateFormat.format(
                                     "yyyy-MM-dd HH:mm:ss",
                                     time
                                 )
-                                binding.textViewFA.text = json.getString("data") + "\n\n" + format
-                                val hash = Encrypt.sha256HMAC(
-                                    json.getString("data"),
-                                    Constant.BH_APP_KEY,
-                                    false
-                                )
-                                binding.textViewF2A.text =
-                                    fp + "\n" + hash.substring(0, 32) + "\n" + hash.substring(32)
-                                binding.imageView.visibility = View.VISIBLE
+                                runOnUiThread {
+                                    binding.textViewFA.text =
+                                        json.getString("data") + "\n\n" + format
+                                    binding.textViewF2A.text =
+                                        fp + "\n" + hash.substring(
+                                            0,
+                                            32
+                                        ) + "\n" + hash.substring(32)
+                                    binding.imageView.visibility = View.VISIBLE
+                                }
                             }
                         } catch (e: Exception) {
                             Logger.e("SbeamLogin", getStackTraceString(e))

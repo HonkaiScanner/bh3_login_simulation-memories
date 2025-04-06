@@ -66,7 +66,7 @@
     <string-array name="icon_type">
         <item>Default</item>
         <item>Type A</item>
-        <!--        <item>Sparkle</item>-->
+        <item>Sparkle</item>
     </string-array>
     <string-array name="icon_type_hide">
         <item>Default</item>
@@ -76,6 +76,7 @@
     <string-array name="icon_type_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
     <string-array name="icon_type_values_full">
         <item>0</item>

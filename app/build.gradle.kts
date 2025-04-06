@@ -79,8 +79,8 @@ android {
         minSdk = 23
         //noinspection OldTargetApi
         targetSdk = 33
-        versionCode = 125
-        versionName = "1.9.1"
+        versionCode = 126
+        versionName = "1.9.2"
         // versionCode = System.currentTimeMillis().toString().substring(7, 12).toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true

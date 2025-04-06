@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,11 +31,17 @@ public class ScannerActivity extends WeChatCameraScanActivity {
     ActivityManager activityManager = ActivityManager.getInstance();
 
     @Override
+    public int getFlashlightId() {
+        return View.NO_ID;
+    }
+
+    @Override
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityManager.addActivity(this);
         viewfinderView.setViewfinderStyle(ViewfinderView.ViewfinderStyle.POPULAR);
         viewfinderView.setLaserStyle(ViewfinderView.LaserStyle.NONE);
+
 
         if (Constant.FA) {
 
