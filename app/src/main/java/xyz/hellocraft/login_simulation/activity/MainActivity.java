@@ -222,6 +222,9 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
                 if (lastLoginState) {
                     Logger.d("Shortcut", "last login checked.");
                     QUICK_MODE = true;
+                    Intent intent = new Intent(this, SplashActivity.class);
+                    intent.putExtra("scanner.quick", true);
+                    startActivity(intent);
                     return;
                 }
             }

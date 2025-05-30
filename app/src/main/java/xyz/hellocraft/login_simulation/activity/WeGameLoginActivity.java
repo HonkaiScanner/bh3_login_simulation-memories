@@ -70,8 +70,12 @@ public class WeGameLoginActivity extends BaseActivity {
                         for (String s : url1.getQuery().split("&")) {
                             if (s.contains("uin")) {
                                 try {
-                                    uin = s.split("=")[1];
-                                    Logger.d(TAG, "find qq: " + uin);
+                                    String tempUin = s.split("=")[1];
+                                    tempUin = tempUin.trim();
+                                    if (tempUin.matches("^[1-9][0-9]{4,10}$")) {
+                                        uin = tempUin;
+                                        Logger.d(TAG, "find qq: " + uin);
+                                    }
                                 } catch (ArrayIndexOutOfBoundsException ignore) {
                                     uin = "get uin err";
                                     // get uin failed

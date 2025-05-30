@@ -175,6 +175,14 @@ public class Logger implements Serializable {
         logToFile("DEBUG", TAG, msg);
     }
 
+    public static void dd(String TAG, String msg) {
+        if (!SAVE_ALL_LOGS) return;
+        msg = processWithBlackList(msg);
+        BuglyLog.d(TAG, msg);
+        logLiveData.addNewLog("DEBUG", TAG, msg, getCurrentTimeStr());
+        logToFile("DEBUG", TAG, msg);
+    }
+
     @Keep
     public static int fakeD(String TAG, String msg) {
         if (SAVE_ALL_LOGS) {

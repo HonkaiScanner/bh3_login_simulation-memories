@@ -92,6 +92,7 @@ import xyz.hellocraft.login_simulation.login.LoginImpl;
 import xyz.hellocraft.login_simulation.login.LoginInstanceManager;
 import xyz.hellocraft.login_simulation.login.Official;
 import xyz.hellocraft.login_simulation.login.Tencent;
+import xyz.hellocraft.login_simulation.login.Wegame;
 import xyz.hellocraft.login_simulation.utils.ChipsHelper;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
 import xyz.hellocraft.login_simulation.utils.FabScanner;
@@ -305,6 +306,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     private int currOfficialSlot = 999;
     private int currBiliSlot = 999;
     private int currYYBSlot = 999;
+    private int currWegameSlot = 999;
     private LayoutInflater mLayoutInflater;
     private String cacheServerType = "";
 
@@ -478,6 +480,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             if (server.startsWith("official") && !new File(activity.getFilesDir().getParent(), "shared_prefs/official_user_" + pref.getInt("official_slot", 1) + ".xml").exists())
                 Tools.saveBoolean(activity, "last_login_succeed", false);
             if (server.startsWith("bili") && !new File(activity.getFilesDir().getParent(), "shared_prefs/bili_user_" + pref.getInt("bili_slot", 1) + ".xml").exists())
+                Tools.saveBoolean(activity, "last_login_succeed", false);
+            if (server.startsWith("yyb") && !new File(activity.getFilesDir().getParent(), "shared_prefs/tencent_user_" + pref.getInt("yyb_slot", 1) + ".xml").exists())
+                Tools.saveBoolean(activity, "last_login_succeed", false);
+            if (server.startsWith("wegame") && !new File(activity.getFilesDir().getParent(), "shared_prefs/wegame_user_" + pref.getInt("wegame_slot", 1) + ".xml").exists())
                 Tools.saveBoolean(activity, "last_login_succeed", false);
             try {
                 if (loginImpl.isLogin()) {
@@ -660,6 +666,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 break;
             case "Wegame":
                 server_type = activity.getString(R.string.types_wegame);
+                binding.slotSelectGroup.setVisibility(View.VISIBLE);
+                initSlotSelectGroup("wegame_user_");
                 break;
 //            case "Qihoo":
 //                server_type = activity.getString(R.string.types_qihoo);
@@ -839,6 +847,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 tempChip.setChecked(true);
                 currYYBSlot = pref.getInt("tencent_slot", 1);
             }
+        } else if (server.startsWith("wegame") && (currWegameSlot == 999 || tempChip.isChecked())) {
+            String activateKey = "wegame_user_" + pref.getInt("wegame_user_", 1);
+            if (currChipMap.containsKey(activateKey)) {
+                currChipMap.get(activateKey).setChecked(true);
+            } else {
+                tempChip.setChecked(true);
+                currWegameSlot = pref.getInt("wegame_slot", 1);
+            }
+
         }
 
         binding.chipGroupSlot.setOnCheckedStateChangeListener(this::onCheckedStateChange);
@@ -869,6 +886,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         } else if (server.startsWith("yyb")) {
                             pref.edit().putInt("tencent_slot", slot).apply();
                             Logger.d(TAG, "onCheckedChanged: New tencent_slot " + slot);
+                        } else if (server.startsWith("wegame")) {
+                            pref.edit().putInt("wegame_slot", slot).apply();
+                            Logger.d(TAG, "onCheckedChanged: New wegame_slot " + slot);
+                        } else {
+                            Log.makeToast("未知服务器类型，无法创建新槽位");
+                            return;
                         }
                     } else if (key.startsWith("official")) {
                         int slot = parseInt(key.replace("official_user_", ""));
@@ -882,6 +905,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                         int slot = parseInt(key.replace("tencent_user_", ""));
                         pref.edit().putInt("tencent_slot", slot).apply();
                         Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currYYBSlot + " to " + slot);
+                    } else if (key.startsWith("wegame")) {
+                        int slot = parseInt(key.replace("wegame_user_", ""));
+                        pref.edit().putInt("wegame_slot", slot).apply();
+                        Logger.d(TAG, "onCheckedChanged: Switch Slot from " + currWegameSlot + " to " + slot);
+                    } else {
+                        Logger.d(TAG, "onCheckedChanged: Unknown key: " + key);
                     }
                 }
             }
@@ -904,6 +933,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 }
             }
             if (loginImpl instanceof Tencent && currYYBSlot != pref.getInt("tencent_slot", 1)) {
+                if (loginImpl.isLogin() || accSwitch) {
+                    accSwitch = true;
+                    loginImpl = loginInstanceManager.getLoginImpl(true);
+                    refreshView();
+                    makeToast("切换后需重新登录");
+                }
+            }
+            if (loginImpl instanceof Wegame && currWegameSlot != pref.getInt("wegame_slot", 1)) {
                 if (loginImpl.isLogin() || accSwitch) {
                     accSwitch = true;
                     loginImpl = loginInstanceManager.getLoginImpl(true);
@@ -1202,9 +1239,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
             }
             try {
                 if (loginImpl.isLogin()) {
-                    if (!loginImpl.getRole().is_setup()) {
+                    if (loginImpl.getRole().is_setup()) {
+                        startQrCode();
+                    } else {
                         makeToast(R.string.error_oa_process);
-                        return;
                     }
                 } else {
                     makeToast(R.string.error_not_login);

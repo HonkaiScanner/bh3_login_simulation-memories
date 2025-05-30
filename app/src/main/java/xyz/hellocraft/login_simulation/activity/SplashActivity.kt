@@ -114,6 +114,22 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
             continueBoot = false
             return
         }
+        val dataIntent = intent
+        if (dataIntent.hasExtra("scanner.quick")) {
+            appendText("Quick Scan Mode")
+            lifecycleScope.launch(Dispatchers.IO) {
+                async {
+                    deviceFpTask()
+                }.await()
+                needBoot = true
+                Constant.SCANNER_INIT = true
+                if (continueBoot) {
+                    finish()
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                }
+            }
+            return
+        }
         lifecycleScope.launch(Dispatchers.IO) {
             val sponsorChecker = async {
                 if (CHECK_VER) {
@@ -161,7 +177,7 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
                                             Tools.saveString(
                                                 applicationContext, "installationId", installationId
                                             )
-                                            Logger.d("PUSH", "admin registered")
+                                            Logger.d("PUSH", "installationId Saved")
                                         }
 
                                         override fun onError(e: Throwable) {
@@ -231,10 +247,7 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
                 }
             }
             val fpTask = async {
-                DeviceFpManager.getInstance().getDeviceFp(this@SplashActivity)
-                appendText(
-                    "[DeviceFp] " + DeviceFpManager.getInstance().getDeviceFp(this@SplashActivity)
-                )
+                deviceFpTask()
             }
             val updateChecker = async {
                 val response = Network.sendGet(Constant.API_ENDPOINT + "/update", false)
@@ -339,6 +352,15 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
         }
+    }
+
+    private fun deviceFpTask() {
+        Logger.i("DeviceFp", "getDeviceFpStart")
+        DeviceFpManager.getInstance().getDeviceFp(this@SplashActivity)
+        Logger.i("DeviceFp", "getDeviceFpFinish")
+        appendText(
+            "[DeviceFp] " + DeviceFpManager.getInstance().getDeviceFp(this@SplashActivity)
+        )
     }
 
     @SuppressLint("SetTextI18n")

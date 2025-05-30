@@ -1,9 +1,11 @@
 package xyz.hellocraft.login_simulation.utils
 
+import android.content.Context
 import com.github.haocen2004.login_simulation.BuildConfig
 import com.tencent.upgrade.bean.UpgradeStrategy
 import com.tencent.upgrade.callback.UpgradeStrategyRequestCallback
 import com.tencent.upgrade.core.UpgradeManager
+import rikka.core.util.ClipboardUtils
 import xyz.hellocraft.login_simulation.data.dialog.ButtonData
 import xyz.hellocraft.login_simulation.data.dialog.DialogData
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData
@@ -31,6 +33,22 @@ class UpgradeCallback : UpgradeStrategyRequestCallback {
                     }
                 }
                 dialog.negativeButtonData = ButtonData("取消")
+                dialog.neutralButtonData = object : ButtonData("复制下载链接") {
+                    override fun callback(dialogHelper: DialogHelper?, context: Context) {
+                        super.callback(dialogHelper)
+                        it.apkBasicInfo.downloadUrl?.let { url ->
+                            Logger.d(
+                                "UpgradeCallback",
+                                "copy download url = $url"
+                            )
+                            ClipboardUtils.put(context, url)
+                            Logger.getLogger(null).makeToast("已复制下载链接")
+
+                        } ?: run {
+                            Logger.getLogger(null).makeToast("获取下载链接失败")
+                        }
+                    }
+                }
                 DialogLiveData.getINSTANCE().addDelayDialog(dialog)
             }
         }

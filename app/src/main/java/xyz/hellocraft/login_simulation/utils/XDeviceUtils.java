@@ -1,5 +1,8 @@
 package xyz.hellocraft.login_simulation.utils;
 
+import static xyz.hellocraft.login_simulation.utils.Tools.getString;
+import static xyz.hellocraft.login_simulation.utils.Tools.saveString;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.UiModeManager;
@@ -32,6 +35,8 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
 import androidx.core.os.EnvironmentCompat;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -242,6 +247,18 @@ public final class XDeviceUtils {
     }
 
     public String syncGetSensorValues(Context context, int type) {
+        String cacheValues = getString(context, "syncGetSensorValues_" + type);
+        if (!TextUtils.isEmpty(cacheValues)) {
+            try {
+                JSONObject jsonObject = new JSONObject(cacheValues);
+                long ts = jsonObject.getLong("ts");
+                // cache 7 days
+                if (System.currentTimeMillis() - ts < 604800000L) {
+                    return jsonObject.getString("values");
+                }
+            } catch (Exception ignore) {
+            }
+        }
         Object systemService = null;
         final Ref.ObjectRef objectRef = new Ref.ObjectRef();
         objectRef.element = "";
@@ -288,13 +305,20 @@ public final class XDeviceUtils {
                 } finally {
                     reentrantLock2.unlock();
                 }
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("values", sb.toString());
+                    jsonObject.put("ts", System.currentTimeMillis());
+                    saveString(context, "syncGetSensorValues_" + type, jsonObject.toString());
+                } catch (Exception ignored) {
+                }
             }
         };
         if (sensorManager.registerListener(sensorEventListener, defaultSensor, 3)) {
             ReentrantLock reentrantLock2 = reentrantLock;
             reentrantLock2.lock();
             try {
-                newCondition.await(5L, TimeUnit.SECONDS);
+                newCondition.await(2L, TimeUnit.SECONDS);
                 reentrantLock2.unlock();
             } catch (Throwable th) {
                 reentrantLock2.unlock();

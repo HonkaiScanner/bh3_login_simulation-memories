@@ -130,24 +130,27 @@ public class DialogHelper {
         ButtonData buttonData2 = dialogData.getNeutralButtonData();
         ButtonData buttonData3 = dialogData.getPositiveButtonData();
         if (buttonData != null) {
+            Context finalMContext = mContext;
             normalDialog.setNegativeButton(buttonData.getText(),
                     (dialog, which) -> {
                         dialogInterface = dialog;
-                        buttonData.callback(this);
+                        buttonData.callback(this, finalMContext);
                     });
         }
         if (buttonData2 != null) {
+            Context finalMContext1 = mContext;
             normalDialog.setNeutralButton(buttonData2.getText(),
                     (dialog, which) -> {
                         dialogInterface = dialog;
-                        buttonData2.callback(this);
+                        buttonData2.callback(this, finalMContext1);
                     });
         }
         if (buttonData3 != null) {
+            Context finalMContext2 = mContext;
             normalDialog.setPositiveButton(buttonData3.getText(),
                     (dialog, which) -> {
                         dialogInterface = dialog;
-                        buttonData3.callback(this);
+                        buttonData3.callback(this, finalMContext2);
                     });
         }
         normalDialog.setCancelable(dialogData.isCancelable());
