@@ -252,5 +252,8 @@ public class Xiaomi extends Application implements LoginImpl {
         return username;
     }
 
-
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

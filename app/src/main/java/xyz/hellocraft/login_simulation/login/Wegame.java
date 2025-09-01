@@ -185,6 +185,11 @@ public class Wegame implements LoginImpl {
     }
 
     @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
     public void login() {
         preferences = activity.getSharedPreferences("wegame_user_" + PreferenceManager.getDefaultSharedPreferences(activity).getInt("wegame_slot", 1), MODE_PRIVATE);
         Logger.d(TAG, "loading " + preferences.getString("username", "oldCache"));

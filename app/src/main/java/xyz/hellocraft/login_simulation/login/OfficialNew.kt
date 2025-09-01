@@ -655,4 +655,8 @@ class OfficialNew(activity: AppCompatActivity, callback: LoginCallback) :
     override fun getUsername(): String {
         return username
     }
+
+    override fun setUsername(username: String) {
+        this.username = username
+    }
 }

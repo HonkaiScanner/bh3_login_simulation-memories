@@ -368,6 +368,9 @@ public class Huawei implements LoginImpl {
         return username;
     }
 
-
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }
 

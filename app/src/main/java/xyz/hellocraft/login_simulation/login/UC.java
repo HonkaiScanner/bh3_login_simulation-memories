@@ -231,4 +231,8 @@ public class UC implements LoginImpl {
         return sid;
     }
 
+    @Override
+    public void setUsername(String username) {
+        this.sid = username;
+    }
 }

@@ -11,7 +11,6 @@
     <string name="basic_header">Basic</string>
     <string name="settings_servers">Select Server</string>
     <string name="settings_fast_login">Automatic confirmation</string>
-    <string name="settings_bh_ver">Honkai Impact Version</string>
     <string name="settings_update">Check Update</string>
     <string name="settings_pure_black_theme">Pure black dark theme</string>
 
@@ -42,9 +41,6 @@
     <string name="login_succeed">Login Succeed</string>
     <string name="logout">Account Logout</string>
     <string name="outdate_qr">QR Code OutDated</string>
-    <string name="slot1">Slot 1</string>
-    <string name="slot2">Slot 2</string>
-    <string name="slot3">Slot 3</string>
     <string name="use_token_true">Token Mode</string>
     <string name="types_vivo">Vivo Server</string>
     <string name="types_oppo">Oppo Server</string>
@@ -65,9 +61,6 @@
     <string name="error_ver_outdated">Scanner is OUTDATED</string>
     <string name="reg_succ">Registered successfully</string>
     <string name="error_key_used">This Key is USED</string>
-    <string name="sel_pc">PC</string>
-    <string name="sel_android">Android</string>
-    <string name="sel_ios">IOS</string>
     <string name="desc_click_login">Click to login.</string>
     <string name="reg_new">Register</string>
     <string name="btn_get_key">Get Sponsor Key</string>
@@ -96,8 +89,6 @@
     <string name="list_about">About</string>
     <string name="types_yyb">YYB Server(QQ only)</string>
     <string name="types_qihoo">360 Server</string>
-    <string name="overwrite_bh_ver">Overwrite Honkai Version</string>
-    <string name="overwrite_bh_ver_sum">Set version in the option below</string>
     <string name="keep_capture">Keep FabScanner</string>
     <string name="quit_on_success">Exit after successful scanning</string>
     <string name="debug_mode">Debug Mode</string>

@@ -169,4 +169,9 @@ public class Vivo implements LoginImpl {
     public String getUsername() {
         return uid;
     }
+
+    @Override
+    public void setUsername(String username) {
+        this.uid = username;
+    }
 }

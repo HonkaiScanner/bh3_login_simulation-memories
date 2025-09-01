@@ -426,7 +426,32 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
                 return;
             }
             genLoginImpl();
+            if (loginImpl.isLogin() && loginImpl.getRole() != null) {
+                Logger.d(loadTag, "loginImpl already has data after genLoginImpl,skip.");
+                return;
+            }
             Map<String, String> map = new HashMap<>();
+
+            ArrayList<String> scannerDataCacheList = savedInstanceState.getStringArrayList("scanner_data_cache_list");
+            if (scannerDataCacheList != null) {
+                for (String s : scannerDataCacheList) {
+                    try {
+                        String key = "scanner_data:" + s;
+                        String value = savedInstanceState.getString(key);
+                        if (s.equals("combo_token")) {
+                            Logger.addBlacklist(value);
+                        }
+                        if (s.equals("username")) {
+                            loginImpl.setUsername(value);
+                        }
+                        Logger.d(s, value);
+                        map.put(s, value);
+                        savedInstanceState.remove(key);
+
+                    } catch (NullPointerException ignore) {
+                    }
+                }
+            }
             for (String s : savedInstanceState.keySet()) {
                 try {
                     if (s.startsWith("scanner_data:")) {
@@ -1431,9 +1456,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, View
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (loginImpl != null && loginImpl.isLogin()) {
             Map<String, String> map = loginImpl.getRole().getMap();
+            ArrayList<String> keys = new ArrayList<>();
             for (String s : map.keySet()) {
+                keys.add(s);
                 outState.putString("scanner_data:" + s, map.get(s));
             }
+            outState.putString("scanner_data:username", loginImpl.getUsername());
+            keys.add("username");
+            outState.putStringArrayList("scanner_data_cache_list", keys);
             Logger.d("onSaveInstanceState", "RoleData saved ");
         }
         super.onSaveInstanceState(outState);

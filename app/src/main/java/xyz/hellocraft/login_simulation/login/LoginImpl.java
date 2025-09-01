@@ -14,4 +14,6 @@ public interface LoginImpl {
     boolean isLogin();
 
     String getUsername();
+
+    void setUsername(String username);
 }

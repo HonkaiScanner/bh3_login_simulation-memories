@@ -404,6 +404,11 @@ public class Bilibili implements LoginImpl {
         return username;
     }
 
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     private void saveSlotInfo() {
         Logger.d(TAG, "saving slot " + app_pref.getInt("bili_slot", 1));
         SharedPreferences slotPref = activity.getSharedPreferences("bili_access_token_" + app_pref.getInt("bili_slot", 1), Context.MODE_PRIVATE);

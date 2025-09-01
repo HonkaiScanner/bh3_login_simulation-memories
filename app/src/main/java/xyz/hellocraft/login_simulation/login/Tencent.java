@@ -214,6 +214,11 @@ public class Tencent implements LoginImpl {
     }
 
     @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
     public void login() {
         if (!getHooked()) {
             preferences = activity.getSharedPreferences("tencent_user_" + PreferenceManager.getDefaultSharedPreferences(activity).getInt("tencent_slot", 1), MODE_PRIVATE);

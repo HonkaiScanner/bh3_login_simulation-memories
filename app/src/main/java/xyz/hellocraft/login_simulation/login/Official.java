@@ -891,5 +891,8 @@ public class Official implements LoginImpl {
         return email;
     }
 
-
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

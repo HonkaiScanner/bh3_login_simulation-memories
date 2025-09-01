@@ -227,4 +227,8 @@ public class Oppo implements LoginImpl {
         return uid;
     }
 
+    @Override
+    public void setUsername(String username) {
+        this.uid = username;
+    }
 }
