@@ -83,37 +83,38 @@ public class CrashActivity extends BaseActivity {
                         stringBuilder.append("&api_option=paste&api_paste_expire_date=1M&api_paste_code=");
                         String path = getExternalFilesDir(null) + "/crash-report/" + Tools.getString(getApplicationContext(), "crash-report-name");
                         File file = new File(path);
-                        FileReader fileReader = new FileReader(file);
-                        BufferedReader bufferedReader = new BufferedReader(fileReader);
-                        String nextLine;
-                        StringBuilder crashInfo = new StringBuilder();
-                        while ((nextLine = bufferedReader.readLine()) != null) {
-                            crashInfo.append(nextLine).append("\n");
-                        }
-                        stringBuilder.append(crashInfo.toString().replaceAll("&", "%26"));
+                        if (file.exists()) {
+                            FileReader fileReader = new FileReader(file);
+                            BufferedReader bufferedReader = new BufferedReader(fileReader);
+                            String nextLine;
+                            StringBuilder crashInfo = new StringBuilder();
+                            while ((nextLine = bufferedReader.readLine()) != null) {
+                                crashInfo.append(nextLine).append("\n");
+                            }
+                            stringBuilder.append(crashInfo.toString().replaceAll("&", "%26"));
 //                        Logger.d("pastebin",stringBuilder.toString());
-                        try {
-                            String ret = Network.sendPost("https://pastebin.com/api/api_post.php", stringBuilder.toString(), null, 5, false).body;
-                            Logger.d("pastebin", ret);
-                            if (ret != null && ret.contains("https://pastebin.com/")) {
-                                Tools.saveString(getApplicationContext(), crashReportName + "-url", ret);
-                                try {
-                                    binding.buttonUrl.setOnClickListener(v -> {
-                                        ClipboardManager clipboard = (ClipboardManager) getApplication().getSystemService(CLIPBOARD_SERVICE);
-                                        ClipData clip = ClipData.newPlainText("ScannerLog", ret);
-                                        clipboard.setPrimaryClip(clip);
-                                    });
-                                } catch (Exception ignore) {
-                                }
-
-                                runOnUiThread(() -> {
+                            try {
+                                String ret = Network.sendPost("https://pastebin.com/api/api_post.php", stringBuilder.toString(), null, 5, false).body;
+                                Logger.d("pastebin", ret);
+                                if (ret != null && ret.contains("https://pastebin.com/")) {
+                                    Tools.saveString(getApplicationContext(), crashReportName + "-url", ret);
                                     try {
-                                        binding.buttonUrl.setVisibility(View.VISIBLE);
+                                        binding.buttonUrl.setOnClickListener(v -> {
+                                            ClipboardManager clipboard = (ClipboardManager) getApplication().getSystemService(CLIPBOARD_SERVICE);
+                                            ClipData clip = ClipData.newPlainText("ScannerLog", ret);
+                                            clipboard.setPrimaryClip(clip);
+                                        });
                                     } catch (Exception ignore) {
                                     }
-                                });
-                            }
-                        } catch (Exception ignore) {
+
+                                    runOnUiThread(() -> {
+                                        try {
+                                            binding.buttonUrl.setVisibility(View.VISIBLE);
+                                        } catch (Exception ignore) {
+                                        }
+                                    });
+                                }
+                            } catch (Exception ignore) { }
                         }
                     } catch (Exception e) {
                         throw new RuntimeException(e);

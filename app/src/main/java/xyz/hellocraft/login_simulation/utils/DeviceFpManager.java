@@ -48,9 +48,9 @@ public class DeviceFpManager {
         baseHeader.put("x-rpc-device_model", XDeviceUtils.INSTANCE.getDeviceModel());
         baseHeader.put("x-rpc-sys_version", XDeviceUtils.INSTANCE.getDeviceVersion());
         baseHeader.put("x-rpc-game_biz", "bbs_cn");
-        baseHeader.put("x-rpc-app_version", "2.73.1");
-        baseHeader.put("x-rpc-sdk_version", "2.20.2");
-        baseHeader.put("x-rpc-account_version", "2.20.2");
+        baseHeader.put("x-rpc-app_version", "2.107.0");
+        baseHeader.put("x-rpc-sdk_version", "2.42.0");
+        baseHeader.put("x-rpc-account_version", "2.42.0");
         baseHeader.put("DS", Encrypt.ds2PRODSign(body));
         return baseHeader;
     }

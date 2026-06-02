@@ -2,7 +2,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://tencent-tds-maven.pkg.coding.net/repository/shiply/repo") }
+        maven { url = uri("https://maven.cnb.cool/tencent-tds/shiply-public/-/packages/") }
         maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://developer.huawei.com/repo/") }
         maven { url = uri("https://developer.hihonor.com/repo") }

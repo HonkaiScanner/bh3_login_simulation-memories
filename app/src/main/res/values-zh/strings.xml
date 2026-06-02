@@ -44,11 +44,7 @@
     <string name="login_succeed">登录成功</string>
     <string name="logout">账号已登出</string>
     <string name="outdate_qr">二维码已过期</string>
-    <string name="slot1">账号1</string>
-    <string name="slot2">账号2</string>
-    <string name="slot3">账号3</string>
     <string name="use_token_true">Token登录模式</string>
-    <string name="settings_bh_ver">崩坏3版本号</string>
     <string name="report_github">Github</string>
     <string name="report_bili">B站主页</string>
     <string name="report_qq">QQ群</string>
@@ -66,9 +62,6 @@
     <string name="error_ver_outdated">该版本不支持此操作</string>
     <string name="reg_succ">注册成功</string>
     <string name="error_key_used">该身份码已被使用</string>
-    <string name="sel_pc">桌面服</string>
-    <string name="sel_android">安卓服</string>
-    <string name="sel_ios">IOS服</string>
     <string name="desc_click_login">点击登录</string>
     <string name="reg_new">新用户注册</string>
     <string name="btn_get_key">获取赞助者身份码</string>
@@ -95,8 +88,6 @@
     <string name="logs">日志</string>
     <string name="feedback_way">反馈途径</string>
     <string name="list_about">关于</string>
-    <string name="overwrite_bh_ver">使用自定义崩坏3版本号</string>
-    <string name="overwrite_bh_ver_sum">在下方的选项中设置版本</string>
     <string name="keep_capture">识别成功不退出悬浮窗</string>
     <string name="quit_on_success">扫码成功后退出扫码器</string>
     <string name="debug_mode">调试模式</string>
