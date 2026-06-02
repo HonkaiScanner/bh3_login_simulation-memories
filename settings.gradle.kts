@@ -22,11 +22,12 @@ pluginManagement {
         id("com.android.application") version "8.5.1"
         id("com.android.library") version "8.5.1"
         id("org.jetbrains.kotlin.android") version "1.7.20"
+        id("org.jetbrains.kotlin.jvm") version "1.7.20"
         kotlin("plugin.serialization") version "1.7.20"
     }
 }
 
-include(":app", ":mi_sdk")//, ':360_sdk'
+include(":app", ":mi_sdk", ":scanner_core")//, ':360_sdk'
 rootProject.name = "bh3_login_simulation"
 
 val isCiServer = System.getenv().containsKey("CI")

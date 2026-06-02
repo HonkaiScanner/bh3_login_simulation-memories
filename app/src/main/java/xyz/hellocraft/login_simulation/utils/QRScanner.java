@@ -2,7 +2,6 @@ package xyz.hellocraft.login_simulation.utils;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static java.lang.Integer.parseInt;
-import static xyz.hellocraft.login_simulation.data.Constant.API_ENDPOINT;
 import static xyz.hellocraft.login_simulation.data.Constant.HAS_TIPS;
 import static xyz.hellocraft.login_simulation.data.Constant.QUICK_MODE;
 import static xyz.hellocraft.login_simulation.data.Constant.TIPS;
@@ -54,6 +53,7 @@ import java.util.UUID;
 import xyz.hellocraft.login_simulation.activity.ActivityManager;
 import xyz.hellocraft.login_simulation.activity.MainActivity;
 import xyz.hellocraft.login_simulation.activity.NotificationActivity;
+import xyz.hellocraft.login_simulation.core.ScannerCoreApi;
 import xyz.hellocraft.login_simulation.data.RoleData;
 import xyz.hellocraft.login_simulation.data.dialog.ButtonData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogData;
@@ -110,7 +110,7 @@ public class QRScanner {
                         try {
                             Map<String, String> header = new HashMap<>();
                             header.put("Content-Type", "application/json");
-                            Network.sendPost(API_ENDPOINT + "/scan_succ_upload", confirm_json.toString(), header, 0, false);
+                            ScannerCoreApi.uploadScanSuccess(confirm_json.toString(), header);
                         } catch (Exception ignore) {
                         }
                     }).start();
@@ -204,7 +204,7 @@ public class QRScanner {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            String spCheck = Network.sendGet(API_ENDPOINT + "/qr_check?ticket=" + ticket + "&open_id=" + open_id + "&device=" + Tools.getDeviceID(activity) + "&fp=" + DeviceFpManager.getInstance().getDeviceFp(activity), true);
+            String spCheck = ScannerCoreApi.qrCheck(ticket, open_id, Tools.getDeviceID(activity), DeviceFpManager.getInstance().getDeviceFp(activity), true);
             try {
                 JSONObject checkJson = new JSONObject(spCheck);
                 if (checkJson.has("retcode") && checkJson.getInt("retcode") == 0) {

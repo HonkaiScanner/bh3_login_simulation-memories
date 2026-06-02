@@ -26,7 +26,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import xyz.hellocraft.login_simulation.data.Constant.BH_PUBLIC_KEY
+import xyz.hellocraft.login_simulation.crypto.CryptoConstants.BH_PUBLIC_KEY
 import xyz.hellocraft.login_simulation.data.Constant.V2_OFFICIAL_TOKEN
 import xyz.hellocraft.login_simulation.data.RoleData
 import xyz.hellocraft.login_simulation.data.TokenResult

@@ -1,22 +1,32 @@
 *.iml
-.gradle
-/local.properties
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-/.idea/
-/app/release/
 *.log
-/app/debug/
 *.jks
+*.d
+.DS_Store
+
+# IDE and local environment
+/.idea/
+/.gradle/
+/.kotlin/
+/.gradle-tmp/
+/local.properties
+
+# Root build outputs
+/build/
+/captures/
+/.externalNativeBuild/
+/.cxx/
+
+# App-specific generated artifacts
+/app/debug/
+/app/release/
+/app/bugly/
 app/src/androidTest/
 app/src/test/
-/app/bugly/
+
+# Local helper tooling
 /helper/build/
 /helper/dist/
 /helper/__pycache__/
-main.spec
-*.d
 /tools/
+main.spec

@@ -1,0 +1,3 @@
+[submodule "scanner_core"]
+	path = scanner_core
+	url = ../bh3_login_simulation_scanner_core

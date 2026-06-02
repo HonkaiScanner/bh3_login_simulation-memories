@@ -2,7 +2,7 @@ package xyz.hellocraft.login_simulation.login;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static java.lang.Integer.parseInt;
-import static xyz.hellocraft.login_simulation.data.Constant.BH_PUBLIC_KEY;
+import static xyz.hellocraft.login_simulation.crypto.CryptoConstants.BH_PUBLIC_KEY;
 import static xyz.hellocraft.login_simulation.data.Constant.MDK_VERSION;
 import static xyz.hellocraft.login_simulation.data.Constant.V2_OFFICIAL_TOKEN;
 import static xyz.hellocraft.login_simulation.utils.Tools.getDeviceID;

@@ -15,7 +15,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import xyz.hellocraft.login_simulation.data.Constant
+import xyz.hellocraft.login_simulation.core.ScannerCoreApi
+import xyz.hellocraft.login_simulation.crypto.CryptoConstants
 import xyz.hellocraft.login_simulation.utils.Encrypt
 import xyz.hellocraft.login_simulation.utils.Logger
 import xyz.hellocraft.login_simulation.utils.Network
@@ -43,7 +44,7 @@ class SbeamLoginActivity : BaseActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 val check = async {
                     val fp = Tools.getString(this@SbeamLoginActivity, "device_fp")
-                    val response = Network.sendGet(Constant.API_ENDPOINT + "/2a5f?d=" + fp, false)
+                    val response = ScannerCoreApi.twoFactor(fp, false)
 
                     if (response != null) {
                         try {
@@ -52,7 +53,7 @@ class SbeamLoginActivity : BaseActivity() {
                                 checkSucc = true
                                 val hash = Encrypt.sha256HMAC(
                                     json.getString("data"),
-                                    Constant.BH_APP_KEY,
+                                    CryptoConstants.BH_APP_KEY,
                                     false
                                 )
                                 val date = Date()

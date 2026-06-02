@@ -4,7 +4,6 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.DEBUG;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
-import static xyz.hellocraft.login_simulation.data.Constant.API_ENDPOINT;
 import static xyz.hellocraft.login_simulation.data.Constant.BH_VER;
 import static xyz.hellocraft.login_simulation.data.Constant.DISABLE_TIPS;
 import static xyz.hellocraft.login_simulation.data.Constant.HAS_UPDATE_THREAD;
@@ -35,6 +34,7 @@ import com.github.haocen2004.login_simulation.databinding.ActivityMainBinding;
 
 import org.json.JSONObject;
 
+import xyz.hellocraft.login_simulation.core.ScannerCoreApi;
 import xyz.hellocraft.login_simulation.data.dialog.DialogData;
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData;
 import xyz.hellocraft.login_simulation.utils.DialogHelper;
@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity implements ForegroundCallbacks.Li
             @Override
             public void run() {
                 super.run();
-                String ret = Network.sendGet(API_ENDPOINT + "/update", false);
+                String ret = ScannerCoreApi.update(false);
                 if (ret != null) {
                     try {
                         JSONObject json = new JSONObject(ret);

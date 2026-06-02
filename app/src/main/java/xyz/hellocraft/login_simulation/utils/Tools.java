@@ -4,7 +4,6 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_CODE;
 import static com.github.haocen2004.login_simulation.BuildConfig.VERSION_NAME;
 import static java.lang.Integer.parseInt;
-import static xyz.hellocraft.login_simulation.data.Constant.API_ENDPOINT;
 import static xyz.hellocraft.login_simulation.data.Constant.OPPO_ADV_MODE;
 
 import android.app.Activity;
@@ -41,6 +40,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import xyz.hellocraft.login_simulation.core.OaServerResult;
+import xyz.hellocraft.login_simulation.core.ScannerCoreApi;
 import xyz.hellocraft.login_simulation.data.ICallback;
 import xyz.hellocraft.login_simulation.data.RoleData;
 import xyz.hellocraft.login_simulation.data.dialog.ButtonData;
@@ -137,74 +138,38 @@ public class Tools {
     }
 
     public static String getOAServer(RoleData roleData) {
-        //            if (ENC_DISPATCH) {
-        Map<String, String> headerMap = new HashMap<>();
-        Map<String, Object> oaMap = new HashMap<>();
-        long currentMs = System.currentTimeMillis();
         String open_id = roleData.getOpen_id();
         if (TextUtils.isEmpty(open_id)) {
             open_id = roleData.getOa_req_key() + "_" + (deviceId == null ? deviceId : "null");
         }
-        oaMap.put("x-req-openid", open_id);
-        headerMap.put("x-req-openid", open_id);
+        String deviceFp = null;
         try {
-            String deviceFp = DeviceFpManager.getInstance().getDeviceFp(null);
-            headerMap.put("x-req-fp", deviceFp);
-            oaMap.put("x-req-fp", deviceFp);
+            deviceFp = DeviceFpManager.getInstance().getDeviceFp(null);
         } catch (Exception ignore) {
-            headerMap.put("x-req-fp", "deviceFp");
-            oaMap.put("x-req-fp", "deviceFp");
         }
-        oaMap.put("x-req-name", VERSION_NAME + ":" + VERSION_CODE);
-        oaMap.put("x-req-code", VERSION_CODE);
-        headerMap.put("x-req-name", VERSION_NAME + ":" + VERSION_CODE);
-        headerMap.put("x-req-code", String.valueOf(VERSION_CODE));
-        oaMap.put("x-req-version", roleData.getOa_req_key());
-        oaMap.put("x-req-ts", (currentMs / 2000) + "t");
-        headerMap.put("x-req-version", roleData.getOa_req_key());
-        String sign = Encrypt.HMACSign(oaMap, false);
-        StringBuilder salt = new StringBuilder();
-        StringBuilder processedSign = new StringBuilder();
-        sign = new StringBuffer(sign).reverse().toString();
-        int count = 0;
-        int offset = 0;
-        do {
-            count++;
-            int pos = new Random().nextInt(sign.length() - 1);
-            int pos2 = pos + new Random().nextInt(4) + 4;
-            pos2 = Math.min(pos2, sign.length() - 1);
-
-            processedSign.append(sign.substring(pos, pos2));
-            salt.append(pos).append("|").append(pos2).append("|");
-            offset += pos;
-            offset += pos2;
-        } while (processedSign.length() < sign.length());
-        String splitSign = processedSign.toString().substring(0, sign.length());
-        oaMap.put("x-req-sign", splitSign);
-        String sign2 = Encrypt.HMACSign(oaMap, false);
-        headerMap.put("x-req-sign", splitSign.substring(0, 16) + sign2.substring(16));
-        headerMap.put("x-req-salt", count + "|" + salt);
-        if (offset % 2 == 0) offset = offset * -1;
-        String getOAUrl = API_ENDPOINT + "/query_dispatch/?version=" + roleData.getOa_req_key() + "&t=" + (currentMs + offset);
-        String feedback = Network.sendGet(getOAUrl, headerMap, false);
-        Logger.d("GetOAServer", feedback);
-//                Logger.getLogger(null).makeToast(json1.getString("msg"));
-        try {
-            JSONObject json1 = new JSONObject(feedback);
-            int retcode = json1.getInt("retcode");
-            if (retcode != 0) {
-                if (retcode > 100) {
-                    DialogData dialogData = new DialogData("OA服务器获取失败", json1.getString("message"), "确认");
-                    DialogLiveData.getINSTANCE().addNewDialog(dialogData);
-                } else {
-                    Logger.getLogger(null).makeToast(json1.getString("message"));
-                }
-                return null;
+        OaServerResult result = ScannerCoreApi.getOAServer(
+                open_id,
+                roleData.getOa_req_key(),
+                deviceFp,
+                VERSION_NAME,
+                VERSION_CODE
+        );
+        Logger.d("GetOAServer", String.valueOf(result.getFeedback()));
+        if (result.isSuccess()) {
+            return result.getFeedback();
+        }
+        if (result.getMessage() != null) {
+            if (result.getRetcode() > 100) {
+                DialogData dialogData = new DialogData("OA服务器获取失败", result.getMessage(), "确认");
+                DialogLiveData.getINSTANCE().addNewDialog(dialogData);
+            } else {
+                Logger.getLogger(null).makeToast(result.getMessage());
             }
-        } catch (Exception ignore) {
+        }
+        if (result.getRetcode() == -1) {
             return null;
         }
-        return feedback;
+        return result.getFeedback();
 //            }
 //            String getOAUrl = "https://global2.bh3.com/query_dispatch?version=" + roleData.getOa_req_key() + "&t=" + System.currentTimeMillis();
 //            Logger.d(TAG, "getOAServer-Param: " + getOAUrl);

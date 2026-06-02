@@ -202,6 +202,7 @@ dependencies {
     implementation("com.github.jenly1314.WeChatQRCode:opencv-x86_64:${qrcodeVer}")
     implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode:${qrcodeVer}")
     implementation("com.github.jenly1314.WeChatQRCode:wechat-qrcode-scanning:${qrcodeVer}")
+    implementation(project(":scanner_core"))
     implementation(project(":mi_sdk"))
 //    implementation(project(":360_sdk"))
     implementation("androidx.multidex:multidex:2.0.1")

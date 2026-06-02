@@ -31,6 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.opencv.OpenCV
+import xyz.hellocraft.login_simulation.core.ScannerCoreApi
 import xyz.hellocraft.login_simulation.data.Constant
 import xyz.hellocraft.login_simulation.data.Constant.BH_VER
 import xyz.hellocraft.login_simulation.data.Constant.CHECK_VER
@@ -216,7 +217,7 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
                 }
             }
             val hi3VerTask = async {
-                val response = Network.sendGet(Constant.API_ENDPOINT + "/hi3_version", false)
+                val response = ScannerCoreApi.hi3Version(false)
                 if (response != null) {
                     try {
                         val json = JSONObject(response)
@@ -250,7 +251,7 @@ class SplashActivity : BaseActivity(), ForegroundCallbacks.Listener {
                 deviceFpTask()
             }
             val updateChecker = async {
-                val response = Network.sendGet(Constant.API_ENDPOINT + "/update", false)
+                val response = ScannerCoreApi.update(false)
                 if (response != null) {
                     Logger.i("Update", "handleMessage: $response")
                     try {

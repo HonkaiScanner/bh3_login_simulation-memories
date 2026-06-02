@@ -11,7 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.github.haocen2004.login_simulation.R
 import com.github.haocen2004.login_simulation.databinding.ActivityBackupBinding
-import xyz.hellocraft.login_simulation.data.Constant
+import xyz.hellocraft.login_simulation.crypto.CryptoConstants
 import xyz.hellocraft.login_simulation.data.dialog.ButtonData
 import xyz.hellocraft.login_simulation.data.dialog.DialogData
 import xyz.hellocraft.login_simulation.data.dialog.DialogLiveData
@@ -288,7 +288,7 @@ class BackupActivity : BaseActivity() {
 
     private fun generateAESKeyFromInput(input: String): SecretKey {
         // 生成 HMAC-SHA256 哈希
-        val result = Encrypt.sha256HMAC(input, Constant.BH_APP_KEY, false)
+        val result = Encrypt.sha256HMAC(input, CryptoConstants.BH_APP_KEY, false)
 
         // 截取前 16 或 32 字节作为 AES 密钥
 //        Logger.d("generateAESKeyFromInput", "HMAC-SHA256 result: $result")
